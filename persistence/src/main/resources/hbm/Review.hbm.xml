@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Oct 10, 2013 9:08:14 AM by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+    <class name="com.jeeyoh.persistence.domain.Review" table="review" catalog="jeeyoh">
+        <id name="id" type="java.lang.Integer">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="business" class="com.jeeyoh.persistence.domain.Business" fetch="select">
+            <column name="businessId" not-null="true" />
+        </many-to-one>
+        <property name="reviewId" type="string">
+            <column name="reviewId" length="250" />
+        </property>
+        <property name="rating" type="java.lang.Long">
+            <column name="rating" precision="10" scale="0" />
+        </property>
+        <property name="excerpt" type="string">
+            <column name="excerpt" length="250" />
+        </property>
+        <property name="creationTime" type="string">
+            <column name="creationTime" length="16777215" />
+        </property>
+        <property name="ratingImageUrl" type="string">
+            <column name="ratingImageUrl" length="250" />
+        </property>
+        <property name="ratingSmallImageUrl" type="string">
+            <column name="ratingSmallImageUrl" length="250" />
+        </property>
+        <property name="ratingLargeImageUrl" type="string">
+            <column name="ratingLargeImageUrl" length="250" />
+        </property>
+        <property name="userId" type="string">
+            <column name="userId" length="200" />
+        </property>
+        <property name="userName" type="string">
+            <column name="userName" length="200" />
+        </property>
+        <property name="userImageUrl" type="string">
+            <column name="userImageUrl" length="250" />
+        </property>
+    </class>
+</hibernate-mapping>

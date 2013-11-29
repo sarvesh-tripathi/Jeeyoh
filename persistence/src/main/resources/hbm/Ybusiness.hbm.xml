@@ -1,0 +1,117 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Oct 10, 2013 9:08:14 AM by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+    <class name="com.jeeyoh.persistence.domain.Ybusiness" table="ybusiness" catalog="jeeyoh">
+        <id name="id" type="java.lang.Integer">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <property name="businessId" type="string">
+            <column name="businessId" length="250" />
+        </property>
+        <property name="isClaimed" type="java.lang.Boolean">
+            <column name="isClaimed" />
+        </property>
+        <property name="isClosed" type="java.lang.Boolean">
+            <column name="isClosed" />
+        </property>
+        <property name="name" type="string">
+            <column name="name" length="250" />
+        </property>
+        <property name="url" type="string">
+            <column name="url" length="250" />
+        </property>
+         <property name="imageUrl" type="string">
+            <column name="imageUrl" />
+        </property>
+        <property name="mobileUrl" type="string">
+            <column name="mobileUrl" length="250" />
+        </property>
+        <property name="phone" type="string">
+            <column name="phone" length="50" />
+        </property>
+        <property name="displayPhone" type="string">
+            <column name="displayPhone" length="50" />
+        </property>
+        <property name="reviewCount" type="string">
+            <column name="reviewCount" length="16777215" />
+        </property>
+        <property name="distance" type="java.lang.Long">
+            <column name="distance" precision="10" scale="0" />
+        </property>
+        <property name="rating" type="java.lang.Long">
+            <column name="rating" precision="10" scale="0" />
+        </property>
+        <property name="ratingImgUrl" type="string">
+            <column name="ratingImgUrl" length="250" />
+        </property>
+        <property name="ratingSmallImgUrl" type="string">
+            <column name="ratingSmallImgUrl" length="250" />
+        </property>
+        <property name="ratingLargeImgUrl" type="string">
+            <column name="ratingLargeImgUrl" length="250" />
+        </property>
+        <property name="snippetText" type="string">
+            <column name="snippetText" length="65535" />
+        </property>
+        <property name="snippetImageUrl" type="string">
+            <column name="snippetImageUrl" length="250" />
+        </property>
+        <property name="menuProvider" type="string">
+            <column name="menuProvider" length="50" />
+        </property>
+        <property name="menuProviderDate" type="java.lang.Long">
+            <column name="menuProviderDate" precision="10" scale="0" />
+        </property>
+        <property name="crossStreets" type="string">
+            <column name="crossStreets" length="250" />
+        </property>
+        <property name="city" type="string">
+            <column name="city" length="250" />
+        </property>
+        <property name="displayAddress" type="string">
+            <column name="displayAddress" length="250" />
+        </property>
+        <property name="postalCode" type="string">
+            <column name="postalCode" length="50" />
+        </property>
+        <property name="countryCode" type="string">
+            <column name="countryCode" length="50" />
+        </property>
+        <property name="address" type="string">
+            <column name="address" />
+        </property>
+        <property name="stateCode" type="string">
+            <column name="stateCode" length="40" />
+        </property>
+        <property name="neighborhoods" type="string">
+            <column name="neighborhoods" length="250" />
+        </property>
+        <set name="ydeals" inverse="true">
+            <key>
+                <column name="businessId" not-null="true" />
+            </key>
+            <one-to-many class="com.jeeyoh.persistence.domain.Ydeal" />
+        </set>
+        <set name="ybusinessregionmaps" inverse="true" cascade="all">
+            <key>
+                <column name="businessId" not-null="true" />
+            </key>
+            <one-to-many class="com.jeeyoh.persistence.domain.Ybusinessregionmap" />
+        </set>
+        <set name="ybusinesscategorymaps" inverse="true" cascade="all">
+            <key>
+                <column name="businessId" not-null="true" />
+            </key>
+            <one-to-many class="com.jeeyoh.persistence.domain.Ybusinesscategorymap" />
+        </set>
+        <set name="yreviews" inverse="true">
+            <key>
+                <column name="businessId" not-null="true" />
+            </key>
+            <one-to-many class="com.jeeyoh.persistence.domain.Yreview" />
+        </set>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Oct 10, 2013 9:08:14 AM by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+    <class name="com.jeeyoh.persistence.domain.Privacy" table="privacy" catalog="jeeyoh">
+        <id name="privacyId" type="java.lang.Integer">
+            <column name="privacyId" />
+            <generator class="identity" />
+        </id>
+        <property name="privacyType" type="string">
+            <column name="privacyType" length="6" not-null="true" />
+        </property>
+        <set name="jeeyohgroups" inverse="true">
+            <key>
+                <column name="privacyId" not-null="true" />
+            </key>
+            <one-to-many class="com.jeeyoh.persistence.domain.Jeeyohgroup" />
+        </set>
+        <set name="users" inverse="true">
+            <key>
+                <column name="privacyId" not-null="true" />
+            </key>
+            <one-to-many class="com.jeeyoh.persistence.domain.User" />
+        </set>
+    </class>
+</hibernate-mapping>

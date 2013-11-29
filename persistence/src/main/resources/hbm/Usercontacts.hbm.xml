@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Oct 10, 2013 9:08:14 AM by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+    <class name="com.jeeyoh.persistence.domain.Usercontacts" table="usercontacts" catalog="jeeyoh">
+        <id name="userContactId" type="java.lang.Integer">
+            <column name="userContactId" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="userByContactId" class="com.jeeyoh.persistence.domain.User" fetch="select">
+            <column name="contactId" not-null="true" />
+        </many-to-one>
+        <many-to-one name="userByUserId" class="com.jeeyoh.persistence.domain.User" fetch="select">
+            <column name="userId" not-null="true" />
+        </many-to-one>
+        <property name="isActive" type="java.lang.Boolean">
+            <column name="isActive" />
+        </property>
+        <property name="isDeleted" type="java.lang.Boolean">
+            <column name="isDeleted" />
+        </property>
+        <property name="createdtime" type="timestamp">
+            <column name="createdtime" length="19" not-null="true" />
+        </property>
+        <property name="updatedtime" type="timestamp">
+            <column name="updatedtime" length="19" not-null="true" />
+        </property>
+        <set name="usercontactsgroupmaps" inverse="true">
+            <key>
+                <column name="userContactId" not-null="true" />
+            </key>
+            <one-to-many class="com.jeeyoh.persistence.domain.Usercontactsgroupmap" />
+        </set>
+    </class>
+</hibernate-mapping>

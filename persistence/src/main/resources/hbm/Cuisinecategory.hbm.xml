@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Oct 10, 2013 9:08:14 AM by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+    <class name="com.jeeyoh.persistence.domain.Cuisinecategory" table="cuisinecategory" catalog="jeeyoh">
+        <id name="cuisineCategoryId" type="java.lang.Integer">
+            <column name="cuisineCategoryId" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="cuisines" class="com.jeeyoh.persistence.domain.Cuisines" fetch="select">
+            <column name="cuisineId" not-null="true" />
+        </many-to-one>
+        <property name="categoryName" type="string">
+            <column name="categoryName" length="250" />
+        </property>
+        <property name="puffery" type="string">
+            <column name="puffery" length="250" />
+        </property>
+        <property name="description" type="string">
+            <column name="description" length="250" />
+        </property>
+        <set name="foodmenuitems" inverse="true">
+            <key>
+                <column name="cuisineCategoryId" not-null="true" />
+            </key>
+            <one-to-many class="com.jeeyoh.persistence.domain.Foodmenuitem" />
+        </set>
+    </class>
+</hibernate-mapping>

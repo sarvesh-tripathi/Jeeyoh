@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+xmlns:h="http://www.springframework.org/schema/security" 
+xmlns:tx="http://www.springframework.org/schema/tx"
+xmlns:context="http://www.springframework.org/schema/context" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd  
+http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd 
+http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd 
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd 
+http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd 
+http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd" 
+default-autowire="byName">
+	<aop:aspectj-autoproxy proxy-target-class="false" />	
+	<context:property-placeholder location="classpath*:properties/*.properties" />
+	<context:annotation-config />
+	<context:component-scan base-package="com.jeeyoh.service.groupon" use-default-filters="true">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Service" />
+	</context:component-scan>
+	<context:component-scan base-package="com.jeeyoh.service.yelp" use-default-filters="true">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Service" />
+	</context:component-scan>
+	<bean id="grouponClient" class="com.jeeyoh.service.groupon.GrouponClient">
+        <constructor-arg ref="restTemplate"/>        
+    </bean>
+	<bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
+		<!-- constructor-arg ref="httpClientFactory" /-->
+		<property name="messageConverters">
+			<list>
+			<bean class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+				
+			</bean>
+				<!-- We only have one message converter for the RestTemplate, namely the XStream Marshller -->
+				<!-- 
+				<bean class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
+					<constructor-arg>
+						<bean class="org.springframework.oxm.xstream.XStreamMarshaller"> -->
+							<!-- Explicitly define the aliases -->
+							<!--
+							<property name="aliases">
+								<props>
+									<prop key="article">com.informit.articleservice.model.Article</prop>
+									<prop key="category">com.informit.articleservice.model.Category</prop>
+								</props>
+							</property>
+							-->
+							
+							<!-- Tell XStream to find the alias names in the following classes -->
+							<!-- 
+							<property name="annotatedClasses">
+								<list>
+									<value>com.informit.articleservice.model.UserBeans</value>						
+																
+								</list>						
+							</property>
+						</bean>
+					</constructor-arg>
+				</bean> -->
+			</list>
+		</property>
+	</bean>
+	
+	<tx:annotation-driven />
+    <bean id="transactionManager"
+        class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+		
+</beans>

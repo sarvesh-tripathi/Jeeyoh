@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Oct 10, 2013 9:08:14 AM by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+    <class name="com.jeeyoh.persistence.domain.Gdealoption" table="gdealoption" catalog="jeeyoh">
+        <id name="id" type="java.lang.Integer">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="gdealpriceByDiscountId" class="com.jeeyoh.persistence.domain.Gdealprice" fetch="select" cascade="all">
+            <column name="discountId" not-null="true" />
+        </many-to-one>
+        <many-to-one name="gdealpriceByPriceId" class="com.jeeyoh.persistence.domain.Gdealprice" fetch="select" cascade="all">
+            <column name="priceId" not-null="true" />
+        </many-to-one>
+        <many-to-one name="gdealpriceByValueId" class="com.jeeyoh.persistence.domain.Gdealprice" fetch="select" cascade="all">
+            <column name="valueId" not-null="true" />
+        </many-to-one>
+        <many-to-one name="gdeal" class="com.jeeyoh.persistence.domain.Gdeal" fetch="select">
+            <column name="dealId" not-null="true" />
+        </many-to-one>
+        <property name="optionId" type="string">
+            <column name="optionId" length="16777215" not-null="true" />
+        </property>
+        <property name="title" type="string">
+            <column name="title" length="250" />
+        </property>
+        <property name="soldQuantity" type="java.lang.Integer">
+            <column name="soldQuantity" />
+        </property>
+        <property name="isSoldOut" type="java.lang.Boolean">
+            <column name="isSoldOut" />
+        </property>
+        <property name="discountPercent" type="java.lang.Integer">
+            <column name="discountPercent" />
+        </property>
+        <property name="isLimitedQuantity" type="java.lang.Boolean">
+            <column name="isLimitedQuantity" />
+        </property>
+        <property name="initialQuantity" type="java.lang.Integer">
+            <column name="initialQuantity" />
+        </property>
+        <property name="remainingQuantity" type="java.lang.Integer">
+            <column name="remainingQuantity" />
+        </property>
+        <property name="minimumPurchaseQuantity" type="java.lang.Integer">
+            <column name="minimumPurchaseQuantity" />
+        </property>
+        <property name="maximumPurchaseQuantity" type="java.lang.Integer">
+            <column name="maximumPurchaseQuantity" />
+        </property>
+        <property name="expiresAt" type="timestamp">
+            <column name="expiresAt" length="19" />
+        </property>
+        <property name="externalUrl" type="string">
+            <column name="externalUrl" length="250" />
+        </property>
+        <property name="buyUrl" type="string">
+            <column name="buyUrl" length="250" />
+        </property>
+        <set name="gredemptionlocations" inverse="true" cascade="all">
+            <key>
+                <column name="optionId" not-null="true" />
+            </key>
+            <one-to-many class="com.jeeyoh.persistence.domain.Gredemptionlocation" />
+        </set>
+        <set name="goptiondetails" inverse="true" cascade="all">
+            <key>
+                <column name="optionId" not-null="true" />
+            </key>
+            <one-to-many class="com.jeeyoh.persistence.domain.Goptiondetail" />
+        </set>
+    </class>
+</hibernate-mapping>

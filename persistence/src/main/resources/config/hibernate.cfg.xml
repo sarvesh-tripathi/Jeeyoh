@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+  <session-factory>
+    <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+    <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+    <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/jeeyoh?zeroDateTimeBehavior=convertToNull</property>
+    <property name="hibernate.connection.username">root</property>
+    <mapping resource="hbm/Yreview.hbm.xml"/>
+    <mapping resource="hbm/Gdeal.hbm.xml"/>
+    <mapping resource="hbm/Usergroups.hbm.xml"/>
+    <mapping resource="hbm/Ybusinesscategorymap.hbm.xml"/>
+    <mapping resource="hbm/Deals.hbm.xml"/>
+    <mapping resource="hbm/Gredemptionlocation.hbm.xml"/>
+    <mapping resource="hbm/Dealsusage.hbm.xml"/>
+    <mapping resource="hbm/User.hbm.xml"/>
+    <mapping resource="hbm/Businesstype.hbm.xml"/>
+    <mapping resource="hbm/Gdealprice.hbm.xml"/>
+    <mapping resource="hbm/Review.hbm.xml"/>
+    <mapping resource="hbm/Goptiondetail.hbm.xml"/>
+    <mapping resource="hbm/Page.hbm.xml"/>
+    <mapping resource="hbm/Groupusermap.hbm.xml"/>
+    <mapping resource="hbm/Pageuserlikes.hbm.xml"/>
+    <mapping resource="hbm/Countrylocation.hbm.xml"/>
+    <mapping resource="hbm/Business.hbm.xml"/>
+    <mapping resource="hbm/Cuisines.hbm.xml"/>
+    <mapping resource="hbm/Gmerchant.hbm.xml"/>
+    <mapping resource="hbm/Foodmenuitem.hbm.xml"/>
+    <mapping resource="hbm/Ycategoryfilter.hbm.xml"/>
+    <mapping resource="hbm/Pagetype.hbm.xml"/>
+    <mapping resource="hbm/Gdealoption.hbm.xml"/>
+    <mapping resource="hbm/Cuisinecategory.hbm.xml"/>
+    <mapping resource="hbm/Ygiftcertificate.hbm.xml"/>
+    <mapping resource="hbm/Dealoption.hbm.xml"/>
+    <mapping resource="hbm/Ybusiness.hbm.xml"/>
+    <mapping resource="hbm/Ygiftoptionmap.hbm.xml"/>
+    <mapping resource="hbm/Usercontactsgroupmap.hbm.xml"/>
+    <mapping resource="hbm/Gdivision.hbm.xml"/>
+    <mapping resource="hbm/Privacy.hbm.xml"/>
+    <mapping resource="hbm/Usercontacts.hbm.xml"/>
+    <mapping resource="hbm/Ybusinessregionmap.hbm.xml"/>
+    <mapping resource="hbm/Ydeal.hbm.xml"/>
+    <mapping resource="hbm/Jeeyohgroup.hbm.xml"/>
+    <mapping resource="hbm/Ybusinesstype.hbm.xml"/>
+    <mapping resource="hbm/Dealredemptionlocation.hbm.xml"/>
+    <mapping resource="hbm/Ydealoption.hbm.xml"/>
+    <mapping resource="hbm/Profiletype.hbm.xml"/>
+    <mapping resource="hbm/Yregion.hbm.xml"/>
+    <mapping resource="hbm/Notificationpermission.hbm.xml"/>
+    <mapping resource="hbm/Gdealtype.hbm.xml"/>
+    <mapping resource="hbm/Gtags.hbm.xml"/>      
+    </session-factory>
+</hibernate-configuration>

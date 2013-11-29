@@ -1,0 +1,156 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>jeeyoh</artifactId>
+    <groupId>jeeyoh</groupId>
+    <version>1.0</version>
+  </parent>
+  <artifactId>controller</artifactId>
+  <version>1.0</version>
+  <packaging>war</packaging>
+  <name>controller</name>
+    
+ 	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+ 	</properties>
+	<dependencies>
+	  	<dependency>
+			<groupId>jeeyoh</groupId>
+			<artifactId>persistence</artifactId>
+			<version>1.0</version>
+		</dependency>		
+		<dependency>
+			<groupId>jeeyoh</groupId>
+			<artifactId>service</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>jeeyoh</groupId>
+			<artifactId>common</artifactId>
+			<version>1.0</version>
+		</dependency>		
+	
+		<!-- Servlet -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>org.springframework.web.servlet</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>com.springsource.javax.servlet</artifactId>
+			<version>2.5.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>com.springsource.javax.servlet.jsp.jstl</artifactId>
+			<version>1.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.taglibs</groupId>
+			<artifactId>com.springsource.org.apache.taglibs.standard</artifactId>
+			<version>1.1.2</version>
+		</dependency>
+		
+		
+		
+		
+		<dependency>
+	        <groupId>javax.servlet</groupId>
+	        <artifactId>jsp-api</artifactId>
+	        <version>2.0</version>
+	        <scope>provided</scope>
+    	</dependency>
+ 
+ 		<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib</artifactId>
+			<version>2.2.2</version>
+		</dependency>
+ 		<dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.10</version>
+        </dependency>
+        
+        <dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>1.5.2</version>
+		</dependency>
+		
+		<!-- Hibernate -->
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+			<version>1.0.0.GA</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>4.2.0.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate</artifactId>
+			<version>3.5.4-Final</version>
+			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>3.6.5.Final</version>
+		</dependency>		
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-c3p0</artifactId>
+			<version>3.6.5.Final</version>
+		</dependency>
+		
+		<dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        
+        <dependency>
+			<groupId>javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<version>3.12.1.GA</version>
+		</dependency>      
+ 
+			
+		<!--  Junit Test dependencies -->
+	    <dependency>
+	      <groupId>junit</groupId>
+	      <artifactId>junit</artifactId>
+	      <version>3.8.1</version>
+	      <scope>test</scope>
+	    </dependency>
+  	</dependencies>
+  
+  	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.1.1</version>
+				<configuration>
+					<warName>jeeyoh</warName>	                                     
+				</configuration>
+			</plugin>
+            
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-ear-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<warName>jeeyoh</warName>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

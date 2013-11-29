@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Oct 10, 2013 9:08:14 AM by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+    <class name="com.jeeyoh.persistence.domain.Foodmenuitem" table="foodmenuitem" catalog="jeeyoh">
+        <id name="foodMenuItemId" type="java.lang.Integer">
+            <column name="foodMenuItemId" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="cuisines" class="com.jeeyoh.persistence.domain.Cuisines" fetch="select">
+            <column name="cuisineId" not-null="true" />
+        </many-to-one>
+        <many-to-one name="cuisinecategory" class="com.jeeyoh.persistence.domain.Cuisinecategory" fetch="select">
+            <column name="cuisineCategoryId" not-null="true" />
+        </many-to-one>
+        <many-to-one name="business" class="com.jeeyoh.persistence.domain.Business" fetch="select">
+            <column name="businessId" not-null="true" />
+        </many-to-one>
+        <property name="menuName" type="string">
+            <column name="menuName" length="250" />
+        </property>
+        <property name="puffery" type="string">
+            <column name="puffery" length="250" />
+        </property>
+        <property name="price" type="java.lang.Long">
+            <column name="price" precision="10" scale="0" />
+        </property>
+        <property name="currencyCode" type="string">
+            <column name="currencyCode" length="20" />
+        </property>
+        <property name="formattedPrice" type="string">
+            <column name="formattedPrice" length="200" />
+        </property>
+        <property name="isSpeciality" type="java.lang.Boolean">
+            <column name="isSpeciality" />
+        </property>
+        <property name="isAvailable" type="java.lang.Boolean">
+            <column name="isAvailable" />
+        </property>
+        <property name="isLunchMenu" type="java.lang.Boolean">
+            <column name="isLunchMenu" />
+        </property>
+        <property name="isBurstMenu" type="java.lang.Boolean">
+            <column name="isBurstMenu" />
+        </property>
+        <property name="isDinnerMenu" type="java.lang.Boolean">
+            <column name="isDinnerMenu" />
+        </property>
+    </class>
+</hibernate-mapping>
