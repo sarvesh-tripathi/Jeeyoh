@@ -131,5 +131,17 @@
             </key>
             <one-to-many class="com.jeeyoh.persistence.domain.Usercontacts" />
         </set>
+        <set name="userdealmaps" inverse="true">
+            <key>
+                <column name="userId" not-null="true" />
+            </key>
+            <one-to-many class="com.jeeyoh.persistence.domain.Userdealmap" />
+        </set>
+        <set name="usernondealsuggestions" inverse="true">
+            <key>
+                <column name="userId" not-null="true" />
+            </key>
+            <one-to-many class="com.jeeyoh.persistence.domain.Usernondealsuggestion" />
+        </set>
     </class>
 </hibernate-mapping>

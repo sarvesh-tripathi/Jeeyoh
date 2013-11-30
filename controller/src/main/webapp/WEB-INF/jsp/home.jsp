@@ -17,6 +17,9 @@
 				<li><a href="searchYelp" title="Search Yelp">Search Yelp</a></li>
 				<li>|</li>
    				<li><a href="filterDealsByDiscount" title="Filter Deals By Discount">Filter Deals By Discount</a></li>		
+   				
+   				<li>|</li>
+   				<li><a href="nonDealSuggestion" title="Non Deal Suggestion">Non Deal Suggestion</a></li>
 			</ul>
 		</div>
 	</body>

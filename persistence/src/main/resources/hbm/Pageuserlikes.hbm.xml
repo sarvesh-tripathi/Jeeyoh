@@ -8,10 +8,10 @@
             <column name="pageUserLikesId" />
             <generator class="identity" />
         </id>
-        <many-to-one name="user" class="com.jeeyoh.persistence.domain.User" fetch="select">
+        <many-to-one name="user" class="com.jeeyoh.persistence.domain.User" fetch="select" lazy="false">
             <column name="userId" not-null="true" />
         </many-to-one>
-        <many-to-one name="page" class="com.jeeyoh.persistence.domain.Page" fetch="select">
+        <many-to-one name="page" class="com.jeeyoh.persistence.domain.Page" fetch="select" lazy="false">
             <column name="pageId" not-null="true" />
         </many-to-one>
         <many-to-one name="notificationpermission" class="com.jeeyoh.persistence.domain.Notificationpermission" fetch="select">

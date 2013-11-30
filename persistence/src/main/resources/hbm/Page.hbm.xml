@@ -44,7 +44,7 @@
         <property name="updatedtime" type="timestamp">
             <column name="updatedtime" length="19" not-null="true" />
         </property>
-        <set name="pageuserlikeses" inverse="true">
+        <set name="pageuserlikeses" inverse="true" lazy="false">
             <key>
                 <column name="pageId" not-null="true" />
             </key>

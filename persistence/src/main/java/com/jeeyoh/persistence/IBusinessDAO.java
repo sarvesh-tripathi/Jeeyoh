@@ -14,6 +14,7 @@ public interface IBusinessDAO {
 	public List<Business> getBusinessByName(String name);
 	
 	public List<Business> getBusinessById(String businessId);
+	public List<Business> getBusinessById(int id);
 	public void saveBusiness(Business business);
 	public Businesstype getBusinesstypeByType(String type);
 }

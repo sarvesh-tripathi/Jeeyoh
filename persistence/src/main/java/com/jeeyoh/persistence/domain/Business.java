@@ -55,6 +55,7 @@ public class Business  implements java.io.Serializable {
      private Set foodmenuitems = new HashSet(0);
      private Set dealses = new HashSet(0);
      private Set pages = new HashSet(0);
+     private Set usernondealsuggestions = new HashSet(0);
 
     public Business() {
     }
@@ -417,6 +418,16 @@ public class Business  implements java.io.Serializable {
     public void setPages(Set pages) {
         this.pages = pages;
     }
+
+
+	public Set getUsernondealsuggestions() {
+		return usernondealsuggestions;
+	}
+
+
+	public void setUsernondealsuggestions(Set usernondealsuggestions) {
+		this.usernondealsuggestions = usernondealsuggestions;
+	}
 
 
 

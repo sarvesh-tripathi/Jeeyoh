@@ -104,5 +104,11 @@
             </key>
             <one-to-many class="com.jeeyoh.persistence.domain.Dealoption" />
         </set>
+        <set name="userdealmaps" inverse="true">
+            <key>
+                <column name="dealId" not-null="true" />
+            </key>
+            <one-to-many class="com.jeeyoh.persistence.domain.Userdealmap" />
+        </set>
     </class>
 </hibernate-mapping>

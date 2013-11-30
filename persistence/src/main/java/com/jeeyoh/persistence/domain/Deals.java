@@ -43,6 +43,7 @@ public class Deals  implements java.io.Serializable {
      private String dealSource;
      private Set dealsusages = new HashSet(0);
      private Set dealoptions = new HashSet(0);
+     private Set userdealmaps = new HashSet(0);
 
     public Deals() {
     }
@@ -301,6 +302,16 @@ public class Deals  implements java.io.Serializable {
     public void setDealoptions(Set dealoptions) {
         this.dealoptions = dealoptions;
     }
+
+
+	public Set getUserdealmaps() {
+		return userdealmaps;
+	}
+
+
+	public void setUserdealmaps(Set userdealmaps) {
+		this.userdealmaps = userdealmaps;
+	}
 
 
 

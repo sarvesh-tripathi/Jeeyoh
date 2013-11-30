@@ -8,10 +8,10 @@
             <column name="userContactId" />
             <generator class="identity" />
         </id>
-        <many-to-one name="userByContactId" class="com.jeeyoh.persistence.domain.User" fetch="select">
+        <many-to-one name="userByContactId" class="com.jeeyoh.persistence.domain.User" fetch="select" lazy="false">
             <column name="contactId" not-null="true" />
         </many-to-one>
-        <many-to-one name="userByUserId" class="com.jeeyoh.persistence.domain.User" fetch="select">
+        <many-to-one name="userByUserId" class="com.jeeyoh.persistence.domain.User" fetch="select" lazy="false">
             <column name="userId" not-null="true" />
         </many-to-one>
         <property name="isActive" type="java.lang.Boolean">
@@ -26,7 +26,7 @@
         <property name="updatedtime" type="timestamp">
             <column name="updatedtime" length="19" not-null="true" />
         </property>
-        <set name="usercontactsgroupmaps" inverse="true">
+        <set name="usercontactsgroupmaps" inverse="true" lazy="false">
             <key>
                 <column name="userContactId" not-null="true" />
             </key>

@@ -15,6 +15,7 @@ import com.jeeyoh.persistence.domain.Gdivision;
 import com.jeeyoh.service.groupon.IGrouponClient;
 import com.jeeyoh.service.groupon.IGrouponFilterEngineService;
 import com.jeeyoh.service.groupon.IGrouponService;
+import com.jeeyoh.service.search.INonDealSearch;
 import com.jeeyoh.service.yelp.IYelpService;
 
 @Controller
@@ -30,6 +31,8 @@ public class AccountController {
 	
 	@Autowired
 	private IGrouponFilterEngineService grouponFilterEngineService;
+	@Autowired
+	private INonDealSearch nonDealSearch;
 
 	@RequestMapping(value = "/home", method = RequestMethod.GET)
 	public ModelAndView home(HttpServletRequest request,
@@ -71,4 +74,13 @@ public class AccountController {
 		grouponFilterEngineService.filter();
 		return modelAndView;
 	}
+	
+	@RequestMapping(value = "/nonDealSuggestion", method = RequestMethod.GET)
+	public ModelAndView nonDealSuggestion(HttpServletRequest request,
+			HttpServletResponse httpresponse) {
+		ModelAndView modelAndView = new ModelAndView("home");
+		nonDealSearch.search();
+		return modelAndView;
+	}
+	
 }

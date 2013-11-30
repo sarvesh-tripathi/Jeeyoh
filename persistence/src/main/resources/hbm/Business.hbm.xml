@@ -149,5 +149,11 @@
             </key>
             <one-to-many class="com.jeeyoh.persistence.domain.Page" />
         </set>
+        <set name="usernondealsuggestions" inverse="true">
+            <key>
+                <column name="businessId" not-null="true" />
+            </key>
+            <one-to-many class="com.jeeyoh.persistence.domain.Usernondealsuggestion" />
+        </set>
     </class>
 </hibernate-mapping>

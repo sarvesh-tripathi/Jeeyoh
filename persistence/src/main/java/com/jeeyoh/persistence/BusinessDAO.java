@@ -31,6 +31,22 @@ public class BusinessDAO implements IBusinessDAO {
 		}
 		return businessList;
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Business> getBusinessById(int id) {
+		List<Business> businessList = null;
+		String hqlQuery = "from Business a where a.id = :id";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("id", id);
+			businessList = (List<Business>) query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return businessList;
+	}
 
 	@Override
 	public List<Business> getBusinessByName(String name) {

@@ -29,7 +29,7 @@
         <property name="updatedtime" type="timestamp">
             <column name="updatedtime" length="19" not-null="true" />
         </property>
-        <set name="groupusermaps" inverse="true">
+        <set name="groupusermaps" inverse="true" lazy="false">
             <key>
                 <column name="groupId" not-null="true" />
             </key>

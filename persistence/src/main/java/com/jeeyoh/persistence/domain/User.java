@@ -45,6 +45,8 @@ public class User  implements java.io.Serializable {
      private Set pagesForOwnerId = new HashSet(0);
      private Set jeeyohgroupsForCreatorId = new HashSet(0);
      private Set usercontactsesForContactId = new HashSet(0);
+     private Set userdealmaps = new HashSet(0);
+     private Set usernondealsuggestions = new HashSet(0);
 
     public User() {
     }
@@ -325,6 +327,26 @@ public class User  implements java.io.Serializable {
     public void setUsercontactsesForContactId(Set usercontactsesForContactId) {
         this.usercontactsesForContactId = usercontactsesForContactId;
     }
+
+
+	public Set getUserdealmaps() {
+		return userdealmaps;
+	}
+
+
+	public void setUserdealmaps(Set userdealmaps) {
+		this.userdealmaps = userdealmaps;
+	}
+
+
+	public Set getUsernondealsuggestions() {
+		return usernondealsuggestions;
+	}
+
+
+	public void setUsernondealsuggestions(Set usernondealsuggestions) {
+		this.usernondealsuggestions = usernondealsuggestions;
+	}
 
 
 
