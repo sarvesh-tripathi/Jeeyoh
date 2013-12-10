@@ -50,6 +50,7 @@
     <mapping resource="hbm/Notificationpermission.hbm.xml"/>
     <mapping resource="hbm/Gdealtype.hbm.xml"/>
     <mapping resource="hbm/Gtags.hbm.xml"/> 
+	<mapping resource="hbm/Gcategory.hbm.xml"/>    
     <mapping resource="hbm/Userdealmap.hbm.xml"/>
     <mapping resource="hbm/Usernondealsuggestion.hbm.xml"/>
          

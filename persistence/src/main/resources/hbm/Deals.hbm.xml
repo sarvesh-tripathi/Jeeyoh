@@ -98,7 +98,7 @@
             </key>
             <one-to-many class="com.jeeyoh.persistence.domain.Dealsusage" />
         </set>
-        <set name="dealoptions" inverse="true">
+        <set name="dealoptions" inverse="true" cascade="all">
             <key>
                 <column name="dealId" not-null="true" />
             </key>

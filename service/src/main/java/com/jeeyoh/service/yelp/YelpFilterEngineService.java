@@ -29,11 +29,11 @@ public class YelpFilterEngineService implements IYelpFilterEngineService {
 	IYelpDAO yelpDAO;
 	@Autowired
 	IDealsDAO dealsDAO;
-	
+
 	@Autowired
 	IBusinessDAO businessDAO;
-	
-	
+
+
 	static final Logger logger = LoggerFactory.getLogger("debugLogger");
 
 	@Override
@@ -47,11 +47,11 @@ public class YelpFilterEngineService implements IYelpFilterEngineService {
 		Ydeal ydeal = null;
 		if(ydealsoptiom != null)
 		{
-			
+
 			for (int i =0; i < ydealsoptiom.size(); i++)
 			{
 				Integer ydealId = ydealsoptiom.get(i).getYdeal().getId();
-				
+
 				if (i == 0) 
 				{
 					ydeal = ydealsoptiom.get(i).getYdeal();
@@ -63,88 +63,115 @@ public class YelpFilterEngineService implements IYelpFilterEngineService {
 				else
 				{
 					int preydealId = ydealsoptiom.get(i - 1).getYdeal().getId();
-				     if (ydealId != preydealId)
-				     { 
-					    	 Deals deal = new Deals();
-					    	 if(dealOptionSet != null)
-					    	 {
-					    		 ydeal.setYdealoptions(dealOptionSet);
-					    	 }
-				    	    
-							if(ydeal.getAdditionalDeals() != null)
-							{
-							deal.setAdditionalDeals(ydeal.getAdditionalDeals());
-							}
-							if(ydeal.getAdditionalRestrictions() != null)
-							{
-								deal.setAdditionalRestrictions(ydeal.getAdditionalRestrictions());
-							}
-							deal.setIsPopular(ydeal.getIsPopular());
-							deal.setTitle(ydeal.getDealTitle());
-							logger.debug("Before save000000000 ::: "+ydeal.getDealUrl());
-							
-							deal.setDealUrl(ydeal.getDealUrl());
-							if(ydeal.getId() != null)
-							{
-								logger.debug("IDD::: "+ydeal.getId());
-								deal.setDealId(ydeal.getId()+"");
-							}
-							long timeStamp = Long.parseLong(ydeal.getDealStartTime());
-						    deal.setStartAt(new java.util.Date((long)timeStamp*1000));
-							deal.setImpRestrictions(ydeal.getImpRestrictions());
-						    Set<Ydealoption> ydealoptions = ydeal.getYdealoptions();
-						    Set<Dealoption> dealOptionSet1 = new HashSet<Dealoption>();
-						    if(ydealoptions != null)
-						    {
-						    	for(Ydealoption ydealoption: ydealoptions)
-							    {
-						    		logger.debug("Ydeal option :: "+ydealoption.getOriginalPrice());
-							    	Dealoption dealoption = new Dealoption();
-							    	dealoption.setOriginalPrice(ydealoption.getOriginalPrice());
-							    	dealoption.setPrice(ydealoption.getPrice());
-							    	dealoption.setFormattedOriginalPrice(ydealoption.getFormattedOriginalPrice());
-							    	dealoption.setFormattedPrice(ydealoption.getFormattedPrice());
-							    	dealoption.setTitle(ydealoption.getTitle());
-							    	dealoption.setDeals(deal);
-							    	dealOptionSet1.add(dealoption);
-							    	
-							    	
-							    }
-						    }
-						    deal.setDealoptions(dealOptionSet1);
-						    Ybusiness yBusiness = ydeal.getYbusiness();
-						    List<Business> business = businessDAO.getBusinessById(yBusiness.getBusinessId());
-						    if(business != null)
-						    {
-						    	deal.setBusiness(business.get(0));	
-						    	logger.debug("In business "+business.get(0).getId());
-						    }
-						    logger.debug("Before 1111 ::: "+deal);
-						    logger.debug("Before save ::: "+deal.getDealUrl());
-						    dealsDAO.saveFilterdDeal(deal);						    
-						    ydeal = ydealsoptiom.get(i).getYdeal();
-							dealOptionSet = new HashSet<Ydealoption>();
-							dealOptionSet.add(ydealsoptiom.get(i));
-						    
+					if (ydealId != preydealId)
+					{ 
+						Deals deal = new Deals();
+						if(dealOptionSet != null)
+						{
+							ydeal.setYdealoptions(dealOptionSet);
 						}
-					     else
-					     {
-							dealOptionSet.add(ydealsoptiom.get(i));
-					     }
-				     }
-				    	 
-				    	 
-				     }
-			
-				//}
-	
 
-			
+						if(ydeal.getAdditionalDeals() != null)
+						{
+							deal.setAdditionalDeals(ydeal.getAdditionalDeals());
+						}
+						if(ydeal.getAdditionalRestrictions() != null)
+						{
+							deal.setAdditionalRestrictions(ydeal.getAdditionalRestrictions());
+						}
+						deal.setIsPopular(ydeal.getIsPopular());
+						deal.setTitle(ydeal.getDealTitle());
+						logger.debug("Before save000000000 ::: "+ydeal.getDealUrl());
+
+						deal.setDealUrl(ydeal.getDealUrl());
+						if(ydeal.getId() != null)
+						{
+							logger.debug("IDD::: "+ydeal.getId());
+							deal.setDealId(ydeal.getId()+"");
+						}
+						long timeStamp = Long.parseLong(ydeal.getDealStartTime());
+						deal.setStartAt(new java.util.Date((long)timeStamp*1000));
+						deal.setImpRestrictions(ydeal.getImpRestrictions());
+						Set<Ydealoption> ydealoptions = ydeal.getYdealoptions();
+						Set<Dealoption> dealOptionSet1 = new HashSet<Dealoption>();
+						if(ydealoptions != null)
+						{
+							for(Ydealoption ydealoption: ydealoptions)
+							{
+								logger.debug("Ydeal option :: "+ydealoption.getOriginalPrice());
+								Dealoption dealoption = new Dealoption();
+								dealoption.setOriginalPrice(ydealoption.getOriginalPrice());
+								dealoption.setPrice(ydealoption.getPrice());
+								dealoption.setFormattedOriginalPrice(ydealoption.getFormattedOriginalPrice());
+								dealoption.setFormattedPrice(ydealoption.getFormattedPrice());
+								dealoption.setTitle(ydealoption.getTitle());
+								dealoption.setDeals(deal);
+								dealOptionSet1.add(dealoption);
+							}
+						}
+						deal.setDealoptions(dealOptionSet1);
+						Ybusiness yBusiness = ydeal.getYbusiness();
+						List<Business> businessList = businessDAO.getBusinessById(yBusiness.getBusinessId());
+						if(businessList != null)
+						{
+							if(businessList != null)
+							{
+								if(businessList.isEmpty())
+								{
+									Businesstype businesstype = businessDAO.getBusinesstypeByType("OTHERS");
+									Business business = new Business();
+									business.setName(yBusiness.getName());
+									business.setBusinessId(yBusiness.getBusinessId());
+									business.setWebsiteUrl(yBusiness.getUrl());
+									business.setAddress(yBusiness.getAddress());
+									business.setCity(yBusiness.getCity());
+									business.setCountryCode(yBusiness.getCountryCode());
+									business.setCrossStreets(yBusiness.getCrossStreets());
+									business.setDisplayAddress(yBusiness.getDisplayAddress());
+									business.setDisplayPhone(yBusiness.getDisplayPhone());
+									business.setDistance(yBusiness.getDistance());
+									business.setImageUrl(yBusiness.getImageUrl());
+									business.setIsActive(yBusiness.getIsClaimed());
+									business.setIsClosed(yBusiness.getIsClosed());
+									business.setMobileUrl(yBusiness.getMobileUrl());
+									business.setMenuProvider(yBusiness.getMenuProvider());
+									business.setMenuProviderDate(yBusiness.getMenuProviderDate());
+									business.setName(yBusiness.getName());
+									business.setNeighborhoods(yBusiness.getNeighborhoods());
+									business.setPostalCode(yBusiness.getPostalCode());
+									business.setRating(yBusiness.getRating());
+									business.setRatingImgUrl(yBusiness.getRatingImgUrl());
+									business.setSnippetImageUrl(yBusiness.getSnippetImageUrl());
+									business.setSnippetText(yBusiness.getSnippetText());
+									business.setStateCode(yBusiness.getStateCode());
+									business.setBusinesstype(businesstype);
+									businessDAO.saveBusiness(business);
+									businessList = businessDAO.getBusinessByIdForGroupon(business.getBusinessId());
+									deal.setBusiness(businessList.get(0));
+								}
+								else
+								{
+									deal.setBusiness(businessList.get(0));
+								}
+							}
+							
+						}
+						logger.debug("Before 1111 ::: "+deal);
+						logger.debug("Before save ::: "+deal.getDealUrl());
+						dealsDAO.saveFilterdDeal(deal);						    
+						ydeal = ydealsoptiom.get(i).getYdeal();
+						dealOptionSet = new HashSet<Ydealoption>();
+						dealOptionSet.add(ydealsoptiom.get(i));
+					}
+					else
+					{
+						dealOptionSet.add(ydealsoptiom.get(i));
+					}
+				}
+			}
 		}
-		
-
 	}
-	
+
 	@Override
 	//@Transactional
 	public void filterBusiness()
@@ -155,63 +182,63 @@ public class YelpFilterEngineService implements IYelpFilterEngineService {
 		logger.debug("List Size "+ybusinessList.size());
 		if(ybusinessList != null)
 		{
-			
+
 			//Ybusiness yBusiness = new Ybusiness();
 			int count = 0;
 			for(Ybusiness yBusiness:ybusinessList)
 			{
-				 logger.debug("YelpFilterEngineService ==> filterBusiness ==> businessID ==> " + yBusiness.getBusinessId());
-				 Business business = new Business();		    
-		       	 business.setAddress(yBusiness.getAddress());
-		    	 //business.setAmbience(yBusiness.getA);
-		    	 business.setBusinessId(yBusiness.getBusinessId());
-		    	 //business.setBusinesstype(yBusiness.get);
-		    	 business.setCity(yBusiness.getCity());
-		    	 business.setCountryCode(yBusiness.getCountryCode());
-		    	 business.setCrossStreets(yBusiness.getCrossStreets());
-		    	 business.setDisplayAddress(yBusiness.getDisplayAddress());
-		    	 business.setDisplayPhone(yBusiness.getDisplayPhone());
-		    	 business.setDistance(yBusiness.getDistance());
-		    	 business.setImageUrl(yBusiness.getImageUrl());
-		    	 //business.setIsActive(yBusiness.getIsClaimed());//not match
-		    	 business.setIsActive(yBusiness.getIsClaimed());
-		    	 business.setIsClosed(yBusiness.getIsClosed());
-		    	 //business.setIsParkingAvailable(yBusiness.);
-		    	// business.setLattitude(yBusiness.)
-		    	 business.setMobileUrl(yBusiness.getMobileUrl());
-		    	 business.setMenuProvider(yBusiness.getMenuProvider());
-		    	 business.setMenuProviderDate(yBusiness.getMenuProviderDate());
-		    	 business.setName(yBusiness.getName());
-		    	 //business.setMusicType(yBusiness.getm)
-		    	 business.setNeighborhoods(yBusiness.getNeighborhoods());
-		    	 //business.setNoiseLevel(noiseLevel)
-		    	// business.setPages(yBusiness.getP)
-		    	 business.setPostalCode(yBusiness.getPostalCode());
-		    	 business.setRating(yBusiness.getRating());
-		    	 business.setRatingImgUrl(yBusiness.getRatingImgUrl());
-		    	 //business.setServiceLevel(yBusiness.getS)
-		    	 business.setSnippetImageUrl(yBusiness.getSnippetImageUrl());
-		    	 business.setSnippetText(yBusiness.getSnippetText());
-		    	 business.setStateCode(yBusiness.getStateCode());
-		    	 Businesstype businesstype = businessDAO.getBusinesstypeByType("OTHERS");
-		    	 business.setBusinesstype(businesstype);
-		    	 //Set<Yreview> yreview = yBusiness.getR
-		    	// business.getTraffic(yBusiness.getT)
-		    	 //business.setWebsiteUrl(yBusiness.getW)
-		    	 //dealsDAO.saveBusiness(business);		    	
-		    	 businessDAO.saveBusiness(business, count);	
-		    	 count++;
-		    	 if(count == 1000)
-		    	 {
-		    		 break;
-		    	 }
-		    	 
-		    }
+				logger.debug("YelpFilterEngineService ==> filterBusiness ==> businessID ==> " + yBusiness.getBusinessId());
+				Business business = new Business();		    
+				business.setAddress(yBusiness.getAddress());
+				//business.setAmbience(yBusiness.getA);
+				business.setBusinessId(yBusiness.getBusinessId());
+				//business.setBusinesstype(yBusiness.get);
+				business.setCity(yBusiness.getCity());
+				business.setCountryCode(yBusiness.getCountryCode());
+				business.setCrossStreets(yBusiness.getCrossStreets());
+				business.setDisplayAddress(yBusiness.getDisplayAddress());
+				business.setDisplayPhone(yBusiness.getDisplayPhone());
+				business.setDistance(yBusiness.getDistance());
+				business.setImageUrl(yBusiness.getImageUrl());
+				//business.setIsActive(yBusiness.getIsClaimed());//not match
+				business.setIsActive(yBusiness.getIsClaimed());
+				business.setIsClosed(yBusiness.getIsClosed());
+				//business.setIsParkingAvailable(yBusiness.);
+				// business.setLattitude(yBusiness.)
+				business.setMobileUrl(yBusiness.getMobileUrl());
+				business.setMenuProvider(yBusiness.getMenuProvider());
+				business.setMenuProviderDate(yBusiness.getMenuProviderDate());
+				business.setName(yBusiness.getName());
+				//business.setMusicType(yBusiness.getm)
+				business.setNeighborhoods(yBusiness.getNeighborhoods());
+				//business.setNoiseLevel(noiseLevel)
+				// business.setPages(yBusiness.getP)
+				business.setPostalCode(yBusiness.getPostalCode());
+				business.setRating(yBusiness.getRating());
+				business.setRatingImgUrl(yBusiness.getRatingImgUrl());
+				//business.setServiceLevel(yBusiness.getS)
+				business.setSnippetImageUrl(yBusiness.getSnippetImageUrl());
+				business.setSnippetText(yBusiness.getSnippetText());
+				business.setStateCode(yBusiness.getStateCode());
+				Businesstype businesstype = businessDAO.getBusinesstypeByType("OTHERS");
+				business.setBusinesstype(businesstype);
+				//Set<Yreview> yreview = yBusiness.getR
+				// business.getTraffic(yBusiness.getT)
+				//business.setWebsiteUrl(yBusiness.getW)
+				//dealsDAO.saveBusiness(business);		    	
+				businessDAO.saveBusiness(business, count);	
+				count++;
+				if(count == 1000)
+				{
+					break;
+				}
+
+			}
 		}
-			
-		
-		
-		
+
+
+
+
 	}
 
 }

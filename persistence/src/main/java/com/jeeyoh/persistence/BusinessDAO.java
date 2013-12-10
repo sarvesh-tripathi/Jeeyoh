@@ -2,6 +2,7 @@ package com.jeeyoh.persistence;
 
 import java.util.List;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -38,9 +39,58 @@ public class BusinessDAO implements IBusinessDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		if(businessList.isEmpty())
+		/*if(businessList.isEmpty())
 		{
 			return getBusinessById("25");
+		}*/
+		return businessList;
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Business> getBusinessByIdForGroupon(String businessId) {
+		Session session = sessionFactory.openSession();
+		Transaction tx = null;
+		List<Business> businessList = null;
+		String hqlQuery = "from Business a where a.businessId = :businessId";
+		try
+		{
+			tx = session.beginTransaction();
+			Query query = session.createQuery(
+					hqlQuery);
+			query.setParameter("businessId", businessId);
+			businessList = (List<Business>) query.list();
+			tx.commit();
+		}
+		catch (HibernateException e) {
+			if (tx!=null) tx.rollback();
+			e.printStackTrace(); 
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		finally
+		{
+			session.close();
+		}
+		return businessList;
+	}
+
+	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Business> getBusinessById(int id) {
+		List<Business> businessList = null;
+		String hqlQuery = "from Business a where a.id = :id";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("id", id);
+			businessList = (List<Business>) query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return businessList;
 	}
@@ -73,22 +123,57 @@ public class BusinessDAO implements IBusinessDAO {
 		tx.commit();
 		session.close();
 	}
+	
+	
+	@Override
+	public void saveBusiness(Business business) {
+		Session session = sessionFactory.openSession();
+		Transaction tx = null;
+		try
+		{
+			tx = session.beginTransaction();
+			session.saveOrUpdate(business);	
+			tx.commit();
+		}
+		catch (HibernateException e) {
+			if (tx!=null) tx.rollback();
+			e.printStackTrace(); 
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		finally
+		{
+			session.close();
+		}
+		
+	}
 
 	@Override
 	public Businesstype getBusinesstypeByType(String type) {
-		List<Businesstype> businessTypeList = null;
 		Session session = sessionFactory.openSession();
-		Transaction tx = session.beginTransaction();
+		Transaction tx = null;
+		List<Businesstype> businessTypeList = null;
 		String hqlQuery = "from Businesstype a where a.businessType = :type";
-		try {
+		try
+		{
+			tx = session.beginTransaction();
 			Query query = session.createQuery(
 					hqlQuery);
 			query.setParameter("type", type);
 			businessTypeList = (List<Businesstype>) query.list();
 			tx.commit();
-			session.close();
-		} catch (Exception e) {
+		}
+		catch (HibernateException e) {
+			if (tx!=null) tx.rollback();
+			e.printStackTrace(); 
+		}
+		catch (Exception e) {
 			e.printStackTrace();
+		}
+		finally
+		{
+			session.close();
 		}
 		return  businessTypeList != null && !businessTypeList.isEmpty() ? businessTypeList.get(0) : null;
 	}

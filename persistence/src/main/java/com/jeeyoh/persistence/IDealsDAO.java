@@ -13,6 +13,7 @@ public interface IDealsDAO {
 	public List<Deals> getDealsByCategory(String category);
 	public List<Deals> getDealsByCategory(String category, String location, boolean isZipCode);
 	public void saveDeal(Deals deals);
+	public void saveDeal(Deals deals, int batch_size);
 	public void saveFilterdDeal(Deals deal);
 	
 }

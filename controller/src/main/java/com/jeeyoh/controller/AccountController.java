@@ -16,6 +16,7 @@ import com.jeeyoh.service.groupon.IGrouponClient;
 import com.jeeyoh.service.groupon.IGrouponFilterEngineService;
 import com.jeeyoh.service.groupon.IGrouponService;
 import com.jeeyoh.service.search.INonDealSearch;
+import com.jeeyoh.service.yelp.IYelpFilterEngineService;
 import com.jeeyoh.service.yelp.IYelpService;
 
 @Controller
@@ -31,6 +32,10 @@ public class AccountController {
 	
 	@Autowired
 	private IGrouponFilterEngineService grouponFilterEngineService;
+	
+	@Autowired
+	private IYelpFilterEngineService yelpFilterEngineService;
+	
 	@Autowired
 	private INonDealSearch nonDealSearch;
 
@@ -74,6 +79,25 @@ public class AccountController {
 		grouponFilterEngineService.filter();
 		return modelAndView;
 	}
+	
+	
+	@RequestMapping(value = "/filterDealsForYelp", method = RequestMethod.GET)
+	public ModelAndView filterDealsForYelp(HttpServletRequest request,
+			HttpServletResponse httpresponse) {
+		ModelAndView modelAndView = new ModelAndView("home");
+		yelpFilterEngineService.filterDeals();
+		return modelAndView;
+	}
+
+	@RequestMapping(value = "/filterBusinessForYelp", method = RequestMethod.GET)
+	public ModelAndView filterBusinessForYelp(HttpServletRequest request,
+			HttpServletResponse httpresponse) {
+		ModelAndView modelAndView = new ModelAndView("home");
+		yelpFilterEngineService.filterBusiness();
+		return modelAndView;
+	}
+	
+	
 	
 	@RequestMapping(value = "/nonDealSuggestion", method = RequestMethod.GET)
 	public ModelAndView nonDealSuggestion(HttpServletRequest request,

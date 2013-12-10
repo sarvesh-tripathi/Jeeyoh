@@ -2,16 +2,14 @@ package com.jeeyoh.persistence;
 
 import java.util.List;
 
-import org.hibernate.Query;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.jeeyoh.persistence.domain.Business;
 import com.jeeyoh.persistence.domain.Deals;
-import com.jeeyoh.persistence.domain.Ydeal;
 
 @Repository("dealsDAO")
 public class DealsDAO implements IDealsDAO {
@@ -51,27 +49,56 @@ public class DealsDAO implements IDealsDAO {
 	}
 
 	@Override
-	public void saveDeal(Deals deals) 
+	public void saveDeal(Deals deals, int batch_size) 
 	{
-		sessionFactory.getCurrentSession().saveOrUpdate(deals);	
-	}
-
-	@Override
-	public void saveFilterdDeal(Deals deal) {
-		// TODO Auto-generated method stub
-		sessionFactory.getCurrentSession().saveOrUpdate(deal);
-		/*Session session  = sessionFactory.openSession();
-		Transaction tx = session.beginTransaction();
-			try {
-				session.save(deal);
+		Session session = sessionFactory.openSession();
+		Transaction tx = null;
+		try
+		{
+			tx = session.beginTransaction();
+			session.saveOrUpdate(deals);	
+			
+			if( batch_size % 50 == 0 ) {
+				session.flush();
+				session.clear();
+			}
 			tx.commit();
+		}
+		catch (HibernateException e) {
+			if (tx!=null) tx.rollback();
+			e.printStackTrace(); 
+		}
+		finally
+		{
 			session.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}*/
-		
+		}
 	}
 	
-	
+	 @Override
+        public void saveDeal(Deals deals)
+        {
+                sessionFactory.getCurrentSession().saveOrUpdate(deals);        
+        }
 
+        @Override
+        public void saveFilterdDeal(Deals deal) {
+            
+                //sessionFactory.getCurrentSession().saveOrUpdate(deal);
+        	Session session = sessionFactory.openSession();
+    		Transaction tx = null;
+    		try
+    		{
+    			tx = session.beginTransaction();
+    			session.save(deal);
+    			tx.commit();
+    		}
+    		catch (HibernateException e) {
+    			if (tx!=null) tx.rollback();
+    			e.printStackTrace(); 
+    		}
+    		finally
+    		{
+    			session.close();
+    		}
+        }
 }
