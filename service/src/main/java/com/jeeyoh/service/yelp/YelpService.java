@@ -45,7 +45,7 @@ public class YelpService implements IYelpService {
 
 	
 	@Override
-	@Transactional
+	//@Transactional
 	public void search() {
 		//YelpSearchResponse searchResponse = yelpClient.search("Los Angeles");
 		//loadData(searchResponse);		
@@ -81,7 +81,7 @@ public class YelpService implements IYelpService {
 		}
 	}
 	
-	@Transactional
+	//@Transactional
 	private void loadData(YelpSearchResponse searchResponse) {
 		
 		/*try 
@@ -121,7 +121,7 @@ public class YelpService implements IYelpService {
 				business.setBusinessId(businessModel.getBusinessId());
 				business.setIsClaimed(businessModel.isClaimed());
 				business.setIsClosed(businessModel.isClosed());
-				business.setRating(business.getRating());
+				business.setRating((long)businessModel.getRating());
 				business.setMobileUrl(businessModel.getMobileUrl());
 				business.setRatingImgUrl(businessModel.getRatingImageUrl());
 				business.setReviewCount(businessModel.getReviewCount()+"");
@@ -208,7 +208,7 @@ public class YelpService implements IYelpService {
 	}
 
 	@Override
-	@Transactional
+	//@Transactional
 	public void searchBusiness() {
 		// TODO Auto-generated method stub
 		logger.debug("IN Business ==> ");
