@@ -12,6 +12,8 @@ import com.jeeyoh.persistence.domain.Usernondealsuggestion;
 public interface IUserDAO {
 	public List<User> getUsers();
 	
+	public User getUsersById(String id);
+	
 	public List<User> getUserContacts(int userId);
 	
 	public List<Page> getUserCommunities(int userId);

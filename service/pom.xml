@@ -79,6 +79,13 @@
 		<artifactId>quartz</artifactId>
 		<version>1.8.6</version>
 	</dependency>
+	
+	    <!-- RSS -->
+		<dependency>
+			<groupId>net.java.dev.rome</groupId>
+			<artifactId>rome</artifactId>
+			<version>1.0.0</version>
+		</dependency>
  
     <dependency>
 		<groupId>joda-time</groupId>

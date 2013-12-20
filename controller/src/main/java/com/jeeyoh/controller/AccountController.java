@@ -1,7 +1,5 @@
 package com.jeeyoh.controller;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -11,11 +9,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.jeeyoh.persistence.domain.Gdivision;
+import com.jeeyoh.service.fandango.IFandangoService;
 import com.jeeyoh.service.groupon.IGrouponClient;
 import com.jeeyoh.service.groupon.IGrouponFilterEngineService;
 import com.jeeyoh.service.groupon.IGrouponService;
+import com.jeeyoh.service.search.IDealSearch;
 import com.jeeyoh.service.search.INonDealSearch;
+import com.jeeyoh.service.stubhub.IStubhubService;
 import com.jeeyoh.service.yelp.IYelpFilterEngineService;
 import com.jeeyoh.service.yelp.IYelpService;
 
@@ -38,7 +38,16 @@ public class AccountController {
 	
 	@Autowired
 	private INonDealSearch nonDealSearch;
-
+	
+	@Autowired
+	private IDealSearch dealSearch;
+	
+	@Autowired
+	private IFandangoService fandangoService;
+	
+	@Autowired
+	private IStubhubService stubhubService;
+	
 	@RequestMapping(value = "/home", method = RequestMethod.GET)
 	public ModelAndView home(HttpServletRequest request,
 			HttpServletResponse response) {
@@ -103,8 +112,31 @@ public class AccountController {
 	public ModelAndView nonDealSuggestion(HttpServletRequest request,
 			HttpServletResponse httpresponse) {
 		ModelAndView modelAndView = new ModelAndView("home");
-		nonDealSearch.search();
+		nonDealSearch.search();		
 		return modelAndView;
 	}
+	
+	@RequestMapping(value = "/dealSuggestion", method = RequestMethod.GET)
+	public ModelAndView dealSuggestion(HttpServletRequest request, HttpServletResponse httpresponse){
+		ModelAndView modelAndView = new ModelAndView("home");
+		//nonDealSearch.search();
+		dealSearch.search();
+		return modelAndView;
+	}
+	
+	@RequestMapping(value = "/fandangoData", method = RequestMethod.GET)
+	public ModelAndView fandangoData(HttpServletRequest request, HttpServletResponse httpresponse){
+		ModelAndView modelAndView = new ModelAndView("home");
+		fandangoService.topTen();
+		return modelAndView;
+	}
+	
+	@RequestMapping(value = "/stubhub", method = RequestMethod.GET)
+	public ModelAndView stubhub(HttpServletRequest request, HttpServletResponse httpresponse){
+		ModelAndView modelAndView = new ModelAndView("home");
+		stubhubService.stubhubEvents();
+		return modelAndView;
+	}
+	
 	
 }

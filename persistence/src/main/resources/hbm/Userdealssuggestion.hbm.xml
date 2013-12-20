@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Nov 30, 2013 12:54:38 PM by Hibernate Tools 3.2.1.GA -->
 <hibernate-mapping>
-    <class name="com.jeeyoh.persistence.domain.Userdealmap" table="userdealmap" catalog="jeeyoh">
+    <class name="com.jeeyoh.persistence.domain.Userdealssuggestion" table="userdealssuggestion" catalog="jeeyoh">
         <id name="userDealMapId" type="java.lang.Integer">
             <column name="userDealMapId" />
             <generator class="identity" />

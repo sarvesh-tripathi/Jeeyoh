@@ -83,7 +83,7 @@
             </key>
             <one-to-many class="com.jeeyoh.persistence.domain.Jeeyohgroup" />
         </set>
-        <set name="dealsusages" inverse="true">
+        <set name="dealsusages" inverse="true" cascade="all">
             <key>
                 <column name="userId" not-null="true" />
             </key>
@@ -135,7 +135,7 @@
             <key>
                 <column name="userId" not-null="true" />
             </key>
-            <one-to-many class="com.jeeyoh.persistence.domain.Userdealmap" />
+            <one-to-many class="com.jeeyoh.persistence.domain.Userdealssuggestion" />
         </set>
         <set name="usernondealsuggestions" inverse="true">
             <key>

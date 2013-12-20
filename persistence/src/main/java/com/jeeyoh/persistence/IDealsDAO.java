@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.jeeyoh.persistence.domain.Business;
 import com.jeeyoh.persistence.domain.Deals;
+import com.jeeyoh.persistence.domain.Userdealssuggestion;
+import com.jeeyoh.persistence.domain.Usernondealsuggestion;
 import com.jeeyoh.persistence.domain.Ydeal;
 
 public interface IDealsDAO {
@@ -15,5 +17,8 @@ public interface IDealsDAO {
 	public void saveDeal(Deals deals);
 	public void saveDeal(Deals deals, int batch_size);
 	public void saveFilterdDeal(Deals deal);
+	public List<Deals> getDealsByBusinessId(String businessId);
+	public void saveSuggestions(Userdealssuggestion dealSuggestion);
+	public void saveNonDealSuggestion(Usernondealsuggestion nondeal);
 	
 }

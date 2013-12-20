@@ -11,7 +11,7 @@
         <property name="businessType" type="string">
             <column name="businessType" length="13" not-null="true" />
         </property>
-        <set name="businesses" inverse="true">
+        <set name="businesses" inverse="true" lazy="false">
             <key>
                 <column name="businessTypeId" not-null="true" />
             </key>

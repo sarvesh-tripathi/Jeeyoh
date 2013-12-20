@@ -2,8 +2,11 @@ package com.jeeyoh.persistence;
 
 import java.util.List;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +25,58 @@ public class UserDAO implements IUserDAO {
 	static final Logger logger = LoggerFactory.getLogger("debugLogger");
 	@Autowired
 	private SessionFactory sessionFactory;
-
+	
+	
 	@Override
+	public List<User> getUsers(){
+		List<User> userList = null;
+		Session session = sessionFactory.openSession();
+		Transaction tx = null;
+		String hqlQuery = "from User";
+		try{
+			tx = session.beginTransaction();
+			Query query = session.createQuery(
+					hqlQuery);
+			userList = (List<User>)query.list();
+			logger.debug("userList => " + userList.get(0).getFirstName());
+		}catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		return userList;
+	}
+	
+	@Override
+	public User getUsersById(String id){
+		List<User> userList = null;
+		logger.debug("Email id ::: = "+id);
+		Session session = sessionFactory.openSession();
+		Transaction tx = null;
+		String hqlQuery = "from User a where a.emailId = :emailId";
+		try{
+			tx = session.beginTransaction();
+			Query query = session.createQuery(
+					hqlQuery);
+			query.setParameter("emailId", id);
+			userList = (List<User>)query.list();
+			//tx.commit();
+		}
+		catch (HibernateException e) {
+			if (tx!=null) tx.rollback();
+			e.printStackTrace(); 
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		finally
+		{
+			//session.close();
+		}
+		logger.debug("EEEEEEEEEEE :: "+userList.get(0));
+		return userList.get(0);
+	}
+
+	/*@Override
 	public List<User> getUsers() {
 		System.out.println("inside getUsers");
 		logger.debug("userList => ");
@@ -33,14 +86,15 @@ public class UserDAO implements IUserDAO {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);			
 			userList = (List<User>) query.list();
-			logger.debug("userList => " + userList);
+			logger.debug("userList => " + userList.get(0).getFirstName());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return userList;
-	}
+	}*/
 	
 	public List<User> getUserContacts(int userId) {
+		logger.debug("get user contacts :::: "+userId);
 		List<User> contactList = null;
 		String hqlQuery = "select a from User a, Usercontacts b where b.userByUserId.userId = :userId and a.userId = b.userByContactId.userId";
 		try {

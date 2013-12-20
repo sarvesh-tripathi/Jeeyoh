@@ -108,7 +108,7 @@
             <key>
                 <column name="dealId" not-null="true" />
             </key>
-            <one-to-many class="com.jeeyoh.persistence.domain.Userdealmap" />
+            <one-to-many class="com.jeeyoh.persistence.domain.Userdealssuggestion" />
         </set>
     </class>
 </hibernate-mapping>

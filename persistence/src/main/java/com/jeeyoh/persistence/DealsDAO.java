@@ -3,17 +3,24 @@ package com.jeeyoh.persistence;
 import java.util.List;
 
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.jeeyoh.persistence.domain.Business;
 import com.jeeyoh.persistence.domain.Deals;
+import com.jeeyoh.persistence.domain.Userdealssuggestion;
+import com.jeeyoh.persistence.domain.Usernondealsuggestion;
 
 @Repository("dealsDAO")
 public class DealsDAO implements IDealsDAO {
 
+	static final Logger logger = LoggerFactory.getLogger("debugLogger");
 	@Autowired
 	private SessionFactory sessionFactory;
 
@@ -25,9 +32,20 @@ public class DealsDAO implements IDealsDAO {
 
 	@Override
 	public List<Deals> getDealsByCategory(String category) {
-		// TODO Auto-generated method stub
+		List<Business> businessList = null;
+		String hqlQuery = "from Deals a where a.businessTypeId = :category";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("businessTypeId", category);
+			businessList = (List<Business>) query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
+	
+	
 
 	@Override
 	public List<Deals> getDealsByCategory(String category, String location,
@@ -101,4 +119,66 @@ public class DealsDAO implements IDealsDAO {
     			session.close();
     		}
         }
+
+		@Override
+		public List<Deals> getDealsByBusinessId(String businessId) {
+			// TODO Auto-generated method stubbusinessId
+			List<Deals> dealsList = null;
+			String hqlQuery = "from Deals a where a.businessId = :businessId";
+			try {
+				Query query = sessionFactory.getCurrentSession().createQuery(
+						hqlQuery);
+				query.setParameter("businessId", businessId);
+				dealsList = (List<Deals>) query.list();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return dealsList;
+		}
+
+		@Override
+		public void saveSuggestions(Userdealssuggestion dealSuggestion) {
+			// TODO Auto-generated method stub
+			
+			Session session = sessionFactory.openSession();
+    		Transaction tx = null;
+    		try
+    		{
+    			tx = session.beginTransaction();
+    			session.save(dealSuggestion);
+    			tx.commit();
+    		}
+    		catch (HibernateException e) {
+    			if (tx!=null) tx.rollback();
+    			e.printStackTrace(); 
+    		}
+    		finally
+    		{
+    			session.close();
+    		}
+			
+		}
+
+		@Override
+		public void saveNonDealSuggestion(Usernondealsuggestion nondeal) {
+			// TODO Auto-generated method stub
+			Session session = sessionFactory.openSession();
+    		Transaction tx = null;
+    		try
+    		{
+    			tx = session.beginTransaction();
+    			session.save(nondeal);
+    			tx.commit();
+    		}
+    		catch (HibernateException e) {
+    			if (tx!=null) tx.rollback();
+    			//e.printStackTrace(); 
+    			logger.error("EXCEPTION IN CATCH  "+e);
+    		}
+    		finally
+    		{
+    			session.close();
+    		}
+			
+		}
 }

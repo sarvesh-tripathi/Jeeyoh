@@ -23,6 +23,12 @@
    				<li><a href="filterBusinessForYelp" title="Filter Business for Yelp">Filter Business for Yelp</a></li>		
    				<li>|</li>
    				<li><a href="nonDealSuggestion" title="Non Deal Suggestion">Non Deal Suggestion</a></li>
+   				<li>|</li>
+   				<li><a href="dealSuggestion" title="Deal Suggestion">Deal Suggestion</a></li>
+   				<li>|</li>
+   				<li><a href="fandangoData" title="Fandango Data">Fandango Data</a></li>
+   				<li>|</li>
+   				<li><a href="stubhub" title="Stubhub Data">Stubhub Data</a></li>
 			</ul>
 		</div>
 	</body>
