@@ -51,12 +51,11 @@
     <mapping resource="hbm/Gdealtype.hbm.xml"/>
     <mapping resource="hbm/Gtags.hbm.xml"/> 
 	<mapping resource="hbm/Gcategory.hbm.xml"/>    
-    <mapping resource="hbm/Userdealssuggestion.hbm.xml"/>
+    <mapping resource="hbm/Userdealmap.hbm.xml"/>
     <mapping resource="hbm/Usernondealsuggestion.hbm.xml"/>
-    <mapping resource="hbm/FandangoTopTen.hbm.xml"/>
-    <mapping resource="hbm/FandangoCommingSoon.hbm.xml"/>
-    <mapping resource="hbm/FandangoOpenning.hbm.xml"/>
-    <mapping resource="hbm/FandangoNearMe.hbm.xml"/>  
-    <mapping resource="hbm/StubhubEvent.hbm.xml"/>        
+    <mapping resource="hbm/Events.hbm.xml"/>
+    <mapping resource="hbm/Eventuserlikes.hbm.xml"/>
+    <mapping resource="hbm/StubhubEvent.hbm.xml"/>
+         
     </session-factory>
 </hibernate-configuration>
