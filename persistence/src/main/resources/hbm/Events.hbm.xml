@@ -4,7 +4,7 @@
 
 <hibernate-mapping>
     <class name="com.jeeyoh.persistence.domain.Events" table="events" catalog="jeeyoh">
-        <id name="id" type="java.lang.Integer">
+        <id name="eventId" type="java.lang.Integer">
             <column name="eventId" />
             <generator class="identity" />
         </id>

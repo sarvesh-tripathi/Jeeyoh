@@ -3,6 +3,7 @@ package com.jeeyoh.persistence;
 import java.util.List;
 
 import com.jeeyoh.persistence.domain.Events;
+import com.jeeyoh.persistence.domain.Eventuserlikes;
 import com.jeeyoh.persistence.domain.Jeeyohgroup;
 import com.jeeyoh.persistence.domain.Page;
 import com.jeeyoh.persistence.domain.Pagetype;
@@ -28,5 +29,7 @@ public interface IUserDAO {
 	public List<Pagetype> getCommunityType(int pageId);
 	public void saveNonDealSuggestions(Usernondealsuggestion suggestion, int batch_size);
 	public List<User> getUserById(int userid);
-	public List<Events> getUserCommunityEvents(int userId);
+	public List<Events> getUserCommunityEvents(int userId, int pageId);
+	public List<Eventuserlikes> getUserEventProperties(int userId, int eventId);
+	public List<Usernondealsuggestion> isNonDealSuggestionExists(int userId, int businessId);
 }

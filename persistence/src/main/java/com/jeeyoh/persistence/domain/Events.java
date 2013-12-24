@@ -42,13 +42,13 @@ public class Events implements Serializable{
 	private double	minSeatsTogether;
 	private String	title;
 	private Page page;
-	private Set eventuserlikeses = new HashSet(0);
+	private Set eventuserlikes = new HashSet(0);
 
-	public int getId() {
+	public int getEventId() {
 		return eventId;
 	}
 
-	public void setId(int eventId) {
+	public void setEventId(int eventId) {
 		this.eventId = eventId;
 	}
 
@@ -284,12 +284,14 @@ public class Events implements Serializable{
 		return page;
 	}
 
-	public void setEventuserlikeses(Set eventuserlikeses) {
-		this.eventuserlikeses = eventuserlikeses;
+	public void setEventuserlikes(Set eventuserlikes) {
+		this.eventuserlikes = eventuserlikes;
 	}
 
-	public Set getEventuserlikeses() {
-		return eventuserlikeses;
+	public Set getEventuserlikes() {
+		return eventuserlikes;
 	}
 
+	
+	
 }

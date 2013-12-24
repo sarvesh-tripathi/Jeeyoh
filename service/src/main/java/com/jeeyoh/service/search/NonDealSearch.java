@@ -17,6 +17,8 @@ import com.google.code.geocoder.model.GeocoderResult;
 import com.jeeyoh.persistence.IBusinessDAO;
 import com.jeeyoh.persistence.IUserDAO;
 import com.jeeyoh.persistence.domain.Business;
+import com.jeeyoh.persistence.domain.Events;
+import com.jeeyoh.persistence.domain.Eventuserlikes;
 import com.jeeyoh.persistence.domain.Page;
 import com.jeeyoh.persistence.domain.Pagetype;
 import com.jeeyoh.persistence.domain.Pageuserlikes;
@@ -61,183 +63,6 @@ public class NonDealSearch implements INonDealSearch {
 					user.setLongitude(Double.toString(array[1]));
 				}
 				saveNonDealSuggestion(userId, user, true, isContactsAccessed);
-
-				/*List<Page> userCommunities = userDAO.getUserCommunities(userId);
-				int countMain = 0;
-				//List<Jeeyohgroup> userGroups = userDAO.getUserGroups(userId);
-				if(userCommunities != null) {
-					boolean includePage = true;
-					int count = 0;
-					for(Page community : userCommunities) {
-						count++;
-						logger.debug("NonDealSearch ==> search ==> pageId ==> " + community.getPageId());
-						List<Pagetype> pageTypeList = userDAO.getCommunityType(community.getPageId());
-
-						Pagetype pageType = null;
-						if(pageTypeList != null) {
-							pageType = pageTypeList.get(0);
-						}
-						logger.debug("NonDealSearch ==> search ==> pagetype ==> " + pageType);
-						if(pageType != null) {
-							String type = pageType.getPageType();
-							logger.debug("NonDealSearch ==> search ==> type ==> " + type);
-
-							if(type.equalsIgnoreCase(MOVIE_CATEGORY) || type.equalsIgnoreCase(RESTAURANT_CATEGORY) || type.equalsIgnoreCase(NIGHTLIFE_CATEGORY) || type.equalsIgnoreCase(EVENTS_CATEGORY) || type.equalsIgnoreCase(GETAWAYS_CATEGORY) || type.equalsIgnoreCase(SPORTS_CATEGORY)) {
-								logger.debug("NonDealSearch ==> search ==> type ==> " + type);
-							List<Business> businessList = businessDAO.getBusinessById(community.getBusiness().getId());
-							Business business = null;
-							if(businessList != null) {
-								business = businessList.get(0);
-							}
-
-							array = getLatLong(business.getPostalCode());
-							business.setLattitude(Double.toString(array[0]));
-							business.setLongitude(Double.toString(array[1]));
-							//Business business = businessDAO.getBusinessById(community.getPageId());
-							double distance = distance(Double.parseDouble(user.getLattitude()), Double.parseDouble(user.getLongitude()), Double.parseDouble(business.getLattitude()), Double.parseDouble(business.getLongitude()), "M");
-							logger.debug("Distance::  "+distance);
-								if(distance <=15)
-								{
-									String ambiance = business.getAmbience();
-									String musicType = business.getMusicType();
-									long rating = business.getRating();
-									List<Pageuserlikes> pageProperties = userDAO.getUserPageProperties(userId, community.getPageId());
-									if(pageProperties != null)
-									{
-										logger.debug("NonDealSearch ==> search ==> pageProperties ==> not null" );
-										Pageuserlikes pageProperty = pageProperties.get(0);
-										if(pageProperty != null) {
-											logger.debug("NonDealSearch ==> search ==> pageProperty ==> not null" );
-											boolean isLiked = pageProperty.getIsLike();
-											boolean isFavorite = pageProperty.getIsFavorite();
-											boolean isVisited = pageProperty.getIsVisited();
-											boolean isFollowing = pageProperty.getIsFollowing();
-											if(isLiked || isFavorite || isVisited || isFollowing) {											
-												includePage = true;
-											} else
-											{
-												includePage = false;
-											}
-											logger.debug("NonDealSearch ==> search ==> pageProperty ==> includePage ==> " + includePage);
-										}
-									} else
-									{
-										includePage = false;
-									}
-									logger.debug("NonDealSearch ==> search ==> pageProperties ==> includePage ==> " + includePage);
-									logger.debug("NonDealSearch ==> search ==> rating ==> " + rating);
-									if(rating > 3) {
-										if(type.equalsIgnoreCase(RESTAURANT_CATEGORY)) {
-											if(!ambiance.equalsIgnoreCase("GOOD") && !musicType.equalsIgnoreCase("SOFT")) {
-												includePage = false;
-											} else {
-												includePage = true;
-											}
-										} else {
-											includePage = true;
-										}
-									}
-									logger.debug("NonDealSearch ==> search ==> rating ==> includePage ==> " + includePage);
-									if(includePage) {
-										Usernondealsuggestion suggestion = new Usernondealsuggestion();									
-										suggestion.setBusiness(business);
-										suggestion.setCreatedtime(new Date());
-										suggestion.setIsChecked(false);
-										suggestion.setIsRelevant(true);
-										suggestion.setUpdatedtime(new Date());
-										suggestion.setUser(user);
-										userDAO.saveNonDealSuggestions(suggestion,countMain);
-										countMain ++;
-									}
-								}
-
-
-							} else {
-								logger.debug("Else...........");
-								List<User> userContacts = userDAO.getUserContacts(userId);
-								List<User> userList1 = userDAO.getUserById(userId);
-								if(userContacts != null) {
-									for(User contact : userContacts) {
-										if(contact != null) {
-											int contactId = contact.getUserId();
-											//List<Page> userContactPages = userDAO.getUserContactsCommunities(contactId);
-											List<Page> userContactPages = userDAO.getUserCommunities(contactId);
-											if(userContactPages != null) {
-
-												for(Page contactPage : userContactPages) {
-													if(contactPage != null) {
-														Pagetype contactPageType = contactPage.getPagetype();
-														String type1 = contactPageType.getPageType();
-														Business business1 = contactPage.getBusiness();
-														array = getLatLong(business1.getPostalCode());
-														business1.setLattitude(Double.toString(array[0]));
-														business1.setLongitude(Double.toString(array[1]));
-														//Business business = businessDAO.getBusinessById(community.getPageId());
-														double distance1 = distance(Double.parseDouble(user.getLattitude()), Double.parseDouble(user.getLongitude()), Double.parseDouble(business1.getLattitude()), Double.parseDouble(business1.getLongitude()), "M");
-														logger.debug("Distance::  "+distance1);
-														if(type1.equalsIgnoreCase(MOVIE_CATEGORY) || type1.equalsIgnoreCase(RESTAURANT_CATEGORY) || type1.equalsIgnoreCase(NIGHTLIFE_CATEGORY) || type1.equalsIgnoreCase(EVENTS_CATEGORY) || type1.equalsIgnoreCase(GETAWAYS_CATEGORY) || type1.equalsIgnoreCase(SPORTS_CATEGORY)) {
-
-															if(distance1 <=15)
-															{
-																String ambiance = business1.getAmbience();
-																String musicType = business1.getMusicType();
-																long rating = business1.getRating();
-																List<Pageuserlikes> pageProperties = userDAO.getUserPageProperties(userId, community.getPageId());
-																if(pageProperties != null)
-																{
-																	Pageuserlikes pageProperty = pageProperties.get(0);
-																	if(pageProperty != null) {
-																		boolean isLiked = pageProperty.getIsLike();
-																		boolean isFavorite = pageProperty.getIsFavorite();
-																		boolean isVisited = pageProperty.getIsVisited();
-																		boolean isFollowing = pageProperty.getIsFollowing();
-																		if(isLiked || isFavorite || isVisited || isFollowing) {
-																			includePage = true;
-																		} else
-																		{
-																			includePage = false;
-																		}
-																	}
-																} else
-																{
-																	includePage = false;
-																}
-																if(rating > 3) {
-																	if(type.equalsIgnoreCase(RESTAURANT_CATEGORY)) {
-																		if(!ambiance.equalsIgnoreCase("GOOD") && !musicType.equalsIgnoreCase("SOFT")) {
-																			includePage = false;
-																		} else {
-																			includePage = true;
-																		}
-																	} else {
-																		includePage = true;
-																	}
-																}
-																if(includePage) {
-																	Usernondealsuggestion suggestion = new Usernondealsuggestion();
-																	//suggestion.setSuggestionId(counter);
-																	suggestion.setBusiness(business1);
-																	suggestion.setCreatedtime(new Date());
-																	suggestion.setIsChecked(false);
-																	suggestion.setIsRelevant(true);
-																	suggestion.setUpdatedtime(new Date());
-																	suggestion.setUser(userList1.get(0));
-																	userDAO.saveNonDealSuggestions(suggestion,countMain);
-																	countMain ++;
-																}
-															}
-														}
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}*/
-
 			}
 		}
 	}
@@ -349,117 +174,159 @@ public class NonDealSearch implements INonDealSearch {
 			int count = 0;
 			for(Page community : userCommunities) {
 				count++;
-				logger.debug("NonDealSearch ==> search ==> pageId ==> " + community.getPageId());
-				List<Pagetype> pageTypeList = userDAO.getCommunityType(community.getPageId());
+				List<Usernondealsuggestion> usernondealsuggestions = userDAO.isNonDealSuggestionExists(userId, community.getBusiness().getId());
+				if(usernondealsuggestions == null)
+				{
+					logger.debug("NonDealSearch ==> search ==> pageId ==> " + community.getPageId());
+					List<Pagetype> pageTypeList = userDAO.getCommunityType(community.getPageId());
 
-				Pagetype pageType = null;
-				if(pageTypeList != null) {
-					pageType = pageTypeList.get(0);
-				}
-				logger.debug("NonDealSearch ==> search ==> pagetype ==> " + pageType);
-				if(pageType != null) {
-					String type = pageType.getPageType();
-					logger.debug("NonDealSearch ==> search ==> type ==> " + type);
-
-					if(type.equalsIgnoreCase(MOVIE_CATEGORY) || type.equalsIgnoreCase(RESTAURANT_CATEGORY) || type.equalsIgnoreCase(NIGHTLIFE_CATEGORY) || type.equalsIgnoreCase(EVENTS_CATEGORY) || type.equalsIgnoreCase(GETAWAYS_CATEGORY) || type.equalsIgnoreCase(SPORTS_CATEGORY)) {
+					Pagetype pageType = null;
+					if(pageTypeList != null) {
+						pageType = pageTypeList.get(0);
+					}
+					logger.debug("NonDealSearch ==> search ==> pagetype ==> " + pageType);
+					if(pageType != null) {
+						String type = pageType.getPageType();
 						logger.debug("NonDealSearch ==> search ==> type ==> " + type);
-						List<Business> businessList = businessDAO.getBusinessById(community.getBusiness().getId());
-						Business business = null;
-						if(businessList != null) {
-							business = businessList.get(0);
-						}
 
-						logger.debug("Lat/Long for business :  " + business.getLattitude() +" , "+business.getLongitude());
-						logger.debug("Lat/Long for business :  " + business.getLattitude() +" , "+business.getLongitude()+" Lat/Long for user:  "+user.getLattitude()+" , "+user.getLongitude());
-						if(business.getLattitude() == null && business.getLongitude() == null || (business.getLattitude().trim().equals("") && business.getLongitude().trim().equals(""))  || (business.getLattitude().trim().equals("0.0") && business.getLongitude().trim().equals("0.0")))
-						{
-							array = getLatLong(business.getPostalCode());
-							business.setLattitude(Double.toString(array[0]));
-							business.setLongitude(Double.toString(array[1]));
-						}
-						
-						double distance = distance(Double.parseDouble(user.getLattitude()), Double.parseDouble(user.getLongitude()), Double.parseDouble(business.getLattitude()), Double.parseDouble(business.getLongitude()), "M");
-						logger.debug("Distance::  "+distance +" lat::  "+user.getLattitude()+" lon::  "+user.getLongitude());
-						if(distance <=15)
-						{
-							String ambiance = business.getAmbience();
-							String musicType = business.getMusicType();
-							long rating = business.getRating();
-							List<Pageuserlikes> pageProperties = userDAO.getUserPageProperties(userId, community.getPageId());
-							if(pageProperties != null)
-							{
-								logger.debug("NonDealSearch ==> search ==> pageProperties ==> not null" );
-								Pageuserlikes pageProperty = pageProperties.get(0);
-								if(pageProperty != null) {
-									logger.debug("NonDealSearch ==> search ==> pageProperty ==> not null" );
-									boolean isLiked = pageProperty.getIsLike();
-									boolean isFavorite = pageProperty.getIsFavorite();
-									boolean isVisited = pageProperty.getIsVisited();
-									boolean isFollowing = pageProperty.getIsFollowing();
-									if(isLiked || isFavorite || isVisited || isFollowing) {											
-										includePage = true;
-									} else
-									{
-										includePage = false;
-									}
-									logger.debug("NonDealSearch ==> search ==> pageProperty ==> includePage ==> " + includePage);
-								}
-							} else
-							{
-								includePage = false;
+						if(type.equalsIgnoreCase(MOVIE_CATEGORY) || type.equalsIgnoreCase(RESTAURANT_CATEGORY) || type.equalsIgnoreCase(NIGHTLIFE_CATEGORY) || type.equalsIgnoreCase(EVENTS_CATEGORY) || type.equalsIgnoreCase(GETAWAYS_CATEGORY) || type.equalsIgnoreCase(SPORTS_CATEGORY)) {
+							logger.debug("NonDealSearch ==> search ==> type ==> " + type);
+							List<Business> businessList = businessDAO.getBusinessById(community.getBusiness().getId());
+							Business business = null;
+							if(businessList != null) {
+								business = businessList.get(0);
 							}
-							logger.debug("NonDealSearch ==> search ==> pageProperties ==> includePage ==> " + includePage);
-							logger.debug("NonDealSearch ==> search ==> rating ==> " + rating);
-							if(rating > 3) {
-								if(type.equalsIgnoreCase(RESTAURANT_CATEGORY)) {
-									if(!ambiance.equalsIgnoreCase("GOOD") && !musicType.equalsIgnoreCase("SOFT")) {
-										includePage = false;
+
+							logger.debug("Lat/Long for business :  " + business.getLattitude() +" , "+business.getLongitude());
+							logger.debug("Lat/Long for business :  " + business.getLattitude() +" , "+business.getLongitude()+" Lat/Long for user:  "+user.getLattitude()+" , "+user.getLongitude());
+							if(business.getLattitude() == null && business.getLongitude() == null || (business.getLattitude().trim().equals("") && business.getLongitude().trim().equals(""))  || (business.getLattitude().trim().equals("0.0") && business.getLongitude().trim().equals("0.0")))
+							{
+								array = getLatLong(business.getPostalCode());
+								business.setLattitude(Double.toString(array[0]));
+								business.setLongitude(Double.toString(array[1]));
+							}
+
+							double distance = distance(Double.parseDouble(user.getLattitude()), Double.parseDouble(user.getLongitude()), Double.parseDouble(business.getLattitude()), Double.parseDouble(business.getLongitude()), "M");
+							logger.debug("Distance::  "+distance +" lat::  "+user.getLattitude()+" lon::  "+user.getLongitude());
+							if(distance <=15)
+							{
+								String ambiance = "";
+								if(business.getAmbience() != null)
+									ambiance = business.getAmbience();
+								String musicType = "";
+								if(business.getAmbience() != null)
+									musicType = business.getMusicType();
+
+								long rating = 0;
+								if(business.getRating() != null)
+								{
+									rating = business.getRating();
+								}
+								List<Pageuserlikes> pageProperties = userDAO.getUserPageProperties(userId, community.getPageId());
+								if(pageProperties != null)
+								{
+									logger.debug("NonDealSearch ==> search ==> pageProperties ==> not null" );
+									Pageuserlikes pageProperty = pageProperties.get(0);
+									if(pageProperty != null) {
+										logger.debug("NonDealSearch ==> search ==> pageProperty ==> not null" );
+										boolean isLiked = pageProperty.getIsLike();
+										boolean isFavorite = pageProperty.getIsFavorite();
+										boolean isVisited = pageProperty.getIsVisited();
+										boolean isFollowing = pageProperty.getIsFollowing();
+										if(isLiked || isFavorite || isVisited || isFollowing) {											
+											includePage = true;
+										} else
+										{
+											includePage = false;
+										}
+										logger.debug("NonDealSearch ==> search ==> pageProperty ==> includePage ==> " + includePage);
+									}
+								} else
+								{
+									includePage = false;
+								}
+								if(!includePage)
+								{
+									List<Events> eventsList = userDAO.getUserCommunityEvents(userId, community.getPageId());
+									if(eventsList != null)
+									{
+										for(Events event : eventsList) {
+
+											List<Eventuserlikes> eventproperties = userDAO.getUserEventProperties(userId, event.getEventId());
+											if(eventproperties != null)
+											{
+												logger.debug("NonDealSearch ==> search ==> eventProperty ==> not null" );
+												Eventuserlikes eventProperty = eventproperties.get(0);
+												if(eventProperty != null) {
+													logger.debug("NonDealSearch ==> search ==> eventProperty ==> not null" );
+													boolean isLiked = eventProperty.getIsLike();
+													boolean isFavorite = eventProperty.getIsFavorite();
+													boolean isVisited = eventProperty.getIsVisited();
+													boolean isFollowing = eventProperty.getIsFollowing();
+													if(isLiked || isFavorite || isVisited || isFollowing) {											
+														includePage = true;
+														break;
+													} else
+													{
+														includePage = false;
+													}
+													logger.debug("NonDealSearch ==> search ==> eventProperty ==> includePage ==> " + includePage);
+												}
+											} else
+											{
+												includePage = false;
+											}
+										}
+									}
+								}
+								logger.debug("NonDealSearch ==> search ==> pageProperties ==> includePage ==> " + includePage);
+								logger.debug("NonDealSearch ==> search ==> rating ==> " + rating);
+								if(rating > 3) {
+									if(type.equalsIgnoreCase(RESTAURANT_CATEGORY)) {
+										if(!ambiance.equalsIgnoreCase("GOOD") && !musicType.equalsIgnoreCase("SOFT")) {
+											includePage = false;
+										} else {
+											includePage = true;
+										}
 									} else {
 										includePage = true;
 									}
-								} else {
-									includePage = true;
 								}
-							}
-							logger.debug("NonDealSearch ==> search ==> rating ==> includePage ==> " + includePage);
-							if(includePage) {
-								Usernondealsuggestion suggestion = new Usernondealsuggestion();									
-								suggestion.setBusiness(business);
-								suggestion.setCreatedtime(new Date());
-								suggestion.setIsChecked(false);
-								suggestion.setIsRelevant(true);
-								suggestion.setUpdatedtime(new Date());
-								suggestion.setUser(user);
-								userDAO.saveNonDealSuggestions(suggestion,countMain);
-								countMain ++;
-							}
-						}
-					}
-					else
-					{
-						if(forUser && !isContactsAccessed)
-						{
-							logger.debug("Else..................");
-							isContactsAccessed = true;
-							List<User> userContacts = userDAO.getUserContacts(userId);
-							List<User> userList = userDAO.getUserById(userId);
-							logger.debug("Contacts Size..............==> "+userContacts.size());
-							if(userContacts != null) {
-								for(User contact : userContacts) {
-									if(contact != null) {
-										int contactId = contact.getUserId();
-										saveNonDealSuggestion(contactId, userList.get(0), false , isContactsAccessed);
-									}
+								logger.debug("NonDealSearch ==> search ==> rating ==> includePage ==> " + includePage);
+								if(includePage) {
+									Usernondealsuggestion suggestion = new Usernondealsuggestion();									
+									suggestion.setBusiness(business);
+									suggestion.setCreatedtime(new Date());
+									suggestion.setIsChecked(false);
+									suggestion.setIsRelevant(true);
+									suggestion.setUpdatedtime(new Date());
+									suggestion.setUser(user);
+									userDAO.saveNonDealSuggestions(suggestion,countMain);
+									countMain ++;
 								}
 							}
 						}
-
 					}
 				}
-
 			}
 		}
 
+		if(forUser && !isContactsAccessed)
+		{
+			logger.debug("Else..................");
+			isContactsAccessed = true;
+			List<User> userContacts = userDAO.getUserContacts(userId);
+			List<User> userList = userDAO.getUserById(userId);
+			logger.debug("Contacts Size..............==> "+userContacts.size());
+			if(userContacts != null) {
+				for(User contact : userContacts) {
+					if(contact != null) {
+						int contactId = contact.getUserId();
+						saveNonDealSuggestion(contactId, userList.get(0), false , isContactsAccessed);
+					}
+				}
+			}
+		}
 	}
 
 }

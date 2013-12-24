@@ -4,15 +4,15 @@
 
 <hibernate-mapping>
     <class name="com.jeeyoh.persistence.domain.Eventuserlikes" table="eventuserlikes" catalog="jeeyoh">
-        <id name="pageUserLikesId" type="java.lang.Integer">
+        <id name="eventUserLikesId" type="java.lang.Integer">
             <column name="eventUserLikesId" />
             <generator class="identity" />
         </id>
         <many-to-one name="user" class="com.jeeyoh.persistence.domain.User" fetch="select" lazy="false">
             <column name="userId" not-null="true" />
         </many-to-one>
-        <many-to-one name="page" class="com.jeeyoh.persistence.domain.Page" fetch="select" lazy="false">
-            <column name="pageId" not-null="true" />
+        <many-to-one name="event" class="com.jeeyoh.persistence.domain.Events" fetch="select" lazy="false">
+            <column name="eventId" not-null="true" />
         </many-to-one>
         <property name="isFavorite" type="java.lang.Boolean">
             <column name="isFavorite" />

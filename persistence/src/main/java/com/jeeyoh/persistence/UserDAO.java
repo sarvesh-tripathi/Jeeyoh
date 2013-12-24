@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.jeeyoh.persistence.domain.Events;
+import com.jeeyoh.persistence.domain.Eventuserlikes;
 import com.jeeyoh.persistence.domain.Jeeyohgroup;
 import com.jeeyoh.persistence.domain.Page;
 import com.jeeyoh.persistence.domain.Pagetype;
@@ -177,14 +178,15 @@ public class UserDAO implements IUserDAO {
 	}
 
 	@Override
-	public List<Events> getUserCommunityEvents(int userId) {
+	public List<Events> getUserCommunityEvents(int userId, int pageId) {
 		logger.debug("pageList => ");
 		List<Events> eventsList = null;
-		String hqlQuery = "select b from User a, Events b, Eventuserlikes c where a.userId = :userId and c.user.userId = a.userId and b.eventId = c.event.eventId";
+		String hqlQuery = "select b from User a, Events b, Eventuserlikes c where a.userId = :userId and b.page.pageId = :pageId and c.user.userId = a.userId and b.eventId = c.event.eventId";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
 			query.setParameter("userId", userId);
+			query.setParameter("pageId", pageId);
 			eventsList = (List<Events>) query.list();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -222,6 +224,43 @@ public class UserDAO implements IUserDAO {
         }
         logger.debug("EEEEEEEEEEE :: "+userList.get(0));
         return userList.get(0);
+	}
+
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Eventuserlikes> getUserEventProperties(int userId, int eventId) {
+		List<Eventuserlikes> eventProperties = null;
+		String hqlQuery = "select c from User a, Events b, Eventuserlikes c where a.userId = :userId and c.event.eventId = :eventId and c.user.userId = a.userId and b.eventId = c.event.eventId";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("userId", userId);
+			query.setParameter("eventId", eventId);
+			eventProperties = (List<Eventuserlikes>) query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return eventProperties;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Usernondealsuggestion> isNonDealSuggestionExists(int userId,
+			int businessId) {
+		
+		List<Usernondealsuggestion> usernondealsuggestions = null;
+		String hqlQuery = "select a from Usernondealsuggestion a where a.userId = :userId and a.businessId = :businessId";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("userId", userId);
+			query.setParameter("businessId", businessId);
+			usernondealsuggestions = (List<Usernondealsuggestion>) query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return usernondealsuggestions;
 	}
 
 }
