@@ -181,4 +181,19 @@ public class DealsDAO implements IDealsDAO {
     		}
 			
 		}
+
+		@Override
+		public int getDealsLikeCounts(Integer id) {
+			// TODO Auto-generated method stub
+			String hqlQuery = "from count(*) from Dealsusage a where a.deals.id = :id";
+			try {
+				Query query = sessionFactory.getCurrentSession().createQuery(
+						hqlQuery);
+				query.setParameter("id", id);
+			
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return 0;
+		}
 }

@@ -20,5 +20,6 @@ public interface IDealsDAO {
 	public List<Deals> getDealsByBusinessId(String businessId);
 	public void saveSuggestions(Userdealssuggestion dealSuggestion);
 	public void saveNonDealSuggestion(Usernondealsuggestion nondeal);
+	public int getDealsLikeCounts(Integer id);
 	
 }
