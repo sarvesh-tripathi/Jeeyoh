@@ -249,8 +249,9 @@ public class UserDAO implements IUserDAO {
 	public List<Usernondealsuggestion> isNonDealSuggestionExists(int userId,
 			int businessId) {
 		
+		 logger.debug("isNonDealSuggestionExists ::: ");
 		List<Usernondealsuggestion> usernondealsuggestions = null;
-		String hqlQuery = "select a from Usernondealsuggestion a where a.userId = :userId and a.businessId = :businessId";
+		String hqlQuery = "select a from Usernondealsuggestion a where a.user.userId = :userId and a.business.id = :businessId";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);

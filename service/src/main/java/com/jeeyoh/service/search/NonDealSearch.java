@@ -171,11 +171,11 @@ public class NonDealSearch implements INonDealSearch {
 
 		if(userCommunities != null) {
 			boolean includePage = true;
-			int count = 0;
 			for(Page community : userCommunities) {
-				count++;
-				List<Usernondealsuggestion> usernondealsuggestions = userDAO.isNonDealSuggestionExists(userId, community.getBusiness().getId());
-				if(usernondealsuggestions == null)
+				
+				List<Usernondealsuggestion> usernondealsuggestions = userDAO.isNonDealSuggestionExists(user.getUserId(), community.getBusiness().getId());
+				logger.debug("NonDealSearch ==> usernondealsuggestions ==> " + usernondealsuggestions);
+				if(usernondealsuggestions == null || usernondealsuggestions.size() == 0)
 				{
 					logger.debug("NonDealSearch ==> search ==> pageId ==> " + community.getPageId());
 					List<Pagetype> pageTypeList = userDAO.getCommunityType(community.getPageId());
