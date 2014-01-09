@@ -7,7 +7,7 @@ import com.jeeyoh.persistence.domain.Gdeal;
 import com.jeeyoh.persistence.domain.Gdealoption;
 
 public interface IGDealsDAO {
-	public void addDeals(Gdeal deal);
+	public void addDeals(Gdeal deal, int count);
 	public List<Gdealoption> getDeals();
 	public Gdeal getDealById(String dealId);
 	

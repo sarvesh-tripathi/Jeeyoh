@@ -101,7 +101,7 @@
             </key>
             <one-to-many class="com.jeeyoh.persistence.domain.Ybusinessregionmap" />
         </set>
-        <set name="ybusinesscategorymaps" inverse="true" cascade="all">
+        <set name="ybusinesscategorymaps" inverse="true" cascade="all" lazy="false">
             <key>
                 <column name="businessId" not-null="true" />
             </key>

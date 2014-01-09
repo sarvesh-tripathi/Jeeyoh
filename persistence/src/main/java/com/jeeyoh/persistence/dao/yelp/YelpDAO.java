@@ -3,11 +3,14 @@ package com.jeeyoh.persistence.dao.yelp;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -23,11 +26,13 @@ public class YelpDAO implements IYelpDAO {
 	@Autowired
 	private SessionFactory sessionFactory;
      
+	static final Logger logger = LoggerFactory.getLogger("debugLogger");
 	
 	@Override
 	public Ycategoryfilter getCategories(String category) {
 		// TODO Auto-generated method stub
 		Ycategoryfilter ycategory = null;
+		Session session = sessionFactory.openSession();
 		if(category == null)
 		{
 			category = "No Category";
@@ -35,12 +40,18 @@ public class YelpDAO implements IYelpDAO {
 		
 		String hqlQuery = "from Ycategoryfilter a where a.category = :category";
 		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(
+			/*Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);*/
+			Query query = session.createQuery(
 					hqlQuery);
 			query.setParameter("category", category);
 			ycategory = (Ycategoryfilter) query.list().get(0);
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+		finally
+		{
+			session.close();
 		}
 		if(ycategory == null)
 		{
@@ -68,26 +79,47 @@ public class YelpDAO implements IYelpDAO {
 	}
 
 	@Override
-	public void saveBusiness(Ybusiness business) {
+	public void saveBusiness(Ybusiness business, int count) {
 		// TODO Auto-generated method stub
-		//sessionFactory.getCurrentSession().saveOrUpdate(business);	
-		sessionFactory.getCurrentSession().save(business);	
-		//sessionFactory.getCurrentSession().
+		logger.debug("Save business ::: ");
+		//Session session = sessionFactory.openSession();
+		Session session = sessionFactory.getCurrentSession();
+		Transaction tx = null;
+		try
+		{
+			tx = session.beginTransaction();
+			session.save(business);	
+			tx.commit();
+			if( count % 20 == 0 ) {
+				session.flush();
+				session.clear();
+			}
+			
+		}
+		catch (HibernateException e) {
+			if (tx!=null) tx.rollback();
+			logger.error("ERROR::: == "+e);
+			}
+		finally
+		{
+			//session.close();
+			logger.debug("close session ::: ");
+		}
 	}
 
 	@Override
 	public List<Ybusiness> getBusiness() {
 
 		List<Ybusiness> businessList = null;
-		Session session = sessionFactory.openSession();
-		Transaction tx = session.beginTransaction();
+		/*Session session = sessionFactory.openSession();
+		Transaction tx = session.beginTransaction();*/
 		String hqlQuery = "from Ybusiness";
 		try {
-			//Query query = sessionFactory.getCurrentSession().createQuery(hqlQuery);
-			Query query = session.createQuery(hqlQuery);	
+			Query query = sessionFactory.getCurrentSession().createQuery(hqlQuery);
+			//Query query = session.createQuery(hqlQuery);	
 			businessList = (List<Ybusiness>) query.list();
-			tx.commit();
-			session.close();
+			/*tx.commit();
+			session.close();*/
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -95,16 +127,59 @@ public class YelpDAO implements IYelpDAO {
 	}
 
 	@Override
-	public void saveDeals(Ydeal ydeal) {
+	public void saveDeals(Ydeal ydeal, int count) {
 		// TODO Auto-generated method stub
-		sessionFactory.getCurrentSession().save(ydeal);
+		//Session session = sessionFactory.openSession();
+		Session session = sessionFactory.getCurrentSession();
+		Transaction tx = null;
+		try
+		{
+			tx = session.beginTransaction();
+			session.save(ydeal);	
+			tx.commit();
+			if( count % 20 == 0 ) {
+				session.flush();
+				session.clear();
+			}
+			
+		}
+		catch (HibernateException e) {
+			if (tx!=null) tx.rollback();
+			logger.error("ERROR::: == "+e);
+			}
+		finally
+		{
+			//session.close();
+			logger.debug("close session ::: ");
+		}
 		
 	}
 	@Override
-	public void saveReviews(Yreview yreview) {
+	public void saveReviews(Yreview yreview, int count) {
 		// TODO Auto-generated method stub
-		sessionFactory.getCurrentSession().save(yreview);
-		
+		//Session session = sessionFactory.openSession();
+		Session session = sessionFactory.getCurrentSession();
+		Transaction tx = null;
+		try
+		{
+			tx = session.beginTransaction();
+			session.save(yreview);	
+			tx.commit();
+			if( count % 20 == 0 ) {
+				session.flush();
+				session.clear();
+			}
+			
+		}
+		catch (HibernateException e) {
+			if (tx!=null) tx.rollback();
+			logger.error("ERROR::: == "+e);
+			}
+		finally
+		{
+			//session.close();
+			logger.debug("close session ::: ");
+		}
 	}
 
 	@Override
@@ -131,7 +206,7 @@ public class YelpDAO implements IYelpDAO {
 	public List<Ybusiness> getFilterBusiness() {
 		// TODO Auto-generated method stub
 		//List<Ybusiness> ybusinessList = null;
-		String[] categoryFilters = {"Restaurants"};
+		String[] categoryFilters = {"Restaurants","Spa","Sport"};
 		//select * from ybusiness where id in (select businessId from ybusinesscategorymap where categoryFilterId in (select id from ycategoryfilter where category in ('Restaurants','Sports')));
 		/*String hqlQuery = "from Ybusiness where id in (select businessId from Ybusinesscategorymap where Ybusinesscategorymap.ycategoryfilter.categoryFilterId in (select id from Ycategoryfilter where category in ('Restaurants','Sports')))";
 		try {

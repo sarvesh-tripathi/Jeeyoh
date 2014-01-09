@@ -7,6 +7,7 @@
     <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/jeeyoh?zeroDateTimeBehavior=convertToNull</property>
     <property name="hibernate.connection.username">root</property>
     <property name="show_sql">true</property>
+    <property name="hibernate.jdbc.batch_size">20</property>
     <mapping resource="hbm/Yreview.hbm.xml"/>
     <mapping resource="hbm/Gdeal.hbm.xml"/>
     <mapping resource="hbm/Usergroups.hbm.xml"/>
@@ -60,6 +61,8 @@
     <mapping resource="hbm/FandangoOpenning.hbm.xml"/>
     <mapping resource="hbm/FandangoNearMe.hbm.xml"/>  
     <mapping resource="hbm/StubhubEvent.hbm.xml"/>
-         
+    <mapping resource="hbm/Tags.hbm.xml"/> 
+    <mapping resource="hbm/UserCategory.hbm.xml"/>
+    <mapping resource="hbm/UserCategoryLikes.hbm.xml"/>
     </session-factory>
 </hibernate-configuration>

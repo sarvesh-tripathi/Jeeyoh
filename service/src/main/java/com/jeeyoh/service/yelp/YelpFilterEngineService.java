@@ -4,8 +4,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-//import org.joda.time.DateTime;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +18,8 @@ import com.jeeyoh.persistence.domain.Businesstype;
 import com.jeeyoh.persistence.domain.Dealoption;
 import com.jeeyoh.persistence.domain.Deals;
 import com.jeeyoh.persistence.domain.Ybusiness;
+import com.jeeyoh.persistence.domain.Ybusinesscategorymap;
+import com.jeeyoh.persistence.domain.Ycategoryfilter;
 import com.jeeyoh.persistence.domain.Ydeal;
 import com.jeeyoh.persistence.domain.Ydealoption;
 
@@ -118,7 +118,55 @@ public class YelpFilterEngineService implements IYelpFilterEngineService {
 							{
 								if(businessList.isEmpty())
 								{
-									Businesstype businesstype = businessDAO.getBusinesstypeByType("OTHERS");
+									Set<Ybusinesscategorymap>  ycategorymap   = yBusiness.getYbusinesscategorymaps();
+									Businesstype businesstype =null;
+									if(ycategorymap != null)
+									{
+										 for(Ybusinesscategorymap ycategorymap1:ycategorymap)
+										 {
+											 Ycategoryfilter  ycategoryfilter = ycategorymap1.getYcategoryfilter();
+											 int parentId = ycategoryfilter.getYcategoryfilter().getId();
+											 logger.debug("Parent id ::: "+parentId);
+											 if(parentId >= 491 && parentId <= 608)
+											 {
+												 businesstype = businessDAO.getBusinesstypeByType("RESTAURANT");
+												 break;
+											 }
+											 else if(parentId >= 109 && parentId <= 130)
+											 {
+												 businesstype = businessDAO.getBusinesstypeByType("SPA");
+												 break;
+											 }
+											 else if(parentId >= 1 && parentId <= 66)
+											 {
+												 businesstype = businessDAO.getBusinesstypeByType("SPORT");
+												 break;
+											 }
+											 else if(parentId == 72)
+											 {
+												 businesstype = businessDAO.getBusinesstypeByType("MOVIE");
+												 break;
+											 }
+											 /*Ycategoryfilter  ycategoryfilter = ycategorymap1.getYcategoryfilter();
+											 String name = ycategoryfilter.getCategory();
+											 if(name.toLowerCase().contains("restaurants"))
+											 {
+												 businesstype = businessDAO.getBusinesstypeByType("RESTAURANT");
+												 break;
+											 }
+											else if(name.toLowerCase().contains("sport"))
+											 {
+												businesstype = businessDAO.getBusinesstypeByType("SPORT");
+												 break;
+											 }
+											else if(name.toLowerCase().contains("spas"))
+											 {
+												businesstype = businessDAO.getBusinesstypeByType("SPA");
+												 break;
+											}*/
+										 }
+									}
+									//Businesstype businesstype = businessDAO.getBusinesstypeByType("OTHERS");
 									Business business = new Business();
 									business.setName(yBusiness.getName());
 									business.setBusinessId(yBusiness.getBusinessId());
@@ -173,7 +221,7 @@ public class YelpFilterEngineService implements IYelpFilterEngineService {
 	}
 
 	@Override
-	//@Transactional
+	@Transactional
 	public void filterBusiness()
 	{
 		logger.debug("In FILTER BUSINESS");
@@ -220,7 +268,55 @@ public class YelpFilterEngineService implements IYelpFilterEngineService {
 				business.setSnippetImageUrl(yBusiness.getSnippetImageUrl());
 				business.setSnippetText(yBusiness.getSnippetText());
 				business.setStateCode(yBusiness.getStateCode());
-				Businesstype businesstype = businessDAO.getBusinesstypeByType("OTHERS");
+				Set<Ybusinesscategorymap>  ycategorymap   = yBusiness.getYbusinesscategorymaps();
+				logger.debug("MAP :::::::::::"+ycategorymap);
+				Businesstype businesstype =null;
+				if(ycategorymap != null)
+				{
+					 for(Ybusinesscategorymap ycategorymap1:ycategorymap)
+					 {
+						 Ycategoryfilter  ycategoryfilter = ycategorymap1.getYcategoryfilter();
+						 int parentId = ycategoryfilter.getYcategoryfilter().getId();
+						 logger.debug("Parent id ::: "+parentId);
+						 if(parentId >= 491 && parentId <= 608)
+						 {
+							 businesstype = businessDAO.getBusinesstypeByType("RESTAURANT");
+							 break;
+						 }
+						 else if(parentId >= 109 && parentId <= 130)
+						 {
+							 businesstype = businessDAO.getBusinesstypeByType("SPA");
+							 break;
+						 }
+						 else if(parentId >= 1 && parentId <= 66)
+						 {
+							 businesstype = businessDAO.getBusinesstypeByType("SPORT");
+							 break;
+						 }
+						 else if(parentId == 72)
+						 {
+							 businesstype = businessDAO.getBusinesstypeByType("MOVIE");
+							 break;
+						 }
+						 /*String name = ycategoryfilter.getCategory();
+						 if(name.toLowerCase().contains("restaurants"))
+						 {
+							 businesstype = businessDAO.getBusinesstypeByType("RESTAURANT");
+							 break;
+						 }
+						else if(name.toLowerCase().contains("sport"))
+						 {
+							businesstype = businessDAO.getBusinesstypeByType("SPORT");
+							break;
+						 }
+						else if(name.toLowerCase().contains("spas"))
+						 {
+							businesstype = businessDAO.getBusinesstypeByType("SPA");
+							break;						}
+					     }*/
+					 }
+				}
+				//Businesstype businesstype = businessDAO.getBusinesstypeByType("OTHERS");
 				business.setBusinesstype(businesstype);
 				//Set<Yreview> yreview = yBusiness.getR
 				// business.getTraffic(yBusiness.getT)
@@ -228,10 +324,10 @@ public class YelpFilterEngineService implements IYelpFilterEngineService {
 				//dealsDAO.saveBusiness(business);		    	
 				businessDAO.saveBusiness(business, count);	
 				count++;
-				if(count == 1000)
+				/*if(count == 2000)
 				{
 					break;
-				}
+				}*/
 
 			}
 		}

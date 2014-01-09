@@ -45,7 +45,7 @@ public class YelpService implements IYelpService {
 
 	
 	@Override
-	//@Transactional
+	@Transactional
 	public void search() {
 		//YelpSearchResponse searchResponse = yelpClient.search("Los Angeles");
 		//loadData(searchResponse);		
@@ -55,7 +55,7 @@ public class YelpService implements IYelpService {
 			//for(Countrylocation location : locationList) {
 			for(int i = 0; i < locationList.size(); i++)
 			{
-				if(i == 13) {
+				if(i == 0) {
 					Countrylocation location = locationList.get(i);				
 					if(location != null)
 					{
@@ -69,8 +69,11 @@ public class YelpService implements IYelpService {
 							if(total > 20)
 							{
 								for(int offset = 20; offset <= total;) {
-									searchResponse = yelpClient.search(city, offset+"");									
-									loadData(searchResponse);
+									searchResponse = yelpClient.search(city, offset+"");
+									if(searchResponse != null)
+									{
+										loadData(searchResponse);
+									}
 									offset += 20;
 								}
 							}
@@ -114,6 +117,7 @@ public class YelpService implements IYelpService {
 		}
 		Ybusinessregionmap regionBusinessMap = new Ybusinessregionmap();
 		regionBusinessMap.setYregion(region);
+		int count = 0;
 		if(businesses != null) {
 			logger.debug("In Business :::: ");
 			for(YelpBusiness businessModel : businesses) {
@@ -201,14 +205,15 @@ public class YelpService implements IYelpService {
 						}
 					}
 					business.setYbusinesscategorymaps(businessCategoryMaps);
-					yelpDAO.saveBusiness(business);
+					yelpDAO.saveBusiness(business,count);
+					count++;
 				}
 			}
 		}
 	}
 
 	@Override
-	//@Transactional
+	@Transactional
 	public void searchBusiness() {
 		// TODO Auto-generated method stub
 		logger.debug("IN Business ==> ");
@@ -249,6 +254,7 @@ public class YelpService implements IYelpService {
 		if(deals != null)
 		{
 			logger.debug("loadDeals ::: "+deals.get(0).getCurrencyCode());
+			int count = 0;
 			for(YelpDeal deal:deals)
 			{
 				Ydeal ydeal = new Ydeal();
@@ -277,7 +283,8 @@ public class YelpService implements IYelpService {
 				}
 				ydeal.setYbusiness(business);
 				ydeal.setYdealoptions(dealsSet);
-				yelpDAO.saveDeals(ydeal);
+				count++;
+				yelpDAO.saveDeals(ydeal,count);
 			}
 		}
 
@@ -289,6 +296,7 @@ public class YelpService implements IYelpService {
 		List<YelpReview> reviews = searchResponse.getReviews();
 		if(reviews != null)
 		{
+			   int count = 0;
 				for(YelpReview review : reviews)
 				{
 					Yreview yreview = new Yreview();
@@ -303,7 +311,8 @@ public class YelpService implements IYelpService {
 					yreview.setUserImageUrl(review.getUser().getImageUrl());
 					yreview.setUserName(review.getUser().getName());
 					yreview.setYbusiness(business);
-					yelpDAO.saveReviews(yreview);
+					count++;
+					yelpDAO.saveReviews(yreview, count);
 					
 				}
 		}

@@ -49,7 +49,7 @@ public class StubhubEvent implements java.io.Serializable {
 	
   	private String timezone;
   	
-	private long	timezone_id;
+	private String	timezone_id;
 	
 	private String	venue_config_name;
 	
@@ -215,12 +215,12 @@ public class StubhubEvent implements java.io.Serializable {
 		this.timezone = timezone;
 	}
 
-	public long getTimezone_id() {
+	public String getTimezone_id() {
 		return timezone_id;
 	}
 
-	public void setTimezone_id(long timezone_id) {
-		this.timezone_id = timezone_id;
+	public void setTimezone_id(String string) {
+		this.timezone_id = string;
 	}
 
 	public String getVenue_config_name() {

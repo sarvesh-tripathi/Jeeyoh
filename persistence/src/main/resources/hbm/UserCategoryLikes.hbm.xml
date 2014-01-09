@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+	<!-- Generated Oct 10, 2013 9:08:14 AM by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+	<class name="com.jeeyoh.persistence.domain.UserCategoryLikes"
+		table="usercategorylikes" catalog="jeeyoh">
+		<id name="userCategoryLikesId" type="java.lang.Integer">
+			<column name="userCategoryLikesId" />
+			<generator class="identity" />
+		</id>
+		<many-to-one name="user" class="com.jeeyoh.persistence.domain.User"
+			fetch="select" lazy="false">
+			<column name="userId" not-null="true" />
+		</many-to-one>
+		<many-to-one name="userCategory"
+			class="com.jeeyoh.persistence.domain.UserCategory" fetch="select">
+			<column name="userCategoryId " />
+		</many-to-one>
+		<property name="rank" type="java.lang.Long">
+			<column name="rank" precision="10" scale="0" />
+		</property>
+	</class>
+</hibernate-mapping>

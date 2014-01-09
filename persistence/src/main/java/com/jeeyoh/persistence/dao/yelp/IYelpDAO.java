@@ -10,10 +10,10 @@ import com.jeeyoh.persistence.domain.Yreview;
 
 public interface IYelpDAO {
 	public Ycategoryfilter getCategories(String category);
-	public void saveBusiness(Ybusiness business);
+	public void saveBusiness(Ybusiness business,int count);
 	public List<Ybusiness> getBusiness();
-	public void saveDeals(Ydeal ydeal);
-	public void saveReviews(Yreview yreview);
+	public void saveDeals(Ydeal ydeal, int count);
+	public void saveReviews(Yreview yreview, int count);
 	public List<Ydealoption> filterdDealByDiscount();
 	public List<Ybusiness> getFilterBusiness();
 

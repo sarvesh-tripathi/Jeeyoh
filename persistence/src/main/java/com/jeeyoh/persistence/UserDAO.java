@@ -19,6 +19,7 @@ import com.jeeyoh.persistence.domain.Page;
 import com.jeeyoh.persistence.domain.Pagetype;
 import com.jeeyoh.persistence.domain.Pageuserlikes;
 import com.jeeyoh.persistence.domain.User;
+import com.jeeyoh.persistence.domain.UserCategory;
 import com.jeeyoh.persistence.domain.Usernondealsuggestion;
 
 @Repository("userDAO")
@@ -142,14 +143,21 @@ public class UserDAO implements IUserDAO {
 	@Override
 	public void saveNonDealSuggestions(Usernondealsuggestion suggestion, int batch_size) {
 		logger.debug("saveNonDealSuggestions => ");
-		Session session  = sessionFactory.openSession();
-		  Transaction tx = session.beginTransaction();
+		 /* Session session  = sessionFactory.openSession();
+		  Transaction tx = session.beginTransaction()*/;
+		  Session session =  sessionFactory.getCurrentSession();
 		  try
 		  {
-		   
-		   session.save(suggestion);    
+			  session.save(suggestion);
+			  if(batch_size % 20 == 0)
+			  {
+				  session.flush();
+				  session.clear();
+				  
+			  }
+		   /*session.save(suggestion);    
 		   tx.commit();
-		   session.close();
+		   session.close();*/
 		  }
 		  catch(HibernateException e)
 		  {
@@ -264,4 +272,60 @@ public class UserDAO implements IUserDAO {
 		return usernondealsuggestions;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Page> getUserCommunitiesByEmailId(String emailId) {
+
+		List<Page> pageList = null;
+		String hqlQuery = "select b from User a, Page b, Pageuserlikes c where a.emailId = :emailId and c.user.userId = a.userId and b.pageId = c.page.pageId";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("emailId",emailId);
+			pageList = (List<Page>) query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.debug(e.toString());
+			logger.debug(e.getLocalizedMessage());
+		}
+		return pageList;
+	}
+
+
+    @SuppressWarnings("unchecked")
+	 @Override
+	 public List<UserCategory> getUserCategoryLikesById(int userId) {
+	  logger.debug("pageList => ");
+	  List<UserCategory> userCategoryList = null;
+	  String hqlQuery = "select b from User a, UserCategory b, UserCategoryLikes c where a.userId = :userId and c.user.userId = a.userId and b.userCategoryId = c.userCategory.userCategoryId";
+	  try {
+	   Query query = sessionFactory.getCurrentSession().createQuery(
+	     hqlQuery);
+	   query.setParameter("userId", userId);
+	   userCategoryList = (List<UserCategory>) query.list();
+	  } catch (Exception e) {
+	   e.printStackTrace();
+	   logger.debug(e.toString());
+	   logger.debug(e.getLocalizedMessage());
+	  }
+	  return userCategoryList;
+	 }
+
+    @SuppressWarnings("unchecked")
+	@Override
+	public List<Usernondealsuggestion> getuserNonDealSuggestionsByEmailId(
+			String emailId) {
+		List<Usernondealsuggestion> usernondealsuggestions = null;
+		String hqlQuery = "select a from Usernondealsuggestion a, User b where b.emailId = :emailId and a.user.userId = b.userId";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("emailId", emailId);
+			usernondealsuggestions = (List<Usernondealsuggestion>) query.list();
+		} catch (Exception e) {
+			logger.debug("ERROR::::  "+e.getMessage());
+			e.printStackTrace();
+		}
+		return usernondealsuggestions;
+	}
 }
