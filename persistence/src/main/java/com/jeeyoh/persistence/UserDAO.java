@@ -19,6 +19,7 @@ import com.jeeyoh.persistence.domain.Page;
 import com.jeeyoh.persistence.domain.Pagetype;
 import com.jeeyoh.persistence.domain.Pageuserlikes;
 import com.jeeyoh.persistence.domain.User;
+import com.jeeyoh.persistence.domain.UserCategory;
 import com.jeeyoh.persistence.domain.Usernondealsuggestion;
 
 @Repository("userDAO")
@@ -264,4 +265,22 @@ public class UserDAO implements IUserDAO {
 		return usernondealsuggestions;
 	}
 
+    @SuppressWarnings("unchecked")
+	 @Override
+	 public List<UserCategory> getUserCategoryLikesById(int userId) {
+	  logger.debug("pageList => ");
+	  List<UserCategory> userCategoryList = null;
+	  String hqlQuery = "select b from User a, UserCategory b, UserCategoryLikes c where a.userId = :userId and c.user.userId = a.userId and b.userCategoryId = c.userCategory.userCategoryId";
+	  try {
+	   Query query = sessionFactory.getCurrentSession().createQuery(
+	     hqlQuery);
+	   query.setParameter("userId", userId);
+	   userCategoryList = (List<UserCategory>) query.list();
+	  } catch (Exception e) {
+	   e.printStackTrace();
+	   logger.debug(e.toString());
+	   logger.debug(e.getLocalizedMessage());
+	  }
+	  return userCategoryList;
+	 }
 }

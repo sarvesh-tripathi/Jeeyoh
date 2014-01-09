@@ -70,7 +70,7 @@ public class StubhubService implements IStubhubService {
 				    stubhub.setMinSeatsTogether(Double.parseDouble(stubhubList.getMinSeatsTogether()));
 				    stubhub.setState(stubhubList.getState());
 				    stubhub.setTimezone(stubhubList.getTimezone());
-				    stubhub.setTimezone_id(Long.parseLong(stubhubList.getTimezone_id()));
+				    stubhub.setTimezone_id(stubhubList.getTimezone_id());
 				    stubhub.setTitle(stubhubList.getTitle());
 				    stubhub.setTotalTickets(stubhubList.getTotalTickets());
 				    stubhub.setUrlpath(stubhubList.getUrlpath());

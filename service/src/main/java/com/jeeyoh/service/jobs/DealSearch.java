@@ -1,4 +1,4 @@
-package com.jeeyoh.service.search;
+package com.jeeyoh.service.jobs;
 
 import java.util.Date;
 import java.util.List;
@@ -22,10 +22,12 @@ import com.jeeyoh.persistence.domain.Business;
 import com.jeeyoh.persistence.domain.Businesstype;
 import com.jeeyoh.persistence.domain.Deals;
 import com.jeeyoh.persistence.domain.Dealsusage;
+import com.jeeyoh.persistence.domain.Groupusermap;
+import com.jeeyoh.persistence.domain.Jeeyohgroup;
 import com.jeeyoh.persistence.domain.Page;
 import com.jeeyoh.persistence.domain.User;
+import com.jeeyoh.persistence.domain.UserCategory;
 import com.jeeyoh.persistence.domain.Userdealssuggestion;
-import com.jeeyoh.persistence.domain.Usernondealsuggestion;
 
 @Component("dealSearch")
 public class DealSearch implements IDealSearch {
@@ -74,6 +76,9 @@ public class DealSearch implements IDealSearch {
 					
 					// user commuinty 
 					List<Page> userCommunities = userDAO.getUserCommunities(user.getUserId());
+					
+					// user group member 
+					List<Jeeyohgroup> jeeyohGroup = userDAO.getUserGroups(user.getUserId());
 								
 					Set<Business> businessSet = businesstype.getBusinesses();
 					for(Business business :businessSet )
@@ -200,9 +205,92 @@ public class DealSearch implements IDealSearch {
 											}
 									}
 									
+									// for user likes item
+								
+									if(!saveDeal)
+									{
 									
-															
+										List<UserCategory> userCategoryList = userDAO.getUserCategoryLikesById(user.getUserId());
+										  if(userCategoryList != null)
+										  {
+										   for(UserCategory userCategory : userCategoryList) {
+											   
+											   List<Deals> catDeals = dealDAO.getDealsByUserCategory(userCategory.getItemCategory(),userCategory.getItemType());
+											   for(Deals catdeal:catDeals)
+											   {
+												    int dealId = deal.getId();
+													int catDealId = catdeal.getId();
+													if(dealId == catDealId)
+													{
+														Date date = new Date();
+														Userdealssuggestion dealSuggestion = new Userdealssuggestion();
+														dealSuggestion.setCreatedtime(date);
+														dealSuggestion.setDeals(deal);
+														dealSuggestion.setIsFavorite(true);
+														dealSuggestion.setIsFollowing(true);
+														dealSuggestion.setIsLike(true);
+														dealSuggestion.setIsRedempted(true);
+														dealSuggestion.setUpdatedtime(date);
+														dealSuggestion.setUser(user);
+														dealDAO.saveSuggestions(dealSuggestion);
+													}
+												   
+											   }
+											   
+										   }
+										  }
+										    
+										    
 									}
+									
+									//// for jeeyohgroups
+									if(!saveDeal)
+									{
+									
+										
+										  if(jeeyohGroup != null)
+										  {
+										   for(Jeeyohgroup jeeyohGroup1 : jeeyohGroup) {
+											   
+											   Set<Groupusermap> groups   =jeeyohGroup1.getGroupusermaps();
+											   for (Groupusermap groups1 : groups)
+											   {
+												   User groupMember = groups1.getUser();
+												   Set<Dealsusage> contactDealUsage = groupMember.getDealsusages();									
+													for(Dealsusage dealsusage1 : contactDealUsage) {
+														logger.debug("DEAL LEVEL 4 ==> "+ dealsusage1.getIsFavorite());
+												
+														int dealId = deal.getId();
+														int dealusageId = dealsusage1.getDeals().getId();
+														if(dealId == dealusageId)
+														{
+															if(dealsusage1.getIsFavorite() || dealsusage1.getIsLike() || dealsusage1.getIsSuggested() || dealsusage1.getIsFollowing())
+															{
+																
+																Date date = new Date();
+																Userdealssuggestion dealSuggestion = new Userdealssuggestion();
+																dealSuggestion.setCreatedtime(date);
+																dealSuggestion.setDeals(deal);
+																dealSuggestion.setIsFavorite(true);
+																dealSuggestion.setIsFollowing(true);
+																dealSuggestion.setIsLike(true);
+																dealSuggestion.setIsRedempted(true);
+																dealSuggestion.setUpdatedtime(date);
+																dealSuggestion.setUser(user);
+																dealDAO.saveSuggestions(dealSuggestion);
+															}
+													   }
+													}
+											   }
+											  
+											   
+											   
+										   }
+										  }
+										    
+										    
+									}
+								}
 							}
 							}
 												
@@ -287,6 +375,6 @@ public class DealSearch implements IDealSearch {
 		return array;
 	}
 
-						
+	
 				
 }

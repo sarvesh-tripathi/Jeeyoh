@@ -131,7 +131,7 @@ public class YelpDAO implements IYelpDAO {
 	public List<Ybusiness> getFilterBusiness() {
 		// TODO Auto-generated method stub
 		//List<Ybusiness> ybusinessList = null;
-		String[] categoryFilters = {"Restaurants"};
+		String[] categoryFilters = {"Restaurants","Spa","Sport"};
 		//select * from ybusiness where id in (select businessId from ybusinesscategorymap where categoryFilterId in (select id from ycategoryfilter where category in ('Restaurants','Sports')));
 		/*String hqlQuery = "from Ybusiness where id in (select businessId from Ybusinesscategorymap where Ybusinesscategorymap.ycategoryfilter.categoryFilterId in (select id from Ycategoryfilter where category in ('Restaurants','Sports')))";
 		try {

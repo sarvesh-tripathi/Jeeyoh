@@ -60,6 +60,8 @@
     <mapping resource="hbm/FandangoOpenning.hbm.xml"/>
     <mapping resource="hbm/FandangoNearMe.hbm.xml"/>  
     <mapping resource="hbm/StubhubEvent.hbm.xml"/>
-         
+    <mapping resource="hbm/Tags.hbm.xml"/> 
+    <mapping resource="hbm/UserCategory.hbm.xml"/>
+    <mapping resource="hbm/UserCategoryLikes.hbm.xml"/>
     </session-factory>
 </hibernate-configuration>

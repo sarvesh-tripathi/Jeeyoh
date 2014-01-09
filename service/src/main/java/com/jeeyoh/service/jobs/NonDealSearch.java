@@ -1,4 +1,4 @@
-package com.jeeyoh.service.search;
+package com.jeeyoh.service.jobs;
 
 import java.util.Date;
 import java.util.List;

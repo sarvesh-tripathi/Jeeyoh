@@ -1,12 +1,15 @@
 package com.jeeyoh.persistence;
 
+import java.awt.print.Book;
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +19,7 @@ import com.jeeyoh.persistence.domain.Business;
 import com.jeeyoh.persistence.domain.Deals;
 import com.jeeyoh.persistence.domain.Userdealssuggestion;
 import com.jeeyoh.persistence.domain.Usernondealsuggestion;
+import com.jeeyoh.persistence.domain.Ybusiness;
 
 @Repository("dealsDAO")
 public class DealsDAO implements IDealsDAO {
@@ -185,15 +189,136 @@ public class DealsDAO implements IDealsDAO {
 		@Override
 		public int getDealsLikeCounts(Integer id) {
 			// TODO Auto-generated method stub
+			int rowCount = 0;
 			String hqlQuery = "from count(*) from Dealsusage a where a.deals.id = :id";
 			try {
 				Query query = sessionFactory.getCurrentSession().createQuery(
 						hqlQuery);
 				query.setParameter("id", id);
-			
+				rowCount = ((Number)query.uniqueResult()).intValue();						
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			return 0;
+			return rowCount;
 		}
+
+		@SuppressWarnings("null")
+		@Override
+		public List<Deals> getDealsByKeywords(String keyword, String category,
+				String location) {
+			logger.error("getDealsByKeywords ==== > "+location);
+			logger.error("getDealsByKeywords ==== > "+location.isEmpty());
+			// TODO Auto-generated method stub
+			
+			Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Deals.class);
+			criteria.createAlias("business", "business");
+			criteria.createAlias("business.businesstype", "businesstype");
+			//criteria.createAlias("tags", "tags");
+			if(category != null && category.isEmpty() == false)
+			{
+				logger.debug("IN CATEGORY CHECKING ::: ");
+				criteria.add(Restrictions.eq("businesstype.businessType", category));
+			}
+			if(location != null && location.isEmpty()== false)
+			{
+				logger.debug("IN LOCATION CHECKING ::: ");
+				criteria.add(Restrictions.eq("business.postalCode", location.trim()));
+			}
+			if(keyword != null && keyword.isEmpty() == false)
+			{
+				logger.debug("IN KEYWORD CHECKING ::: ");
+				criteria.add(Restrictions.like("title", "%" + keyword.trim() + "%"));
+				criteria.add(Restrictions.like("dealUrl", "%" + keyword.trim() + "%"));
+				criteria.add(Restrictions.like("dealId", "%" + keyword.trim() + "%"));
+				//criteria.add(Restrictions.like("tags.name", "%" + keyword + "%"));
+				
+			}
+			
+			List<Deals> dealsList = criteria.list();
+			return dealsList;
+		}
+		
+		@Override
+		public List<Userdealssuggestion> getDealsSuggestion(int id)
+		{
+			List<Userdealssuggestion> dealSuggestionList = null;
+			String hqlQuery = "from Userdealssuggestion a where a.user.userId = :id";
+			try
+			{
+				Query query = sessionFactory.getCurrentSession().createQuery(hqlQuery);
+				query.setParameter("id", id);
+				dealSuggestionList = query.list();
+			}
+			catch(HibernateException e)
+			{
+				e.printStackTrace();
+			}
+			return dealSuggestionList;
+			
+		}
+
+		@Override
+		public List<Deals> getUserDeals(Integer userId) {
+			// TODO Auto-generated method stub
+			
+			List<Deals> deals= null;
+			String hqlQuery = "from Deals where id in(select d.deals.id from Dealsusage d where d.user.userId =:userId)";
+			try
+			{
+				Query query = sessionFactory.getCurrentSession().createQuery(hqlQuery);
+				query.setParameter("userId", userId);
+				deals = query.list();
+			}
+			catch(HibernateException e)
+			{
+				e.printStackTrace();
+			}
+			logger.debug("Value === "+deals);
+			return deals;
+		}
+
+		@Override
+		public List<Deals> getDealsByBusinessId(Integer id) {
+			// TODO Auto-generated method stub
+			List<Deals> dealsList = null;
+			String hqlQuery = "from Deals a where a.business.id = :id";
+			try {
+				Query query = sessionFactory.getCurrentSession().createQuery(
+						hqlQuery);
+				query.setParameter("id", id);
+				dealsList = (List<Deals>) query.list();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return dealsList;
+			
+		}
+
+		@Override
+		public List<Deals> getDealsByUserCategory(String itemCategory,
+				String itemType) {
+			Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Deals.class);
+			criteria.createAlias("business", "business");
+			criteria.createAlias("business.businesstype", "businesstype");
+			//criteria.createAlias("tags", "tags");
+			if(itemCategory != null)
+			{
+				criteria.add(Restrictions.eq("businesstype.businessType", itemCategory));
+			}
+			
+			if(itemType != null)
+			{
+				criteria.add(Restrictions.like("title", "%" + itemType + "%"));
+				criteria.add(Restrictions.like("dealUrl", "%" + itemType + "%"));
+				criteria.add(Restrictions.like("dealId", "%" + itemType + "%"));
+				//criteria.add(Restrictions.like("tags.name", "%" + keyword + "%"));
+				
+			}
+			
+			List<Deals> dealsList = criteria.list();
+			return dealsList;
+			
+		}
+		
 }

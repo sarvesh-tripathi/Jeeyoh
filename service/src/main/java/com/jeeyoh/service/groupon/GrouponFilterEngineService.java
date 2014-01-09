@@ -26,6 +26,8 @@ import com.jeeyoh.persistence.domain.Deals;
 import com.jeeyoh.persistence.domain.Gdeal;
 import com.jeeyoh.persistence.domain.Gdealoption;
 import com.jeeyoh.persistence.domain.Gmerchant;
+import com.jeeyoh.persistence.domain.Gtags;
+import com.jeeyoh.persistence.domain.Tags;
 
 @Component("grouponFilterEngine")
 public class GrouponFilterEngineService implements IGrouponFilterEngineService {
@@ -114,7 +116,35 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 										{
 											if(businessList.isEmpty())
 											{
-												Businesstype businesstype = businessDAO.getBusinesstypeByType("RESTAURANT");
+												// 
+												Set<Gtags> tags = gdeal.getGtagses();
+												Businesstype businesstype = null;
+												//Businesstype businesstype = businessDAO.getBusinesstypeByType("RESTAURANT");
+												for(Gtags gtag :tags)
+												{
+													String name = gtag.getName();
+													logger.debug("Check Tag Name ::: "+name);
+													
+													/*if(name.toLowerCase().contains("movie"))
+													{
+														 businesstype = businessDAO.getBusinesstypeByType("MOVIE");
+													}*/
+												    if(name.toLowerCase().contains("restaurants"))
+													{
+														 businesstype = businessDAO.getBusinesstypeByType("RESTAURANT");
+													}
+													else if(name.toLowerCase().contains("sport"))
+													{
+														businesstype = businessDAO.getBusinesstypeByType("SPORT");
+													}
+													else if(name.toLowerCase().contains("spa"))
+													{
+														businesstype = businessDAO.getBusinesstypeByType("SPA");
+													}
+													
+													
+												}											
+											
 												Business business = new Business();
 												business.setName(gmerchant.getName());
 												business.setBusinessId(gmerchant.getMerchantId());
@@ -155,7 +185,19 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 											}
 											deals.setDealoptions(dealOptions);
 										}		
-
+										
+										Set<Gtags> tags = gdeal.getGtagses();
+										if(tags != null) 
+										{
+											Set<Tags> tagsset = new HashSet<Tags>();
+											for(Gtags tag : tags) {
+												Tags tag1 = new Tags();
+												tag1.setDeal(deals);
+												tag1.setName(tag.getName());
+												tagsset.add(tag1);
+											}
+											deals.setTags(tagsset);
+										}
 										logger.debug("loadDeals => count ");
 										dealsDAO.saveDeal(deals,batch_size);
 										break;

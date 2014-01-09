@@ -59,8 +59,8 @@
         <property name="timezone" type="string">
             <column name="timezone"  />
         </property>
-        <property name="timezone_id" type="java.lang.Long">
-            <column name="timezone_id" precision="10" scale="0" />
+        <property name="timezone_id" type="string">
+            <column name="timezone_id" />
         </property>
         <property name="venue_config_name" type="string">
             <column name="venue_config_name" />
