@@ -1,10 +1,7 @@
 package com.jeeyoh.service.search;
 
 import java.util.ArrayList;
-<<<<<<< HEAD
 import java.util.HashSet;
-=======
->>>>>>> 1846fe671c0cdaf33ff00c596a7334be53d58b17
 import java.util.List;
 import java.util.Set;
 
@@ -18,17 +15,11 @@ import com.jeeyoh.model.search.DealModel;
 import com.jeeyoh.persistence.IDealsDAO;
 import com.jeeyoh.persistence.IUserDAO;
 import com.jeeyoh.persistence.domain.Deals;
-<<<<<<< HEAD
 import com.jeeyoh.persistence.domain.Groupusermap;
 import com.jeeyoh.persistence.domain.Jeeyohgroup;
 import com.jeeyoh.persistence.domain.Page;
 import com.jeeyoh.persistence.domain.User;
 import com.jeeyoh.persistence.domain.UserCategory;
-=======
-import com.jeeyoh.persistence.domain.Dealsusage;
-import com.jeeyoh.persistence.domain.Page;
-import com.jeeyoh.persistence.domain.User;
->>>>>>> 1846fe671c0cdaf33ff00c596a7334be53d58b17
 import com.jeeyoh.persistence.domain.Userdealssuggestion;
 
 @Component("searchDeals")
@@ -43,7 +34,6 @@ public class SearchDeals implements ISearchDeals {
 
 	@Override
 	@Transactional
-<<<<<<< HEAD
 	public Set<Deals> getDeals(String keyword, String category, String location, String emailId) {
 		// TODO Auto-generated method stub
 		logger.debug("Get deal ::: ");
@@ -64,109 +54,29 @@ public class SearchDeals implements ISearchDeals {
 		
 		//List<DealModel> dealModels = new ArrayList<DealModel>();
 		Set<Deals> dealModels = new HashSet<Deals>();
-=======
-	public List<DealModel> getDeals(String keyword, String category, String location, String emailId) {
-		// TODO Auto-generated method stub
-		logger.debug("Get deal ::: ");
-		List<Deals> deals =  dealsDAO.getDealsByKeywords(keyword,category,location);
-		logger.debug("DEAL Object ::: "+deals.size());
-		List<Userdealssuggestion> dealSuggestionList = null;
-		if(emailId != null && emailId  != "")
-		{			
-			User user = userDAO.getUsersById(emailId);
-			logger.debug("user Id :::: "+ user.getUserId());
-			dealSuggestionList = dealsDAO.getDealsSuggestion(user.getUserId());
-		}
-		
-		List<DealModel> dealModels = new ArrayList<DealModel>();
->>>>>>> 1846fe671c0cdaf33ff00c596a7334be53d58b17
 		if(deals != null)
 		{
 			
 			for (Deals deal : deals)
 			{
-<<<<<<< HEAD
 				//DealModel dealModel =  new DealModel();
-=======
-				DealModel dealModel =  new DealModel();
->>>>>>> 1846fe671c0cdaf33ff00c596a7334be53d58b17
 				if(dealSuggestionList != null)
 				{
 					for(Userdealssuggestion dealsuggestion : dealSuggestionList)
 					{
-<<<<<<< HEAD
 						if(dealsuggestion.getDeals() != null)
 						{
 							dealModels.add(dealsuggestion.getDeals());
 						}
 						
-=======
-						logger.debug("DEAL 1111111 :::: " + dealsuggestion.getDeals().getId());
-						logger.debug("DEAL 2222222 :::: " + deal.getId());
-						if(dealsuggestion.getDeals().getId() == deal.getId())
-						{
-							if(deal.getDealUrl() != null)
-							{
-								dealModel.setDealUrl(deal.getDealUrl());
-							}
-							if(deal.getTitle() != null)
-							{
-								dealModel.setTitle(deal.getTitle());
-							}
-							if(deal.getStatus() != null)
-							{
-								dealModel.setStatus(deal.getStatus());
-							}
-							if(deal.getStartAt().toString() != null)
-							{
-								dealModel.setStartAt(deal.getStartAt().toString());
-							}
-							if(deal.getEndAt().toString() != null)
-							{
-								dealModel.setEndAt(deal.getEndAt().toString());
-							}				
-							
-							if(dealModel != null)
-							{
-								dealModels.add(dealModel);
-							}
-						}
->>>>>>> 1846fe671c0cdaf33ff00c596a7334be53d58b17
 					}
 					
 				}
 				else
 				{
-<<<<<<< HEAD
 					if(deal != null)
 					{
 						dealModels.add(deal);
-=======
-					if(deal.getDealUrl() != null)
-					{
-						dealModel.setDealUrl(deal.getDealUrl());
-					}
-					if(deal.getTitle() != null)
-					{
-						dealModel.setTitle(deal.getTitle());
-					}
-					if(deal.getStatus() != null)
-					{
-						dealModel.setStatus(deal.getStatus());
-					}
-					if(deal.getStartAt().toString() != null)
-					{
-						dealModel.setStartAt(deal.getStartAt().toString());
-					}
-					if(deal.getEndAt().toString() != null)
-					{
-						dealModel.setEndAt(deal.getEndAt().toString());
-					}				
-					
-					if(dealModel != null)
-					{
-						dealModels.add(dealModel);
->>>>>>> 1846fe671c0cdaf33ff00c596a7334be53d58b17
 					}
 				}
 				
@@ -175,7 +85,6 @@ public class SearchDeals implements ISearchDeals {
 			}
 			
 		}
-<<<<<<< HEAD
 		else
 		{
 			logger.debug("USER DEALS ::::::::"+dealSuggestionList.size());
@@ -205,18 +114,6 @@ public class SearchDeals implements ISearchDeals {
 		List<Deals> deals = null;
 		//List<DealModel> dealModels = new ArrayList<DealModel>();
 		Set<Deals> dealModels = new HashSet<Deals>();
-=======
-		return dealModels;
-		
-	}
-	
-	@Override
-	@Transactional
-	public List<DealModel> getUserDeals(String emailId) {
-		
-		List<Deals> deals = null;
-		List<DealModel> dealModels = new ArrayList<DealModel>();
->>>>>>> 1846fe671c0cdaf33ff00c596a7334be53d58b17
 		if(emailId != null && emailId  != "")
 		{			
 			User user = userDAO.getUsersById(emailId);
@@ -230,39 +127,10 @@ public class SearchDeals implements ISearchDeals {
 			
 			for (Deals deal : deals)
 			{
-<<<<<<< HEAD
 				
 				if(deal != null)
 				{
 					dealModels.add(deal);
-=======
-				DealModel dealModel =  new DealModel();
-				logger.debug("UR L  :: "+deal.getDealUrl());
-				if(deal.getDealUrl() != null)
-				{
-					dealModel.setDealUrl(deal.getDealUrl());
-				}
-				if(deal.getTitle() != null)
-				{
-					dealModel.setTitle(deal.getTitle());
-				}
-				if(deal.getStatus() != null)
-				{
-					dealModel.setStatus(deal.getStatus());
-				}
-				if(deal.getStartAt().toString() != null)
-				{
-					dealModel.setStartAt(deal.getStartAt().toString());
-				}
-				if(deal.getEndAt().toString() != null)
-				{
-					dealModel.setEndAt(deal.getEndAt().toString());
-				}				
-				
-				if(dealModel != null)
-				{
-					dealModels.add(dealModel);
->>>>>>> 1846fe671c0cdaf33ff00c596a7334be53d58b17
 				}
 			}
 			
@@ -273,18 +141,11 @@ public class SearchDeals implements ISearchDeals {
 	
 	@Override
 	@Transactional
-<<<<<<< HEAD
 	public Set<Deals> getUserContactAndCommunityDeals(String emailId){
 		
 		List<Deals> deals = null;
 		List<Deals> dealModels = new ArrayList<Deals>();
 		//Set<DealModel> dealModels = new HashSet<DealModel>();
-=======
-	public List<DealModel> getUserContactAndCommunityDeals(String emailId){
-		
-		List<Deals> deals = null;
-		List<DealModel> dealModels = new ArrayList<DealModel>();
->>>>>>> 1846fe671c0cdaf33ff00c596a7334be53d58b17
 		if(emailId != null && emailId  != "")
 		{			
 			User user = userDAO.getUsersById(emailId);
@@ -295,12 +156,9 @@ public class SearchDeals implements ISearchDeals {
 			
 			// user commuinty 
 			List<Page> userCommunities = userDAO.getUserCommunities(user.getUserId());
-<<<<<<< HEAD
 			
 			// user group member 
 			List<Jeeyohgroup> jeeyohGroup = userDAO.getUserGroups(user.getUserId());
-=======
->>>>>>> 1846fe671c0cdaf33ff00c596a7334be53d58b17
 						
 		//contacts deals
 		if(userContacts != null) {
@@ -313,39 +171,10 @@ public class SearchDeals implements ISearchDeals {
 						
 						for (Deals deal : deals)
 						{
-<<<<<<< HEAD
 							if(deal != null)
 							{
 								
 								dealModels.add(deal);
-=======
-							DealModel dealModel =  new DealModel();
-							logger.debug("UR L11111  :: "+deal.getDealUrl());
-							if(deal.getDealUrl() != null)
-							{
-								dealModel.setDealUrl(deal.getDealUrl());
-							}
-							if(deal.getTitle() != null)
-							{
-								dealModel.setTitle(deal.getTitle());
-							}
-							if(deal.getStatus() != null)
-							{
-								dealModel.setStatus(deal.getStatus());
-							}
-							if(deal.getStartAt().toString() != null)
-							{
-								dealModel.setStartAt(deal.getStartAt().toString());
-							}
-							if(deal.getEndAt().toString() != null)
-							{
-								dealModel.setEndAt(deal.getEndAt().toString());
-							}				
-							
-							if(dealModel != null)
-							{
-								dealModels.add(dealModel);
->>>>>>> 1846fe671c0cdaf33ff00c596a7334be53d58b17
 							}
 						}
 						
@@ -366,39 +195,10 @@ public class SearchDeals implements ISearchDeals {
 					
 					for (Deals deal : deals1)
 					{
-<<<<<<< HEAD
 						
 						if(deal != null)
 						{
 							dealModels.add(deal);
-=======
-						DealModel dealModel =  new DealModel();
-						logger.debug("UR L222222  :: "+deal.getDealUrl());
-						if(deal.getDealUrl() != null)
-						{
-							dealModel.setDealUrl(deal.getDealUrl());
-						}
-						if(deal.getTitle() != null)
-						{
-							dealModel.setTitle(deal.getTitle());
-						}
-						if(deal.getStatus() != null)
-						{
-							dealModel.setStatus(deal.getStatus());
-						}
-						if(deal.getStartAt().toString() != null)
-						{
-							dealModel.setStartAt(deal.getStartAt().toString());
-						}
-						if(deal.getEndAt().toString() != null)
-						{
-							dealModel.setEndAt(deal.getEndAt().toString());
-						}				
-						
-						if(dealModel != null)
-						{
-							dealModels.add(dealModel);
->>>>>>> 1846fe671c0cdaf33ff00c596a7334be53d58b17
 						}
 					}
 					
@@ -406,7 +206,6 @@ public class SearchDeals implements ISearchDeals {
 			}
 		
 			}
-<<<<<<< HEAD
 	 // jeeyoh group
 		if(jeeyohGroup != null)
 		  {
@@ -457,14 +256,6 @@ public class SearchDeals implements ISearchDeals {
 		logger.debug("SIZE OF SET :::: "+aSet.size());
 		
 		return aSet;
-=======
-		
-		
-		logger.debug("deal Model size after community " + dealModels.size());
-		
-	}
-		return dealModels;
->>>>>>> 1846fe671c0cdaf33ff00c596a7334be53d58b17
 	}
 
 }

@@ -28,10 +28,7 @@ public interface IDealsDAO {
 	public List<Deals> getDealsByBusinessId(Integer id);
 	public List<Deals> getDealsByUserCategory(String itemCategory,
 			String itemType);
-<<<<<<< HEAD
 	public List<Userdealssuggestion>userDealsSuggestedByJeeyoh(String keyword, String category,
 			String location, int id);
-=======
->>>>>>> 1846fe671c0cdaf33ff00c596a7334be53d58b17
 	
 }

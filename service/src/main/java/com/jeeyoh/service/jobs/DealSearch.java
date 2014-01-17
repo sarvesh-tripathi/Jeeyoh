@@ -48,8 +48,9 @@ public class DealSearch implements IDealSearch {
 	@Transactional
 	public void search() {
 		
-		
-		Businesstype businesstype = businessDAO.getBusinesstypeByType("RESTAURANT");		
+		String[] type = {"RESTAURANT","SPA","SPORT"};
+		List<Businesstype> businesstypes = businessDAO.getBusinesstypeByTypeArray(type);	
+		//Businesstype businesstype = businessDAO.getBusinesstypeByType("SPORT");
 		List<User> userList = userDAO.getUsers();		
 		
 		for (User user : userList)
@@ -57,6 +58,7 @@ public class DealSearch implements IDealSearch {
 			if(user != null)
 			{
 				double[] array = null;
+				logger.debug("USER FOR :: "+user.getEmailId());
 				logger.debug("Lat/Long for user :  " + user.getLattitude() +" , "+user.getLongitude());
 				if(user.getLattitude() == null && user.getLongitude() == null || (user.getLattitude().trim().equals("") && user.getLongitude().trim().equals(""))|| (user.getLattitude().trim().equals("0.0") && user.getLongitude().trim().equals("0.0")))
 				{
@@ -65,10 +67,10 @@ public class DealSearch implements IDealSearch {
 					user.setLattitude(Double.toString(array[0]));
 					user.setLongitude(Double.toString(array[1]));
 				}
-				if(businesstype != null)
+				if(businesstypes != null)
 				{
-					/*//get user detail and deal usage
-					User user = userDAO.getUsersById("gaurav.shandilya@gmail.com");*/
+					//get user detail and deal usage
+					//User user = userDAO.getUsersById("gaurav.shandilya@gmail.com");
 					Set<Dealsusage> dealUsage = user.getDealsusages();	
 					
 					// get user contects				
@@ -79,74 +81,41 @@ public class DealSearch implements IDealSearch {
 					
 					// user group member 
 					List<Jeeyohgroup> jeeyohGroup = userDAO.getUserGroups(user.getUserId());
-								
-					Set<Business> businessSet = businesstype.getBusinesses();
-					for(Business business :businessSet )
+					for(Businesstype businesstype:businesstypes)
 					{
-						logger.debug("Business data :: "+business.getCity());
-						if(business != null)
+						Set<Business> businessSet = businesstype.getBusinesses();
+						for(Business business :businessSet )
 						{
-							
-							if(business.getLattitude() == null && business.getLongitude() == null || (business.getLattitude().trim().equals("") && business.getLongitude().trim().equals(""))  || (business.getLattitude().trim().equals("0.0") && business.getLongitude().trim().equals("0.0")))
+							logger.debug("Business data :: "+business.getCity());
+							if(business != null)
 							{
-								array = getLatLong(business.getPostalCode());
-								business.setLattitude(Double.toString(array[0]));
-								business.setLongitude(Double.toString(array[1]));
-							}
-							double distance = distance(Double.parseDouble(user.getLattitude()), Double.parseDouble(user.getLongitude()), Double.parseDouble(business.getLattitude()), Double.parseDouble(business.getLongitude()), "M");
-							logger.debug("Distance::  "+distance +" lat::  "+user.getLattitude()+" lon::  "+user.getLongitude());
-							if(distance <=50)
-							{
-							
-								Set<Deals> deals = business.getDealses();	
-								for(Deals deal :deals )
+								
+								if(business.getLattitude() == null && business.getLongitude() == null || (business.getLattitude().trim().equals("") && business.getLongitude().trim().equals(""))  || (business.getLattitude().trim().equals("0.0") && business.getLongitude().trim().equals("0.0")))
 								{
-									
-									// rules level 1 , level 2 , level3 or  level 6
-									boolean saveDeal = false;						
-									for(Dealsusage dealsusage : dealUsage) {
-										//logger.debug("DealSearch ==> search ==> dealusage ==> " + dealsusage.getIsFavorite());
-										if(deal.getId() == dealsusage.getDeals().getId())
-										{
-											int likeCount = dealDAO.getDealsLikeCounts(dealsusage.getDeals().getId());
-											logger.debug("Like COUNT :::::"+likeCount);
-											if(dealsusage.getIsFavorite() || dealsusage.getIsLike() || likeCount >= 2)
-											{
-												logger.debug("Cross basic three level3",deal.getId());
-												saveDeal = true;
-												// Get time---
-												Date date = new Date();
-												// add top of deal suggestion box
-												Userdealssuggestion dealSuggestion = new Userdealssuggestion();
-												dealSuggestion.setCreatedtime(date);
-												dealSuggestion.setDeals(deal);
-												dealSuggestion.setIsFavorite(true);
-												dealSuggestion.setIsFollowing(true);
-												dealSuggestion.setIsLike(true);
-												dealSuggestion.setIsRedempted(true);
-												dealSuggestion.setUpdatedtime(date);
-												dealSuggestion.setUser(user);
-												dealDAO.saveSuggestions(dealSuggestion);						
-												 									
-												
-											}
-											
-											
-										}
-										
-									}
-									if(!saveDeal)
+									array = getLatLong(business.getPostalCode());
+									business.setLattitude(Double.toString(array[0]));
+									business.setLongitude(Double.toString(array[1]));
+								}
+								double distance = distance(Double.parseDouble(user.getLattitude()), Double.parseDouble(user.getLongitude()), Double.parseDouble(business.getLattitude()), Double.parseDouble(business.getLongitude()), "M");
+								logger.debug("Distance::  "+distance +" lat::  "+user.getLattitude()+" lon::  "+user.getLongitude());
+								if(distance <=50)
+								{
+								
+									Set<Deals> deals = business.getDealses();	
+									for(Deals deal :deals )
 									{
-										logger.debug("IN COMMUNITY:");							
-										if(userCommunities != null) {
-											
-											for(Page community : userCommunities) {
-												
-												int dealbusinessId = deal.getBusiness().getId();
-												int pagebusinessId = community.getBusiness().getId();
-												if( dealbusinessId == pagebusinessId)
+										
+										// rules level 1 , level 2 , level3 or  level 6
+										boolean saveDeal = false;						
+										for(Dealsusage dealsusage : dealUsage) {
+											//logger.debug("DealSearch ==> search ==> dealusage ==> " + dealsusage.getIsFavorite());
+											if(deal.getId() == dealsusage.getDeals().getId())
+											{
+												int likeCount = dealDAO.getDealsLikeCounts(dealsusage.getDeals().getId());
+												logger.debug("Like COUNT :::::"+likeCount);
+												if(dealsusage.getIsFavorite() || dealsusage.getIsLike() || likeCount >= 2)
 												{
-													logger.debug("ENTRY HERE :::: ");
+													logger.debug("Cross basic three level3",deal.getId());
 													saveDeal = true;
 													// Get time---
 													Date date = new Date();
@@ -160,21 +129,138 @@ public class DealSearch implements IDealSearch {
 													dealSuggestion.setIsRedempted(true);
 													dealSuggestion.setUpdatedtime(date);
 													dealSuggestion.setUser(user);
-													dealDAO.saveSuggestions(dealSuggestion);
+													dealDAO.saveSuggestions(dealSuggestion);						
+													 									
+													
 												}
 												
+												
+											}
+											
+										}
+										if(!saveDeal)
+										{
+											logger.debug("IN COMMUNITY:");							
+											if(userCommunities != null) {
+												
+												for(Page community : userCommunities) {
+													
+													int dealbusinessId = deal.getBusiness().getId();
+													int pagebusinessId = community.getBusiness().getId();
+													if( dealbusinessId == pagebusinessId)
+													{
+														logger.debug("ENTRY HERE :::: ");
+														saveDeal = true;
+														// Get time---
+														Date date = new Date();
+														// add top of deal suggestion box
+														Userdealssuggestion dealSuggestion = new Userdealssuggestion();
+														dealSuggestion.setCreatedtime(date);
+														dealSuggestion.setDeals(deal);
+														dealSuggestion.setIsFavorite(true);
+														dealSuggestion.setIsFollowing(true);
+														dealSuggestion.setIsLike(true);
+														dealSuggestion.setIsRedempted(true);
+														dealSuggestion.setUpdatedtime(date);
+														dealSuggestion.setUser(user);
+														dealDAO.saveSuggestions(dealSuggestion);
+													}
+													
+												}
 											}
 										}
-									}
+										
+										//get user contacts group for rules level 4
+										if(!saveDeal)
+										{
+												if(userContacts != null) {
+													for(User contact : userContacts) {
+														if(contact != null) {
+															logger.debug("contact 4 ==> "+contact.getFirstName());
+															Set<Dealsusage> contactDealUsage = contact.getDealsusages();									
+															for(Dealsusage dealsusage1 : contactDealUsage) {
+																logger.debug("DEAL LEVEL 4 ==> "+ dealsusage1.getIsFavorite());
+														
+																int dealId = deal.getId();
+																int dealusageId = dealsusage1.getDeals().getId();
+																if(dealId == dealusageId)
+																{
+																	if(dealsusage1.getIsFavorite() || dealsusage1.getIsLike() || dealsusage1.getIsSuggested() || dealsusage1.getIsFollowing())
+																	{
+																		saveDeal = true;
+																		//logger.debug("Deal in level 4 :: = > "+deal.getId());
+																		Date date = new Date();
+																		Userdealssuggestion dealSuggestion = new Userdealssuggestion();
+																		dealSuggestion.setCreatedtime(date);
+																		dealSuggestion.setDeals(deal);
+																		dealSuggestion.setIsFavorite(true);
+																		dealSuggestion.setIsFollowing(true);
+																		dealSuggestion.setIsLike(true);
+																		dealSuggestion.setIsRedempted(true);
+																		dealSuggestion.setUpdatedtime(date);
+																		dealSuggestion.setUser(user);
+																		dealDAO.saveSuggestions(dealSuggestion);
+																	}
+															   }
+															}
+															
+														}
+													}
+												}
+										}
+										
+										// for user likes item
 									
-									//get user contacts group for rules level 4
-									if(!saveDeal)
-									{
-											if(userContacts != null) {
-												for(User contact : userContacts) {
-													if(contact != null) {
-														logger.debug("contact 4 ==> "+contact.getFirstName());
-														Set<Dealsusage> contactDealUsage = contact.getDealsusages();									
+										if(!saveDeal)
+										{
+										
+											List<UserCategory> userCategoryList = userDAO.getUserCategoryLikesById(user.getUserId());
+											  if(userCategoryList != null)
+											  {
+											   for(UserCategory userCategory : userCategoryList) {
+												   
+												   List<Deals> catDeals = dealDAO.getDealsByUserCategory(userCategory.getItemCategory(),userCategory.getItemType());
+												   for(Deals catdeal:catDeals)
+												   {
+													    int dealId = deal.getId();
+														int catDealId = catdeal.getId();
+														if(dealId == catDealId)
+														{
+															saveDeal = true;
+															Date date = new Date();
+															Userdealssuggestion dealSuggestion = new Userdealssuggestion();
+															dealSuggestion.setCreatedtime(date);
+															dealSuggestion.setDeals(deal);
+															dealSuggestion.setIsFavorite(true);
+															dealSuggestion.setIsFollowing(true);
+															dealSuggestion.setIsLike(true);
+															dealSuggestion.setIsRedempted(true);
+															dealSuggestion.setUpdatedtime(date);
+															dealSuggestion.setUser(user);
+															dealDAO.saveSuggestions(dealSuggestion);
+														}
+													   
+												   }
+												   
+											   }
+											  }
+											    
+											    
+										}
+										
+										//// for jeeyohgroups
+										if(!saveDeal)
+										{
+										
+											  if(jeeyohGroup != null)
+											  {
+											   for(Jeeyohgroup jeeyohGroup1 : jeeyohGroup) {
+												   
+												   Set<Groupusermap> groups   =jeeyohGroup1.getGroupusermaps();
+												   for (Groupusermap groups1 : groups)
+												   {
+													   User groupMember = groups1.getUser();
+													   Set<Dealsusage> contactDealUsage = groupMember.getDealsusages();									
 														for(Dealsusage dealsusage1 : contactDealUsage) {
 															logger.debug("DEAL LEVEL 4 ==> "+ dealsusage1.getIsFavorite());
 													
@@ -184,7 +270,7 @@ public class DealSearch implements IDealSearch {
 															{
 																if(dealsusage1.getIsFavorite() || dealsusage1.getIsLike() || dealsusage1.getIsSuggested() || dealsusage1.getIsFollowing())
 																{
-																	//logger.debug("Deal in level 4 :: = > "+deal.getId());
+																	saveDeal = true;																
 																	Date date = new Date();
 																	Userdealssuggestion dealSuggestion = new Userdealssuggestion();
 																	dealSuggestion.setCreatedtime(date);
@@ -199,101 +285,20 @@ public class DealSearch implements IDealSearch {
 																}
 														   }
 														}
-														
-													}
-												}
-											}
-									}
-									
-									// for user likes item
-								
-									if(!saveDeal)
-									{
-									
-										List<UserCategory> userCategoryList = userDAO.getUserCategoryLikesById(user.getUserId());
-										  if(userCategoryList != null)
-										  {
-										   for(UserCategory userCategory : userCategoryList) {
-											   
-											   List<Deals> catDeals = dealDAO.getDealsByUserCategory(userCategory.getItemCategory(),userCategory.getItemType());
-											   for(Deals catdeal:catDeals)
-											   {
-												    int dealId = deal.getId();
-													int catDealId = catdeal.getId();
-													if(dealId == catDealId)
-													{
-														Date date = new Date();
-														Userdealssuggestion dealSuggestion = new Userdealssuggestion();
-														dealSuggestion.setCreatedtime(date);
-														dealSuggestion.setDeals(deal);
-														dealSuggestion.setIsFavorite(true);
-														dealSuggestion.setIsFollowing(true);
-														dealSuggestion.setIsLike(true);
-														dealSuggestion.setIsRedempted(true);
-														dealSuggestion.setUpdatedtime(date);
-														dealSuggestion.setUser(user);
-														dealDAO.saveSuggestions(dealSuggestion);
-													}
+												   }
+												  
+												   
 												   
 											   }
-											   
-										   }
-										  }
-										    
-										    
-									}
-									
-									//// for jeeyohgroups
-									if(!saveDeal)
-									{
-									
-										
-										  if(jeeyohGroup != null)
-										  {
-										   for(Jeeyohgroup jeeyohGroup1 : jeeyohGroup) {
-											   
-											   Set<Groupusermap> groups   =jeeyohGroup1.getGroupusermaps();
-											   for (Groupusermap groups1 : groups)
-											   {
-												   User groupMember = groups1.getUser();
-												   Set<Dealsusage> contactDealUsage = groupMember.getDealsusages();									
-													for(Dealsusage dealsusage1 : contactDealUsage) {
-														logger.debug("DEAL LEVEL 4 ==> "+ dealsusage1.getIsFavorite());
-												
-														int dealId = deal.getId();
-														int dealusageId = dealsusage1.getDeals().getId();
-														if(dealId == dealusageId)
-														{
-															if(dealsusage1.getIsFavorite() || dealsusage1.getIsLike() || dealsusage1.getIsSuggested() || dealsusage1.getIsFollowing())
-															{
-																
-																Date date = new Date();
-																Userdealssuggestion dealSuggestion = new Userdealssuggestion();
-																dealSuggestion.setCreatedtime(date);
-																dealSuggestion.setDeals(deal);
-																dealSuggestion.setIsFavorite(true);
-																dealSuggestion.setIsFollowing(true);
-																dealSuggestion.setIsLike(true);
-																dealSuggestion.setIsRedempted(true);
-																dealSuggestion.setUpdatedtime(date);
-																dealSuggestion.setUser(user);
-																dealDAO.saveSuggestions(dealSuggestion);
-															}
-													   }
-													}
-											   }
-											  
-											   
-											   
-										   }
-										  }
-										    
-										    
+											  }
+											    
+											    
+										}
 									}
 								}
+								}
+													
 							}
-							}
-												
 						}
 					}
 			}

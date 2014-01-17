@@ -9,11 +9,8 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-<<<<<<< HEAD
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Projections;
-=======
->>>>>>> 1846fe671c0cdaf33ff00c596a7334be53d58b17
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -212,10 +209,7 @@ public class DealsDAO implements IDealsDAO {
 			// TODO Auto-generated method stub
 			
 			Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Deals.class);
-<<<<<<< HEAD
 			//criteria.setProjection(Projections.distinct(Projections.property("dealId")));
-=======
->>>>>>> 1846fe671c0cdaf33ff00c596a7334be53d58b17
 			criteria.createAlias("business", "business");
 			criteria.createAlias("business.businesstype", "businesstype");
 			//criteria.createAlias("tags", "tags");
@@ -232,15 +226,9 @@ public class DealsDAO implements IDealsDAO {
 			if(keyword != null && keyword.isEmpty() == false)
 			{
 				logger.debug("IN KEYWORD CHECKING ::: ");
-<<<<<<< HEAD
 				criteria.add(Restrictions.disjunction().add(Restrictions.like("title", "%" + keyword.trim() + "%"))
 				.add(Restrictions.like("dealUrl", "%" + keyword.trim() + "%"))
 				.add(Restrictions.like("dealId", "%" + keyword.trim() + "%")));
-=======
-				criteria.add(Restrictions.like("title", "%" + keyword.trim() + "%"));
-				criteria.add(Restrictions.like("dealUrl", "%" + keyword.trim() + "%"));
-				criteria.add(Restrictions.like("dealId", "%" + keyword.trim() + "%"));
->>>>>>> 1846fe671c0cdaf33ff00c596a7334be53d58b17
 				//criteria.add(Restrictions.like("tags.name", "%" + keyword + "%"));
 				
 			}
@@ -252,10 +240,7 @@ public class DealsDAO implements IDealsDAO {
 		@Override
 		public List<Userdealssuggestion> getDealsSuggestion(int id)
 		{
-<<<<<<< HEAD
 			logger.debug("IN user deal suggestion ::: "+id);
-=======
->>>>>>> 1846fe671c0cdaf33ff00c596a7334be53d58b17
 			List<Userdealssuggestion> dealSuggestionList = null;
 			String hqlQuery = "from Userdealssuggestion a where a.user.userId = :id";
 			try
@@ -269,7 +254,6 @@ public class DealsDAO implements IDealsDAO {
 				e.printStackTrace();
 			}
 			return dealSuggestionList;
-<<<<<<< HEAD
 			
 		}
 
@@ -277,15 +261,6 @@ public class DealsDAO implements IDealsDAO {
 		public List<Deals> getUserDeals(Integer userId) {
 			// TODO Auto-generated method stub
 			
-=======
-			
-		}
-
-		@Override
-		public List<Deals> getUserDeals(Integer userId) {
-			// TODO Auto-generated method stub
-			
->>>>>>> 1846fe671c0cdaf33ff00c596a7334be53d58b17
 			List<Deals> deals= null;
 			String hqlQuery = "from Deals where id in(select d.deals.id from Dealsusage d where d.user.userId =:userId)";
 			try
@@ -343,7 +318,6 @@ public class DealsDAO implements IDealsDAO {
 			List<Deals> dealsList = criteria.list();
 			return dealsList;
 			
-<<<<<<< HEAD
 		}
 		
 		@Override
@@ -382,8 +356,6 @@ public class DealsDAO implements IDealsDAO {
 			
 			List<Userdealssuggestion> dealsList = criteria.list();
 			return dealsList;
-=======
->>>>>>> 1846fe671c0cdaf33ff00c596a7334be53d58b17
 		}
 		
 }

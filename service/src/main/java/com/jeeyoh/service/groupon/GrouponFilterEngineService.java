@@ -36,10 +36,6 @@ import com.jeeyoh.persistence.domain.Gdealoption;
 import com.jeeyoh.persistence.domain.Gdivision;
 import com.jeeyoh.persistence.domain.Gmerchant;
 import com.jeeyoh.persistence.domain.Gtags;
-<<<<<<< HEAD
-=======
-import com.jeeyoh.persistence.domain.Tags;
->>>>>>> 1846fe671c0cdaf33ff00c596a7334be53d58b17
 
 @Component("grouponFilterEngine")
 public class GrouponFilterEngineService implements IGrouponFilterEngineService {
@@ -128,54 +124,10 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 									{
 										if(businessList.isEmpty())
 										{
-<<<<<<< HEAD
 											Set<Gtags> tags = gdeal.getGtagses();
 											Businesstype businesstype = null;
 
 											for(Gtags gtag :tags)
-=======
-											if(businessList.isEmpty())
-											{
-												// 
-												Set<Gtags> tags = gdeal.getGtagses();
-												Businesstype businesstype = null;
-												//Businesstype businesstype = businessDAO.getBusinesstypeByType("RESTAURANT");
-												for(Gtags gtag :tags)
-												{
-													String name = gtag.getName();
-													logger.debug("Check Tag Name ::: "+name);
-													
-													/*if(name.toLowerCase().contains("movie"))
-													{
-														 businesstype = businessDAO.getBusinesstypeByType("MOVIE");
-													}*/
-												    if(name.toLowerCase().contains("restaurants"))
-													{
-														 businesstype = businessDAO.getBusinesstypeByType("RESTAURANT");
-													}
-													else if(name.toLowerCase().contains("sport"))
-													{
-														businesstype = businessDAO.getBusinesstypeByType("SPORT");
-													}
-													else if(name.toLowerCase().contains("spa"))
-													{
-														businesstype = businessDAO.getBusinesstypeByType("SPA");
-													}
-													
-													
-												}											
-											
-												Business business = new Business();
-												business.setName(gmerchant.getName());
-												business.setBusinessId(gmerchant.getMerchantId());
-												business.setWebsiteUrl(gmerchant.getWebsiteUrl());
-												business.setBusinesstype(businesstype);
-												businessDAO.saveBusiness(business);
-												businessList = businessDAO.getBusinessByIdForGroupon(business.getBusinessId());
-												deals.setBusiness(businessList.get(0));
-											}
-											else
->>>>>>> 1846fe671c0cdaf33ff00c596a7334be53d58b17
 											{
 												String name = gtag.getName();
 												logger.debug("Check Tag Name ::: "+name);
@@ -228,7 +180,6 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 										}
 									}
 
-<<<<<<< HEAD
 									Set<Gdealoption> gdealoption1 = gdeal.getGdealoptions();
 									logger.debug("loadDeals => gdealoption size " + gdeal.getId()+"   :   " +gdealoption1.size());
 
@@ -259,50 +210,6 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 									dealsDAO.saveDeal(deals,batch_size);
 									break;
 								}
-=======
-										Set<Gdealoption> gdealoption1 = gdeal.getGdealoptions();
-										logger.debug("loadDeals => gdealoption size " + gdeal.getId()+"   :   " +gdealoption1.size());
-
-										if(gdealoption1 != null) {
-											Set<Dealoption> dealOptions = new HashSet<Dealoption>();
-											Dealoption dealOption = null;
-											for(Gdealoption option : gdealoption1) {
-												dealOption = new Dealoption();
-												dealOption.setTitle(option.getTitle());
-												dealOption.setSoldQuantity(option.getSoldQuantity());
-												dealOption.setOptionId(option.getOptionId());										
-												dealOption.setDiscountPercent(option.getDiscountPercent());
-												dealOption.setInitialQuantity(option.getInitialQuantity());
-												dealOption.setRemainingQuantity(option.getRemainingQuantity());
-												dealOption.setMaximumPurchaseQuantity(option.getMaximumPurchaseQuantity());
-												dealOption.setMinimumPurchaseQuantity(option.getMinimumPurchaseQuantity());
-												dealOption.setExternalUrl(option.getExternalUrl());
-												dealOption.setBuyUrl(option.getBuyUrl());
-												dealOption.setExpiresAt(new DateTime(option.getExpiresAt()).toDate());
-
-												dealOption.setDeals(deals);
-												dealOptions.add(dealOption);
-											}
-											deals.setDealoptions(dealOptions);
-										}		
-										
-										Set<Gtags> tags = gdeal.getGtagses();
-										if(tags != null) 
-										{
-											Set<Tags> tagsset = new HashSet<Tags>();
-											for(Gtags tag : tags) {
-												Tags tag1 = new Tags();
-												tag1.setDeal(deals);
-												tag1.setName(tag.getName());
-												tagsset.add(tag1);
-											}
-											deals.setTags(tagsset);
-										}
-										logger.debug("loadDeals => count ");
-										dealsDAO.saveDeal(deals,batch_size);
-										break;
-									}
->>>>>>> 1846fe671c0cdaf33ff00c596a7334be53d58b17
 							} catch (ParseException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();

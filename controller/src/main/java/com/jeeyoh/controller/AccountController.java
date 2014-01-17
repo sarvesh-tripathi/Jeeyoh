@@ -1,10 +1,7 @@
 package com.jeeyoh.controller;
 
 import java.util.List;
-<<<<<<< HEAD
 import java.util.Set;
-=======
->>>>>>> 1846fe671c0cdaf33ff00c596a7334be53d58b17
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,10 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.jeeyoh.model.search.DealModel;
 import com.jeeyoh.model.search.MainModel;
-<<<<<<< HEAD
 import com.jeeyoh.persistence.domain.Deals;
-=======
->>>>>>> 1846fe671c0cdaf33ff00c596a7334be53d58b17
 import com.jeeyoh.service.fandango.IFandangoService;
 import com.jeeyoh.service.groupon.IGrouponClient;
 import com.jeeyoh.service.groupon.IGrouponFilterEngineService;
@@ -191,11 +185,7 @@ public class AccountController {
 		String location = request.getParameter("location");
 		String emailId = request.getParameter("emailId");
 		logger.debug("PARAMETER :: "+keyword+ " category "+ category + "Location" + location);
-<<<<<<< HEAD
 		Set<Deals> deals = searchDeals.getDeals(keyword,category,location,emailId);		
-=======
-		List<DealModel> deals = searchDeals.getDeals(keyword,category,location,emailId);		
->>>>>>> 1846fe671c0cdaf33ff00c596a7334be53d58b17
 		MainModel mainModel = new MainModel();
 		if(deals != null)
 		{
@@ -215,11 +205,7 @@ public class AccountController {
 		ModelAndView modelAndView = new ModelAndView("mydeals");
 		
 		String emailId = request.getParameter("emailId");
-<<<<<<< HEAD
 		Set<Deals> deals = searchDeals.getUserDeals(emailId);		
-=======
-		List<DealModel> deals = searchDeals.getUserDeals(emailId);		
->>>>>>> 1846fe671c0cdaf33ff00c596a7334be53d58b17
 		MainModel mainModel = new MainModel();
 		if(deals != null)
 		{
@@ -238,15 +224,9 @@ public class AccountController {
 		
 		logger.debug("Deal getmydeals  :: ");
 		ModelAndView modelAndView = new ModelAndView("contactandcommunitydeals");
-<<<<<<< HEAD
 		String emailId = request.getParameter("emailId");
 		///Set<DealModel> deals = searchDeals.getUserContactAndCommunityDeals(emailId);		
 		Set<Deals> deals = searchDeals.getUserContactAndCommunityDeals(emailId);	
-=======
-		
-		String emailId = request.getParameter("emailId");
-		List<DealModel> deals = searchDeals.getUserContactAndCommunityDeals(emailId);		
->>>>>>> 1846fe671c0cdaf33ff00c596a7334be53d58b17
 		MainModel mainModel = new MainModel();
 		if(deals != null)
 		{

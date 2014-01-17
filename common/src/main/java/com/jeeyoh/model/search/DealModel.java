@@ -2,10 +2,7 @@ package com.jeeyoh.model.search;
 
 public class DealModel {
 	
-<<<<<<< HEAD
 	
-=======
->>>>>>> 1846fe671c0cdaf33ff00c596a7334be53d58b17
 	private String title;
 	private String dealUrl;
 	private String status;
