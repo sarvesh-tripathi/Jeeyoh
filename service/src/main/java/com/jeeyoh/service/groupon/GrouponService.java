@@ -88,6 +88,8 @@ public class GrouponService implements IGrouponService {
 	public void loadDeals(String country) {
 		logger.debug("Inside loadDeals");
 		List<Gdivision> divisions = divisionDAO.getDivisionsByCountry(country);
+		//List<Gdivision> divisions = divisionDAO.getDivisionsById(560);
+		int count = 0;
 		if(divisions != null) {
 			
 			String longitude;
@@ -243,7 +245,6 @@ public class GrouponService implements IGrouponService {
 										}
 										deal.setGdealtypes(dealTypesSet);
 									}
-									
 								}								
 								dealsDAO.addDeals(deal,batch_size);
 							}

@@ -45,7 +45,7 @@ public class YelpClient {
                 String category = "food"; 
                 String radius = "40000"; 
                 String limit = "20"; 
-                String offset = "0"; 
+                String offset = "1120"; 
                 String sort = "0"; 
                 //String term = "food";
                 String location = "Indianapolis";
@@ -113,7 +113,7 @@ public class YelpClient {
         }
         public void business() {
     		
-   		 String service = "http://api.yelp.com/v2/business/" + "texas-gourmet-beef-sticks-arlington"; 
+   		 String service = "http://api.yelp.com/v2/business/" + "pinos-prime-meat-market-new-york"; 
    		 YelpBusinessResponse searchResponse = null;
    	        try { 
    	                
@@ -171,8 +171,8 @@ public class YelpClient {
          */ 
         public static void main(String[] args) { 
                 // TODO Auto-generated method stub 
-               // new YelpClient().start(); 
-        	   new YelpClient().business(); 
+               new YelpClient().start(); 
+        	   //new YelpClient().business(); 
         }
 } 
 

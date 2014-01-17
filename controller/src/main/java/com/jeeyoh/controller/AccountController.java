@@ -1,6 +1,7 @@
 package com.jeeyoh.controller;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.jeeyoh.model.search.DealModel;
 import com.jeeyoh.model.search.MainModel;
+import com.jeeyoh.persistence.domain.Deals;
 import com.jeeyoh.service.fandango.IFandangoService;
 import com.jeeyoh.service.groupon.IGrouponClient;
 import com.jeeyoh.service.groupon.IGrouponFilterEngineService;
@@ -129,7 +131,8 @@ public class AccountController {
 	public ModelAndView searchYelp(HttpServletRequest request,
 			HttpServletResponse httpresponse) {
 		ModelAndView modelAndView = new ModelAndView("home");
-		yelpService.search();
+		//yelpService.search();
+		yelpService.searchBusiness();
 		return modelAndView;
 	}
 	
@@ -204,7 +207,7 @@ public class AccountController {
 		String location = request.getParameter("location");
 		String emailId = request.getParameter("emailId");
 		logger.debug("PARAMETER :: "+keyword+ " category "+ category + "Location" + location);
-		List<DealModel> deals = searchDeals.getDeals(keyword,category,location,emailId);		
+		Set<Deals> deals = searchDeals.getDeals(keyword,category,location,emailId);		
 		MainModel mainModel = new MainModel();
 		if(deals != null)
 		{
@@ -224,7 +227,7 @@ public class AccountController {
 		ModelAndView modelAndView = new ModelAndView("mydeals");
 		
 		String emailId = request.getParameter("emailId");
-		List<DealModel> deals = searchDeals.getUserDeals(emailId);		
+		Set<Deals> deals = searchDeals.getUserDeals(emailId);		
 		MainModel mainModel = new MainModel();
 		if(deals != null)
 		{
@@ -243,9 +246,9 @@ public class AccountController {
 		
 		logger.debug("Deal getmydeals  :: ");
 		ModelAndView modelAndView = new ModelAndView("contactandcommunitydeals");
-		
 		String emailId = request.getParameter("emailId");
-		List<DealModel> deals = searchDeals.getUserContactAndCommunityDeals(emailId);		
+		///Set<DealModel> deals = searchDeals.getUserContactAndCommunityDeals(emailId);		
+		Set<Deals> deals = searchDeals.getUserContactAndCommunityDeals(emailId);	
 		MainModel mainModel = new MainModel();
 		if(deals != null)
 		{

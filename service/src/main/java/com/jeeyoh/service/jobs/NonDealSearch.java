@@ -15,6 +15,7 @@ import com.google.code.geocoder.GeocoderRequestBuilder;
 import com.google.code.geocoder.model.GeocodeResponse;
 import com.google.code.geocoder.model.GeocoderRequest;
 import com.google.code.geocoder.model.GeocoderResult;
+import com.google.code.geocoder.model.LatLng;
 import com.jeeyoh.persistence.IBusinessDAO;
 import com.jeeyoh.persistence.IUserDAO;
 import com.jeeyoh.persistence.domain.Business;

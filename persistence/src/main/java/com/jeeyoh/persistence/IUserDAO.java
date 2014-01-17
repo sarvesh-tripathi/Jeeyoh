@@ -15,7 +15,7 @@ import com.jeeyoh.persistence.domain.Usernondealsuggestion;
 public interface IUserDAO {
 	public List<User> getUsers();
 	
-	 public User getUsersById(String id);
+	public User getUsersById(String id);
 	
 	public List<User> getUserContacts(int userId);
 	
@@ -35,5 +35,6 @@ public interface IUserDAO {
 	public List<Usernondealsuggestion> isNonDealSuggestionExists(int userId, int businessId);
 	public List<Usernondealsuggestion> getuserNonDealSuggestionsByEmailId(String emailId);
 	public List<Page> getUserCommunitiesByEmailId(String emailId);
-	List<UserCategory> getUserCategoryLikesById(int userId);
+	public List<UserCategory> getUserCategoryLikesById(int userId);
+
 }

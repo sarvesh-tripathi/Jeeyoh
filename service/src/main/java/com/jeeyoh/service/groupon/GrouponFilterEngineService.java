@@ -89,7 +89,7 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 									batch_size++;
 									logger.debug("gdeal id:: "+ gdeal.getId());
 									gdeal.setGdealoptions(gdealoption);
-									
+
 									Deals deals = new Deals();
 									deals.setDealId(gdeal.getDealId());
 									deals.setDealUrl(gdeal.getDealUrl());
@@ -281,6 +281,12 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 			}
 			
 			logger.debug("Lat/Long :  " + zipcode);
+			List<GeocoderResult> results = geocoderResponse.getResults();
+			logger.debug("results :  "+results);
+			List<GeocoderAddressComponent> geList= results.get(0).getAddressComponents();
+			zipcode = geList.get(geList.size()-1).getLongName();
+			
+			logger.debug("Lat/Long :  " + zipcode);
 
 		}catch (Exception e) {
 			logger.debug(e.toString());
@@ -288,4 +294,5 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 		}
 		return zipcode;
 	}
+
 }

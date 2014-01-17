@@ -23,7 +23,7 @@ import com.jeeyoh.model.groupon.ResponseModel;
 @Component("grouponClient")
 public class GrouponClient implements IGrouponClient {
 
-	private static Logger logger = LoggerFactory.getLogger(GrouponClient.class);
+	private static Logger logger = LoggerFactory.getLogger("debugLogger");
 
 	protected RestTemplate restTemplate;
 
@@ -111,7 +111,8 @@ public class GrouponClient implements IGrouponClient {
 	}
 
 	public ResponseModel getDealsByDivision(String longitude, String lattitude) {
-		logger.debug(grouponDealsByLatlngAPIUrl);
+		logger.debug("UR L ::: "+grouponDealsByLatlngAPIUrl);
+		logger.debug("LAt :: "+lattitude+" longi :: "+longitude+" client id :::"+grouponClientId);
 		Map<String, String> uriVariables = new HashMap<String, String>();
 		uriVariables.put("clientId", grouponClientId);
 		uriVariables.put("longitude", longitude);

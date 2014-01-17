@@ -1,15 +1,16 @@
 package com.jeeyoh.service.search;
 
-import java.util.List;
+import java.util.Set;
 
 import com.jeeyoh.model.search.DealModel;
+import com.jeeyoh.persistence.domain.Deals;
 
 public interface ISearchDeals {
 
-	List<DealModel> getDeals(String keyword, String category, String location , String emailId);
+	Set<Deals> getDeals(String keyword, String category, String location , String emailId);
 
-	List<DealModel> getUserDeals(String emailId);
+	Set<Deals> getUserDeals(String emailId);
 
-	List<DealModel> getUserContactAndCommunityDeals(String emailId);
+	Set<Deals> getUserContactAndCommunityDeals(String emailId);
 
 }

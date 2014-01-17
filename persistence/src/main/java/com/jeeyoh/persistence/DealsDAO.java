@@ -9,6 +9,8 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,11 +81,12 @@ public class DealsDAO implements IDealsDAO {
 		{
 			tx = session.beginTransaction();
 			session.saveOrUpdate(deals);	
-			
+
 			if( batch_size % 20 == 0 ) {
 				session.flush();
 				session.clear();
 			}
+
 			tx.commit();
 		}
 		catch (HibernateException e) {
@@ -209,6 +212,7 @@ public class DealsDAO implements IDealsDAO {
 			// TODO Auto-generated method stub
 			
 			Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Deals.class);
+			//criteria.setProjection(Projections.distinct(Projections.property("dealId")));
 			criteria.createAlias("business", "business");
 			criteria.createAlias("business.businesstype", "businesstype");
 			//criteria.createAlias("tags", "tags");
@@ -225,9 +229,9 @@ public class DealsDAO implements IDealsDAO {
 			if(keyword != null && keyword.isEmpty() == false)
 			{
 				logger.debug("IN KEYWORD CHECKING ::: ");
-				criteria.add(Restrictions.like("title", "%" + keyword.trim() + "%"));
-				criteria.add(Restrictions.like("dealUrl", "%" + keyword.trim() + "%"));
-				criteria.add(Restrictions.like("dealId", "%" + keyword.trim() + "%"));
+				criteria.add(Restrictions.disjunction().add(Restrictions.like("title", "%" + keyword.trim() + "%"))
+				.add(Restrictions.like("dealUrl", "%" + keyword.trim() + "%"))
+				.add(Restrictions.like("dealId", "%" + keyword.trim() + "%")));
 				//criteria.add(Restrictions.like("tags.name", "%" + keyword + "%"));
 				
 			}
@@ -239,6 +243,7 @@ public class DealsDAO implements IDealsDAO {
 		@Override
 		public List<Userdealssuggestion> getDealsSuggestion(int id)
 		{
+			logger.debug("IN user deal suggestion ::: "+id);
 			List<Userdealssuggestion> dealSuggestionList = null;
 			String hqlQuery = "from Userdealssuggestion a where a.user.userId = :id";
 			try
@@ -317,8 +322,8 @@ public class DealsDAO implements IDealsDAO {
 			return dealsList;
 			
 		}
-		
-			@SuppressWarnings("unchecked")
+
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Deals> getDealsByUserEmail(String userEmail) {
 		List<Deals> dealsList = null;
@@ -331,6 +336,44 @@ public class DealsDAO implements IDealsDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return dealsList;
+	}
+
+	@Override
+	public List<Userdealssuggestion> userDealsSuggestedByJeeyoh(String keyword, String category,
+				String location, int id) {
+		logger.error("getDealsByKeywords ==== > "+location);
+		logger.error("getDealsByKeywords ==== > "+location.isEmpty());
+		// TODO Auto-generated method stub
+		
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Userdealssuggestion.class);
+		criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+		criteria.createAlias("deals", "deals");			
+		criteria.createAlias("deals.business", "business");
+		criteria.createAlias("business.businesstype", "businesstype");
+		criteria.add(Restrictions.eq("user.userId", id));
+		//criteria.createAlias("tags", "tags");
+		if(category != null && category.isEmpty() == false)
+		{
+			logger.debug("IN CATEGORY CHECKING ::: ");
+			criteria.add(Restrictions.eq("businesstype.businessType", category));
+		}
+		if(location != null && location.isEmpty()== false)
+		{
+			logger.debug("IN LOCATION CHECKING ::: ");
+			criteria.add(Restrictions.eq("business.postalCode", location.trim()));
+		}
+		if(keyword != null && keyword.isEmpty() == false)
+		{
+			logger.debug("IN KEYWORD CHECKING ::: ");
+			criteria.add(Restrictions.disjunction().add(Restrictions.like("deals.title", "%" + keyword.trim() + "%"))
+			.add(Restrictions.like("deals.dealUrl", "%" + keyword.trim() + "%"))
+			.add(Restrictions.like("deals.dealId", "%" + keyword.trim() + "%")));
+			//criteria.add(Restrictions.like("tags.name", "%" + keyword + "%"));
+			
+		}
+		
+		List<Userdealssuggestion> dealsList = criteria.list();
 		return dealsList;
 	}
 		

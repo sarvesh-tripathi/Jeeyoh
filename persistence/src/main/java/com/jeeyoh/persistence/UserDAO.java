@@ -143,29 +143,30 @@ public class UserDAO implements IUserDAO {
 	@Override
 	public void saveNonDealSuggestions(Usernondealsuggestion suggestion, int batch_size) {
 		logger.debug("saveNonDealSuggestions => ");
-		//Session session  = sessionFactory.openSession();
-		/*Transaction tx = session.beginTransaction();
 		try
 		{
-
-			session.save(suggestion);    
-			tx.commit();
-			session.close();*/
-		Session session =  sessionFactory.getCurrentSession();
-		try
-		{
-			session.save(suggestion);
-			if(batch_size % 20 == 0)
-			{
-				session.flush();
-				session.clear();
-			}
-		}
-		catch(HibernateException e)
-		{
-			e.printStackTrace();
-			logger.error("ERROR IN DAO :: = > "+e);
-		}
+		 /* Session session  = sessionFactory.openSession();
+		  Transaction tx = session.beginTransaction()*/;
+		  Session session =  sessionFactory.getCurrentSession();
+		  try
+		  {
+			  session.save(suggestion);
+			  if(batch_size % 20 == 0)
+			  {
+				  session.flush();
+				  session.clear();
+				  
+			  }
+		   /*session.save(suggestion);    
+		   tx.commit();
+		   session.close();*/
+		  }
+		  catch(HibernateException e)
+		  {
+			  e.printStackTrace();
+		   logger.error("ERROR IN DAO :: = > "+e);
+		  }
+		
 	}
 
 	@Override
@@ -316,8 +317,6 @@ public class UserDAO implements IUserDAO {
 		return pageList;
 	}
 
-
-
     @SuppressWarnings("unchecked")
 	 @Override
 	 public List<UserCategory> getUserCategoryLikesById(int userId) {
@@ -336,4 +335,22 @@ public class UserDAO implements IUserDAO {
 	  }
 	  return userCategoryList;
 	 }
+
+    @SuppressWarnings("unchecked")
+	@Override
+	public List<Usernondealsuggestion> getuserNonDealSuggestionsByEmailId(
+			String emailId) {
+		List<Usernondealsuggestion> usernondealsuggestions = null;
+		String hqlQuery = "select a from Usernondealsuggestion a, User b where b.emailId = :emailId and a.user.userId = b.userId";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("emailId", emailId);
+			usernondealsuggestions = (List<Usernondealsuggestion>) query.list();
+		} catch (Exception e) {
+			logger.debug("ERROR::::  "+e.getMessage());
+			e.printStackTrace();
+		}
+		return usernondealsuggestions;
+	}
 }

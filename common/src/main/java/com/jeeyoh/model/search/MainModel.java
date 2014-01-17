@@ -1,5 +1,6 @@
 package com.jeeyoh.model.search;
 
+<<<<<<< HEAD
 import java.util.List;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ public class MainModel {
 	private List<Business> businessList = new ArrayList<Business>();
 	private List<Page> pageList = new ArrayList<Page>();
 	private List<Deals> dealList = new ArrayList<Deals>();
+	private Set<Deals> dealModel;
 	/**
 	 * @param name the name to set
 	 */
@@ -83,14 +85,11 @@ public class MainModel {
 		return dealList;
 	}
 	
-	List<DealModel> dealModel;
-
-	public List<DealModel> getDealModel() {
+	public Set<Deals> getDealModel() {
 		return dealModel;
 	}
 
-	public void setDealModel(List<DealModel> dealModel) {
+	public void setDealModel(Set<Deals> dealModel) {
 		this.dealModel = dealModel;
 	}
-
 }
