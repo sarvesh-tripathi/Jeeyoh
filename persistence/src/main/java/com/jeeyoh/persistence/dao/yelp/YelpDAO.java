@@ -107,6 +107,7 @@ public class YelpDAO implements IYelpDAO {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Ybusiness> getBusiness() {
 
@@ -182,6 +183,7 @@ public class YelpDAO implements IYelpDAO {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Ydealoption> filterdDealByDiscount() {
 		// TODO Auto-generated method stub
@@ -202,6 +204,7 @@ public class YelpDAO implements IYelpDAO {
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Ybusiness> getFilterBusiness() {
 		// TODO Auto-generated method stub

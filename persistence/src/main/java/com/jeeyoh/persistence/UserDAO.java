@@ -30,6 +30,7 @@ public class UserDAO implements IUserDAO {
 	@Autowired
 	private SessionFactory sessionFactory;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<User> getUsers() {
 		System.out.println("inside getUsers");
@@ -47,6 +48,7 @@ public class UserDAO implements IUserDAO {
 		return userList;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<User> getUserContacts(int userId) {
 		List<User> contactList = null;
@@ -62,6 +64,7 @@ public class UserDAO implements IUserDAO {
 		return contactList;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Page> getUserCommunities(int userId) {
 		logger.debug("pageList => ");
@@ -81,6 +84,7 @@ public class UserDAO implements IUserDAO {
 		return pageList;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Pagetype> getCommunityType(int pageId) {
 		logger.debug("pageList CommunityType => ");
@@ -106,6 +110,7 @@ public class UserDAO implements IUserDAO {
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Jeeyohgroup> getUserGroups(int userId) {
 		List<Jeeyohgroup> groupList = null;
@@ -127,6 +132,7 @@ public class UserDAO implements IUserDAO {
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Pageuserlikes> getUserPageProperties(int userId, int pageId) {
 		List<Pageuserlikes> pageProperties = null;
@@ -169,6 +175,7 @@ public class UserDAO implements IUserDAO {
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<User> getUserById(int userId) {
 		System.out.println("inside getUsers");
@@ -187,6 +194,7 @@ public class UserDAO implements IUserDAO {
 		return userList;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Events> getUserCommunityEvents(int userId, int pageId) {
 		logger.debug("pageList => ");
@@ -206,6 +214,7 @@ public class UserDAO implements IUserDAO {
 		return eventsList;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public User getUsersById(String id) {
 		List<User> userList = null;

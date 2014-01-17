@@ -16,7 +16,6 @@ import org.springframework.stereotype.Repository;
 
 import com.jeeyoh.persistence.domain.Business;
 import com.jeeyoh.persistence.domain.Businesstype;
-import com.jeeyoh.persistence.domain.Ybusiness;
 
 @Repository("businessDAO")
 public class BusinessDAO implements IBusinessDAO {
