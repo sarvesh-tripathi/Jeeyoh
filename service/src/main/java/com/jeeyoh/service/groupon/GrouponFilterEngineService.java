@@ -280,13 +280,7 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 				zipcode = geList.get(0).getLongName();
 			}
 			
-			logger.debug("Lat/Long :  " + zipcode);
-			List<GeocoderResult> results = geocoderResponse.getResults();
-			logger.debug("results :  "+results);
-			List<GeocoderAddressComponent> geList= results.get(0).getAddressComponents();
-			zipcode = geList.get(geList.size()-1).getLongName();
-			
-			logger.debug("Lat/Long :  " + zipcode);
+			logger.debug("zipcode :  " + zipcode);
 
 		}catch (Exception e) {
 			logger.debug(e.toString());

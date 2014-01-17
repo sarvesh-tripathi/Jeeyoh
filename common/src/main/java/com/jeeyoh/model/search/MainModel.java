@@ -1,9 +1,8 @@
 package com.jeeyoh.model.search;
 
-<<<<<<< HEAD
-import java.util.List;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import com.jeeyoh.persistence.domain.Business;
 import com.jeeyoh.persistence.domain.Deals;

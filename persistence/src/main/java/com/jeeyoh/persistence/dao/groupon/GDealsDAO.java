@@ -6,7 +6,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,7 @@ public class GDealsDAO implements IGDealsDAO {
 	private SessionFactory sessionFactory;
 
 	@Override
-	public void addDeals(Gdeal deal) {
+	public void addDeals(Gdeal deal, int batch_size) {
 		Session session =  sessionFactory.getCurrentSession();
 		try
 		{

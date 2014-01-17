@@ -14,16 +14,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.jeeyoh.model.search.DealModel;
 import com.jeeyoh.model.search.MainModel;
+import com.jeeyoh.persistence.domain.Business;
 import com.jeeyoh.persistence.domain.Deals;
+import com.jeeyoh.persistence.domain.Page;
 import com.jeeyoh.service.fandango.IFandangoService;
 import com.jeeyoh.service.groupon.IGrouponClient;
 import com.jeeyoh.service.groupon.IGrouponFilterEngineService;
 import com.jeeyoh.service.groupon.IGrouponService;
 import com.jeeyoh.service.jobs.IDealSearch;
 import com.jeeyoh.service.jobs.INonDealSearch;
+import com.jeeyoh.service.search.ICommunitySearch;
+import com.jeeyoh.service.search.INonDealSuggestionSearch;
 import com.jeeyoh.service.search.ISearchDeals;
+import com.jeeyoh.service.search.IUserDealsSearch;
 import com.jeeyoh.service.stubhub.IStubhubService;
 import com.jeeyoh.service.yelp.IYelpFilterEngineService;
 import com.jeeyoh.service.yelp.IYelpService;
@@ -58,6 +62,15 @@ public class AccountController {
 	
 	@Autowired
 	private IStubhubService stubhubService;
+	
+	@Autowired
+	private ICommunitySearch communitySearch;
+	
+	@Autowired
+	private IUserDealsSearch userDealsSearch;
+	
+	@Autowired
+	private INonDealSuggestionSearch nonDealSuggestionSearch;
 	
 	@Autowired
 	private ISearchDeals searchDeals;
