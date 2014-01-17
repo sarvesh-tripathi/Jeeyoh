@@ -272,6 +272,7 @@ public class UserDAO implements IUserDAO {
 		return usernondealsuggestions;
 	}
 
+<<<<<<< HEAD
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Page> getUserCommunitiesByEmailId(String emailId) {
@@ -292,6 +293,8 @@ public class UserDAO implements IUserDAO {
 	}
 
 
+=======
+>>>>>>> 1846fe671c0cdaf33ff00c596a7334be53d58b17
     @SuppressWarnings("unchecked")
 	 @Override
 	 public List<UserCategory> getUserCategoryLikesById(int userId) {
@@ -310,6 +313,7 @@ public class UserDAO implements IUserDAO {
 	  }
 	  return userCategoryList;
 	 }
+<<<<<<< HEAD
 
     @SuppressWarnings("unchecked")
 	@Override
@@ -328,4 +332,6 @@ public class UserDAO implements IUserDAO {
 		}
 		return usernondealsuggestions;
 	}
+=======
+>>>>>>> 1846fe671c0cdaf33ff00c596a7334be53d58b17
 }
