@@ -32,5 +32,8 @@
             </key>
             <one-to-many class="com.jeeyoh.persistence.domain.Usercontactsgroupmap" />
         </set>
+        <property name="isStar" type="java.lang.Boolean">
+            <column name="isStar" />
+        </property>
     </class>
 </hibernate-mapping>

@@ -11,7 +11,7 @@
         <property name="pageType" type="string">
             <column name="pageType" length="13" not-null="true" />
         </property>
-        <set name="pages" inverse="true">
+        <set name="pages" inverse="true" lazy="false">
             <key>
                 <column name="pageTypeId" not-null="true" />
             </key>

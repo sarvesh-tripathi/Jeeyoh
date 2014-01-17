@@ -68,7 +68,7 @@ public class YelpService implements IYelpService {
 							logger.debug("Total Record : : "+total);
 							if(total > 20)
 							{
-								for(int offset = 20; offset <= total;) {
+								for(int offset = 20; offset <= 1000;) {
 									searchResponse = yelpClient.search(city, offset+"");
 									if(searchResponse != null)
 									{

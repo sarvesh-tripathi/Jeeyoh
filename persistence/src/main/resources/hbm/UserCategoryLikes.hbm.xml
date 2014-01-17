@@ -17,8 +17,18 @@
 			class="com.jeeyoh.persistence.domain.UserCategory" fetch="select">
 			<column name="userCategoryId " />
 		</many-to-one>
+		<many-to-one name="userByContactId" class="com.jeeyoh.persistence.domain.User"
+			fetch="select" lazy="false">
+			<column name="userContactId" not-null="true" />
+		</many-to-one>
+		<property name="isActive" type="java.lang.Boolean">
+			<column name="isActive" precision="10" scale="0" />
+		</property>
 		<property name="rank" type="java.lang.Long">
 			<column name="rank" precision="10" scale="0" />
 		</property>
+		<property name="createdTime" type="timestamp">
+            <column name="createdTime" length="19" not-null="true" />
+        </property>
 	</class>
 </hibernate-mapping>

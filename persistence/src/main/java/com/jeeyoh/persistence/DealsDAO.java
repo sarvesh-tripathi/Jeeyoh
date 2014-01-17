@@ -299,11 +299,15 @@ public class DealsDAO implements IDealsDAO {
 
 		@Override
 		public List<Deals> getDealsByUserCategory(String itemCategory,
-				String itemType) {
+				String itemType,String providerName) {
 			Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Deals.class);
 			criteria.createAlias("business", "business");
 			criteria.createAlias("business.businesstype", "businesstype");
 			//criteria.createAlias("tags", "tags");
+			if(providerName != null)
+			{
+				criteria.add(Restrictions.eq("business.name", providerName));
+			}
 			if(itemCategory != null)
 			{
 				criteria.add(Restrictions.eq("businesstype.businessType", itemCategory));
@@ -375,6 +379,25 @@ public class DealsDAO implements IDealsDAO {
 		
 		List<Userdealssuggestion> dealsList = criteria.list();
 		return dealsList;
+	}
+
+	@Override
+	public int userCategoryLikeCount(Integer userCategoryId) {
+		// TODO Auto-generated method stub
+		int rowCount = 0;
+		Session session = sessionFactory.getCurrentSession();
+		String hqlQuery = "select count(*) from UserCategoryLikes a where a.userCategory.userCategoryId=:userCategoryId";
+		try
+		{
+			Query query = session.createQuery(
+					hqlQuery);
+			query.setParameter("userCategoryId", userCategoryId);
+			rowCount = ((Number)query.uniqueResult()).intValue();	
+		}catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		return rowCount;
 	}
 		
 }

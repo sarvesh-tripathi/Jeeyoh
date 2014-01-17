@@ -237,7 +237,7 @@ public class SearchDeals implements ISearchDeals {
 		  {
 		   for(UserCategory userCategory : userCategoryList) {
 			   
-			   List<Deals> catDeals = dealsDAO.getDealsByUserCategory(userCategory.getItemCategory(),userCategory.getItemType());
+			   List<Deals> catDeals = dealsDAO.getDealsByUserCategory(userCategory.getItemCategory(),userCategory.getItemType(),userCategory.getProviderName());
 			   for(Deals deal:catDeals)
 			   {
 				   if(deal != null)

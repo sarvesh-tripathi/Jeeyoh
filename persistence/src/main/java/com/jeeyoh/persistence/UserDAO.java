@@ -2,11 +2,13 @@ package com.jeeyoh.persistence;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,7 @@ import com.jeeyoh.persistence.domain.Pagetype;
 import com.jeeyoh.persistence.domain.Pageuserlikes;
 import com.jeeyoh.persistence.domain.User;
 import com.jeeyoh.persistence.domain.UserCategory;
+import com.jeeyoh.persistence.domain.Usercontacts;
 import com.jeeyoh.persistence.domain.Usernondealsuggestion;
 
 @Repository("userDAO")
@@ -59,7 +62,20 @@ public class UserDAO implements IUserDAO {
 		}
 		return contactList;
 	}
-	
+	@Override
+	public List<Usercontacts> getAllUserContacts(int userId) {
+		List<Usercontacts> contactList = null;
+		String hqlQuery = "from Usercontacts b where b.userByUserId.userId = :userId";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("userId", userId);
+			contactList = (List<Usercontacts>) query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return contactList;
+	}
 	@Override
 	public List<Page> getUserCommunities(int userId) {
 		logger.debug("pageList => ");
@@ -143,8 +159,6 @@ public class UserDAO implements IUserDAO {
 	@Override
 	public void saveNonDealSuggestions(Usernondealsuggestion suggestion, int batch_size) {
 		logger.debug("saveNonDealSuggestions => ");
-		try
-		{
 		 /* Session session  = sessionFactory.openSession();
 		  Transaction tx = session.beginTransaction()*/;
 		  Session session =  sessionFactory.getCurrentSession();
@@ -280,23 +294,6 @@ public class UserDAO implements IUserDAO {
 		 */		return usernondealsuggestions;
 	}
 	
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Usernondealsuggestion> getuserNonDealSuggestionsByEmailId(
-			String emailId) {
-		List<Usernondealsuggestion> usernondealsuggestions = null;
-		String hqlQuery = "select a from Usernondealsuggestion a, User b where b.emailId = :emailId and a.user.userId = b.userId";
-		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(
-					hqlQuery);
-			query.setParameter("emailId", emailId);
-			usernondealsuggestions = (List<Usernondealsuggestion>) query.list();
-		} catch (Exception e) {
-			logger.debug("ERROR::::  "+e.getMessage());
-			e.printStackTrace();
-		}
-		return usernondealsuggestions;
-	}
 
 	@SuppressWarnings("unchecked")
 	@Override

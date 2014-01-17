@@ -84,7 +84,7 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 
 							try {
 								logger.debug("Date::  "+ gdeal.getEndAt() +"  :  "+ sdf.parse(sdf.format((Date)weekendList.get(j))));
-								if(gdeal.getEndAt().before(sdf.parse(sdf.format((Date)weekendList.get(j)))))
+								if(gdeal.getEndAt().before(sdf.parse(sdf.format((Date)weekendList.get(j)))))//gdeal.getEndAt().after(nearWeekend()) && //for weekend test
 								{
 									batch_size++;
 									logger.debug("gdeal id:: "+ gdeal.getId());
@@ -227,6 +227,16 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 	public void filterDealsByExpirationDate() {
 
 	}
+	
+	/*
+	 * Give Upcomming weekend
+	 */
+	public Date nearWeekend()
+	{
+		Calendar c = Calendar.getInstance();
+   	 	c.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
+   	 	return c.getTime(); 
+	}
 
 
 	@SuppressWarnings("unchecked")
@@ -280,13 +290,7 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 				zipcode = geList.get(0).getLongName();
 			}
 			
-			logger.debug("Lat/Long :  " + zipcode);
-			List<GeocoderResult> results = geocoderResponse.getResults();
-			logger.debug("results :  "+results);
-			List<GeocoderAddressComponent> geList= results.get(0).getAddressComponents();
-			zipcode = geList.get(geList.size()-1).getLongName();
-			
-			logger.debug("Lat/Long :  " + zipcode);
+			logger.debug("zipcode :  " + zipcode);
 
 		}catch (Exception e) {
 			logger.debug(e.toString());

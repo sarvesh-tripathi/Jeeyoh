@@ -1,28 +1,27 @@
 package com.jeeyoh.yelp.test;
 
 
-import java.io.IOException; 
-import java.io.UnsupportedEncodingException; 
-import java.net.MalformedURLException; 
-import java.net.URLEncoder; 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URLEncoder;
+import java.util.Calendar;
 import java.util.List;
 
+import oauth.signpost.OAuthConsumer;
+import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
+import oauth.signpost.exception.OAuthCommunicationException;
+import oauth.signpost.exception.OAuthExpectationFailedException;
+import oauth.signpost.exception.OAuthMessageSignerException;
+import oauth.signpost.signature.HmacSha1MessageSigner;
+import oauth.signpost.signature.QueryStringSigningStrategy;
 
-import oauth.signpost.OAuthConsumer; 
-import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer; 
-import oauth.signpost.exception.OAuthCommunicationException; 
-import oauth.signpost.exception.OAuthExpectationFailedException; 
-import oauth.signpost.exception.OAuthMessageSignerException; 
-import oauth.signpost.signature.HmacSha1MessageSigner; 
-import oauth.signpost.signature.QueryStringSigningStrategy; 
-
-
-import org.apache.http.HttpEntity; 
-import org.apache.http.HttpResponse; 
-import org.apache.http.client.HttpClient; 
-import org.apache.http.client.methods.HttpGet; 
-import org.apache.http.impl.client.DefaultHttpClient; 
-import org.apache.http.util.EntityUtils; 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -45,9 +44,9 @@ public class YelpClient {
                 String category = "food"; 
                 String radius = "40000"; 
                 String limit = "20"; 
-                String offset = "1120"; 
+                String offset = "20"; 
                 String sort = "0"; 
-                //String term = "food";
+                String term = "food";
                 String location = "Indianapolis";
                 //String id = "2908";
                 String service = "http://api.yelp.com/v2/search"; 
@@ -56,7 +55,7 @@ public class YelpClient {
                 try { 
                         String query = String 
                                         .format(service + "?location=%s&radius_filter=%s&limit=%s&offset=%s&sort=%s", 
-                                                        //URLEncoder.encode(term, ENCODING_SCHEME), 
+                                                       // URLEncoder.encode(term, ENCODING_SCHEME), 
                                                         URLEncoder.encode(location, ENCODING_SCHEME), 
                                                         URLEncoder.encode(radius, ENCODING_SCHEME), 
                                                         URLEncoder.encode(limit, ENCODING_SCHEME), 
@@ -165,6 +164,14 @@ public class YelpClient {
    	        }
    	        
    	}
+        
+     public void test()
+     {
+    	 Calendar c = Calendar.getInstance();
+    	 c.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
+    	 c.getTime(); // => Date of this coming Saturd
+    	 System.out.println("DATE WILL BE :: "+c.getTime());
+     }
 
         /** 
          * @param args 
@@ -173,6 +180,7 @@ public class YelpClient {
                 // TODO Auto-generated method stub 
                new YelpClient().start(); 
         	   //new YelpClient().business(); 
+        		//new YelpClient().test(); 
         }
 } 
 

@@ -51,7 +51,7 @@ public class YelpClient implements IYelpClient {
         String limit = "20"; 
         //String offset = "0"; 
         String sort = "0"; 
-        //String term = "food";
+        String term = "restaurant";
         //String location = "San Fransisco";
         String service = "http://api.yelp.com/v2/search"; 
         YelpSearchResponse searchResponse = null;
@@ -127,6 +127,7 @@ public class YelpClient implements IYelpClient {
         String limit = "20"; 
         String offset = "0"; 
         String sort = "0"; 
+        //String term = "movie";
               
         String service = "http://api.yelp.com/v2/search"; 
         YelpSearchResponse searchResponse = null;

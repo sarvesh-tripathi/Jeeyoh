@@ -20,8 +20,19 @@ public class Usercontacts  implements java.io.Serializable {
      private Date createdtime;
      private Date updatedtime;
      private Set usercontactsgroupmaps = new HashSet(0);
+     private Boolean isStar ;
 
-    public Usercontacts() {
+    public Boolean getIsStar() {
+		return isStar;
+	}
+
+
+	public void setIsStar(Boolean isStar) {
+		this.isStar = isStar;
+	}
+
+
+	public Usercontacts() {
     }
 
 	

@@ -18,7 +18,17 @@ public class Jeeyohgroup  implements java.io.Serializable {
      private User userByCreatorId;
      private String groupName;
      private String about;
-     private Date createdtime;
+     private String groupType;
+     public String getGroupType() {
+		return groupType;
+	}
+
+
+	public void setGroupType(String groupType) {
+		this.groupType = groupType;
+	}
+
+	private Date createdtime;
      private Date updatedtime;
      private Set groupusermaps = new HashSet(0);
 
