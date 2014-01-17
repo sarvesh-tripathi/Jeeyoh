@@ -33,6 +33,7 @@ public interface IUserDAO {
 	public List<Events> getUserCommunityEvents(int userId, int pageId);
 	public List<Eventuserlikes> getUserEventProperties(int userId, int eventId);
 	public List<Usernondealsuggestion> isNonDealSuggestionExists(int userId, int businessId);
-
+	public List<Usernondealsuggestion> getuserNonDealSuggestionsByEmailId(String emailId);
+	public List<Page> getUserCommunitiesByEmailId(String emailId);
 	List<UserCategory> getUserCategoryLikesById(int userId);
 }

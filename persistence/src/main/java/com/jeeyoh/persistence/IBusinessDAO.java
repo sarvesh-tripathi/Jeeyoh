@@ -19,4 +19,6 @@ public interface IBusinessDAO {
 	public void saveBusiness(Business business, int count);
 	public Businesstype getBusinesstypeByType(String type);
 	public void saveBusiness(Business business);
+	public List<Business> getBusinessByCriteria(String userEmail, String searchText, String category, String location);
+	public List<Business> getBusinessByuserLikes(String itemType, String itemCategory);
 }

@@ -143,21 +143,29 @@ public class UserDAO implements IUserDAO {
 	@Override
 	public void saveNonDealSuggestions(Usernondealsuggestion suggestion, int batch_size) {
 		logger.debug("saveNonDealSuggestions => ");
-		Session session  = sessionFactory.openSession();
-		  Transaction tx = session.beginTransaction();
-		  try
-		  {
-		   
-		   session.save(suggestion);    
-		   tx.commit();
-		   session.close();
-		  }
-		  catch(HibernateException e)
-		  {
-			  e.printStackTrace();
-		   logger.error("ERROR IN DAO :: = > "+e);
-		  }
-		//sessionFactory.getCurrentSession().saveOrUpdate(suggestion);
+		//Session session  = sessionFactory.openSession();
+		/*Transaction tx = session.beginTransaction();
+		try
+		{
+
+			session.save(suggestion);    
+			tx.commit();
+			session.close();*/
+		Session session =  sessionFactory.getCurrentSession();
+		try
+		{
+			session.save(suggestion);
+			if(batch_size % 20 == 0)
+			{
+				session.flush();
+				session.clear();
+			}
+		}
+		catch(HibernateException e)
+		{
+			e.printStackTrace();
+			logger.error("ERROR IN DAO :: = > "+e);
+		}
 	}
 
 	@Override
@@ -250,8 +258,14 @@ public class UserDAO implements IUserDAO {
 	public List<Usernondealsuggestion> isNonDealSuggestionExists(int userId,
 			int businessId) {
 		
-		 logger.debug("isNonDealSuggestionExists ::: ");
-		List<Usernondealsuggestion> usernondealsuggestions = null;
+		logger.debug("UserId ==> "+userId +" businessid ==> "+businessId);
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Usernondealsuggestion.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+
+		criteria.add(Restrictions.eq("user.userId", userId));
+		criteria.add(Restrictions.eq("business.id", businessId));
+
+		List<Usernondealsuggestion> usernondealsuggestions = criteria.list();
+		/*List<Usernondealsuggestion> usernondealsuggestions = null;
 		String hqlQuery = "select a from Usernondealsuggestion a where a.user.userId = :userId and a.business.id = :businessId";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
@@ -262,8 +276,47 @@ public class UserDAO implements IUserDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		 */		return usernondealsuggestions;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Usernondealsuggestion> getuserNonDealSuggestionsByEmailId(
+			String emailId) {
+		List<Usernondealsuggestion> usernondealsuggestions = null;
+		String hqlQuery = "select a from Usernondealsuggestion a, User b where b.emailId = :emailId and a.user.userId = b.userId";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("emailId", emailId);
+			usernondealsuggestions = (List<Usernondealsuggestion>) query.list();
+		} catch (Exception e) {
+			logger.debug("ERROR::::  "+e.getMessage());
+			e.printStackTrace();
+		}
 		return usernondealsuggestions;
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Page> getUserCommunitiesByEmailId(String emailId) {
+
+		List<Page> pageList = null;
+		String hqlQuery = "select b from User a, Page b, Pageuserlikes c where a.emailId = :emailId and c.user.userId = a.userId and b.pageId = c.page.pageId";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("emailId",emailId);
+			pageList = (List<Page>) query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.debug(e.toString());
+			logger.debug(e.getLocalizedMessage());
+		}
+		return pageList;
+	}
+
+
 
     @SuppressWarnings("unchecked")
 	 @Override

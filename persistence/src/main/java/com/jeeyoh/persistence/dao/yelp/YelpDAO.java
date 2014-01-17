@@ -79,15 +79,15 @@ public class YelpDAO implements IYelpDAO {
 	public List<Ybusiness> getBusiness() {
 
 		List<Ybusiness> businessList = null;
-		Session session = sessionFactory.openSession();
-		Transaction tx = session.beginTransaction();
+		/*Session session = sessionFactory.openSession();
+		Transaction tx = session.beginTransaction();*/
 		String hqlQuery = "from Ybusiness";
 		try {
-			//Query query = sessionFactory.getCurrentSession().createQuery(hqlQuery);
-			Query query = session.createQuery(hqlQuery);	
+			Query query = sessionFactory.getCurrentSession().createQuery(hqlQuery);
+			//Query query = session.createQuery(hqlQuery);	
 			businessList = (List<Ybusiness>) query.list();
-			tx.commit();
-			session.close();
+			/*tx.commit();
+			session.close();*/
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

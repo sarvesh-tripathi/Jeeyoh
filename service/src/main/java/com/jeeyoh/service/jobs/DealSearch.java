@@ -184,6 +184,7 @@ public class DealSearch implements IDealSearch {
 															{
 																if(dealsusage1.getIsFavorite() || dealsusage1.getIsLike() || dealsusage1.getIsSuggested() || dealsusage1.getIsFollowing())
 																{
+																	saveDeal = true;
 																	//logger.debug("Deal in level 4 :: = > "+deal.getId());
 																	Date date = new Date();
 																	Userdealssuggestion dealSuggestion = new Userdealssuggestion();
@@ -222,6 +223,7 @@ public class DealSearch implements IDealSearch {
 													int catDealId = catdeal.getId();
 													if(dealId == catDealId)
 													{
+														saveDeal = true;
 														Date date = new Date();
 														Userdealssuggestion dealSuggestion = new Userdealssuggestion();
 														dealSuggestion.setCreatedtime(date);
@@ -266,7 +268,7 @@ public class DealSearch implements IDealSearch {
 														{
 															if(dealsusage1.getIsFavorite() || dealsusage1.getIsLike() || dealsusage1.getIsSuggested() || dealsusage1.getIsFollowing())
 															{
-																
+																//saveDeal = true;																
 																Date date = new Date();
 																Userdealssuggestion dealSuggestion = new Userdealssuggestion();
 																dealSuggestion.setCreatedtime(date);

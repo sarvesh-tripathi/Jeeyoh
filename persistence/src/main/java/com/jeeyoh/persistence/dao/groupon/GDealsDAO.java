@@ -21,8 +21,19 @@ public class GDealsDAO implements IGDealsDAO {
 
 	@Override
 	public void addDeals(Gdeal deal) {
-		sessionFactory.getCurrentSession().saveOrUpdate(deal);	
-
+		Session session =  sessionFactory.getCurrentSession();
+		try
+		{
+			session.save(deal);
+			if(batch_size % 20 == 0)
+			{
+				session.flush();
+				session.clear();
+			}
+		}
+		catch (HibernateException e) {
+			e.printStackTrace(); 
+		}
 	}
 
 	@Override
@@ -37,33 +48,7 @@ public class GDealsDAO implements IGDealsDAO {
 
 		List<Gdealoption> gDealList = null;
 		logger.debug("loadDeals => getDeals... ");
-		
-		/*Session session = sessionFactory.openSession();
-		Transaction tx = null;
-		try
-		{
-			tx = session.beginTransaction();
-			String h = "select b from Gdeal a, Gdealoption b, Gtags c, Gcategory d where d.category = c.name and b.discountPercent > 20 and c.gdeal.id = a.id and b.gdeal.id = a.id";
-				try {
-					Query query = session.createQuery(
-							h);
-				//gDealList = template.find("select * from Gdeal gDeal,GDealOption gdealOption where gDeal.id=gdealOption.gdeal.id and gdealOption.discountPercent > 20");
-					logger.debug("loadDeals => query.list() size " + query.list().size());
-					gDealList = (List<Gdealoption>) query.list();
 
-				} catch (Exception e) {
-				e.printStackTrace();
-			}
-			tx.commit();
-		}
-		catch (HibernateException e) {
-			if (tx!=null) tx.rollback();
-			e.printStackTrace(); 
-		}
-		finally
-		{
-			session.close();
-		}*/
 		//HibernateTemplate template = getHibernateTemplate();
 
 		//String query = "from Gdeal";
@@ -80,16 +65,15 @@ public class GDealsDAO implements IGDealsDAO {
 		//List<Object> rows = criteria.list();
 
 		//String hqlQuery = "from Gdeal gDeal,Gdealoption gdealOption where gDeal.id=gdealOption.gdeal.id and gdealOption.discountPercent > 20 and gDeal.";
-			
-		String h = "select b from Gdeal a, Gdealoption b, Gtags c, Gcategory d where d.category = c.name and b.discountPercent > 20 and c.gdeal.id = a.id and b.gdeal.id = a.id";
-			try {
-				Query query = sessionFactory.getCurrentSession().createQuery(
-						h);
-			//gDealList = template.find("select * from Gdeal gDeal,GDealOption gdealOption where gDeal.id=gdealOption.gdeal.id and gdealOption.discountPercent > 20");
-				logger.debug("loadDeals => query.list() size " + query.list().size());
-				gDealList = (List<Gdealoption>) query.list();
 
-			} catch (Exception e) {
+		String h = "select b from Gdeal a, Gdealoption b, Gtags c, Gcategory d where d.category = c.name and b.discountPercent > 20 and c.gdeal.id = a.id and b.gdeal.id = a.id";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					h);
+			logger.debug("loadDeals => query.list() size " + query.list().size());
+			gDealList = (List<Gdealoption>) query.list();
+
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return gDealList;

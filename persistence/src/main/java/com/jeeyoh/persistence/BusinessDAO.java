@@ -2,11 +2,13 @@ package com.jeeyoh.persistence;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,7 +116,7 @@ public class BusinessDAO implements IBusinessDAO {
 		Session session  = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();
 		session.save(business);
-		if(count % 50 == 0)
+		if(count % 20 == 0)
 		{
 			session.flush();
 			session.clear();
@@ -176,6 +178,76 @@ public class BusinessDAO implements IBusinessDAO {
 			session.close();
 		}
 		return  businessTypeList != null && !businessTypeList.isEmpty() ? businessTypeList.get(0) : null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Business> getBusinessByCriteria(String userEmail, String searchText,
+			String category, String location) {
+		
+		logger.debug("getBusinessByCriteria ==> "+searchText +" ==> "+category+" ==> "+location);
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Business.class, "business").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		
+		criteria.createAlias("business.businesstype", "businessTypes");
+		if(userEmail != null && !userEmail.trim().equals(""))
+		{
+			criteria.createAlias("business.usernondealsuggestions", "usernondealsuggestion");
+			criteria.createAlias("usernondealsuggestion.user", "user");
+			criteria.add(Restrictions.eq("user.emailId", userEmail));
+		}
+		
+		if(category != null && !category.trim().equals(""))
+		{
+			criteria.add(Restrictions.eq("businessTypes.businessType", category));
+		}
+		if(location != null && !location.trim().equals(""))
+		{
+			criteria.add(Restrictions.disjunction().add(Restrictions.like("business.displayAddress", "%" + location + "%"))
+					.add(Restrictions.like("business.businessId", "%" + location + "%"))
+					.add(Restrictions.eq("business.postalCode", location))
+					.add(Restrictions.like("business.city", "%" + location + "%")));
+		}
+		if(searchText != null && !searchText.trim().equals(""))
+		{
+			criteria.add(Restrictions.disjunction().add(Restrictions.like("business.businessId", "%" + searchText + "%"))
+					.add(Restrictions.like("business.websiteUrl", "%" + searchText + "%"))
+					.add(Restrictions.like("business.city", "%" + searchText + "%"))
+					.add(Restrictions.like("business.displayAddress", "%" + searchText + "%"))
+					.add(Restrictions.like("business.name", "%" + searchText + "%")));
+		}
+		
+		List<Business> businessList = criteria.list();
+	
+		return businessList;
+	}
+
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Business> getBusinessByuserLikes(String likekeyword, String itemCategory) {
+		logger.debug("getBusinessByuserLikes ==> "+likekeyword);
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Business.class, "business").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		
+		criteria.createAlias("business.businesstype", "businessTypes");
+		if(likekeyword != null && !likekeyword.trim().equals(""))
+		{
+			criteria.add(Restrictions.disjunction().add(Restrictions.like("business.displayAddress", "%" + likekeyword + "%"))
+					.add(Restrictions.like("business.businessId", "%" + likekeyword + "%"))
+					.add(Restrictions.eq("business.postalCode", likekeyword))
+					.add(Restrictions.like("business.name", "%" + likekeyword + "%"))
+					.add(Restrictions.like("business.websiteUrl", "%" + likekeyword + "%"))
+					.add(Restrictions.like("business.city", "%" + likekeyword + "%")));
+		}
+		if(itemCategory != null && !itemCategory.trim().equals(""))
+		{
+			criteria.add(Restrictions.disjunction().add(Restrictions.like("business.businessId", "%" + itemCategory + "%"))
+					.add(Restrictions.eq("businessTypes.businessType", itemCategory))
+					.add(Restrictions.like("business.name", "%" + itemCategory + "%")));
+		}
+		
+		List<Business> businessList = criteria.list();
+	
+		return businessList;
 	}
 
 }

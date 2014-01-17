@@ -85,6 +85,28 @@ public class AccountController {
 		ModelAndView modelAndView = new ModelAndView("contactandcommunitydeals");
 		return modelAndView;
 	}
+	
+	@RequestMapping(value = "/nonDealSuggestionSearch", method = RequestMethod.GET)
+	public ModelAndView nonDealSuggestionSearch(HttpServletRequest request,
+			HttpServletResponse response) {
+		ModelAndView modelAndView = new ModelAndView("nonDealSuggestionSearch");
+		return modelAndView;
+	}
+	
+	@RequestMapping(value = "/community", method = RequestMethod.GET)
+	public ModelAndView community(HttpServletRequest request,
+			HttpServletResponse response) {
+		ModelAndView modelAndView = new ModelAndView("community");
+		return modelAndView;
+	}
+	
+	@RequestMapping(value = "/myDeals", method = RequestMethod.GET)
+	public ModelAndView myDeals(HttpServletRequest request,
+			HttpServletResponse response) {
+		ModelAndView modelAndView = new ModelAndView("userDeals");
+		return modelAndView;
+	}
+
 
 	@RequestMapping(value = "/getDivisions", method = RequestMethod.GET)
 	public ModelAndView getDivisions(HttpServletRequest request,
@@ -232,6 +254,50 @@ public class AccountController {
 		modelAndView.addObject("mainModel", mainModel);
 		return modelAndView;
 	}
+	
+	@RequestMapping(value = "/nonDealSearch", method = RequestMethod.GET)
+	public ModelAndView nonDealSearch(HttpServletRequest request, HttpServletResponse httpresponse){
+		ModelAndView modelAndView = new ModelAndView("nonDealSuggestionSearch");
+		String userEmail = request.getParameter("userEmail");
+		String searchText = request.getParameter("searchText");
+		String location = request.getParameter("location");
+		String category = request.getParameter("businessCategory");
+		List<Business> businessList = nonDealSuggestionSearch.search(userEmail.trim(), searchText.trim(), category.trim(), location.trim());
+		MainModel model = new MainModel();
+		model.setBusinessList(businessList);
+		modelAndView.addObject("mainModel", model);
+		return modelAndView;
+	}
+	
+	
+	@RequestMapping(value = "/communitySearch", method = RequestMethod.GET)
+	public ModelAndView communitySearch(HttpServletRequest request, HttpServletResponse httpresponse){
+		ModelAndView modelAndView = new ModelAndView("community");
+		String userEmail = request.getParameter("userEmail");
+		/*String searchText = request.getParameter("searchText");
+		String location = request.getParameter("location");
+		String category = request.getParameter("businessCategory");*/
+		List<Page> pageList = communitySearch.search(userEmail.trim());
+		MainModel model = new MainModel();
+		model.setPageList(pageList);
+		modelAndView.addObject("mainModel", model);
+		return modelAndView;
+	}
+	
+	@RequestMapping(value = "/myDealsSearch", method = RequestMethod.GET)
+	public ModelAndView myDealsSearch(HttpServletRequest request, HttpServletResponse httpresponse){
+		ModelAndView modelAndView = new ModelAndView("userDeals");
+		String userEmail = request.getParameter("userEmail");
+		/*String searchText = request.getParameter("searchText");
+		String location = request.getParameter("location");
+		String category = request.getParameter("businessCategory");*/
+		List<Deals> dealList = userDealsSearch.search(userEmail.trim());
+		MainModel model = new MainModel();
+		model.setDealList(dealList);
+		modelAndView.addObject("mainModel", model);
+		return modelAndView;
+	}
+	
 	
 	
 	

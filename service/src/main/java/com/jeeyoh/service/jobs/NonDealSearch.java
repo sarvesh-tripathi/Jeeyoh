@@ -2,6 +2,7 @@ package com.jeeyoh.service.jobs;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,10 +20,13 @@ import com.jeeyoh.persistence.IUserDAO;
 import com.jeeyoh.persistence.domain.Business;
 import com.jeeyoh.persistence.domain.Events;
 import com.jeeyoh.persistence.domain.Eventuserlikes;
+import com.jeeyoh.persistence.domain.Groupusermap;
+import com.jeeyoh.persistence.domain.Jeeyohgroup;
 import com.jeeyoh.persistence.domain.Page;
 import com.jeeyoh.persistence.domain.Pagetype;
 import com.jeeyoh.persistence.domain.Pageuserlikes;
 import com.jeeyoh.persistence.domain.User;
+import com.jeeyoh.persistence.domain.UserCategory;
 import com.jeeyoh.persistence.domain.Usernondealsuggestion;
 
 @Component("nonDealSearch")
@@ -133,7 +137,6 @@ public class NonDealSearch implements INonDealSearch {
 			GeocoderRequest geocoderRequest = new GeocoderRequestBuilder().setAddress(postCode).getGeocoderRequest();
 			GeocodeResponse geocoderResponse = geocoder.geocode(geocoderRequest);
 			List<GeocoderResult> results = geocoderResponse.getResults();
-			logger.debug("results :  "+results);
 			float latitude = results.get(0).getGeometry().getLocation().getLat().floatValue();
 			float longitude = results.get(0).getGeometry().getLocation().getLng().floatValue();
 
@@ -155,6 +158,7 @@ public class NonDealSearch implements INonDealSearch {
 	 * @param userId
 	 * @param user
 	 */
+	@SuppressWarnings("unchecked")
 	private void saveNonDealSuggestion(int userId, User user, boolean forUser, boolean isContactsAccessed)
 	{
 		int countMain = 0;
@@ -166,6 +170,100 @@ public class NonDealSearch implements INonDealSearch {
 			user.setLattitude(Double.toString(array[0]));
 			user.setLongitude(Double.toString(array[1]));
 		}
+		
+		List<UserCategory> userCategoryList = userDAO.getUserCategoryLikesById(userId);
+		if(userCategoryList != null)
+		{
+			for(UserCategory userCategory : userCategoryList) {
+				
+				if(userCategory.getItemCategory().equalsIgnoreCase(MOVIE_CATEGORY) || userCategory.getItemCategory().equalsIgnoreCase(RESTAURANT_CATEGORY) || userCategory.getItemCategory().equalsIgnoreCase(NIGHTLIFE_CATEGORY) || userCategory.getItemCategory().equalsIgnoreCase(EVENTS_CATEGORY) || userCategory.getItemCategory().equalsIgnoreCase(GETAWAYS_CATEGORY) || userCategory.getItemCategory().equalsIgnoreCase(SPORTS_CATEGORY)) {
+					
+					List<Business> businessList = businessDAO.getBusinessByuserLikes(userCategory.getItemType(),userCategory.getItemCategory());
+					if(businessList != null)
+					{
+						boolean includePage = true;
+						for(Business business : businessList)
+						{
+							List<Usernondealsuggestion> usernondealsuggestions = userDAO.isNonDealSuggestionExists(user.getUserId(), business.getId());
+							logger.debug("NonDealSearch ==> usernondealsuggestions ==> " + usernondealsuggestions);
+							if(usernondealsuggestions == null || usernondealsuggestions.size() == 0)
+							{
+							String type = business.getBusinesstype().getBusinessType();
+							if(type.equalsIgnoreCase(MOVIE_CATEGORY) || type.equalsIgnoreCase(RESTAURANT_CATEGORY) || type.equalsIgnoreCase(NIGHTLIFE_CATEGORY) || type.equalsIgnoreCase(EVENTS_CATEGORY) || type.equalsIgnoreCase(GETAWAYS_CATEGORY) || type.equalsIgnoreCase(SPORTS_CATEGORY)) {
+								
+								if(business.getLattitude() == null && business.getLongitude() == null || (business.getLattitude().trim().equals("") && business.getLongitude().trim().equals(""))  || (business.getLattitude().trim().equals("0.0") && business.getLongitude().trim().equals("0.0")))
+								{
+									array = getLatLong(business.getPostalCode());
+									business.setLattitude(Double.toString(array[0]));
+									business.setLongitude(Double.toString(array[1]));
+								}
+
+								double distance = distance(Double.parseDouble(user.getLattitude()), Double.parseDouble(user.getLongitude()), Double.parseDouble(business.getLattitude()), Double.parseDouble(business.getLongitude()), "M");
+								logger.debug("Distance::  "+distance +" lat::  "+user.getLattitude()+" lon::  "+user.getLongitude());
+								if(distance <=15)
+								{
+									String ambiance = "";
+									if(business.getAmbience() != null)
+										ambiance = business.getAmbience();
+									String musicType = "";
+									if(business.getAmbience() != null)
+										musicType = business.getMusicType();
+
+									long rating = 0;
+									if(business.getRating() != null)
+									{
+										rating = business.getRating();
+									}
+									if(rating > 3) {
+										if(type.equalsIgnoreCase(RESTAURANT_CATEGORY)) {
+											if(!ambiance.equalsIgnoreCase("GOOD") && !musicType.equalsIgnoreCase("SOFT")) {
+												includePage = false;
+											} else {
+												includePage = true;
+											}
+										} else {
+											includePage = true;
+										}
+									}
+									logger.debug("NonDealSearch ==> search ==> rating ==> includePage ==> " + includePage);
+									if(includePage) {
+										Usernondealsuggestion suggestion = new Usernondealsuggestion();									
+										suggestion.setBusiness(business);
+										suggestion.setCreatedtime(new Date());
+										suggestion.setIsChecked(false);
+										suggestion.setIsRelevant(true);
+										suggestion.setUpdatedtime(new Date());
+										suggestion.setUser(user);
+										userDAO.saveNonDealSuggestions(suggestion,countMain);
+										countMain ++;
+									}
+								}
+							}
+						}
+						}
+					}
+				}
+			}
+		}
+		
+		if(forUser)
+		{
+			List<Jeeyohgroup> groups = userDAO.getUserGroups(userId);
+			if(groups != null)
+			{
+				for(Jeeyohgroup jeeyohgroup : groups)
+				{
+					Set<Groupusermap> groupusermapList = jeeyohgroup.getGroupusermaps();
+					for(Groupusermap groupusermap : groupusermapList)
+					{
+						int userid = groupusermap.getUser().getUserId();
+						logger.debug("USERID for userGroup::  "+userid);
+						saveNonDealSuggestion(userid, user, false , false);
+					}
+				}
+			}
+		}
+		
 		List<Page> userCommunities = userDAO.getUserCommunities(userId);
 		logger.debug("NonDealSearch ==> userCommunities ==> size ==> " + userCommunities.size());
 

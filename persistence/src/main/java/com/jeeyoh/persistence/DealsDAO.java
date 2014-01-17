@@ -80,7 +80,7 @@ public class DealsDAO implements IDealsDAO {
 			tx = session.beginTransaction();
 			session.saveOrUpdate(deals);	
 			
-			if( batch_size % 50 == 0 ) {
+			if( batch_size % 20 == 0 ) {
 				session.flush();
 				session.clear();
 			}
@@ -126,7 +126,6 @@ public class DealsDAO implements IDealsDAO {
 
 		@Override
 		public List<Deals> getDealsByBusinessId(String businessId) {
-			// TODO Auto-generated method stubbusinessId
 			List<Deals> dealsList = null;
 			String hqlQuery = "from Deals a where a.businessId = :businessId";
 			try {
@@ -142,8 +141,6 @@ public class DealsDAO implements IDealsDAO {
 
 		@Override
 		public void saveSuggestions(Userdealssuggestion dealSuggestion) {
-			// TODO Auto-generated method stub
-			
 			Session session = sessionFactory.openSession();
     		Transaction tx = null;
     		try
@@ -320,5 +317,21 @@ public class DealsDAO implements IDealsDAO {
 			return dealsList;
 			
 		}
+		
+			@SuppressWarnings("unchecked")
+	@Override
+	public List<Deals> getDealsByUserEmail(String userEmail) {
+		List<Deals> dealsList = null;
+		String hqlQuery = "select distinct a from Deals a, Dealsusage b, User c where c.emailId = :emailId and c.userId = b.user.userId and a.id = b.deals.id";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("emailId", userEmail);
+			dealsList = (List<Deals>) query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return dealsList;
+	}
 		
 }

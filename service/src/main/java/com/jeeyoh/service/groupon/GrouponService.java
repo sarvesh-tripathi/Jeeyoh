@@ -37,7 +37,7 @@ import com.jeeyoh.persistence.domain.Gtags;
 
 @Component("grouponService")
 public class GrouponService implements IGrouponService {
-	private static Logger logger = LoggerFactory.getLogger(GrouponService.class);
+	private static Logger logger = LoggerFactory.getLogger("debugLogger");
 
 	@Autowired
 	private IDivisionDAO divisionDAO;
@@ -92,6 +92,7 @@ public class GrouponService implements IGrouponService {
 			
 			String longitude;
 			String lattitude;
+			int batch_size = 0;
 			for(Gdivision division : divisions) {
 				longitude = division.getLongitude();
 				lattitude = division.getLattitude();
@@ -105,6 +106,7 @@ public class GrouponService implements IGrouponService {
 						if(deals != null)
 						{
 							for(DealsModel dealModel : deals) {
+								batch_size++;
 								Gdeal deal = new Gdeal();
 								deal.setAnnouncementTitle(dealModel.getAnnouncementTitle());
 								deal.setDealId(dealModel.getDealId());
@@ -243,7 +245,7 @@ public class GrouponService implements IGrouponService {
 									}
 									
 								}								
-								dealsDAO.addDeals(deal);
+								dealsDAO.addDeals(deal,batch_size);
 							}
 						} else {
 							logger.debug("loadDeals => no deals found");
