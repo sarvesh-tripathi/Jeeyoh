@@ -15,28 +15,10 @@ public class UserCategoryLikes implements Serializable{
     private User userByContactId;
     private Boolean isActive;
     private Long rank;
+
     private Date createdTime;
-    
    
 	
-	public User getUserByContactId() {
-		return userByContactId;
-	}
-	public void setUserByContactId(User userByContactId) {
-		this.userByContactId = userByContactId;
-	}
-	public Boolean getIsActive() {
-		return isActive;
-	}
-	public void setIsActive(Boolean isActive) {
-		this.isActive = isActive;
-	}
-	public Date getCreatedTime() {
-		return createdTime;
-	}
-	public void setCreatedTime(Date createdTime) {
-		this.createdTime = createdTime;
-	}
 	public UserCategoryLikes() {
     } 
 	/**
@@ -86,6 +68,24 @@ public class UserCategoryLikes implements Serializable{
 	 */
 	public Long getRank() {
 		return rank;
+	}
+	public void setUserByContactId(User userByContactId) {
+		this.userByContactId = userByContactId;
+	}
+	public User getUserByContactId() {
+		return userByContactId;
+	}
+	public void setCreatedTime(Date createdTime) {
+		this.createdTime = createdTime;
+	}
+	public Date getCreatedTime() {
+		return createdTime;
+	}
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
+	}
+	public Boolean getIsActive() {
+		return isActive;
 	}
 
 }

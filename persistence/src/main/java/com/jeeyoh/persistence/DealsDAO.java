@@ -1,6 +1,5 @@
 package com.jeeyoh.persistence;
 
-import java.awt.print.Book;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -10,18 +9,15 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.CriteriaSpecification;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.jeeyoh.persistence.domain.Business;
 import com.jeeyoh.persistence.domain.Deals;
 import com.jeeyoh.persistence.domain.Userdealssuggestion;
 import com.jeeyoh.persistence.domain.Usernondealsuggestion;
-import com.jeeyoh.persistence.domain.Ybusiness;
 
 @Repository("dealsDAO")
 public class DealsDAO implements IDealsDAO {
@@ -36,19 +32,20 @@ public class DealsDAO implements IDealsDAO {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Deals> getDealsByCategory(String category) {
-		List<Business> businessList = null;
+		List<Deals> dealsList = null;
 		String hqlQuery = "from Deals a where a.businessTypeId = :category";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
 			query.setParameter("businessTypeId", category);
-			businessList = (List<Business>) query.list();
+			dealsList = (List<Deals>) query.list();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return null;
+		return dealsList;
 	}
 	
 	
@@ -127,6 +124,7 @@ public class DealsDAO implements IDealsDAO {
     		}
         }
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public List<Deals> getDealsByBusinessId(String businessId) {
 			List<Deals> dealsList = null;
@@ -144,7 +142,9 @@ public class DealsDAO implements IDealsDAO {
 
 		@Override
 		public void saveSuggestions(Userdealssuggestion dealSuggestion) {
-			Session session = sessionFactory.openSession();
+			
+			sessionFactory.getCurrentSession().save(dealSuggestion);
+			/*Session session = sessionFactory.openSession();
     		Transaction tx = null;
     		try
     		{
@@ -159,7 +159,7 @@ public class DealsDAO implements IDealsDAO {
     		finally
     		{
     			session.close();
-    		}
+    		}*/
 			
 		}
 
@@ -203,7 +203,8 @@ public class DealsDAO implements IDealsDAO {
 			return rowCount;
 		}
 
-		@SuppressWarnings("null")
+		
+		@SuppressWarnings("unchecked")
 		@Override
 		public List<Deals> getDealsByKeywords(String keyword, String category,
 				String location) {
@@ -240,6 +241,7 @@ public class DealsDAO implements IDealsDAO {
 			return dealsList;
 		}
 		
+		@SuppressWarnings("unchecked")
 		@Override
 		public List<Userdealssuggestion> getDealsSuggestion(int id)
 		{
@@ -260,6 +262,7 @@ public class DealsDAO implements IDealsDAO {
 			
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public List<Deals> getUserDeals(Integer userId) {
 			// TODO Auto-generated method stub
@@ -280,6 +283,7 @@ public class DealsDAO implements IDealsDAO {
 			return deals;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public List<Deals> getDealsByBusinessId(Integer id) {
 			// TODO Auto-generated method stub
@@ -297,6 +301,7 @@ public class DealsDAO implements IDealsDAO {
 			
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public List<Deals> getDealsByUserCategory(String itemCategory,
 				String itemType,String providerName) {
@@ -343,6 +348,7 @@ public class DealsDAO implements IDealsDAO {
 		return dealsList;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Userdealssuggestion> userDealsSuggestedByJeeyoh(String keyword, String category,
 				String location, int id) {

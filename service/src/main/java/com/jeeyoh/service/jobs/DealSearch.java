@@ -1,6 +1,7 @@
 package com.jeeyoh.service.jobs;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -32,6 +33,7 @@ import com.jeeyoh.persistence.domain.UserCategory;
 import com.jeeyoh.persistence.domain.UserCategoryLikes;
 import com.jeeyoh.persistence.domain.Usercontacts;
 import com.jeeyoh.persistence.domain.Userdealssuggestion;
+import com.jeeyoh.persistence.domain.Usernondealsuggestion;
 
 @Component("dealSearch")
 public class DealSearch implements IDealSearch {
@@ -52,311 +54,360 @@ public class DealSearch implements IDealSearch {
 	@Transactional
 	public void search() {
 		
-		String[] type = {"RESTAURANT","SPA","SPORT"};
-		List<Businesstype> businesstypes = businessDAO.getBusinesstypeByTypeArray(type);	
-		//Businesstype businesstype = businessDAO.getBusinesstypeByType("SPORT");
-		List<User> userList = userDAO.getUsers();		
-		
+		/*String[] type = {"RESTAURANT","SPA","SPORT"};
+		List<Businesstype> businesstypes = businessDAO.getBusinesstypeByTypeArray(type);	*/
+		List<User> userList = userDAO.getUsers();
+		// Iterate user list for suggestion
+		int count = 0;
 		for (User user : userList)
 		{
 			if(user != null)
 			{
-				saveDealSuggestion(user,user,businesstypes,false,false);
-				//List<User> userContacts = userDAO.getUserContacts(user.getUserId());
-				List<Usercontacts> userContactsList = userDAO.getAllUserContacts(user.getUserId());
-				if(userContactsList != null)
-				{
-					for(Usercontacts usercontacts:userContactsList)
+				  //for user Contacts affinity level
+				  List<Usercontacts> userContactsList = userDAO.getAllUserContacts(user.getUserId());
+	              saveDealSuggestion(user,user,false,false);
+				  if(userContactsList != null)
 					{
-						
-						Boolean isStar = usercontacts.getIsStar();
-						User contact = usercontacts.getUserByContactId();
-						logger.debug("Friend Name ::"+contact.getFirstName());
-						logger.debug("IS STAR ::"+isStar);
-						saveDealSuggestion(contact,user,businesstypes,true,isStar);
+						for(Usercontacts usercontacts:userContactsList)
+						{
+							
+							Boolean isStar = usercontacts.getIsStar();
+							User contact = usercontacts.getUserByContactId();
+							logger.debug("Friend Name ::"+contact.getFirstName());
+							logger.debug("IS STAR ::"+isStar);
+							saveDealSuggestion(contact,user,true,false);
+							
+						}
 					}
-				}
-				
+			}
+			count++;
+			if(count == 5)
+			{
+				break;
 			}
 		}
+				
+		
 							
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void saveDealSuggestion(User user,User userFor, List<Businesstype> businesstypes,Boolean contactFlag,Boolean isStar)
+	private void saveDealSuggestion(User user,User userFor,Boolean contactFlag,Boolean isStar)
 	{
-		double[] array = null;
-		logger.debug("USER FOR :: "+user.getEmailId());
-		logger.debug("Lat/Long for user :  " + user.getLattitude() +" , "+user.getLongitude());
-		if(user.getLattitude() == null && user.getLongitude() == null || (user.getLattitude().trim().equals("") && user.getLongitude().trim().equals(""))|| (user.getLattitude().trim().equals("0.0") && user.getLongitude().trim().equals("0.0")))
+		
+		//get user detail and deal usage			
+		Set<Dealsusage> dealUsage = user.getDealsusages();		
+			
+		// user commuinty 
+		List<Page> userCommunities = userDAO.getUserCommunities(user.getUserId());
+		
+		//user category
+		
+		List<UserCategory> userCategoryList = userDAO.getUserCategoryLikesById(user.getUserId());
+		// user group member
+		List<Jeeyohgroup> jeeyohGroup = null;
+		if(!contactFlag)
 		{
-			array = getLatLong(user.getZipcode());
-			logger.debug("Lat/long length ==> " + Double.toString(array[0]).length()+" : "+Double.toString(array[1]).length());
-			user.setLattitude(Double.toString(array[0]));
-			user.setLongitude(Double.toString(array[1]));
+			jeeyohGroup = userDAO.getUserGroups(user.getUserId());
 		}
-		if(businesstypes != null)
-		{
-			//get user detail and deal usage
-			//User user = userDAO.getUsersById("gaurav.shandilya@gmail.com");
-			Set<Dealsusage> dealUsage = user.getDealsusages();	
-			
-			// get user contects				
-			//List<User> userContacts = userDAO.getUserContacts(user.getUserId());
-			
-			// user commuinty 
-			List<Page> userCommunities = userDAO.getUserCommunities(user.getUserId());
-			
-			//user category
-			
-			List<UserCategory> userCategoryList = userDAO.getUserCategoryLikesById(user.getUserId());
-			// user group member
-			
-			List<Jeeyohgroup> jeeyohGroup = userDAO.getUserGroups(user.getUserId());
-			
-			for(Businesstype businesstype:businesstypes)
+	   
+	    double[] array = null;		
+		for(Dealsusage dealsusage : dealUsage) {
+			//logger.debug("DealSearch ==> search ==> dealusage ==> " + dealsusage.getIsFavorite());
+			Deals deal = dealsusage.getDeals();
+			List<Userdealssuggestion> userdealsuggestions = userDAO.isDealSuggestionExists(userFor.getUserId(), deal.getId());
+			if(userdealsuggestions == null || userdealsuggestions.size() == 0)
 			{
-				Set<Business> businessSet = businesstype.getBusinesses();
-				for(Business business :businessSet )
-				{
-					logger.debug("Business data :: "+business.getCity());
-					if(business != null)
+				    Business business = deal.getBusiness();
+				    if(business != null)
 					{
 						
-						if(business.getLattitude() == null && business.getLongitude() == null || (business.getLattitude().trim().equals("") && business.getLongitude().trim().equals(""))  || (business.getLattitude().trim().equals("0.0") && business.getLongitude().trim().equals("0.0")))
-						{
-							array = getLatLong(business.getPostalCode());
-							business.setLattitude(Double.toString(array[0]));
-							business.setLongitude(Double.toString(array[1]));
-						}
-						double distance = distance(Double.parseDouble(user.getLattitude()), Double.parseDouble(user.getLongitude()), Double.parseDouble(business.getLattitude()), Double.parseDouble(business.getLongitude()), "M");
-						logger.debug("Distance::  "+distance +" lat::  "+user.getLattitude()+" lon::  "+user.getLongitude());
-						if(distance <= 50)
-						{
-						
-							Set<Deals> deals = business.getDealses();	
-							for(Deals deal :deals )
+							if(business.getLattitude() == null && business.getLongitude() == null || (business.getLattitude().trim().equals("") && business.getLongitude().trim().equals(""))  || (business.getLattitude().trim().equals("0.0") && business.getLongitude().trim().equals("0.0")))
 							{
-								
-								// rules level 1 , level 2 , level3 or  level 6
-								boolean saveDeal = false;						
-								for(Dealsusage dealsusage : dealUsage) {
-									//logger.debug("DealSearch ==> search ==> dealusage ==> " + dealsusage.getIsFavorite());
-									if(deal.getId() == dealsusage.getDeals().getId())
-									{
-										int likeCount = dealDAO.getDealsLikeCounts(dealsusage.getDeals().getId());
-										logger.debug("Like COUNT :::::"+likeCount);
-										if(dealsusage.getIsFavorite() || dealsusage.getIsLike() || likeCount >= 2)
-										{
-											logger.debug("Cross basic three level3",deal.getId());
-											saveDeal = true;
-											saveDealsSuggestionInDataBase(deal,userFor);						
-											 									
-											
-										}
-										
-										
-									}
+								array = getLatLong(business.getPostalCode());
+								business.setLattitude(Double.toString(array[0]));
+								business.setLongitude(Double.toString(array[1]));
+							}
+							double distance = distance(Double.parseDouble(userFor.getLattitude()), Double.parseDouble(userFor.getLongitude()), Double.parseDouble(business.getLattitude()), Double.parseDouble(business.getLongitude()), "M");
+							logger.debug("Distance::  "+distance +" lat::  "+userFor.getLattitude()+" lon::  "+userFor.getLongitude());
+							if(distance <= 50)
+							{
+								int likeCount = dealDAO.getDealsLikeCounts(dealsusage.getDeals().getId());
+								logger.debug("Like COUNT :::::"+likeCount);
+								if(dealsusage.getIsFavorite() || dealsusage.getIsLike() || likeCount >= 2)
+								{
+									logger.debug("Cross basic three level3",deal.getId());									
+									saveDealsSuggestionInDataBase(deal,userFor);
 									
 								}
-								if(!saveDeal)
+							}
+						
+						
+			        }
+			}
+			
+		}
+			//	For Community							
+			if(userCommunities != null) {
+				
+				for(Page community : userCommunities) {
+					
+					Business business = community.getBusiness();
+				    if(business != null)
+					{
+						
+							if(business.getLattitude() == null && business.getLongitude() == null || (business.getLattitude().trim().equals("") && business.getLongitude().trim().equals(""))  || (business.getLattitude().trim().equals("0.0") && business.getLongitude().trim().equals("0.0")))
+							{
+								array = getLatLong(business.getPostalCode());
+								business.setLattitude(Double.toString(array[0]));
+								business.setLongitude(Double.toString(array[1]));
+							}
+							double distance = distance(Double.parseDouble(userFor.getLattitude()), Double.parseDouble(userFor.getLongitude()), Double.parseDouble(business.getLattitude()), Double.parseDouble(business.getLongitude()), "M");
+							logger.debug("Distance::  "+distance +" lat::  "+userFor.getLattitude()+" lon::  "+userFor.getLongitude());
+							if(distance <= 50)
+							{
+								List<Deals> deals = dealDAO.getDealsByBusinessId(business.getId());
+								for(Deals deal : deals)
 								{
-									logger.debug("IN COMMUNITY:");							
-									if(userCommunities != null) {
-										
-										for(Page community : userCommunities) {
-											
-											int dealbusinessId = deal.getBusiness().getId();
-											int pagebusinessId = community.getBusiness().getId();
-											if( dealbusinessId == pagebusinessId)
-											{
-												logger.debug("ENTRY HERE :::: ");
-												saveDeal = true;
-												saveDealsSuggestionInDataBase(deal,userFor);
-											}
-											
-										}
+									List<Userdealssuggestion> userdealsuggestions = userDAO.isDealSuggestionExists(userFor.getUserId(), deal.getId());
+									if(userdealsuggestions == null || userdealsuggestions.size() == 0)
+									{
+										saveDealsSuggestionInDataBase(deal,userFor);
 									}
 								}
-								
-								
-								
-								// for user likes item
-							
-								if(!saveDeal)
-								{
-									 
-								    
-									///List<UserCategory> userCategoryList = userDAO.getUserCategoryLikesById(user.getUserId());
-									  if(userCategoryList != null)
-									  {
-									   for(UserCategory userCategory : userCategoryList) {
-										   UserCategoryLikes userCategoryLikes = (UserCategoryLikes)userCategory.getUserCategoryLikes().iterator().next();
-										    Date  weekendDate = getNearestWeekend();
-										    Calendar cal = Calendar.getInstance();
-									        cal.setTime(userCategoryLikes.getCreatedTime());
-									        cal.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
-									        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-									       logger.debug("Date Comparison: "+cal.getTime()+" : "+weekendDate);
-									       logger.debug("Date Comparison: "+cal.getTime().compareTo(weekendDate));
-									       try {
-									        if(sdf.parse(sdf.format(cal.getTime())).compareTo(weekendDate) == 0)
-									        {
-											   int LikeCount = dealDAO.userCategoryLikeCount(userCategory.getUserCategoryId());
-											   if(!contactFlag )
-											   {
-												   List<Deals> catDeals = dealDAO.getDealsByUserCategory(userCategory.getItemCategory(),userCategory.getItemType(),userCategory.getProviderName());
-												   for(Deals catdeal:catDeals)
-												   {
-													    int dealId = deal.getId();
-														int catDealId = catdeal.getId();
-														if(dealId == catDealId)
-														{
-															saveDeal = true;
-															saveDealsSuggestionInDataBase(deal,userFor);
-														}
-													   
-												   }
-												   
-										      }
-											   else
-											   {
-												   if(isStar)
-												   {
-													   List<Deals> catDeals = dealDAO.getDealsByUserCategory(userCategory.getItemCategory(),userCategory.getItemType(),userCategory.getProviderName());
-													   for(Deals catdeal:catDeals)
-													   {
-														    int dealId = deal.getId();
-															int catDealId = catdeal.getId();
-															if(dealId == catDealId)
-															{
-																saveDeal = true;
-																saveDealsSuggestionInDataBase(deal,userFor);
-															}
-														   
-													   }
-												   }
-												   else
-												   {
-													   if(LikeCount >= 2)
-													   {
-														   List<Deals> catDeals = dealDAO.getDealsByUserCategory(userCategory.getItemCategory(),userCategory.getItemType(),userCategory.getProviderName());
-														   for(Deals catdeal:catDeals)
-														   {
-															    int dealId = deal.getId();
-																int catDealId = catdeal.getId();
-																if(dealId == catDealId)
-																{
-																	saveDeal = true;
-																	saveDealsSuggestionInDataBase(deal,userFor);
-																}
-															   
-														   }
-													   }
-												   }
-											   }
-									        }
-									        }catch(Exception e)
-									        {
-									        	e.printStackTrace();
-									        }
-									       
-									   
-									   }
-									  }
-									    
-									    
-								}
-								
-								//// for jeeyohgroups
-								if(!contactFlag && !saveDeal)
-								{
-								
-									  if(jeeyohGroup != null)
-									  {
-									   for(Jeeyohgroup jeeyohGroup1 : jeeyohGroup) {
-										   
-										   String groupType = jeeyohGroup1.getGroupType();
-										   Set<Groupusermap> groups   = jeeyohGroup1.getGroupusermaps();
-										   for (Groupusermap groups1 : groups)
-										   {
-											   User groupMember = groups1.getUser();
-											   if(groupMember.getUserId() != user.getUserId())
-											   {
-												   List<UserCategory> userCategoryList1 = userDAO.getUserCategoryLikesById(groupMember.getUserId());
-													  if(userCategoryList != null)
-													  {
-													   for(UserCategory userCategory : userCategoryList1) {
-														  if(groupType.equals(userCategory.getItemCategory()))
-														  {
-														   
-															   List<Deals> catDeals = dealDAO.getDealsByUserCategory(userCategory.getItemCategory(),userCategory.getItemType(),userCategory.getProviderName());
-															   for(Deals catdeal:catDeals)
-															   {
-																    int dealId = deal.getId();
-																	int catDealId = catdeal.getId();
-																	if(dealId == catDealId)
-																	{
-																		saveDeal = true;
-																		saveDealsSuggestionInDataBase(deal,userFor);
-																		
-																	}
-																   
-															   }
-														  }
-														   
-													   }
-											   }
-
-										   }
-										
-									   }
-									  }
-								 
-								}
-
 							}
-						}
-						}
-											
+						
 					}
+					
 				}
 			}
-		}
+		
+								
+				// for user category likes item
+							
+				
+					///List<UserCategory> userCategoryList = userDAO.getUserCategoryLikesById(user.getUserId());
+					  if(userCategoryList != null)
+					  {
+					     for(UserCategory userCategory : userCategoryList) {
+						    UserCategoryLikes userCategoryLikes = (UserCategoryLikes)userCategory.getUserCategoryLikes().iterator().next();
+							Date  weekendDate = getNearestWeekend();
+							Calendar cal = Calendar.getInstance();
+							cal.setTime(userCategoryLikes.getCreatedTime());
+							cal.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
+							SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+						    logger.debug("Date Comparison: "+cal.getTime()+" : "+weekendDate);
+						    logger.debug("Date Comparison: "+cal.getTime().compareTo(weekendDate));
+						   try {
+							if(sdf.parse(sdf.format(cal.getTime())).compareTo(weekendDate) == 0) // Deals is open for nearst weekend only
+							{
+							   
+							   if(!contactFlag )
+							   {
+									   List<Deals> catDeals = dealDAO.getDealsByUserCategory(userCategory.getItemCategory(),userCategory.getItemType(),userCategory.getProviderName());
+									   
+									   for(Deals catdeal:catDeals)
+									   {
+										   Business business = catdeal.getBusiness();
+										    if(business != null)
+											{
+												
+													if(business.getLattitude() == null && business.getLongitude() == null || (business.getLattitude().trim().equals("") && business.getLongitude().trim().equals(""))  || (business.getLattitude().trim().equals("0.0") && business.getLongitude().trim().equals("0.0")))
+													{
+														array = getLatLong(business.getPostalCode());
+														business.setLattitude(Double.toString(array[0]));
+														business.setLongitude(Double.toString(array[1]));
+													}
+													double distance = distance(Double.parseDouble(userFor.getLattitude()), Double.parseDouble(userFor.getLongitude()), Double.parseDouble(business.getLattitude()), Double.parseDouble(business.getLongitude()), "M");
+													logger.debug("Distance::  "+distance +" lat::  "+userFor.getLattitude()+" lon::  "+userFor.getLongitude());
+													if(distance <= 50)
+													{
+														List<Userdealssuggestion> userdealsuggestions = userDAO.isDealSuggestionExists(userFor.getUserId(), catdeal.getId());
+														if(userdealsuggestions == null || userdealsuggestions.size() == 0)
+														{
+															saveDealsSuggestionInDataBase(catdeal,userFor);
+														}
+													}
+											}
+									   
+								  }
+								}
+							   else
+							   {
+								   int LikeCount = dealDAO.userCategoryLikeCount(userCategory.getUserCategoryId());
+								   if(isStar)//check friend is star or non star
+								   {
+									   List<Deals> catDeals = dealDAO.getDealsByUserCategory(userCategory.getItemCategory(),userCategory.getItemType(),userCategory.getProviderName());
+									   for(Deals catdeal:catDeals)
+									   {
+										   Business business = catdeal.getBusiness();
+										    if(business != null)
+											{
+												
+													if(business.getLattitude() == null && business.getLongitude() == null || (business.getLattitude().trim().equals("") && business.getLongitude().trim().equals(""))  || (business.getLattitude().trim().equals("0.0") && business.getLongitude().trim().equals("0.0")))
+													{
+														array = getLatLong(business.getPostalCode());
+														business.setLattitude(Double.toString(array[0]));
+														business.setLongitude(Double.toString(array[1]));
+													}
+													double distance = distance(Double.parseDouble(userFor.getLattitude()), Double.parseDouble(userFor.getLongitude()), Double.parseDouble(business.getLattitude()), Double.parseDouble(business.getLongitude()), "M");
+													logger.debug("Distance::  "+distance +" lat::  "+userFor.getLattitude()+" lon::  "+userFor.getLongitude());
+													if(distance <= 50)
+													{
+														List<Userdealssuggestion> userdealsuggestions = userDAO.isDealSuggestionExists(userFor.getUserId(), catdeal.getId());
+														if(userdealsuggestions == null || userdealsuggestions.size() == 0)
+														{
+															saveDealsSuggestionInDataBase(catdeal,userFor);
+														}
+													}
+											}
+										   
+									   }
+								   }
+								   else
+								   {
+									   if(LikeCount >= 2) // if non star then chek Like count greater than 2.
+									   {
+										   List<Deals> catDeals = dealDAO.getDealsByUserCategory(userCategory.getItemCategory(),userCategory.getItemType(),userCategory.getProviderName());
+										   for(Deals catdeal:catDeals)
+										   {
+											   Business business = catdeal.getBusiness();
+											    if(business != null)
+												{
+													
+														if(business.getLattitude() == null && business.getLongitude() == null || (business.getLattitude().trim().equals("") && business.getLongitude().trim().equals(""))  || (business.getLattitude().trim().equals("0.0") && business.getLongitude().trim().equals("0.0")))
+														{
+															array = getLatLong(business.getPostalCode());
+															business.setLattitude(Double.toString(array[0]));
+															business.setLongitude(Double.toString(array[1]));
+														}
+														double distance = distance(Double.parseDouble(userFor.getLattitude()), Double.parseDouble(userFor.getLongitude()), Double.parseDouble(business.getLattitude()), Double.parseDouble(business.getLongitude()), "M");
+														logger.debug("Distance::  "+distance +" lat::  "+userFor.getLattitude()+" lon::  "+userFor.getLongitude());
+														if(distance <= 50)
+														{
+															List<Userdealssuggestion> userdealsuggestions = userDAO.isDealSuggestionExists(userFor.getUserId(), catdeal.getId());
+															if(userdealsuggestions == null || userdealsuggestions.size() == 0)
+															{
+																saveDealsSuggestionInDataBase(catdeal,userFor);
+															}
+														}
+												}
+											   
+										   }
+									   }
+								   }
+							   }
+							}
+							}catch(Exception e)
+							{
+								e.printStackTrace();
+							}
+						   
+					   
+					   }
+					}
+						
+						
+				
+								
+				//// for jeeyohgroups
+				if(!contactFlag)
+				{
+						
+				  if(jeeyohGroup != null)
+				  {
+				   for(Jeeyohgroup jeeyohGroup1 : jeeyohGroup) {
+					   
+					   String groupType = jeeyohGroup1.getGroupType();
+					   Set<Groupusermap> groups   = jeeyohGroup1.getGroupusermaps();
+					   for (Groupusermap groups1 : groups)
+					   {
+						   User groupMember = groups1.getUser();
+						   if(groupMember.getUserId() != userFor.getUserId())
+						   {
+							   //List<UserCategory> userCategoryList1 = userDAO.getUserCategoryLikesById(groupMember.getUserId());
+							   List<UserCategory> userCategoryList1   = userDAO.getUserCategoryLikesByType(groupMember.getUserId(), groupType);
+								  if(userCategoryList != null)
+								  {
+								   for(UserCategory userCategory : userCategoryList1) {											  
+									   
+										   List<Deals> catDeals = dealDAO.getDealsByUserCategory(userCategory.getItemCategory(),userCategory.getItemType(),userCategory.getProviderName());
+										   for(Deals catdeal:catDeals)
+										   {
+											   Business business = catdeal.getBusiness();
+											    if(business != null)
+												{
+													
+														if(business.getLattitude() == null && business.getLongitude() == null || (business.getLattitude().trim().equals("") && business.getLongitude().trim().equals(""))  || (business.getLattitude().trim().equals("0.0") && business.getLongitude().trim().equals("0.0")))
+														{
+															array = getLatLong(business.getPostalCode());
+															business.setLattitude(Double.toString(array[0]));
+															business.setLongitude(Double.toString(array[1]));
+														}
+														double distance = distance(Double.parseDouble(userFor.getLattitude()), Double.parseDouble(userFor.getLongitude()), Double.parseDouble(business.getLattitude()), Double.parseDouble(business.getLongitude()), "M");
+														logger.debug("Distance::  "+distance +" lat::  "+userFor.getLattitude()+" lon::  "+userFor.getLongitude());
+														if(distance <= 50)
+														{
+															List<Userdealssuggestion> userdealsuggestions = userDAO.isDealSuggestionExists(userFor.getUserId(), catdeal.getId());
+															if(userdealsuggestions == null || userdealsuggestions.size() == 0)
+															{
+																saveDealsSuggestionInDataBase(catdeal,userFor);
+															}
+														}
+												}
+											   
+										   }
+									  
+									   
+								    }
+						        }
+
+					       }
+					
+				       }
+				  }
+			 
+				}
+
+					}
+				
+			
+			
+		
 			
 	
 	}
 	
- private void saveDealsSuggestionInDataBase(Deals deal, User user)
- {
-	    Date date = new Date();
-		Userdealssuggestion dealSuggestion = new Userdealssuggestion();
-		dealSuggestion.setCreatedtime(date);
-		dealSuggestion.setDeals(deal);
-		dealSuggestion.setIsFavorite(true);
-		dealSuggestion.setIsFollowing(true);
-		dealSuggestion.setIsLike(true);
-		dealSuggestion.setIsRedempted(true);
-		dealSuggestion.setUpdatedtime(date);
-		dealSuggestion.setUser(user);
-		dealDAO.saveSuggestions(dealSuggestion);
- }
+	 private void saveDealsSuggestionInDataBase(Deals deal, User user)
+	 {
+		    Date date = new Date();
+			Userdealssuggestion dealSuggestion = new Userdealssuggestion();
+			dealSuggestion.setCreatedtime(date);
+			dealSuggestion.setDeals(deal);
+			dealSuggestion.setIsFavorite(true);
+			dealSuggestion.setIsFollowing(true);
+			dealSuggestion.setIsLike(true);
+			dealSuggestion.setIsRedempted(true);
+			dealSuggestion.setUpdatedtime(date);
+			dealSuggestion.setUser(user);
+			dealDAO.saveSuggestions(dealSuggestion);
+	 }
 	
-private Date getNearestWeekend()
-{
- try {
-  Calendar c = Calendar.getInstance();
-  c.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
-  SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-  Date weekendDate = sdf.parse(sdf.format(c.getTime()));
-  return weekendDate;
- } catch (Exception e) {
-  // TODO Auto-generated catch block
-  e.printStackTrace();
-  return null;
- }
-
-}
+	private Date getNearestWeekend()
+	{
+	 try {
+	  Calendar c = Calendar.getInstance();
+	  c.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
+	  SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	  Date weekendDate = sdf.parse(sdf.format(c.getTime()));
+	  return weekendDate;
+	 } catch (Exception e) {
+	  // TODO Auto-generated catch block
+	  e.printStackTrace();
+	  return null;
+	 }
+	
+	}
 	
 	private double distance(double lat1, double lon1,double lat2, double lon2, String unit)
 	{

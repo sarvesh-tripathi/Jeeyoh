@@ -1,5 +1,8 @@
 package com.jeeyoh.service.jobs;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -15,7 +18,6 @@ import com.google.code.geocoder.GeocoderRequestBuilder;
 import com.google.code.geocoder.model.GeocodeResponse;
 import com.google.code.geocoder.model.GeocoderRequest;
 import com.google.code.geocoder.model.GeocoderResult;
-import com.google.code.geocoder.model.LatLng;
 import com.jeeyoh.persistence.IBusinessDAO;
 import com.jeeyoh.persistence.IUserDAO;
 import com.jeeyoh.persistence.domain.Business;
@@ -28,6 +30,8 @@ import com.jeeyoh.persistence.domain.Pagetype;
 import com.jeeyoh.persistence.domain.Pageuserlikes;
 import com.jeeyoh.persistence.domain.User;
 import com.jeeyoh.persistence.domain.UserCategory;
+import com.jeeyoh.persistence.domain.UserCategoryLikes;
+import com.jeeyoh.persistence.domain.Usercontacts;
 import com.jeeyoh.persistence.domain.Usernondealsuggestion;
 
 @Component("nonDealSearch")
@@ -53,6 +57,7 @@ public class NonDealSearch implements INonDealSearch {
 	public void search() {
 		List<User> userList = userDAO.getUsers();
 		logger.debug("NonDealSearch ==> search ==> ");
+		Date weekendDate = getNearestWeekend();
 		if(userList != null) {
 			for(User user : userList) {
 				logger.debug("NonDealSearch ==> search ==> userID ==> " + user.getEmailId());
@@ -67,9 +72,28 @@ public class NonDealSearch implements INonDealSearch {
 					user.setLattitude(Double.toString(array[0]));
 					user.setLongitude(Double.toString(array[1]));
 				}
-				saveNonDealSuggestion(userId, user, true, isContactsAccessed);
+				saveNonDealSuggestion(userId, user, true, isContactsAccessed,weekendDate, false,null,false);
 			}
 		}
+	}
+
+	/**
+	 * Get nearest weekend for a particular date
+	 * @return weekendDate
+	 */
+	private Date getNearestWeekend()
+	{
+		try {
+			Calendar c = Calendar.getInstance();
+			c.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			Date weekendDate = sdf.parse(sdf.format(c.getTime()));
+			return weekendDate;
+		} catch (ParseException e) {
+			e.printStackTrace();
+			return null;
+		}
+
 	}
 
 	/**
@@ -160,7 +184,7 @@ public class NonDealSearch implements INonDealSearch {
 	 * @param user
 	 */
 	@SuppressWarnings("unchecked")
-	private void saveNonDealSuggestion(int userId, User user, boolean forUser, boolean isContactsAccessed)
+	private void saveNonDealSuggestion(int userId, User user, boolean forUser, boolean isContactsAccessed, Date weekendDate, boolean isGroupMember, String groupType, boolean isStar)
 	{
 		int countMain = 0;
 		double[] array = null;
@@ -171,82 +195,116 @@ public class NonDealSearch implements INonDealSearch {
 			user.setLattitude(Double.toString(array[0]));
 			user.setLongitude(Double.toString(array[1]));
 		}
-		
-		List<UserCategory> userCategoryList = userDAO.getUserCategoryLikesById(userId);
+
+		List<UserCategory> userCategoryList = null;
+		int categoryLikesCount = 0;
+		if(isGroupMember)
+		{
+			userCategoryList = userDAO.getUserCategoryLikesByType(userId, groupType);
+			logger.debug("isGroupMember: "+userCategoryList);
+		}
+		else
+		{
+			userCategoryList = userDAO.getUserCategoryLikesById(userId);
+			logger.debug("not a group member: "+userCategoryList);
+		}
+
+		logger.debug("userCategoryList::  "+userCategoryList);
 		if(userCategoryList != null)
 		{
 			for(UserCategory userCategory : userCategoryList) {
-				
+
 				if(userCategory.getItemCategory().equalsIgnoreCase(MOVIE_CATEGORY) || userCategory.getItemCategory().equalsIgnoreCase(RESTAURANT_CATEGORY) || userCategory.getItemCategory().equalsIgnoreCase(NIGHTLIFE_CATEGORY) || userCategory.getItemCategory().equalsIgnoreCase(EVENTS_CATEGORY) || userCategory.getItemCategory().equalsIgnoreCase(GETAWAYS_CATEGORY) || userCategory.getItemCategory().equalsIgnoreCase(SPORTS_CATEGORY)) {
-					
-					List<Business> businessList = businessDAO.getBusinessByuserLikes(userCategory.getItemType(),userCategory.getItemCategory());
-					if(businessList != null)
-					{
-						boolean includePage = true;
-						for(Business business : businessList)
+
+					UserCategoryLikes userCategoryLikes = (UserCategoryLikes)userCategory.getUserCategoryLikes().iterator().next();
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(userCategoryLikes.getCreatedTime());
+					cal.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+					logger.debug("Date Comparison: "+cal.getTime()+" : "+weekendDate);
+					logger.debug("Date Comparison: "+cal.getTime().compareTo(weekendDate));
+					try {
+						if(sdf.parse(sdf.format(cal.getTime())).compareTo(weekendDate) == 0)
 						{
-							List<Usernondealsuggestion> usernondealsuggestions = userDAO.isNonDealSuggestionExists(user.getUserId(), business.getId());
-							logger.debug("NonDealSearch ==> usernondealsuggestions ==> " + usernondealsuggestions);
-							if(usernondealsuggestions == null || usernondealsuggestions.size() == 0)
+							if(isContactsAccessed)
+								categoryLikesCount = userDAO.userCategoryLikeCount(userCategory.getUserCategoryId());
+							if(forUser ||isGroupMember || isStar || categoryLikesCount >= 2)
 							{
-							String type = business.getBusinesstype().getBusinessType();
-							if(type.equalsIgnoreCase(MOVIE_CATEGORY) || type.equalsIgnoreCase(RESTAURANT_CATEGORY) || type.equalsIgnoreCase(NIGHTLIFE_CATEGORY) || type.equalsIgnoreCase(EVENTS_CATEGORY) || type.equalsIgnoreCase(GETAWAYS_CATEGORY) || type.equalsIgnoreCase(SPORTS_CATEGORY)) {
-								
-								if(business.getLattitude() == null && business.getLongitude() == null || (business.getLattitude().trim().equals("") && business.getLongitude().trim().equals(""))  || (business.getLattitude().trim().equals("0.0") && business.getLongitude().trim().equals("0.0")))
+								List<Business> businessList = businessDAO.getBusinessByuserLikes(userCategory.getItemType(),userCategory.getItemCategory(),userCategory.getProviderName());
+								if(businessList != null)
 								{
-									array = getLatLong(business.getPostalCode());
-									business.setLattitude(Double.toString(array[0]));
-									business.setLongitude(Double.toString(array[1]));
-								}
-
-								double distance = distance(Double.parseDouble(user.getLattitude()), Double.parseDouble(user.getLongitude()), Double.parseDouble(business.getLattitude()), Double.parseDouble(business.getLongitude()), "M");
-								logger.debug("Distance::  "+distance +" lat::  "+user.getLattitude()+" lon::  "+user.getLongitude());
-								if(distance <=15)
-								{
-									String ambiance = "";
-									if(business.getAmbience() != null)
-										ambiance = business.getAmbience();
-									String musicType = "";
-									if(business.getAmbience() != null)
-										musicType = business.getMusicType();
-
-									long rating = 0;
-									if(business.getRating() != null)
+									boolean includePage = true;
+									for(Business business : businessList)
 									{
-										rating = business.getRating();
-									}
-									if(rating > 3) {
-										if(type.equalsIgnoreCase(RESTAURANT_CATEGORY)) {
-											if(!ambiance.equalsIgnoreCase("GOOD") && !musicType.equalsIgnoreCase("SOFT")) {
-												includePage = false;
-											} else {
-												includePage = true;
+										List<Usernondealsuggestion> usernondealsuggestions = userDAO.isNonDealSuggestionExists(user.getUserId(), business.getId());
+										logger.debug("NonDealSearch ==> usernondealsuggestions ==> " + usernondealsuggestions);
+										if(usernondealsuggestions == null || usernondealsuggestions.size() == 0)
+										{
+											String type = business.getBusinesstype().getBusinessType();
+											if(type.equalsIgnoreCase(MOVIE_CATEGORY) || type.equalsIgnoreCase(RESTAURANT_CATEGORY) || type.equalsIgnoreCase(NIGHTLIFE_CATEGORY) || type.equalsIgnoreCase(EVENTS_CATEGORY) || type.equalsIgnoreCase(GETAWAYS_CATEGORY) || type.equalsIgnoreCase(SPORTS_CATEGORY)) {
+
+												if(business.getLattitude() == null && business.getLongitude() == null || (business.getLattitude().trim().equals("") && business.getLongitude().trim().equals(""))  || (business.getLattitude().trim().equals("0.0") && business.getLongitude().trim().equals("0.0")))
+												{
+													array = getLatLong(business.getPostalCode());
+													business.setLattitude(Double.toString(array[0]));
+													business.setLongitude(Double.toString(array[1]));
+												}
+
+												double distance = distance(Double.parseDouble(user.getLattitude()), Double.parseDouble(user.getLongitude()), Double.parseDouble(business.getLattitude()), Double.parseDouble(business.getLongitude()), "M");
+												logger.debug("Distance::  "+distance +" lat::  "+user.getLattitude()+" lon::  "+user.getLongitude());
+												if(distance <=15)
+												{
+													String ambiance = "";
+													if(business.getAmbience() != null)
+														ambiance = business.getAmbience();
+													String musicType = "";
+													if(business.getAmbience() != null)
+														musicType = business.getMusicType();
+
+													long rating = 0;
+													if(business.getRating() != null)
+													{
+														rating = business.getRating();
+													}
+													if(rating > 3) {
+														if(type.equalsIgnoreCase(RESTAURANT_CATEGORY)) {
+															if(!ambiance.equalsIgnoreCase("GOOD") && !musicType.equalsIgnoreCase("SOFT")) {
+																includePage = false;
+															} else {
+																includePage = true;
+															}
+														} else {
+															includePage = true;
+														}
+													}
+													logger.debug("NonDealSearch ==> search ==> rating ==> includePage ==> " + includePage);
+													if(includePage) {
+														Usernondealsuggestion suggestion = new Usernondealsuggestion();									
+														suggestion.setBusiness(business);
+														suggestion.setCreatedtime(new Date());
+														suggestion.setIsChecked(false);
+														suggestion.setIsRelevant(true);
+														suggestion.setUpdatedtime(new Date());
+														suggestion.setUser(user);
+														userDAO.saveNonDealSuggestions(suggestion,countMain);
+														countMain ++;
+													}
+												}
 											}
-										} else {
-											includePage = true;
 										}
-									}
-									logger.debug("NonDealSearch ==> search ==> rating ==> includePage ==> " + includePage);
-									if(includePage) {
-										Usernondealsuggestion suggestion = new Usernondealsuggestion();									
-										suggestion.setBusiness(business);
-										suggestion.setCreatedtime(new Date());
-										suggestion.setIsChecked(false);
-										suggestion.setIsRelevant(true);
-										suggestion.setUpdatedtime(new Date());
-										suggestion.setUser(user);
-										userDAO.saveNonDealSuggestions(suggestion,countMain);
-										countMain ++;
 									}
 								}
 							}
 						}
-						}
+					} catch (NumberFormatException e) {
+						e.printStackTrace();
+					} catch (ParseException e) {
+						e.printStackTrace();
 					}
 				}
 			}
 		}
-		
+
 		if(forUser)
 		{
 			List<Jeeyohgroup> groups = userDAO.getUserGroups(userId);
@@ -255,23 +313,35 @@ public class NonDealSearch implements INonDealSearch {
 				for(Jeeyohgroup jeeyohgroup : groups)
 				{
 					Set<Groupusermap> groupusermapList = jeeyohgroup.getGroupusermaps();
+					String groupType1 = jeeyohgroup.getGroupType();
+					logger.debug("groupType1::  "+groupType1);
 					for(Groupusermap groupusermap : groupusermapList)
 					{
 						int userid = groupusermap.getUser().getUserId();
+
 						logger.debug("USERID for userGroup::  "+userid);
-						saveNonDealSuggestion(userid, user, false , false);
+						if(user.getUserId() != userid)
+							saveNonDealSuggestion(userid, user, false , false,weekendDate,true,groupType1,false);
 					}
 				}
 			}
 		}
-		
-		List<Page> userCommunities = userDAO.getUserCommunities(userId);
+
+		List<Page> userCommunities = null;
+		if(isGroupMember)
+		{
+			userCommunities = userDAO.getUserCommunitiesByPageType(userId, groupType);
+		}
+		else
+		{
+			userCommunities = userDAO.getUserCommunities(userId);
+		}
 		logger.debug("NonDealSearch ==> userCommunities ==> size ==> " + userCommunities.size());
 
 		if(userCommunities != null) {
 			boolean includePage = true;
 			for(Page community : userCommunities) {
-				
+
 				List<Usernondealsuggestion> usernondealsuggestions = userDAO.isNonDealSuggestionExists(user.getUserId(), community.getBusiness().getId());
 				logger.debug("NonDealSearch ==> usernondealsuggestions ==> " + usernondealsuggestions);
 				if(usernondealsuggestions == null || usernondealsuggestions.size() == 0)
@@ -420,8 +490,9 @@ public class NonDealSearch implements INonDealSearch {
 			if(userContacts != null) {
 				for(User contact : userContacts) {
 					if(contact != null) {
+						Usercontacts usercontacts2 = (Usercontacts)contact.getUsercontactsesForContactId().iterator().next();
 						int contactId = contact.getUserId();
-						saveNonDealSuggestion(contactId, userList.get(0), false , isContactsAccessed);
+						saveNonDealSuggestion(contactId, userList.get(0), false , isContactsAccessed,weekendDate,false,null,usercontacts2.getIsStar());
 					}
 				}
 			}

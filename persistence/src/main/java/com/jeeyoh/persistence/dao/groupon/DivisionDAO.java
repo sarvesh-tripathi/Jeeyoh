@@ -20,6 +20,7 @@ public class DivisionDAO implements IDivisionDAO {
 		sessionFactory.getCurrentSession().saveOrUpdate(division);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Gdivision> getDivisions() {
 		List<Gdivision> divisionList = null;
@@ -33,6 +34,7 @@ public class DivisionDAO implements IDivisionDAO {
 		return divisionList;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Gdivision> getDivisionsByCountry(String country) {
 		List<Gdivision> divisionList = null;
@@ -54,6 +56,7 @@ public class DivisionDAO implements IDivisionDAO {
 		return divisionList;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Gdivision> getDivisionsById(int id) {
 		// TODO Auto-generated method stub

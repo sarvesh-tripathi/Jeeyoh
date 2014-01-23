@@ -16,7 +16,6 @@ import org.springframework.stereotype.Repository;
 
 import com.jeeyoh.persistence.domain.Business;
 import com.jeeyoh.persistence.domain.Businesstype;
-import com.jeeyoh.persistence.domain.Ybusiness;
 
 @Repository("businessDAO")
 public class BusinessDAO implements IBusinessDAO {
@@ -158,33 +157,6 @@ public class BusinessDAO implements IBusinessDAO {
 	public List<Businesstype> getBusinesstypeByTypeArray(String[] type) {
 		
 		List<Businesstype> businessTypeList = null;
-		/*Session session = sessionFactory.openSession();
-		Transaction tx = null;
-		
-		//String[] type1 = {'RESTAURANT','SPA','SPORT'};
-		//String hqlQuery = "from Businesstype a where a.businessType = :type";
-		String hqlQuery = "from Businesstype a where a.businessType in {:type}";
-		try
-		{
-			tx = session.beginTransaction();
-			Query query = session.createQuery(
-					hqlQuery);
-			query.setParameter("type", type1);
-			businessTypeList = (List<Businesstype>) query.list();
-			tx.commit();
-		}
-		catch (HibernateException e) {
-			if (tx!=null) tx.rollback();
-			e.printStackTrace(); 
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-		finally
-		{
-			session.close();
-		}
-		logger.debug("SIZE "+businessTypeList.size());*/
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Businesstype.class);
 		criteria.add(Restrictions.in("businessType", type));
 		businessTypeList = (List<Businesstype>)criteria.list();
@@ -210,7 +182,7 @@ public class BusinessDAO implements IBusinessDAO {
 		catch (HibernateException e) {
 			e.printStackTrace();
 		}
-		
+
 		return  businessTypeList != null && !businessTypeList.isEmpty() ? businessTypeList.get(0) : null;
 	}
 
@@ -259,7 +231,8 @@ public class BusinessDAO implements IBusinessDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Business> getBusinessByuserLikes(String likekeyword, String itemCategory) {
+	public List<Business> getBusinessByuserLikes(String likekeyword,
+			String itemCategory, String providerName) {
 		logger.debug("getBusinessByuserLikes ==> "+likekeyword);
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Business.class, "business").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		
@@ -272,6 +245,10 @@ public class BusinessDAO implements IBusinessDAO {
 					.add(Restrictions.like("business.name", "%" + likekeyword + "%"))
 					.add(Restrictions.like("business.websiteUrl", "%" + likekeyword + "%"))
 					.add(Restrictions.like("business.city", "%" + likekeyword + "%")));
+		}
+		if(providerName != null && !providerName.trim().equals(""))
+		{
+			criteria.add(Restrictions.eq("business.name", providerName));
 		}
 		if(itemCategory != null && !itemCategory.trim().equals(""))
 		{

@@ -1,7 +1,6 @@
 package com.jeeyoh.model.stubhub;
 
 import java.util.List;
-import java.util.Map;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;

@@ -11,6 +11,7 @@ import com.jeeyoh.persistence.domain.Pageuserlikes;
 import com.jeeyoh.persistence.domain.User;
 import com.jeeyoh.persistence.domain.UserCategory;
 import com.jeeyoh.persistence.domain.Usercontacts;
+import com.jeeyoh.persistence.domain.Userdealssuggestion;
 import com.jeeyoh.persistence.domain.Usernondealsuggestion;
 
 public interface IUserDAO {
@@ -37,7 +38,12 @@ public interface IUserDAO {
 	public List<Usernondealsuggestion> getuserNonDealSuggestionsByEmailId(String emailId);
 	public List<Page> getUserCommunitiesByEmailId(String emailId);
 	public List<UserCategory> getUserCategoryLikesById(int userId);
-
+	public List<UserCategory> getUserCategoryLikesByType(int userId, String category);
+	public List<Page> getUserCommunitiesByPageType(int userId, String pageType);
+	public int userCategoryLikeCount(Integer userCategoryId);
 	public List<Usercontacts> getAllUserContacts(int userId);
+
+	public List<Userdealssuggestion> isDealSuggestionExists(Integer userId,
+			Integer id);
 
 }

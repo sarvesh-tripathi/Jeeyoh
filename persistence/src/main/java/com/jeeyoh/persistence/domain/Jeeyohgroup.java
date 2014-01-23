@@ -12,24 +12,19 @@ import java.util.Set;
 public class Jeeyohgroup  implements java.io.Serializable {
 
 
-     private Integer groupId;
+     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private Integer groupId;
      private User userByOwnerId;
      private Privacy privacy;
      private User userByCreatorId;
      private String groupName;
      private String about;
      private String groupType;
-     public String getGroupType() {
-		return groupType;
-	}
-
-
-	public void setGroupType(String groupType) {
-		this.groupType = groupType;
-	}
-
-	private Date createdtime;
-     private Date updatedtime;
+     private Date createdtime;
+	 private Date updatedtime;    
      private Set groupusermaps = new HashSet(0);
 
     public Jeeyohgroup() {
@@ -117,6 +112,16 @@ public class Jeeyohgroup  implements java.io.Serializable {
     public void setGroupusermaps(Set groupusermaps) {
         this.groupusermaps = groupusermaps;
     }
+
+
+	public void setGroupType(String groupType) {
+		this.groupType = groupType;
+	}
+
+
+	public String getGroupType() {
+		return groupType;
+	}
 
 
 
