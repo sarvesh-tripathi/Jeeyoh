@@ -1,6 +1,7 @@
 package com.jeeyoh.persistence.domain;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class UserCategoryLikes implements Serializable{
 	
@@ -12,6 +13,9 @@ public class UserCategoryLikes implements Serializable{
     private User user ;
     private UserCategory userCategory;
     private Long rank;
+    private User userByContactId;
+    private Boolean isActive;
+    private Date createdTime;
     
     public UserCategoryLikes() {
     } 
@@ -62,6 +66,24 @@ public class UserCategoryLikes implements Serializable{
 	 */
 	public Long getRank() {
 		return rank;
+	}
+	public void setUserByContactId(User userByContactId) {
+		this.userByContactId = userByContactId;
+	}
+	public User getUserByContactId() {
+		return userByContactId;
+	}
+	public void setCreatedTime(Date createdTime) {
+		this.createdTime = createdTime;
+	}
+	public Date getCreatedTime() {
+		return createdTime;
+	}
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
+	}
+	public Boolean getIsActive() {
+		return isActive;
 	}
 
 }

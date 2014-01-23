@@ -36,5 +36,8 @@ public interface IUserDAO {
 	public List<Usernondealsuggestion> getuserNonDealSuggestionsByEmailId(String emailId);
 	public List<Page> getUserCommunitiesByEmailId(String emailId);
 	public List<UserCategory> getUserCategoryLikesById(int userId);
+	public List<UserCategory> getUserCategoryLikesByType(int userId, String category);
+	public List<Page> getUserCommunitiesByPageType(int userId, String pageType);
+	public int userCategoryLikeCount(Integer userCategoryId);
 
 }

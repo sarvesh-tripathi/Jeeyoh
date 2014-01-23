@@ -267,7 +267,8 @@ public class BusinessDAO implements IBusinessDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Business> getBusinessByuserLikes(String likekeyword, String itemCategory) {
+	public List<Business> getBusinessByuserLikes(String likekeyword,
+			String itemCategory, String providerName) {
 		logger.debug("getBusinessByuserLikes ==> "+likekeyword);
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Business.class, "business").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		
@@ -280,6 +281,10 @@ public class BusinessDAO implements IBusinessDAO {
 					.add(Restrictions.like("business.name", "%" + likekeyword + "%"))
 					.add(Restrictions.like("business.websiteUrl", "%" + likekeyword + "%"))
 					.add(Restrictions.like("business.city", "%" + likekeyword + "%")));
+		}
+		if(providerName != null && !providerName.trim().equals(""))
+		{
+			criteria.add(Restrictions.eq("business.name", providerName));
 		}
 		if(itemCategory != null && !itemCategory.trim().equals(""))
 		{

@@ -23,6 +23,9 @@
         <property name="about" type="string">
             <column name="about" length="250" />
         </property>
+         <property name="groupType" type="string">
+            <column name="groupType" length="250" />
+        </property>
         <property name="createdtime" type="timestamp">
             <column name="createdtime" length="19" not-null="true" />
         </property>
