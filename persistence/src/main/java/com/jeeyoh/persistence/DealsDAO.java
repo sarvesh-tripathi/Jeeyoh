@@ -387,7 +387,6 @@ public class DealsDAO implements IDealsDAO {
 
 	@Override
 	public int userCategoryLikeCount(Integer userCategoryId) {
-		// TODO Auto-generated method stub
 		int rowCount = 0;
 		Session session = sessionFactory.getCurrentSession();
 		String hqlQuery = "select count(*) from UserCategoryLikes a where a.userCategory.userCategoryId=:userCategoryId";

@@ -27,7 +27,6 @@ public class CountryLocationDAO implements ICountryLocationDAO {
 			/*Query query = session.createQuery(
 					hqlQuery);
 			query.setParameter("countryCode", countryCode);*/
-			query.setParameter("countryCode", countryCode);
 			locationList = (List<Countrylocation>) query.list();
 		} catch (Exception e) {
 			e.printStackTrace();

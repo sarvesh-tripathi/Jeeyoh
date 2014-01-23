@@ -1,7 +1,6 @@
 package com.jeeyoh.persistence;
 
 import java.util.List;
-
 import com.jeeyoh.persistence.domain.Deals;
 import com.jeeyoh.persistence.domain.Userdealssuggestion;
 import com.jeeyoh.persistence.domain.Usernondealsuggestion;

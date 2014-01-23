@@ -141,14 +141,6 @@ public class AccountController {
 	public ModelAndView searchYelp(HttpServletRequest request,
 			HttpServletResponse httpresponse) {
 		ModelAndView modelAndView = new ModelAndView("home");
-		yelpService.search();
-		//yelpService.searchBusiness();
-		return modelAndView;
-	}
-	@RequestMapping(value = "/searchBusinessYelp", method = RequestMethod.GET)
-	public ModelAndView searchBusinessYelp(HttpServletRequest request,
-			HttpServletResponse httpresponse) {
-		ModelAndView modelAndView = new ModelAndView("home");
 		//yelpService.search();
 		yelpService.searchBusiness();
 		return modelAndView;

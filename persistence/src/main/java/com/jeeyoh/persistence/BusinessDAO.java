@@ -283,7 +283,6 @@ public class BusinessDAO implements IBusinessDAO {
 					.add(Restrictions.eq("businessTypes.businessType", itemCategory))
 					.add(Restrictions.like("business.name", "%" + itemCategory + "%")));
 		}
-		
 		List<Business> businessList = criteria.list();
 	
 		return businessList;
