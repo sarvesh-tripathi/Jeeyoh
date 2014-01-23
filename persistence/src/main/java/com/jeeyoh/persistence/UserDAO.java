@@ -64,6 +64,8 @@ public class UserDAO implements IUserDAO {
 		return contactList;
 	}
 
+	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Usercontacts> getAllUserContacts(int userId) {
 		List<Usercontacts> contactList = null;
