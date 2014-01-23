@@ -31,6 +31,7 @@ public class UserDAO implements IUserDAO {
 	@Autowired
 	private SessionFactory sessionFactory;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<User> getUsers() {
 		System.out.println("inside getUsers");
@@ -48,6 +49,7 @@ public class UserDAO implements IUserDAO {
 		return userList;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<User> getUserContacts(int userId) {
 		List<User> contactList = null;
@@ -62,6 +64,7 @@ public class UserDAO implements IUserDAO {
 		}
 		return contactList;
 	}
+
 	@Override
 	public List<Usercontacts> getAllUserContacts(int userId) {
 		List<Usercontacts> contactList = null;
@@ -76,11 +79,14 @@ public class UserDAO implements IUserDAO {
 		}
 		return contactList;
 	}
+
+	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Page> getUserCommunities(int userId) {
 		logger.debug("pageList => ");
 		List<Page> pageList = null;
-		String hqlQuery = "select b from User a, Page b, Pageuserlikes c where a.userId = :userId and c.user.userId = a.userId and b.pageId = c.page.pageId";
+		String hqlQuery = "select distinct b from User a, Page b, Pageuserlikes c where a.userId = :userId and c.user.userId = a.userId and b.pageId = c.page.pageId";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
@@ -95,6 +101,7 @@ public class UserDAO implements IUserDAO {
 		return pageList;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Pagetype> getCommunityType(int pageId) {
 		logger.debug("pageList CommunityType => ");
@@ -120,6 +127,7 @@ public class UserDAO implements IUserDAO {
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Jeeyohgroup> getUserGroups(int userId) {
 		List<Jeeyohgroup> groupList = null;
@@ -141,6 +149,7 @@ public class UserDAO implements IUserDAO {
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Pageuserlikes> getUserPageProperties(int userId, int pageId) {
 		List<Pageuserlikes> pageProperties = null;
@@ -183,6 +192,7 @@ public class UserDAO implements IUserDAO {
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<User> getUserById(int userId) {
 		System.out.println("inside getUsers");
@@ -201,6 +211,7 @@ public class UserDAO implements IUserDAO {
 		return userList;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Events> getUserCommunityEvents(int userId, int pageId) {
 		logger.debug("pageList => ");
@@ -220,6 +231,7 @@ public class UserDAO implements IUserDAO {
 		return eventsList;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public User getUsersById(String id) {
 		List<User> userList = null;
@@ -349,5 +361,68 @@ public class UserDAO implements IUserDAO {
 			e.printStackTrace();
 		}
 		return usernondealsuggestions;
+	}
+
+    
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<UserCategory> getUserCategoryLikesByType(int userId,
+			String category) {
+		logger.debug("pageList => ");
+		  List<UserCategory> userCategoryList = null;
+		  String hqlQuery = "select b from User a, UserCategory b, UserCategoryLikes c where a.userId = :userId and b.itemCategory = :category and c.user.userId = a.userId and b.userCategoryId = c.userCategory.userCategoryId";
+		  try {
+		   Query query = sessionFactory.getCurrentSession().createQuery(
+		     hqlQuery);
+		   query.setParameter("userId", userId);
+		   query.setParameter("category", category);
+		   userCategoryList = (List<UserCategory>) query.list();
+		  } catch (Exception e) {
+		   e.printStackTrace();
+		   logger.debug(e.toString());
+		   logger.debug(e.getLocalizedMessage());
+		  }
+		  return userCategoryList;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Page> getUserCommunitiesByPageType(int userId, String pageType) {
+		logger.debug("pageList => ");
+		List<Page> pageList = null;
+		String hqlQuery = "select distinct b from User a, Page b, Pageuserlikes c, Pagetype d where a.userId = :userId and d.pageType = :pageType and d.pageTypeId = b.pagetype.pageTypeId and c.user.userId = a.userId and b.pageId = c.page.pageId";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("userId", userId);
+			query.setParameter("pageType", pageType);
+			pageList = (List<Page>) query.list();
+			//logger.debug("pageList => " + pageList);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.debug(e.toString());
+			logger.debug(e.getLocalizedMessage());
+		}
+		return pageList;
+	}
+
+	@Override
+	public int userCategoryLikeCount(Integer userCategoryId) {
+		logger.debug("userCategoryLikeCount => ");
+		int rowCount = 0;
+		String hqlQuery = "select count(*) from UserCategoryLikes a where a.userCategory.userCategoryId = :userCategoryId";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("userCategoryId", userCategoryId);
+			
+			rowCount = ((Number)query.uniqueResult()).intValue();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.debug(e.toString());
+			logger.debug(e.getLocalizedMessage());
+		}
+		return rowCount;
 	}
 }

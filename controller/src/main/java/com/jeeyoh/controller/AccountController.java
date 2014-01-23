@@ -19,7 +19,6 @@ import com.jeeyoh.persistence.domain.Business;
 import com.jeeyoh.persistence.domain.Deals;
 import com.jeeyoh.persistence.domain.Page;
 import com.jeeyoh.service.fandango.IFandangoService;
-import com.jeeyoh.service.groupon.IGrouponClient;
 import com.jeeyoh.service.groupon.IGrouponFilterEngineService;
 import com.jeeyoh.service.groupon.IGrouponService;
 import com.jeeyoh.service.jobs.IDealSearch;
@@ -36,8 +35,6 @@ import com.jeeyoh.service.yelp.IYelpService;
 public class AccountController {
 	
 	static final Logger logger = LoggerFactory.getLogger("debugLogger");
-	@Autowired
-	private IGrouponClient grouponClient;
 
 	@Autowired
 	private IGrouponService grouponService;

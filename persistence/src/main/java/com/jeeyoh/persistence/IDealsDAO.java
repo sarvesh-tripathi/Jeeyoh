@@ -2,11 +2,9 @@ package com.jeeyoh.persistence;
 
 import java.util.List;
 
-import com.jeeyoh.persistence.domain.Business;
 import com.jeeyoh.persistence.domain.Deals;
 import com.jeeyoh.persistence.domain.Userdealssuggestion;
 import com.jeeyoh.persistence.domain.Usernondealsuggestion;
-import com.jeeyoh.persistence.domain.Ydeal;
 
 public interface IDealsDAO {
 	public List<Deals> getDeals();

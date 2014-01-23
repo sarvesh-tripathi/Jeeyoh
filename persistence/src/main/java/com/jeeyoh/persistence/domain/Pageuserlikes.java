@@ -10,7 +10,11 @@ import java.util.Date;
 public class Pageuserlikes  implements java.io.Serializable {
 
 
-     private Integer pageUserLikesId;
+     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private Integer pageUserLikesId;
      private User user;
      private Page page;
      private Notificationpermission notificationpermission;

@@ -20,6 +20,9 @@
         <property name="isDeleted" type="java.lang.Boolean">
             <column name="isDeleted" />
         </property>
+         <property name="isStar" type="java.lang.Boolean">
+            <column name="isStar" />
+        </property>
         <property name="createdtime" type="timestamp">
             <column name="createdtime" length="19" not-null="true" />
         </property>

@@ -17,6 +17,7 @@ public class Usercontacts  implements java.io.Serializable {
      private User userByUserId;
      private Boolean isActive;
      private Boolean isDeleted;
+     private Boolean isStar;
      private Date createdtime;
      private Date updatedtime;
      private Set usercontactsgroupmaps = new HashSet(0);
@@ -108,6 +109,16 @@ public class Usercontacts  implements java.io.Serializable {
     public void setUsercontactsgroupmaps(Set usercontactsgroupmaps) {
         this.usercontactsgroupmaps = usercontactsgroupmaps;
     }
+
+
+	public void setIsStar(Boolean isStar) {
+		this.isStar = isStar;
+	}
+
+
+	public Boolean getIsStar() {
+		return isStar;
+	}
 
 
 
