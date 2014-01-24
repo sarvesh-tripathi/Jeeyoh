@@ -88,7 +88,6 @@ public class GrouponService implements IGrouponService {
 		logger.debug("Inside loadDeals");
 		List<Gdivision> divisions = divisionDAO.getDivisionsByCountry(country);
 		//List<Gdivision> divisions = divisionDAO.getDivisionsById(560);
-		int count = 0;
 		if(divisions != null) {
 			
 			String longitude;

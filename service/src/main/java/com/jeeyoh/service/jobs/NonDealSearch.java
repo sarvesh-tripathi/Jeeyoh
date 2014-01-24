@@ -221,8 +221,6 @@ public class NonDealSearch implements INonDealSearch {
 					cal.setTime(userCategoryLikes.getCreatedTime());
 					cal.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-					logger.debug("Date Comparison: "+cal.getTime()+" : "+weekendDate);
-					logger.debug("Date Comparison: "+cal.getTime().compareTo(weekendDate));
 					try {
 						if(sdf.parse(sdf.format(cal.getTime())).compareTo(weekendDate) == 0)
 						{
@@ -365,8 +363,6 @@ public class NonDealSearch implements INonDealSearch {
 							if(businessList != null) {
 								business = businessList.get(0);
 							}
-
-							logger.debug("Lat/Long for business :  " + business.getLattitude() +" , "+business.getLongitude());
 							logger.debug("Lat/Long for business :  " + business.getLattitude() +" , "+business.getLongitude()+" Lat/Long for user:  "+user.getLattitude()+" , "+user.getLongitude());
 							if(business.getLattitude() == null && business.getLongitude() == null || (business.getLattitude().trim().equals("") && business.getLongitude().trim().equals(""))  || (business.getLattitude().trim().equals("0.0") && business.getLongitude().trim().equals("0.0")))
 							{

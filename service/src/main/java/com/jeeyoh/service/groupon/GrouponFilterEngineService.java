@@ -57,7 +57,6 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 	public void filter() {
 		List<Gdealoption> rows = gDealsDAO.getDeals();
 		logger.debug("loadDeals => row size " + rows.size());
-		List<Gdeal> gDealList = new ArrayList<Gdeal>();
 		Date currentDate = null;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		try {

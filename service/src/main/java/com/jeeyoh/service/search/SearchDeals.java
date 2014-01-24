@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.jeeyoh.model.search.DealModel;
 import com.jeeyoh.persistence.IDealsDAO;
 import com.jeeyoh.persistence.IUserDAO;
 import com.jeeyoh.persistence.domain.Deals;
@@ -90,7 +89,6 @@ public class SearchDeals implements ISearchDeals {
 			logger.debug("USER DEALS ::::::::"+dealSuggestionList.size());
 			if(dealSuggestionList != null)
 			{
-				int preId = 0;
 				for(Userdealssuggestion dealsuggestion : dealSuggestionList)
 				{
 			
@@ -139,6 +137,7 @@ public class SearchDeals implements ISearchDeals {
 		return dealModels;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional
 	public Set<Deals> getUserContactAndCommunityDeals(String emailId){
