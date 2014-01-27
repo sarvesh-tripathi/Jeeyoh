@@ -12,13 +12,14 @@ public class UserCategoryLikes implements Serializable{
 	private Integer userCategoryLikesId ;
     private User user ;
     private UserCategory userCategory;
-    private Long rank;
     private User userByContactId;
     private Boolean isActive;
-    private Date createdTime;
-    
-    public UserCategoryLikes() {
+    private Long rank;
 
+    private Date createdTime;
+   
+	
+	public UserCategoryLikes() {
     } 
 	/**
 	 * @param userCategoryLikesId the userCategoryLikesId to set

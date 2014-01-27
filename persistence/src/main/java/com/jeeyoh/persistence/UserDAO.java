@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
 import com.jeeyoh.persistence.domain.Events;
 import com.jeeyoh.persistence.domain.Eventuserlikes;
 import com.jeeyoh.persistence.domain.Jeeyohgroup;
@@ -64,7 +65,6 @@ public class UserDAO implements IUserDAO {
 		}
 		return contactList;
 	}
-
 
 	@Override
 	public List<Usercontacts> getAllUserContacts(int userId) {
@@ -293,7 +293,18 @@ public class UserDAO implements IUserDAO {
 		criteria.add(Restrictions.eq("business.id", businessId));
 
 		List<Usernondealsuggestion> usernondealsuggestions = criteria.list();
-		return usernondealsuggestions;
+		/*List<Usernondealsuggestion> usernondealsuggestions = null;
+		String hqlQuery = "select a from Usernondealsuggestion a where a.user.userId = :userId and a.business.id = :businessId";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("userId", userId);
+			query.setParameter("businessId", businessId);
+			usernondealsuggestions = (List<Usernondealsuggestion>) query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		 */		return usernondealsuggestions;
 	}
 	
 
@@ -319,7 +330,7 @@ public class UserDAO implements IUserDAO {
     @SuppressWarnings("unchecked")
 	 @Override
 	 public List<UserCategory> getUserCategoryLikesById(int userId) {
-	  logger.debug("getUserCategoryLikesById => ");
+	  logger.debug("pageList => ");
 	  List<UserCategory> userCategoryList = null;
 	  String hqlQuery = "select b from User a, UserCategory b, UserCategoryLikes c where a.userId = :userId and c.user.userId = a.userId and b.userCategoryId = c.userCategory.userCategoryId";
 	  try {
@@ -358,7 +369,7 @@ public class UserDAO implements IUserDAO {
 	@Override
 	public List<UserCategory> getUserCategoryLikesByType(int userId,
 			String category) {
-		logger.debug("getUserCategoryLikesByType => ");
+		logger.debug("pageList => ");
 		  List<UserCategory> userCategoryList = null;
 		  String hqlQuery = "select b from User a, UserCategory b, UserCategoryLikes c where a.userId = :userId and b.itemCategory = :category and c.user.userId = a.userId and b.userCategoryId = c.userCategory.userCategoryId";
 		  try {
@@ -378,7 +389,7 @@ public class UserDAO implements IUserDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Page> getUserCommunitiesByPageType(int userId, String pageType) {
-		logger.debug("getUserCommunitiesByPageType => ");
+		logger.debug("pageList => ");
 		List<Page> pageList = null;
 		String hqlQuery = "select distinct b from User a, Page b, Pageuserlikes c, Pagetype d where a.userId = :userId and d.pageType = :pageType and d.pageTypeId = b.pagetype.pageTypeId and c.user.userId = a.userId and b.pageId = c.page.pageId";
 		try {
