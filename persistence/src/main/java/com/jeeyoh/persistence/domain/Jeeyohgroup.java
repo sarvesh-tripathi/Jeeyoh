@@ -24,7 +24,9 @@ public class Jeeyohgroup  implements java.io.Serializable {
      private String about;
      private String groupType;
      private Date createdtime;
+
 	 private Date updatedtime;    
+
      private Set groupusermaps = new HashSet(0);
 
     public Jeeyohgroup() {

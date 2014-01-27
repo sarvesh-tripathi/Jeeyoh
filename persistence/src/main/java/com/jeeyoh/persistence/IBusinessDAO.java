@@ -10,9 +10,7 @@ import com.jeeyoh.persistence.domain.Businesstype;
 @Repository("businessDAO")
 public interface IBusinessDAO {
 	public List<Business> getBusinesses();
-	
 	public List<Business> getBusinessByName(String name);
-	
 	public List<Business> getBusinessById(String businessId);
 	public List<Business> getBusinessByIdForGroupon(String businessId);
 	public List<Business> getBusinessById(int id);

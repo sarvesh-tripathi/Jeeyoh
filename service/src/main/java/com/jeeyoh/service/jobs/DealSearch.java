@@ -48,8 +48,6 @@ public class DealSearch implements IDealSearch {
 	@Autowired
 	private IBusinessDAO businessDAO;
 	
-	
-	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional
 	public void search() {

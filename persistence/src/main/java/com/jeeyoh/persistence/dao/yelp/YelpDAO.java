@@ -82,8 +82,8 @@ public class YelpDAO implements IYelpDAO {
 	public void saveBusiness(Ybusiness business, int count) {
 		// TODO Auto-generated method stub
 		logger.debug("Save business ::: ");
-		Session session = sessionFactory.openSession();
-		//Session session = sessionFactory.getCurrentSession();
+		//Session session = sessionFactory.openSession();
+		Session session = sessionFactory.getCurrentSession();
 		Transaction tx = null;
 		try
 		{
@@ -102,7 +102,7 @@ public class YelpDAO implements IYelpDAO {
 			}
 		finally
 		{
-			session.close();
+			//session.close();
 			logger.debug("close session ::: ");
 		}
 	}

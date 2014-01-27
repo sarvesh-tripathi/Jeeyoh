@@ -3,7 +3,6 @@ package com.jeeyoh.service.groupon;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,7 +88,6 @@ public class GrouponService implements IGrouponService {
 		logger.debug("Inside loadDeals");
 		List<Gdivision> divisions = divisionDAO.getDivisionsByCountry(country);
 		//List<Gdivision> divisions = divisionDAO.getDivisionsById(560);
-		int count = 0;
 		if(divisions != null) {
 			
 			String longitude;
