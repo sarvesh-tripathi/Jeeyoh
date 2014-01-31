@@ -1,6 +1,9 @@
 package com.jeeyoh.persistence.dao.stubhub;
 
+import java.util.List;
+
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -13,29 +16,51 @@ import com.jeeyoh.persistence.domain.StubhubEvent;
 
 @Repository("stubhubDAO")
 public class StubhubDAO implements IStubhubDAO {
-	
+
 	@Autowired
 	private SessionFactory sessionFactory;
-	
+
 	static final Logger logger = LoggerFactory.getLogger("debugLogger");
 
 	@Override
-	public void save(StubhubEvent stunhub) {
-		// TODO Auto-generated method stub
+	public void save(StubhubEvent stunhub, int count) {
 		Session session  = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();
 		try
 		{
-			
-			session.save(stunhub);				
+
+			session.save(stunhub); 
+			if( count % 20 == 0 ) {
+				session.flush();
+				session.clear();
+			}
 			tx.commit();
-			session.close();
+
 		}
 		catch(HibernateException e)
 		{
 			logger.error("ERROR IN DAO :: = > "+e);
 		}
-		
+		finally
+		{
+			session.close();
+		}
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<StubhubEvent> getStubhubEvents() {
+		List<StubhubEvent> eventsList = null;
+		String hqlQuery = "from StubhubEvent";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			eventsList = (List<StubhubEvent>) query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return eventsList;
 	}
 
 }

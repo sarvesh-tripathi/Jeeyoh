@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.jeeyoh.persistence.domain.Business;
 import com.jeeyoh.persistence.domain.Deals;
+import com.jeeyoh.persistence.domain.Events;
 import com.jeeyoh.persistence.domain.Page;
 
 public class MainModel {
@@ -16,6 +17,7 @@ public class MainModel {
 	private List<Business> businessList = new ArrayList<Business>();
 	private List<Page> pageList = new ArrayList<Page>();
 	private List<Deals> dealList = new ArrayList<Deals>();
+	private List<Events> eventsList = new ArrayList<Events>();
 	private Set<Deals> dealModel;
 	/**
 	 * @param name the name to set
@@ -90,5 +92,17 @@ public class MainModel {
 
 	public void setDealModel(Set<Deals> dealModel) {
 		this.dealModel = dealModel;
+	}
+	/**
+	 * @param eventsList the eventsList to set
+	 */
+	public void setEventsList(List<Events> eventsList) {
+		this.eventsList = eventsList;
+	}
+	/**
+	 * @return the eventsList
+	 */
+	public List<Events> getEventsList() {
+		return eventsList;
 	}
 }

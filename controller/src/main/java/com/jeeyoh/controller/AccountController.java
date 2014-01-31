@@ -17,16 +17,20 @@ import org.springframework.web.servlet.ModelAndView;
 import com.jeeyoh.model.search.MainModel;
 import com.jeeyoh.persistence.domain.Business;
 import com.jeeyoh.persistence.domain.Deals;
+import com.jeeyoh.persistence.domain.Events;
 import com.jeeyoh.persistence.domain.Page;
 import com.jeeyoh.service.fandango.IFandangoService;
 import com.jeeyoh.service.groupon.IGrouponFilterEngineService;
 import com.jeeyoh.service.groupon.IGrouponService;
 import com.jeeyoh.service.jobs.IDealSearch;
+import com.jeeyoh.service.jobs.IEventSearch;
 import com.jeeyoh.service.jobs.INonDealSearch;
 import com.jeeyoh.service.search.ICommunitySearch;
+import com.jeeyoh.service.search.IEventsSuggestionSearch;
 import com.jeeyoh.service.search.INonDealSuggestionSearch;
 import com.jeeyoh.service.search.ISearchDeals;
 import com.jeeyoh.service.search.IUserDealsSearch;
+import com.jeeyoh.service.stubhub.IStubhubFilterEngineService;
 import com.jeeyoh.service.stubhub.IStubhubService;
 import com.jeeyoh.service.yelp.IYelpFilterEngineService;
 import com.jeeyoh.service.yelp.IYelpService;
@@ -71,6 +75,17 @@ public class AccountController {
 	
 	@Autowired
 	private ISearchDeals searchDeals;
+	
+	@Autowired
+	private IStubhubFilterEngineService stubhubFilterEngineService;
+	
+	@Autowired
+	private IEventSearch eventSearch;
+	
+	@Autowired
+	private IEventsSuggestionSearch eventsSuggestionSearch;
+	
+	
 	
 	@RequestMapping(value = "/home", method = RequestMethod.GET)
 	public ModelAndView home(HttpServletRequest request,
@@ -119,6 +134,12 @@ public class AccountController {
 		return modelAndView;
 	}
 
+	@RequestMapping(value = "/eventSuggestionSearch", method = RequestMethod.GET)
+	public ModelAndView eventSuggestionSearch(HttpServletRequest request,
+			HttpServletResponse response) {
+		ModelAndView modelAndView = new ModelAndView("eventSuggestionSearch");
+		return modelAndView;
+	}
 
 	@RequestMapping(value = "/getDivisions", method = RequestMethod.GET)
 	public ModelAndView getDivisions(HttpServletRequest request,
@@ -311,7 +332,34 @@ public class AccountController {
 		return modelAndView;
 	}
 	
+	@RequestMapping(value = "/filterEventsForStubhub", method = RequestMethod.GET)
+	public ModelAndView filterEventsForStubhub(HttpServletRequest request, HttpServletResponse httpresponse){
+		ModelAndView modelAndView = new ModelAndView("home");
+		stubhubFilterEngineService.filter();
+		return modelAndView;
+	}
 	
+	@RequestMapping(value = "/eventsSuggestion", method = RequestMethod.GET)
+	public ModelAndView eventsSuggestion(HttpServletRequest request,
+			HttpServletResponse httpresponse) {
+		ModelAndView modelAndView = new ModelAndView("home");
+		eventSearch.search();		
+		return modelAndView;
+	}
+	
+	@RequestMapping(value = "/eventsSearch", method = RequestMethod.GET)
+	public ModelAndView eventsSearch(HttpServletRequest request, HttpServletResponse httpresponse){
+		ModelAndView modelAndView = new ModelAndView("eventSuggestionSearch");
+		String userEmail = request.getParameter("userEmail");
+		String searchText = request.getParameter("searchText");
+		String location = request.getParameter("location");
+		String category = request.getParameter("eventCategory");
+		List<Events> eventsList = eventsSuggestionSearch.search(userEmail.trim(), searchText.trim(), category.trim(), location.trim());
+		MainModel model = new MainModel();
+		model.setEventsList(eventsList);
+		modelAndView.addObject("mainModel", model);
+		return modelAndView;
+	}
 	
 	
 }

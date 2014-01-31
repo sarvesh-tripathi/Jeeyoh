@@ -10,7 +10,11 @@ import java.util.Date;
 public class Usernondealsuggestion  implements java.io.Serializable {
 
 
-     private Integer suggestionId;
+     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private Integer suggestionId;
      private User user;
      private Business business;
      private Boolean isChecked;

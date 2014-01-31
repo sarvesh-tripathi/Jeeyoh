@@ -47,6 +47,7 @@ public class User  implements java.io.Serializable {
      private Set usercontactsesForContactId = new HashSet(0);
      private Set userdealmaps = new HashSet(0);
      private Set usernondealsuggestions = new HashSet(0);
+     private Set usereventsuggestions = new HashSet(0);
 
     public User() {
     }
@@ -346,6 +347,22 @@ public class User  implements java.io.Serializable {
 
 	public void setUsernondealsuggestions(Set usernondealsuggestions) {
 		this.usernondealsuggestions = usernondealsuggestions;
+	}
+
+
+	/**
+	 * @param usereventsuggestions the usereventsuggestions to set
+	 */
+	public void setUsereventsuggestions(Set usereventsuggestions) {
+		this.usereventsuggestions = usereventsuggestions;
+	}
+
+
+	/**
+	 * @return the usereventsuggestions
+	 */
+	public Set getUsereventsuggestions() {
+		return usereventsuggestions;
 	}
 
 

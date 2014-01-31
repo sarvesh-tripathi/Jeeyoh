@@ -41,8 +41,10 @@ public class Events implements Serializable{
 	private double	maxSeatsTogether;
 	private double	minSeatsTogether;
 	private String	title;
+	private String ancestorGenreDescriptions;
 	private Page page;
 	private Set eventuserlikes = new HashSet(0);
+	private Set usereventsuggestions = new HashSet(0);
 
 	public int getEventId() {
 		return eventId;
@@ -290,6 +292,34 @@ public class Events implements Serializable{
 
 	public Set getEventuserlikes() {
 		return eventuserlikes;
+	}
+
+	/**
+	 * @param ancestorGenreDescriptions the ancestorGenreDescriptions to set
+	 */
+	public void setAncestorGenreDescriptions(String ancestorGenreDescriptions) {
+		this.ancestorGenreDescriptions = ancestorGenreDescriptions;
+	}
+
+	/**
+	 * @return the ancestorGenreDescriptions
+	 */
+	public String getAncestorGenreDescriptions() {
+		return ancestorGenreDescriptions;
+	}
+
+	/**
+	 * @param usereventsuggestions the usereventsuggestions to set
+	 */
+	public void setUsereventsuggestions(Set usereventsuggestions) {
+		this.usereventsuggestions = usereventsuggestions;
+	}
+
+	/**
+	 * @return the usereventsuggestions
+	 */
+	public Set getUsereventsuggestions() {
+		return usereventsuggestions;
 	}
 
 	

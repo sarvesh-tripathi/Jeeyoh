@@ -92,6 +92,9 @@
         <property name="title" type="string">
             <column name="title" />
         </property>
+        <property name="ancestorGenreDescriptions" type="string">
+            <column name="ancestorGenreDescriptions" />
+        </property>
          <many-to-one name="page" class="com.jeeyoh.persistence.domain.Page" fetch="select">
             <column name="pageId" />
         </many-to-one>
@@ -100,6 +103,12 @@
                 <column name="eventId" not-null="true" />
             </key>
             <one-to-many class="com.jeeyoh.persistence.domain.Eventuserlikes" />
+        </set>
+         <set name="usereventsuggestions" inverse="true">
+            <key>
+                <column name="eventId" not-null="true" />
+            </key>
+            <one-to-many class="com.jeeyoh.persistence.domain.Usereventsuggestion" />
         </set>
      </class>
 </hibernate-mapping>

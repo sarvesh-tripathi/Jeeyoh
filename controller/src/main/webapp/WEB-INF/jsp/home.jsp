@@ -31,6 +31,10 @@
    				<li><a href="fandangoData" title="Fandango Data">Fandango Data</a></li>
    				<li>|</li>
    				<li><a href="stubhub" title="Stubhub Data">Stubhub Data</a></li>
+   				<li>|</li>
+   				<li><a href="filterEventsForStubhub" title="Filter Events for Stubhub">Filter Events for Stubhub</a></li>
+   				<li>|</li>
+   				<li><a href="eventsSuggestion" title="Events Suggestion">Events Suggestion</a></li>
 			</ul>
 		</div>
 	</body>

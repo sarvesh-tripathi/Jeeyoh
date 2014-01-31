@@ -71,6 +71,8 @@ public class StubhubEvent implements java.io.Serializable {
 	
 	private String	title;
 	
+	private String ancestorGenreDescriptions;
+	
 	public int getId() {
 		return id;
 	}
@@ -301,6 +303,20 @@ public class StubhubEvent implements java.io.Serializable {
 
 	public void setTitle(String title) {
 		this.title = title;
+	}
+
+	/**
+	 * @param ancestorGenreDescriptions the ancestorGenreDescriptions to set
+	 */
+	public void setAncestorGenreDescriptions(String ancestorGenreDescriptions) {
+		this.ancestorGenreDescriptions = ancestorGenreDescriptions;
+	}
+
+	/**
+	 * @return the ancestorGenreDescriptions
+	 */
+	public String getAncestorGenreDescriptions() {
+		return ancestorGenreDescriptions;
 	}
 
 

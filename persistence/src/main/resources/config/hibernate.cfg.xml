@@ -64,5 +64,6 @@
     <mapping resource="hbm/Tags.hbm.xml"/> 
     <mapping resource="hbm/UserCategory.hbm.xml"/>
     <mapping resource="hbm/UserCategoryLikes.hbm.xml"/>
+    <mapping resource="hbm/Usereventsuggestion.hbm.xml"/>
     </session-factory>
 </hibernate-configuration>

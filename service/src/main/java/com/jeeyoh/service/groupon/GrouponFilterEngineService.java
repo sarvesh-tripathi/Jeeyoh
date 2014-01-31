@@ -3,8 +3,6 @@ package com.jeeyoh.service.groupon;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -36,6 +34,7 @@ import com.jeeyoh.persistence.domain.Gdealoption;
 import com.jeeyoh.persistence.domain.Gdivision;
 import com.jeeyoh.persistence.domain.Gmerchant;
 import com.jeeyoh.persistence.domain.Gtags;
+import com.jeeyoh.utils.Utils;
 
 @Component("grouponFilterEngine")
 public class GrouponFilterEngineService implements IGrouponFilterEngineService {
@@ -57,15 +56,11 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 	public void filter() {
 		List<Gdealoption> rows = gDealsDAO.getDeals();
 		logger.debug("loadDeals => row size " + rows.size());
-		Date currentDate = null;
+		//Get current date
+		Date currentDate = Utils.getCurrentDate();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		try {
-			currentDate = sdf.parse(sdf.format(Calendar.getInstance().getTime()));
-		} catch (ParseException e1) {
-			e1.printStackTrace();
-		}
 		Set<Gdealoption> gdealoption = null;
-		findWeekends();
+		List<Date>weekendList =  Utils.findWeekends();
 		logger.debug("loadDeals => weekendList size " + weekendList.size());
 		Gdeal gdeal = null;
 		if(rows != null)
@@ -89,7 +84,7 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 
 							try {
 								logger.debug("Date::  "+ gdeal.getEndAt() +"  :  "+ sdf.parse(sdf.format((Date)weekendList.get(j))));
-								if(gdeal.getEndAt().after(currentDate) && gdeal.getEndAt().before(sdf.parse(sdf.format((Date)weekendList.get(j)))))
+								if(sdf.parse(sdf.format(gdeal.getEndAt())).compareTo(currentDate) >= 0 && gdeal.getEndAt().before(sdf.parse(sdf.format((Date)weekendList.get(j)))))
 								{
 									batch_size++;
 									logger.debug("gdeal id:: "+ gdeal.getId());
@@ -227,34 +222,6 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 		}
 	}
 
-
-
-	public void filterDealsByExpirationDate() {
-
-	}
-
-
-	@SuppressWarnings("unchecked")
-	private ArrayList weekendList = null;
-	@SuppressWarnings("unchecked")
-	public void findWeekends(){
-		weekendList = new ArrayList();
-		Calendar cal = null;
-		cal = Calendar.getInstance();
-		// The while loop ensures that you are only checking dates in the specified year
-		while(cal.get(Calendar.YEAR) == Calendar.getInstance().get(Calendar.YEAR)){
-			// The switch checks the day of the week for Saturdays and Sundays
-			switch(cal.get(Calendar.DAY_OF_WEEK)){
-			case Calendar.SATURDAY:
-			case Calendar.SUNDAY:
-				weekendList.add(cal.getTime());
-				break;
-			}
-			// Increment the day of the year for the next iteration of the while loop
-			cal.add(Calendar.DAY_OF_YEAR, 1);
-		}
-	}
-	
 	
 	/**
 	 * Get latitude and longitude for ZipCode

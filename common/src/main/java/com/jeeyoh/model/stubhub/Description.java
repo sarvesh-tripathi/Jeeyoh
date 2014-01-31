@@ -1,5 +1,7 @@
 package com.jeeyoh.model.stubhub;
 
+import java.util.List;
+
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
@@ -73,6 +75,9 @@ public class Description {
 	private String	minSeatsTogether;
 	@JsonProperty
 	private String	title;
+	
+	@JsonProperty
+	private List<String>ancestorGenreDescriptions;
 	
 	public String getEvent_date() {
 		return event_date;
@@ -296,6 +301,21 @@ public class Description {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	/**
+	 * @param ancestorGenreDescriptions the ancestorGenreDescriptions to set
+	 */
+	public void setAncestorGenreDescriptions(
+			List<String> ancestorGenreDescriptions) {
+		this.ancestorGenreDescriptions = ancestorGenreDescriptions;
+	}
+
+	/**
+	 * @return the ancestorGenreDescriptions
+	 */
+	public List<String> getAncestorGenreDescriptions() {
+		return ancestorGenreDescriptions;
 	}
 
 	

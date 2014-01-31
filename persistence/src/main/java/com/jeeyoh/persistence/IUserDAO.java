@@ -11,6 +11,7 @@ import com.jeeyoh.persistence.domain.Pageuserlikes;
 import com.jeeyoh.persistence.domain.User;
 import com.jeeyoh.persistence.domain.UserCategory;
 import com.jeeyoh.persistence.domain.Usercontacts;
+import com.jeeyoh.persistence.domain.Usereventsuggestion;
 import com.jeeyoh.persistence.domain.Usernondealsuggestion;
 
 public interface IUserDAO {
@@ -41,5 +42,9 @@ public interface IUserDAO {
 	public List<Page> getUserCommunitiesByPageType(int userId, String pageType);
 	public int userCategoryLikeCount(Integer userCategoryId);
 	public List<Usercontacts> getAllUserContacts(int userId);
+	public void saveEventsSuggestions(Usereventsuggestion suggestion, int batch_size);
+	public List<Events> getUserLikesEvents(int userId);
+	public List<Events> getUserLikesEventsByType(int userId, String pageType);
+	public List<Usereventsuggestion> isEventSuggestionExists(int userId, int eventId);
 
 }

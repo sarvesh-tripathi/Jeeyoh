@@ -143,5 +143,12 @@
             </key>
             <one-to-many class="com.jeeyoh.persistence.domain.Usernondealsuggestion" />
         </set>
+         <set name="usereventsuggestions" inverse="true">
+            <key>
+                <column name="eventId" not-null="true" />
+            </key>
+            <one-to-many class="com.jeeyoh.persistence.domain.Usereventsuggestion" />
+        </set>
+        
     </class>
 </hibernate-mapping>

@@ -15,18 +15,17 @@ import com.jeeyoh.persistence.domain.StubhubEvent;
 
 @Component("stubhubService")
 public class StubhubService implements IStubhubService {
-	
+
 	static final Logger logger = LoggerFactory.getLogger("debugLogger");
-	
+
 	@Autowired
 	IStubhubClient stubhubClient;
-	
+
 	@Autowired
 	private IStubhubDAO stubhubDAO;
 
 	@Override
 	public void stubhubEvents() {
-		// TODO Auto-generated method stub
 		logger.debug("Service of Stubhub ");
 		StubHubEvents stubHubEvents = stubhubClient.getStubHubEvents();
 		//logger.debug("Get responce here ::: "+stubHubEvents.getResponce().getNumFound());
@@ -43,55 +42,50 @@ public class StubhubService implements IStubhubService {
 					logger.debug("TOTAL Count == >"+count);
 					StubhubEvent stubhub = new StubhubEvent();
 					stubhub.setChannel(stubhubList.getChannel());
-				    stubhub.setCity(stubhubList.getCity());
-				    stubhub.setCurrency_code(stubhubList.getCurrency_code());
-				    stubhub.setDescription(stubhubList.getDescription());
-				    stubhub.setEvent_config_template(stubhubList.getEvent_config_template());
-				    stubhub.setEvent_config_template_id(stubhubList.getEvent_config_template_id());
-				    if(stubhubList.getEvent_date() != null)
-				    {
-				    	stubhub.setEvent_date(new DateTime(stubhubList.getEvent_date()).toDate());
-				    }
-				    if(stubhubList.getEvent_date_local() != null)
-				    {
-				    	stubhub.setEvent_date_local(new DateTime(stubhubList.getEvent_date_local()).toDate());
-				    }
-				    stubhub.setEvent_time_local(stubhubList.getEvent_time_local());
-				    stubhub.setGenreUrlPath(stubhubList.getGenreUrlPath());
-				    stubhub.setGeography_parent(stubhubList.getGeography_parent());
-				    stubhub.setKeywords_en_US(stubhubList.getKeywords_en_US());
-				    stubhub.setLatitude(stubhubList.getLatitude());
-				    stubhub.setLongitude(stubhubList.getLongitude());
-				    stubhub.setLeaf(stubhubList.getLeaf());
-				    stubhub.setMaxPrice(Double.parseDouble((stubhubList.getMaxPrice())));
-				    stubhub.setMaxSeatsTogether(Double.parseDouble(stubhubList.getMaxSeatsTogether()));
-				    stubhub.setMinPrice(Double.parseDouble(stubhubList.getMinPrice()));
-				    stubhub.setMinSeatsTogether(Double.parseDouble(stubhubList.getMinSeatsTogether()));
-				    stubhub.setState(stubhubList.getState());
-				    stubhub.setTimezone(stubhubList.getTimezone());
-				    stubhub.setTimezone_id(stubhubList.getTimezone_id());
-				    stubhub.setTitle(stubhubList.getTitle());
-				    stubhub.setTotalTickets(stubhubList.getTotalTickets());
-				    stubhub.setUrlpath(stubhubList.getUrlpath());
-				    stubhub.setVenue_config_name(stubhubList.getVenue_config_name());
-				    stubhub.setVenue_name(stubhubList.getVenue_name());
-				    stubhub.setZip(stubhubList.getZip());
-				    stubhubDAO.save(stubhub);
-				    count++;
-				    if(count == 1000)
-				    {
-				    	break;
-				    }
+					stubhub.setCity(stubhubList.getCity());
+					stubhub.setCurrency_code(stubhubList.getCurrency_code());
+					stubhub.setDescription(stubhubList.getDescription());
+					stubhub.setEvent_config_template(stubhubList.getEvent_config_template());
+					stubhub.setEvent_config_template_id(stubhubList.getEvent_config_template_id());
+					if(stubhubList.getEvent_date() != null)
+					{
+						stubhub.setEvent_date(new DateTime(stubhubList.getEvent_date()).toDate());
+					}
+					if(stubhubList.getEvent_date_local() != null)
+					{
+						stubhub.setEvent_date_local(new DateTime(stubhubList.getEvent_date_local()).toDate());
+					}
+					stubhub.setEvent_time_local(stubhubList.getEvent_time_local());
+					stubhub.setGenreUrlPath(stubhubList.getGenreUrlPath());
+					stubhub.setGeography_parent(stubhubList.getGeography_parent());
+					stubhub.setKeywords_en_US(stubhubList.getKeywords_en_US());
+					stubhub.setLatitude(stubhubList.getLatitude());
+					stubhub.setLongitude(stubhubList.getLongitude());
+					stubhub.setLeaf(stubhubList.getLeaf());
+					if(stubhubList.getMaxPrice() != null)
+						stubhub.setMaxPrice(Double.parseDouble((stubhubList.getMaxPrice())));
+					if(stubhubList.getMaxSeatsTogether() != null)
+						stubhub.setMaxSeatsTogether(Double.parseDouble(stubhubList.getMaxSeatsTogether()));
+					if(stubhubList.getMinPrice() != null)
+						stubhub.setMinPrice(Double.parseDouble(stubhubList.getMinPrice()));
+					if(stubhubList.getMinSeatsTogether() != null)
+						stubhub.setMinSeatsTogether(Double.parseDouble(stubhubList.getMinSeatsTogether()));
+					stubhub.setState(stubhubList.getState());
+					stubhub.setTimezone(stubhubList.getTimezone());
+					stubhub.setTimezone_id(stubhubList.getTimezone_id());
+					stubhub.setTitle(stubhubList.getTitle());
+					stubhub.setTotalTickets(stubhubList.getTotalTickets());
+					stubhub.setUrlpath(stubhubList.getUrlpath());
+					stubhub.setVenue_config_name(stubhubList.getVenue_config_name());
+					stubhub.setVenue_name(stubhubList.getVenue_name());
+					stubhub.setZip(stubhubList.getZip());
+					stubhub.setAncestorGenreDescriptions(stubhubList.getAncestorGenreDescriptions().toString());
+					stubhubDAO.save(stubhub,count);
+					count++;
 				}
-			    
-				
 			}
 		}
-		
-		
-		
-		
-		
+
 	}
 
 }
