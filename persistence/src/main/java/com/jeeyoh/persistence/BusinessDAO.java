@@ -157,33 +157,6 @@ public class BusinessDAO implements IBusinessDAO {
 	public List<Businesstype> getBusinesstypeByTypeArray(String[] type) {
 		
 		List<Businesstype> businessTypeList = null;
-		/*Session session = sessionFactory.openSession();
-		Transaction tx = null;
-		
-		//String[] type1 = {'RESTAURANT','SPA','SPORT'};
-		//String hqlQuery = "from Businesstype a where a.businessType = :type";
-		String hqlQuery = "from Businesstype a where a.businessType in {:type}";
-		try
-		{
-			tx = session.beginTransaction();
-			Query query = session.createQuery(
-					hqlQuery);
-			query.setParameter("type", type1);
-			businessTypeList = (List<Businesstype>) query.list();
-			tx.commit();
-		}
-		catch (HibernateException e) {
-			if (tx!=null) tx.rollback();
-			e.printStackTrace(); 
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-		finally
-		{
-			session.close();
-		}
-		logger.debug("SIZE "+businessTypeList.size());*/
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Businesstype.class);
 		criteria.add(Restrictions.in("businessType", type));
 		businessTypeList = (List<Businesstype>)criteria.list();

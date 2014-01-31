@@ -56,8 +56,11 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 	public void filter() {
 		List<Gdealoption> rows = gDealsDAO.getDeals();
 		logger.debug("loadDeals => row size " + rows.size());
+
 		//Get current date
 		Date currentDate = Utils.getCurrentDate();
+		List<Gdeal> gDealList = new ArrayList<Gdeal>();
+
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Set<Gdealoption> gdealoption = null;
 		List<Date>weekendList =  Utils.findWeekends();
@@ -84,7 +87,9 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 
 							try {
 								logger.debug("Date::  "+ gdeal.getEndAt() +"  :  "+ sdf.parse(sdf.format((Date)weekendList.get(j))));
+
 								if(sdf.parse(sdf.format(gdeal.getEndAt())).compareTo(currentDate) >= 0 && gdeal.getEndAt().before(sdf.parse(sdf.format((Date)weekendList.get(j)))))
+
 								{
 									batch_size++;
 									logger.debug("gdeal id:: "+ gdeal.getId());

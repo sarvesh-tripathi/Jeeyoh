@@ -142,7 +142,9 @@ public class DealsDAO implements IDealsDAO {
 
 		@Override
 		public void saveSuggestions(Userdealssuggestion dealSuggestion) {
-			Session session = sessionFactory.openSession();
+			
+			sessionFactory.getCurrentSession().save(dealSuggestion);
+			/*Session session = sessionFactory.openSession();
     		Transaction tx = null;
     		try
     		{
@@ -157,7 +159,7 @@ public class DealsDAO implements IDealsDAO {
     		finally
     		{
     			session.close();
-    		}
+    		}*/
 			
 		}
 

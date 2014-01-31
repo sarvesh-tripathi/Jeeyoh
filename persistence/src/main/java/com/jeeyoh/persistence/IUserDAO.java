@@ -12,6 +12,7 @@ import com.jeeyoh.persistence.domain.User;
 import com.jeeyoh.persistence.domain.UserCategory;
 import com.jeeyoh.persistence.domain.Usercontacts;
 import com.jeeyoh.persistence.domain.Usereventsuggestion;
+import com.jeeyoh.persistence.domain.Userdealssuggestion;
 import com.jeeyoh.persistence.domain.Usernondealsuggestion;
 
 public interface IUserDAO {
@@ -46,5 +47,8 @@ public interface IUserDAO {
 	public List<Events> getUserLikesEvents(int userId);
 	public List<Events> getUserLikesEventsByType(int userId, String pageType);
 	public List<Usereventsuggestion> isEventSuggestionExists(int userId, int eventId);
+
+	public List<Userdealssuggestion> isDealSuggestionExists(Integer userId,
+			Integer id);
 
 }
