@@ -67,11 +67,8 @@ public class UserDAO implements IUserDAO {
 		return contactList;
 	}
 
-<<<<<<< HEAD
 
 	@SuppressWarnings("unchecked")
-=======
->>>>>>> a871f0906c59b3432b614b1f7919874becb058f9
 	@Override
 	public List<Usercontacts> getAllUserContacts(int userId) {
 		logger.debug("getAllUserContacts userId::  "+userId);
@@ -334,7 +331,7 @@ public class UserDAO implements IUserDAO {
 		return pageList;
 	}
 
-<<<<<<< HEAD
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<UserCategory> getUserCategoryLikesById(int userId) {
@@ -355,28 +352,6 @@ public class UserDAO implements IUserDAO {
 	}
 
 	@SuppressWarnings("unchecked")
-=======
-    @SuppressWarnings("unchecked")
-	 @Override
-	 public List<UserCategory> getUserCategoryLikesById(int userId) {
-	  logger.debug("pageList => ");
-	  List<UserCategory> userCategoryList = null;
-	  String hqlQuery = "select b from User a, UserCategory b, UserCategoryLikes c where a.userId = :userId and c.user.userId = a.userId and b.userCategoryId = c.userCategory.userCategoryId";
-	  try {
-	   Query query = sessionFactory.getCurrentSession().createQuery(
-	     hqlQuery);
-	   query.setParameter("userId", userId);
-	   userCategoryList = (List<UserCategory>) query.list();
-	  } catch (Exception e) {
-	   e.printStackTrace();
-	   logger.debug(e.toString());
-	   logger.debug(e.getLocalizedMessage());
-	  }
-	  return userCategoryList;
-	 }
-
-    @SuppressWarnings("unchecked")
->>>>>>> a871f0906c59b3432b614b1f7919874becb058f9
 	@Override
 	public List<Usernondealsuggestion> getuserNonDealSuggestionsByEmailId(
 			String emailId) {
@@ -399,7 +374,6 @@ public class UserDAO implements IUserDAO {
 	@Override
 	public List<UserCategory> getUserCategoryLikesByType(int userId,
 			String category) {
-<<<<<<< HEAD
 		logger.debug("getUserCategoryLikesByType => ");
 		List<UserCategory> userCategoryList = null;
 		String hqlQuery = "select b from User a, UserCategory b, UserCategoryLikes c where a.userId = :userId and b.itemCategory = :category and c.user.userId = a.userId and b.userCategoryId = c.userCategory.userCategoryId";
@@ -415,23 +389,6 @@ public class UserDAO implements IUserDAO {
 			logger.debug(e.getLocalizedMessage());
 		}
 		return userCategoryList;
-=======
-		logger.debug("pageList => ");
-		  List<UserCategory> userCategoryList = null;
-		  String hqlQuery = "select b from User a, UserCategory b, UserCategoryLikes c where a.userId = :userId and b.itemCategory = :category and c.user.userId = a.userId and b.userCategoryId = c.userCategory.userCategoryId";
-		  try {
-		   Query query = sessionFactory.getCurrentSession().createQuery(
-		     hqlQuery);
-		   query.setParameter("userId", userId);
-		   query.setParameter("category", category);
-		   userCategoryList = (List<UserCategory>) query.list();
-		  } catch (Exception e) {
-		   e.printStackTrace();
-		   logger.debug(e.toString());
-		   logger.debug(e.getLocalizedMessage());
-		  }
-		  return userCategoryList;
->>>>>>> a871f0906c59b3432b614b1f7919874becb058f9
 	}
 
 	@SuppressWarnings("unchecked")

@@ -59,7 +59,6 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 
 		//Get current date
 		Date currentDate = Utils.getCurrentDate();
-		List<Gdeal> gDealList = new ArrayList<Gdeal>();
 
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Set<Gdealoption> gdealoption = null;
