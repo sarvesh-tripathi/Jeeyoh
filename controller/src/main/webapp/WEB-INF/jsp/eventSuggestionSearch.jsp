@@ -28,7 +28,7 @@
 		<td>Category:</td>
 		<td>
 		<div align="center"><select name="eventCategory">
-			<option value="Concerts">Concerts</option>
+			<option value="Concert">Concerts</option>
 			<option value="Theater">Theater</option>
 			<!--<option value="NIGHT LIFE">NIGHT LIFE</option>
 			--><!--<option value="EVENT">EVENT</option>
@@ -53,6 +53,7 @@
 		<td><b>Venue Name</b></td>
 		<td><b>City</b></td>
 		<td><b>EventDate</b></td>
+		<td><b>Title</b></td>
 		<td><b>AncestorGenreDescriptions</b></td>
 		<td><b>TotalTickets</b></td>
 	</tr>

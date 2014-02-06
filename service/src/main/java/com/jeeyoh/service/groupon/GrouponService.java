@@ -33,6 +33,7 @@ import com.jeeyoh.persistence.domain.Gmerchant;
 import com.jeeyoh.persistence.domain.Goptiondetail;
 import com.jeeyoh.persistence.domain.Gredemptionlocation;
 import com.jeeyoh.persistence.domain.Gtags;
+import com.jeeyoh.utils.Utils;
 
 @Component("grouponService")
 public class GrouponService implements IGrouponService {
@@ -51,10 +52,13 @@ public class GrouponService implements IGrouponService {
 	@Transactional
 	public void populateDivisions() {
 		DivisionResponseModel divisionResponse = grouponClient.getDivisions();
+		
 		if (divisionResponse != null) {
 			List<DivisionModel> divisions = divisionResponse.getDivisions();
 			if (divisions != null) {
+				String[] addressArray;
 				for (DivisionModel divisionModel : divisions) {
+					addressArray = Utils.getGeographicalInfo(Double.parseDouble(divisionModel.getLattitude()), Double.parseDouble(divisionModel.getLongitude()));
 					Gdivision division = new Gdivision();
 					division.setDivisionId(divisionModel.getDivisionId());
 					division.setName(divisionModel.getName());
@@ -76,6 +80,11 @@ public class GrouponService implements IGrouponService {
 					division.setCountry(divisionModel.getCountry());
 					division.setIsNowMerchantEnabled(divisionModel
 							.isNowMerchantEnabled());
+					if(addressArray != null)
+					{
+						division.setZipCode(addressArray[0]);
+						division.setAddress(addressArray[1]);
+					}
 					divisionDAO.addDivision(division);
 				}
 			}

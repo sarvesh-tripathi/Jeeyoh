@@ -163,17 +163,22 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 											Gdivision gdivision = gdeal.getGdivision();
 											
 											//businesstype = businessDAO.getBusinesstypeByType("RESTAURANT");
+											//String[] addressArray = Utils.getCityAndAddress(Double.parseDouble(gdivision.getLattitude()), Double.parseDouble(gdivision.getLongitude()));
 											Business business = new Business();
 											business.setName(gmerchant.getName());
 											business.setBusinessId(gmerchant.getMerchantId());
 											business.setWebsiteUrl(gmerchant.getWebsiteUrl());
 											business.setLattitude(gdivision.getLattitude());
 											business.setLongitude(gdivision.getLongitude());
-											business.setPostalCode(getZipCode(Double.parseDouble(gdivision.getLattitude()), Double.parseDouble(gdivision.getLongitude())));
+											business.setPostalCode(gdivision.getZipCode());
+											business.setCity(gdivision.getName());
+											business.setDisplayAddress(gdivision.getAddress());
+											business.setAddress(gdivision.getAddress());
 											business.setBusinesstype(businesstype);
-											businessDAO.saveBusiness(business);
-											businessList = businessDAO.getBusinessByIdForGroupon(business.getBusinessId());
-											deals.setBusiness(businessList.get(0));
+											business.setSource("Groupon");
+											//businessDAO.saveBusiness(business);
+											//businessList = businessDAO.getBusinessByIdForGroupon(business.getBusinessId());
+											deals.setBusiness(business);
 										}
 										else
 										{
@@ -225,44 +230,4 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 			}
 		}
 	}
-
-	
-	/**
-	 * Get latitude and longitude for ZipCode
-	 * @param postCode
-	 */
-	private String getZipCode(Double latitude, Double longitude)
-	{
-		logger.debug("latitude :  "+latitude+" longitude: "+longitude);
-		String zipcode = null;
-		try
-		{
-			LatLng latLng = new LatLng();
-			latLng.setLat(BigDecimal.valueOf(latitude));
-			latLng.setLng(BigDecimal.valueOf(longitude));
-			final Geocoder geocoder = new Geocoder();
-			GeocoderRequest geocoderRequest = new GeocoderRequestBuilder().setLocation(latLng).getGeocoderRequest();
-			GeocodeResponse geocoderResponse = geocoder.geocode(geocoderRequest);
-			//logger.debug("geocoderResponse :  "+geocoderResponse);
-			List<GeocoderResult> results = geocoderResponse.getResults();
-			//logger.debug("results :  "+results);
-			List<GeocoderAddressComponent> geList= results.get(0).getAddressComponents();
-			if(geList.get(geList.size()-1).getTypes().get(0).trim().equalsIgnoreCase("postal_code"))
-			{
-				zipcode = geList.get(geList.size()-1).getLongName();
-			}
-			else if(geList.get(0).getTypes().get(0).trim().equalsIgnoreCase("postal_code"))
-			{
-				zipcode = geList.get(0).getLongName();
-			}
-			
-			logger.debug("zipcode :  " + zipcode);
-
-		}catch (Exception e) {
-			logger.debug(e.toString());
-			logger.debug(e.getLocalizedMessage());
-		}
-		return zipcode;
-	}
-
 }

@@ -156,7 +156,7 @@ public class NonDealSearch implements INonDealSearch {
 													if(business.getAmbience() != null)
 														ambiance = business.getAmbience();
 													String musicType = "";
-													if(business.getAmbience() != null)
+													if(business.getMusicType() != null)
 														musicType = business.getMusicType();
 
 													long rating = 0;
@@ -165,16 +165,23 @@ public class NonDealSearch implements INonDealSearch {
 														rating = business.getRating();
 													}
 													if(rating > 3) {
-														if(type.equalsIgnoreCase(RESTAURANT_CATEGORY)) {
-															if(!ambiance.equalsIgnoreCase("GOOD") && !musicType.equalsIgnoreCase("SOFT")) {
-																includePage = false;
-															} else {
-																includePage = true;
+														if(business.getSource().equalsIgnoreCase("yelp"))
+														{
+															if(type.equalsIgnoreCase(RESTAURANT_CATEGORY)) {
+																if(!ambiance.equalsIgnoreCase("GOOD") && !musicType.equalsIgnoreCase("SOFT")) {
+																	includePage = false;
+																} else {
+																	includePage = true;
+																}
 															}
-														} else {
+														}else {
 															includePage = true;
 														}
 													}
+													/*else
+													{
+														includePage = false;
+													}*/
 													logger.debug("NonDealSearch ==> search ==> rating ==> includePage ==> " + includePage);
 													if(includePage) {
 														Usernondealsuggestion suggestion = new Usernondealsuggestion();									
@@ -279,7 +286,7 @@ public class NonDealSearch implements INonDealSearch {
 										if(business.getAmbience() != null)
 											ambiance = business.getAmbience();
 										String musicType = "";
-										if(business.getAmbience() != null)
+										if(business.getMusicType() != null)
 											musicType = business.getMusicType();
 
 										long rating = 0;
@@ -347,16 +354,23 @@ public class NonDealSearch implements INonDealSearch {
 										logger.debug("NonDealSearch ==> search ==> pageProperties ==> includePage ==> " + includePage);
 										logger.debug("NonDealSearch ==> search ==> rating ==> " + rating);
 										if(rating > 3) {
-											if(type.equalsIgnoreCase(RESTAURANT_CATEGORY)) {
-												if(!ambiance.equalsIgnoreCase("GOOD") && !musicType.equalsIgnoreCase("SOFT")) {
-													includePage = false;
-												} else {
-													includePage = true;
+											if(business.getSource().equalsIgnoreCase("yelp"))
+											{
+												if(type.equalsIgnoreCase(RESTAURANT_CATEGORY)) {
+													if(!ambiance.equalsIgnoreCase("GOOD") && !musicType.equalsIgnoreCase("SOFT")) {
+														includePage = false;
+													} else {
+														includePage = true;
+													}
 												}
-											} else {
+											}else {
 												includePage = true;
 											}
 										}
+										/*else
+										{
+											includePage = false;
+										}*/
 										logger.debug("NonDealSearch ==> search ==> rating ==> includePage ==> " + includePage);
 										if(includePage) {
 											Usernondealsuggestion suggestion = new Usernondealsuggestion();									

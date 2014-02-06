@@ -26,6 +26,8 @@ public class Gdivision  implements java.io.Serializable {
      private String timezoneIdentifier;
      private String country;
      private Boolean isNowMerchantEnabled;
+     private String zipCode;
+     private String address;
      private Set gdeals = new HashSet(0);
 
     public Gdivision() {
@@ -166,6 +168,38 @@ public class Gdivision  implements java.io.Serializable {
     public void setGdeals(Set gdeals) {
         this.gdeals = gdeals;
     }
+
+
+	/**
+	 * @param zipCode the zipCode to set
+	 */
+	public void setZipCode(String zipCode) {
+		this.zipCode = zipCode;
+	}
+
+
+	/**
+	 * @return the zipCode
+	 */
+	public String getZipCode() {
+		return zipCode;
+	}
+
+
+	/**
+	 * @param address the address to set
+	 */
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+
+	/**
+	 * @return the address
+	 */
+	public String getAddress() {
+		return address;
+	}
 
 
 

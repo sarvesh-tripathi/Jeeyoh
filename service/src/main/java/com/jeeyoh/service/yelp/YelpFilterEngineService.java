@@ -193,6 +193,7 @@ public class YelpFilterEngineService implements IYelpFilterEngineService {
 									business.setSnippetText(yBusiness.getSnippetText());
 									business.setStateCode(yBusiness.getStateCode());
 									business.setBusinesstype(businesstype);
+									business.setSource("Yelp");
 									businessDAO.saveBusiness(business);
 									businessList = businessDAO.getBusinessByIdForGroupon(business.getBusinessId());
 									deal.setBusiness(businessList.get(0));

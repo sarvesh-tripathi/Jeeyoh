@@ -1,159 +1,165 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<!-- Generated Oct 10, 2013 9:08:14 AM by Hibernate Tools 3.2.1.GA -->
+	<!-- Generated Oct 10, 2013 9:08:14 AM by Hibernate Tools 3.2.1.GA -->
 <hibernate-mapping>
-    <class name="com.jeeyoh.persistence.domain.Business" table="business" catalog="jeeyoh">
-        <id name="id" type="java.lang.Integer">
-            <column name="id" />
-            <generator class="identity" />
-        </id>
-        <many-to-one name="businesstype" class="com.jeeyoh.persistence.domain.Businesstype" fetch="select">
-            <column name="businessTypeId" not-null="true" />
-        </many-to-one>
-        <property name="businessId" type="string">
-            <column name="businessId" length="250" />
-        </property>
-        <property name="name" type="string">
-            <column name="name" length="250" />
-        </property>
-        <property name="websiteUrl" type="string">
-            <column name="websiteUrl" length="250" />
-        </property>
-        <property name="isClaimed" type="java.lang.Boolean">
-            <column name="isClaimed" />
-        </property>
-        <property name="isClosed" type="java.lang.Boolean">
-            <column name="isClosed" />
-        </property>
-        <property name="mobileUrl" type="string">
-            <column name="mobileUrl" length="250" />
-        </property>
-        <property name="phone" type="string">
-            <column name="phone" length="50" />
-        </property>
-        <property name="displayPhone" type="string">
-            <column name="displayPhone" length="50" />
-        </property>
-        <property name="reviewCount" type="string">
-            <column name="reviewCount" length="16777215" />
-        </property>
-        <property name="distance" type="java.lang.Long">
-            <column name="distance" precision="10" scale="0" />
-        </property>
-        <property name="rating" type="java.lang.Long">
-            <column name="rating" precision="10" scale="0" />
-        </property>
-        <property name="ratingImgUrl" type="string">
-            <column name="ratingImgUrl" length="250" />
-        </property>
-        <property name="ratingSmallImgUrl" type="string">
-            <column name="ratingSmallImgUrl" length="250" />
-        </property>
-        <property name="ratingLargeImgUrl" type="string">
-            <column name="ratingLargeImgUrl" length="250" />
-        </property>
-        <property name="snippetText" type="string">
-            <column name="snippetText" length="65535" />
-        </property>
-        <property name="snippetImageUrl" type="string">
-            <column name="snippetImageUrl" length="250" />
-        </property>
-        <property name="menuProvider" type="string">
-            <column name="menuProvider" length="50" />
-        </property>
-        <property name="menuProviderDate" type="java.lang.Long">
-            <column name="menuProviderDate" precision="10" scale="0" />
-        </property>
-        <property name="crossStreets" type="string">
-            <column name="crossStreets" length="250" />
-        </property>
-        <property name="city" type="string">
-            <column name="city" length="250" />
-        </property>
-        <property name="displayAddress" type="string">
-            <column name="displayAddress" length="250" />
-        </property>
-        <property name="postalCode" type="string">
-            <column name="postalCode" length="50" />
-        </property>
-        <property name="countryCode" type="string">
-            <column name="countryCode" length="50" />
-        </property>
-        <property name="address" type="string">
-            <column name="address" length="250" />
-        </property>
-        <property name="stateCode" type="string">
-            <column name="stateCode" length="40" />
-        </property>
-        <property name="neighborhoods" type="string">
-            <column name="neighborhoods" length="250" />
-        </property>
-        <property name="lattitude" type="string">
-            <column name="lattitude" length="250" />
-        </property>
-        <property name="longitude" type="string">
-            <column name="longitude" length="250" />
-        </property>
-        <property name="ambience" type="string">
-            <column name="ambience" length="200" />
-        </property>
-        <property name="isParkingAvailable" type="java.lang.Boolean">
-            <column name="isParkingAvailable" />
-        </property>
-        <property name="traffic" type="string">
-            <column name="traffic" length="200" />
-        </property>
-        <property name="serviceLevel" type="string">
-            <column name="serviceLevel" length="200" />
-        </property>
-        <property name="noiseLevel" type="string">
-            <column name="noiseLevel" length="200" />
-        </property>
-        <property name="likeCount" type="string">
-            <column name="likeCount" length="16777215" />
-        </property>
-        <property name="isActive" type="java.lang.Boolean">
-            <column name="isActive" />
-        </property>
-        <property name="imageUrl" type="string">
-            <column name="imageUrl" length="200" />
-        </property>
-        <property name="workingHours" type="string">
-            <column name="workingHours" length="200" />
-        </property>
-        <property name="musicType" type="string">
-            <column name="musicType" length="200" />
-        </property>
-        <set name="reviews" inverse="true">
-            <key>
-                <column name="businessId" not-null="true" />
-            </key>
-            <one-to-many class="com.jeeyoh.persistence.domain.Review" />
-        </set>
-        <set name="foodmenuitems" inverse="true">
-            <key>
-                <column name="businessId" not-null="true" />
-            </key>
-            <one-to-many class="com.jeeyoh.persistence.domain.Foodmenuitem" />
-        </set>
-        <set name="dealses" inverse="true" lazy ="false">
-            <key>
-                <column name="businessId" not-null="true" />
-            </key>
-            <one-to-many class="com.jeeyoh.persistence.domain.Deals" />
-        </set>
-        <set name="pages" inverse="true">
-            <key>
-                <column name="businessId" />
-            </key>
-            <one-to-many class="com.jeeyoh.persistence.domain.Page" />
-        </set>
-        <set name="usernondealsuggestions" inverse="true">
-            <key>
-                <column name="businessId" not-null="true" />
-            </key>
-            <one-to-many class="com.jeeyoh.persistence.domain.Usernondealsuggestion" />
-        </set>
-    </class>
+	<class name="com.jeeyoh.persistence.domain.Business" table="business"
+		catalog="jeeyoh">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+		<many-to-one name="businesstype"
+			class="com.jeeyoh.persistence.domain.Businesstype" fetch="select">
+			<column name="businessTypeId" not-null="true" />
+		</many-to-one>
+		<property name="businessId" type="string">
+			<column name="businessId" length="250" />
+		</property>
+		<property name="name" type="string">
+			<column name="name" length="250" />
+		</property>
+		<property name="websiteUrl" type="string">
+			<column name="websiteUrl" length="250" />
+		</property>
+		<property name="isClaimed" type="java.lang.Boolean">
+			<column name="isClaimed" />
+		</property>
+		<property name="isClosed" type="java.lang.Boolean">
+			<column name="isClosed" />
+		</property>
+		<property name="mobileUrl" type="string">
+			<column name="mobileUrl" length="250" />
+		</property>
+		<property name="phone" type="string">
+			<column name="phone" length="50" />
+		</property>
+		<property name="displayPhone" type="string">
+			<column name="displayPhone" length="50" />
+		</property>
+		<property name="reviewCount" type="string">
+			<column name="reviewCount" length="16777215" />
+		</property>
+		<property name="distance" type="java.lang.Long">
+			<column name="distance" precision="10" scale="0" />
+		</property>
+		<property name="rating" type="java.lang.Long">
+			<column name="rating" precision="10" scale="0" />
+		</property>
+		<property name="ratingImgUrl" type="string">
+			<column name="ratingImgUrl" length="250" />
+		</property>
+		<property name="ratingSmallImgUrl" type="string">
+			<column name="ratingSmallImgUrl" length="250" />
+		</property>
+		<property name="ratingLargeImgUrl" type="string">
+			<column name="ratingLargeImgUrl" length="250" />
+		</property>
+		<property name="snippetText" type="string">
+			<column name="snippetText" length="65535" />
+		</property>
+		<property name="snippetImageUrl" type="string">
+			<column name="snippetImageUrl" length="250" />
+		</property>
+		<property name="menuProvider" type="string">
+			<column name="menuProvider" length="50" />
+		</property>
+		<property name="menuProviderDate" type="java.lang.Long">
+			<column name="menuProviderDate" precision="10" scale="0" />
+		</property>
+		<property name="crossStreets" type="string">
+			<column name="crossStreets" length="250" />
+		</property>
+		<property name="city" type="string">
+			<column name="city" length="250" />
+		</property>
+		<property name="displayAddress" type="string">
+			<column name="displayAddress" length="250" />
+		</property>
+		<property name="postalCode" type="string">
+			<column name="postalCode" length="50" />
+		</property>
+		<property name="countryCode" type="string">
+			<column name="countryCode" length="50" />
+		</property>
+		<property name="address" type="string">
+			<column name="address" length="250" />
+		</property>
+		<property name="stateCode" type="string">
+			<column name="stateCode" length="40" />
+		</property>
+		<property name="neighborhoods" type="string">
+			<column name="neighborhoods" length="250" />
+		</property>
+		<property name="lattitude" type="string">
+			<column name="lattitude" length="250" />
+		</property>
+		<property name="longitude" type="string">
+			<column name="longitude" length="250" />
+		</property>
+		<property name="ambience" type="string">
+			<column name="ambience" length="200" />
+		</property>
+		<property name="isParkingAvailable" type="java.lang.Boolean">
+			<column name="isParkingAvailable" />
+		</property>
+		<property name="traffic" type="string">
+			<column name="traffic" length="200" />
+		</property>
+		<property name="serviceLevel" type="string">
+			<column name="serviceLevel" length="200" />
+		</property>
+		<property name="noiseLevel" type="string">
+			<column name="noiseLevel" length="200" />
+		</property>
+		<property name="likeCount" type="string">
+			<column name="likeCount" length="16777215" />
+		</property>
+		<property name="isActive" type="java.lang.Boolean">
+			<column name="isActive" />
+		</property>
+		<property name="imageUrl" type="string">
+			<column name="imageUrl" length="200" />
+		</property>
+		<property name="workingHours" type="string">
+			<column name="workingHours" length="200" />
+		</property>
+		<property name="musicType" type="string">
+			<column name="musicType" length="200" />
+		</property>
+		<property name="source" type="string">
+			<column name="source" length="50" />
+		</property>
+
+		<set name="reviews" inverse="true">
+			<key>
+				<column name="businessId" not-null="true" />
+			</key>
+			<one-to-many class="com.jeeyoh.persistence.domain.Review" />
+		</set>
+		<set name="foodmenuitems" inverse="true">
+			<key>
+				<column name="businessId" not-null="true" />
+			</key>
+			<one-to-many class="com.jeeyoh.persistence.domain.Foodmenuitem" />
+		</set>
+		<set name="dealses" inverse="true" lazy="false">
+			<key>
+				<column name="businessId" not-null="true" />
+			</key>
+			<one-to-many class="com.jeeyoh.persistence.domain.Deals" />
+		</set>
+		<set name="pages" inverse="true">
+			<key>
+				<column name="businessId" />
+			</key>
+			<one-to-many class="com.jeeyoh.persistence.domain.Page" />
+		</set>
+		<set name="usernondealsuggestions" inverse="true">
+			<key>
+				<column name="businessId" not-null="true" />
+			</key>
+			<one-to-many class="com.jeeyoh.persistence.domain.Usernondealsuggestion" />
+		</set>
+	</class>
 </hibernate-mapping>

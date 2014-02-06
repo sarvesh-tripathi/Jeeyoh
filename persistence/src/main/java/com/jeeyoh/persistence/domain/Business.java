@@ -51,6 +51,7 @@ public class Business  implements java.io.Serializable {
      private String imageUrl;
      private String workingHours;
      private String musicType;
+     private String source;
      private Set reviews = new HashSet(0);
      private Set foodmenuitems = new HashSet(0);
      private Set dealses = new HashSet(0);
@@ -427,6 +428,22 @@ public class Business  implements java.io.Serializable {
 
 	public void setUsernondealsuggestions(Set usernondealsuggestions) {
 		this.usernondealsuggestions = usernondealsuggestions;
+	}
+
+
+	/**
+	 * @param source the source to set
+	 */
+	public void setSource(String source) {
+		this.source = source;
+	}
+
+
+	/**
+	 * @return the source
+	 */
+	public String getSource() {
+		return source;
 	}
 
 

@@ -50,6 +50,12 @@
         <property name="isNowMerchantEnabled" type="java.lang.Boolean">
             <column name="isNowMerchantEnabled" />
         </property>
+        <property name="zipCode" type="string">
+            <column name="zipCode" length="50" />
+        </property>
+        <property name="address" type="string">
+            <column name="address" length="250" />
+        </property>
         <set name="gdeals" inverse="true">
             <key>
                 <column name="divisionId" not-null="true" />

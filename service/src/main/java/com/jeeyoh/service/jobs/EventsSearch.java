@@ -100,7 +100,7 @@ public class EventsSearch implements IEventSearch{
 						logger.debug("EventSearch => Events List => "+events.size());
 						for(Events event : events)
 						{
-							saveEventSuggesstion(event, user, batch_size, currentDate);
+							saveEventSuggesstion(event, userId, user, batch_size, currentDate);
 						}
 					}
 				}
@@ -120,7 +120,7 @@ public class EventsSearch implements IEventSearch{
 				int batch_size = 0;
 				for(Events event : eventsList) {
 
-					saveEventSuggesstion(event, user, batch_size, currentDate);
+					saveEventSuggesstion(event, userId, user, batch_size, currentDate);
 				}
 			}
 
@@ -167,7 +167,7 @@ public class EventsSearch implements IEventSearch{
 					//Boolean isStar = usercontacts.getIsStar();
 					User contact = usercontacts.getUserByContactId();
 					logger.debug("Friend Name ::"+contact.getFirstName());
-					logger.debug("IS STAR ::"+isStar);
+					logger.debug("IS STAR ::"+usercontacts.getIsStar());
 					int contactId = contact.getUserId();
 					saveEventsSuggestion(contactId, userList.get(0), false , isContactsAccessed,weekendDate,false,null,usercontacts.getIsStar());
 				}
@@ -192,7 +192,7 @@ public class EventsSearch implements IEventSearch{
 	 * @param events
 	 * @param user
 	 */
-	private void saveEventSuggesstion(Events event, User user,int batch_size, Date currentDate)
+	private void saveEventSuggesstion(Events event, int userId, User user,int batch_size, Date currentDate)
 	{
 		try
 		{
@@ -208,9 +208,9 @@ public class EventsSearch implements IEventSearch{
 					logger.debug("Distance::  "+distance +" lat::  "+user.getLattitude()+" lon::  "+user.getLongitude());
 					if(distance <=50)
 					{
-						List<Eventuserlikes> eventproperties = userDAO.getUserEventProperties(user.getUserId(), event.getEventId());
+						List<Eventuserlikes> eventproperties = userDAO.getUserEventProperties(userId, event.getEventId());
 						boolean isLiked = false,isFavorite = false,isVisited,isFollowing = false;
-						if(eventproperties != null)
+						if(eventproperties != null && !eventproperties.isEmpty())
 						{
 							logger.debug("NonDealSearch ==> search ==> eventProperty ==> not null" );
 							Eventuserlikes eventProperty = eventproperties.get(0);

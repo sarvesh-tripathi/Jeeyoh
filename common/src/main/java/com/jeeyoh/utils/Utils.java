@@ -247,6 +247,7 @@ public class Utils {
 				if(geList.get(i).getTypes().get(0).equalsIgnoreCase("locality"))
 				{
 					addressArray[0] = geList.get(i).getLongName();
+					break;
 				}
 			}
 			addressArray[1] = results.get(0).getFormattedAddress();
@@ -259,5 +260,88 @@ public class Utils {
 		return addressArray;
 	}
 
+
+	/**
+	 * Get latitude and longitude for ZipCode
+	 * @param postCode
+	 */
+	public static String getZipCode(Double latitude, Double longitude)
+	{
+		logger.debug("latitude :  "+latitude+" longitude: "+longitude);
+		String zipcode = null;
+		try
+		{
+			LatLng latLng = new LatLng();
+			latLng.setLat(BigDecimal.valueOf(latitude));
+			latLng.setLng(BigDecimal.valueOf(longitude));
+			final Geocoder geocoder = new Geocoder();
+			GeocoderRequest geocoderRequest = new GeocoderRequestBuilder().setLocation(latLng).getGeocoderRequest();
+			GeocodeResponse geocoderResponse = geocoder.geocode(geocoderRequest);
+			//logger.debug("geocoderResponse :  "+geocoderResponse);
+			List<GeocoderResult> results = geocoderResponse.getResults();
+			//logger.debug("results :  "+results);
+			List<GeocoderAddressComponent> geList= results.get(0).getAddressComponents();
+			if(geList.get(geList.size()-1).getTypes().get(0).trim().equalsIgnoreCase("postal_code"))
+			{
+				zipcode = geList.get(geList.size()-1).getLongName();
+			}
+			else if(geList.get(0).getTypes().get(0).trim().equalsIgnoreCase("postal_code"))
+			{
+				zipcode = geList.get(0).getLongName();
+			}
+
+			logger.debug("zipcode :  " + zipcode);
+
+		}catch (Exception e) {
+			logger.debug(e.toString());
+			logger.debug(e.getLocalizedMessage());
+		}
+		return zipcode;
+	}
+
+
+	/**
+	 * Get latitude and longitude for ZipCode
+	 * @param postCode
+	 */
+	public static String[] getGeographicalInfo(Double latitude, Double longitude)
+	{
+		String[] addressArray = new String[2];
+		try
+		{
+			LatLng latLng = new LatLng();
+			latLng.setLat(BigDecimal.valueOf(latitude));
+			latLng.setLng(BigDecimal.valueOf(longitude));
+			final Geocoder geocoder = new Geocoder();
+			GeocoderRequest geocoderRequest = new GeocoderRequestBuilder().setLocation(latLng).getGeocoderRequest();
+			GeocodeResponse geocoderResponse = geocoder.geocode(geocoderRequest);
+			List<GeocoderResult> results = geocoderResponse.getResults();
+			outerloop:
+			for(int k =0; k < results.size(); k++)
+			{
+				List<GeocoderAddressComponent> geList= results.get(k).getAddressComponents();
+				for(int i =0; i < geList.size(); i++)
+				{
+					List<String> types = geList.get(i).getTypes();
+					for(int j =0; j < types.size(); j++)
+					{
+						if(types.get(j).equalsIgnoreCase("postal_code"))
+						{
+							addressArray[0] = geList.get(i).getLongName();
+							 break outerloop;
+						}
+					}
+				}
+			}
+			
+			addressArray[1] = results.get(0).getFormattedAddress();
+			logger.debug("zipcode :  " + addressArray);
+
+		}catch (Exception e) {
+			logger.debug(e.toString());
+			logger.debug(e.getLocalizedMessage());
+		}
+		return addressArray;
+	}
 
 }
