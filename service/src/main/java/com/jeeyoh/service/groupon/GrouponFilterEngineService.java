@@ -1,6 +1,5 @@
 package com.jeeyoh.service.groupon;
 
-import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -15,13 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.code.geocoder.Geocoder;
-import com.google.code.geocoder.GeocoderRequestBuilder;
-import com.google.code.geocoder.model.GeocodeResponse;
-import com.google.code.geocoder.model.GeocoderAddressComponent;
-import com.google.code.geocoder.model.GeocoderRequest;
-import com.google.code.geocoder.model.GeocoderResult;
-import com.google.code.geocoder.model.LatLng;
 import com.jeeyoh.persistence.IBusinessDAO;
 import com.jeeyoh.persistence.IDealsDAO;
 import com.jeeyoh.persistence.dao.groupon.IGDealsDAO;
@@ -176,8 +168,8 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 											business.setAddress(gdivision.getAddress());
 											business.setBusinesstype(businesstype);
 											business.setSource("Groupon");
-											//businessDAO.saveBusiness(business);
-											//businessList = businessDAO.getBusinessByIdForGroupon(business.getBusinessId());
+											businessDAO.saveBusiness(business);
+											businessList = businessDAO.getBusinessByIdForGroupon(business.getBusinessId());
 											deals.setBusiness(business);
 										}
 										else

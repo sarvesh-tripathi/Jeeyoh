@@ -72,6 +72,7 @@ public class DealsDAO implements IDealsDAO {
 	@Override
 	public void saveDeal(Deals deals, int batch_size) 
 	{
+		logger.debug("saveDeal ==>");
 		Session session = sessionFactory.openSession();
 		Transaction tx = null;
 		try
