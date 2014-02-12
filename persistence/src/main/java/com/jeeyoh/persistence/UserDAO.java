@@ -297,18 +297,7 @@ public class UserDAO implements IUserDAO {
 		criteria.add(Restrictions.eq("business.id", businessId));
 
 		List<Usernondealsuggestion> usernondealsuggestions = criteria.list();
-		/*List<Usernondealsuggestion> usernondealsuggestions = null;
-		String hqlQuery = "select a from Usernondealsuggestion a where a.user.userId = :userId and a.business.id = :businessId";
-		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(
-					hqlQuery);
-			query.setParameter("userId", userId);
-			query.setParameter("businessId", businessId);
-			usernondealsuggestions = (List<Usernondealsuggestion>) query.list();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		 */		return usernondealsuggestions;
+		return usernondealsuggestions;
 	}
 
 
@@ -403,7 +392,6 @@ public class UserDAO implements IUserDAO {
 			query.setParameter("userId", userId);
 			query.setParameter("pageType", pageType);
 			pageList = (List<Page>) query.list();
-			//logger.debug("pageList => " + pageList);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.debug(e.toString());
@@ -494,7 +482,7 @@ public class UserDAO implements IUserDAO {
 	@Override
 	public List<Usereventsuggestion> isEventSuggestionExists(int userId,
 			int eventId) {
-		
+
 		logger.debug("UserId ==> "+userId +" eventId ==> "+eventId);
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Usereventsuggestion.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
@@ -502,33 +490,25 @@ public class UserDAO implements IUserDAO {
 		criteria.add(Restrictions.eq("events.eventId", eventId));
 
 		List<Usereventsuggestion> usereventsuggestions = criteria.list();
-		/*List<Usereventsuggestion> usereventsuggestions = null;
-		String hqlQuery = "select a from Usereventsuggestion a where a.user.userId = :userId and a.events.eventId = :eventId";
-		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(
-					hqlQuery);
-			query.setParameter("userId", userId);
-			query.setParameter("eventId", eventId);
-			usereventsuggestions = (List<Usereventsuggestion>) query.list();
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.debug(e.toString());
-			logger.debug(e.getLocalizedMessage());
-		}*/
 		return usereventsuggestions;
 
-}
+	}
+	
+	@SuppressWarnings("unchecked")
 	public List<Userdealssuggestion> isDealSuggestionExists(Integer userId,
 			Integer dealId) {
-		// TODO Auto-generated method stub
-
-		logger.debug("UserId ==> "+userId +" businessid ==> "+dealId);
+		logger.debug("UserId ==> "+userId +" dealId ==> "+dealId);
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Userdealssuggestion.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		criteria.add(Restrictions.eq("user.userId", userId));
 		criteria.add(Restrictions.eq("deals.id", dealId));
 		List<Userdealssuggestion> userdealsuggestions = criteria.list();
-	    return userdealsuggestions;
-		
+		return userdealsuggestions;
 
+
+	}
+
+	@Override
+	public void registerUser(User user) {
+		sessionFactory.getCurrentSession().saveOrUpdate(user);   
 	}
 }

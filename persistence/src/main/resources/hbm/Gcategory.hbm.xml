@@ -8,11 +8,11 @@
             <column name="id" />
             <generator class="identity" />
         </id>
+         <many-to-one name="gcategory" class="com.jeeyoh.persistence.domain.Gcategory" fetch="select">
+            <column name="parentCategoryId" not-null="true" />
+        </many-to-one>
         <property name="category" type="string">
             <column name="category" length="65535" not-null="true" />
-        </property>
-        <property name="parentCategoryId" type="string">
-            <column name="parentCategoryId" length="250" />
         </property>
     </class>
 </hibernate-mapping>

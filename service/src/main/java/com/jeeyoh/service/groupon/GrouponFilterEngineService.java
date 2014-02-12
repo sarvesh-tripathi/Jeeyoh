@@ -21,8 +21,10 @@ import com.jeeyoh.persistence.domain.Business;
 import com.jeeyoh.persistence.domain.Businesstype;
 import com.jeeyoh.persistence.domain.Dealoption;
 import com.jeeyoh.persistence.domain.Deals;
+import com.jeeyoh.persistence.domain.Gcategory;
 import com.jeeyoh.persistence.domain.Gdeal;
 import com.jeeyoh.persistence.domain.Gdealoption;
+import com.jeeyoh.persistence.domain.Gdealprice;
 import com.jeeyoh.persistence.domain.Gdivision;
 import com.jeeyoh.persistence.domain.Gmerchant;
 import com.jeeyoh.persistence.domain.Gtags;
@@ -61,7 +63,7 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 		{
 			int batch_size = 0;
 			for(int i = 0; i < rows.size();i++){
-				
+
 				Gdealoption row = (Gdealoption) rows.get(i);
 				Integer gdealId = row.getGdeal().getId();
 				if (i == 0) {
@@ -124,38 +126,41 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 											{
 												String name = gtag.getName();
 												logger.debug("Check Tag Name ::: "+name);
-
-												if(name.toLowerCase().contains("restaurants"))
+												Gcategory gcategory = businessDAO.getBusinessCategory(name);
+												if(gcategory != null)
 												{
-													businesstype = businessDAO.getBusinesstypeByType("RESTAURANT");
-													break;
-												}
-												else if(name.toLowerCase().contains("sport"))
-												{
-													businesstype = businessDAO.getBusinesstypeByType("SPORT");
-													break;
-												}
-												else if(name.toLowerCase().contains("spa"))
-												{
-													businesstype = businessDAO.getBusinesstypeByType("SPA");
-													break;
-												}
-												else if(name.toLowerCase().contains("yoga"))
-												{
-													businesstype = businessDAO.getBusinesstypeByType("YOGA");
-													break;
-												}
-												else if(name.toLowerCase().contains("movie"))
-												{
-													businesstype = businessDAO.getBusinesstypeByType("MOVIE");
-													break;
+													String category = gcategory.getGcategory().getCategory();
+													logger.debug("category ::: "+category);
+													if(category.equalsIgnoreCase("Arts and Entertainment"))
+													{
+														businesstype = businessDAO.getBusinesstypeByType("SPORT");
+														break;
+													}
+													else if(category.equalsIgnoreCase("Restaurants"))
+													{
+														businesstype = businessDAO.getBusinesstypeByType("RESTAURANT");
+														break;
+													}
+													else if(category.equalsIgnoreCase("Beauty & Spas"))
+													{
+														businesstype = businessDAO.getBusinesstypeByType("SPA");
+														break;
+													}
+													else if(category.equalsIgnoreCase("Nightlife"))
+													{
+														businesstype = businessDAO.getBusinesstypeByType("NIGHTLIFE");
+														break;
+													}
+													else if(category.equalsIgnoreCase("Health & Fitness"))
+													{
+														businesstype = businessDAO.getBusinesstypeByType("YOGA");
+														break;
+													}
 												}
 											}
-											
+
 											Gdivision gdivision = gdeal.getGdivision();
-											
-											//businesstype = businessDAO.getBusinesstypeByType("RESTAURANT");
-											//String[] addressArray = Utils.getCityAndAddress(Double.parseDouble(gdivision.getLattitude()), Double.parseDouble(gdivision.getLongitude()));
+
 											Business business = new Business();
 											business.setName(gmerchant.getName());
 											business.setBusinessId(gmerchant.getMerchantId());
@@ -168,6 +173,7 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 											business.setAddress(gdivision.getAddress());
 											business.setBusinesstype(businesstype);
 											business.setSource("Groupon");
+											
 											businessDAO.saveBusiness(business);
 											businessList = businessDAO.getBusinessByIdForGroupon(business.getBusinessId());
 											deals.setBusiness(business);
@@ -197,7 +203,9 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 											dealOption.setExternalUrl(option.getExternalUrl());
 											dealOption.setBuyUrl(option.getBuyUrl());
 											dealOption.setExpiresAt(new DateTime(option.getExpiresAt()).toDate());
-
+											Gdealprice gdealprice = option.getGdealpriceByPriceId();
+											dealOption.setPrice(Long.parseLong(Integer.toString(gdealprice.getAmount())));
+											dealOption.setFormattedPrice(gdealprice.getFormattedAmount());
 											dealOption.setDeals(deals);
 											dealOptions.add(dealOption);
 										}

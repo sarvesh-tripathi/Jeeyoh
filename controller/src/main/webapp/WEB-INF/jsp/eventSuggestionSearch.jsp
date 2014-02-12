@@ -31,9 +31,11 @@
 			<option value="Concert">Concerts</option>
 			<option value="Theater">Theater</option>
 			<!--<option value="NIGHT LIFE">NIGHT LIFE</option>
-			--><!--<option value="EVENT">EVENT</option>
+			-->
+			<!--<option value="EVENT">EVENT</option>
 			<option value="GETAWAYS">GETAWAYS</option>
-			--><option value="Sport">Sport</option>
+			-->
+			<option value="Sport">Sport</option>
 		</select></div>
 		</td>
 
@@ -49,6 +51,9 @@
 </table>
 <table cellpadding="15">
 	<tr>
+		<c:if test="${mainModel.isUser}">
+			<td><b>Suggestion Type</b></td>
+		</c:if>
 		<td><b>Description</b></td>
 		<td><b>Venue Name</b></td>
 		<td><b>City</b></td>
@@ -59,6 +64,17 @@
 	</tr>
 	<c:forEach items="${mainModel.eventsList}" var="mainModelObj">
 		<tr>
+			<c:if test="${mainModel.isUser}">
+				<c:forEach items="${mainModelObj.usereventsuggestions}"
+					var="usereventsuggestionsObj">
+					<c:if
+						test="${usereventsuggestionsObj.user.emailId eq mainModel.name}">
+						<td>${usereventsuggestionsObj.suggestionType}</td>
+					</c:if>
+
+				</c:forEach>
+			</c:if>
+
 			<td>${mainModelObj.description}</td>
 			<td>${mainModelObj.venue_name}</td>
 			<td>${mainModelObj.city}</td>

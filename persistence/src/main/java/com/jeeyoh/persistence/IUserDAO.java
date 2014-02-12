@@ -50,5 +50,6 @@ public interface IUserDAO {
 
 	public List<Userdealssuggestion> isDealSuggestionExists(Integer userId,
 			Integer id);
+	public void registerUser(User user);
 
 }

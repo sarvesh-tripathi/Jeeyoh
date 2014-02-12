@@ -36,6 +36,7 @@ public class User  implements java.io.Serializable {
      private String lattitude;
      private Date createdtime;
      private Date updatedtime;
+     private String confirmationId;
      private Set jeeyohgroupsForOwnerId = new HashSet(0);
      private Set dealsusages = new HashSet(0);
      private Set pagesForCreatorId = new HashSet(0);
@@ -48,6 +49,7 @@ public class User  implements java.io.Serializable {
      private Set userdealmaps = new HashSet(0);
      private Set usernondealsuggestions = new HashSet(0);
      private Set usereventsuggestions = new HashSet(0);
+     private Set userdealssuggestions = new HashSet(0);
 
     public User() {
     }
@@ -363,6 +365,38 @@ public class User  implements java.io.Serializable {
 	 */
 	public Set getUsereventsuggestions() {
 		return usereventsuggestions;
+	}
+
+
+	/**
+	 * @param userdealssuggestions the userdealssuggestions to set
+	 */
+	public void setUserdealssuggestions(Set userdealssuggestions) {
+		this.userdealssuggestions = userdealssuggestions;
+	}
+
+
+	/**
+	 * @return the userdealssuggestions
+	 */
+	public Set getUserdealssuggestions() {
+		return userdealssuggestions;
+	}
+
+
+	/**
+	 * @param confirmationId the confirmationId to set
+	 */
+	public void setConfirmationId(String confirmationId) {
+		this.confirmationId = confirmationId;
+	}
+
+
+	/**
+	 * @return the confirmationId
+	 */
+	public String getConfirmationId() {
+		return confirmationId;
 	}
 
 

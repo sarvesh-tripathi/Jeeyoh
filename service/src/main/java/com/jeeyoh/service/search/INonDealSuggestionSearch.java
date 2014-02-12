@@ -6,7 +6,7 @@ import com.jeeyoh.persistence.domain.Business;
 
 public interface INonDealSuggestionSearch {
 	
-	public List<Business> search(String userEmail, String searchText, String category, String location);
+	public List<Business> search(String userEmail, String searchText, String category, String location, String rating);
 	
 
 }

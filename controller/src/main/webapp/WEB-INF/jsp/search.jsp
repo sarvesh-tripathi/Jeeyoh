@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
+	pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -7,53 +7,60 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <title>Deal Search</title>
 </head>
-<body>	
-      <h3>DEAL SUGGESTION</h3><br>
-	<form action="dealSuggestionResult">
-   Keyword: <input type="text" name="keyword">
- Category: <select name="category">
-	  <option value="RESTAURANT">Restaurant</option>
-	  <option value="SPA">Spa</option>
-	  <option value="SPORT">Sport</option>  
-   </select>
-  Location: <input type="text" name="location">
-  User Id <input type ="text" name = "emailId" > 
-   <input type="submit" value="Submit"><br>
+<body>
+<h3>DEAL SUGGESTION</h3>
+<br>
+<form action="dealSuggestionResult">Keyword: <input type="text"
+	name="keyword"> Category: <select name="category">
+	<option value="RESTAURANT">Restaurant</option>
+	<option value="SPA">Spa</option>
+	<option value="SPORT">Sport</option>
+</select> Location: <input type="text" name="location"> User Id <input
+	type="text" name="emailId"> <input type="submit" value="Submit"><br>
 </form>
-	<div id="searchContentSection">
-	                <div>						
-						<c:if test="${empty mainModel.dealModel}">
+<div id="searchContentSection">
+<div><c:if test="${empty mainModel.dealModel}">
 						   NO RESULT FOUND
+						</c:if> <c:if test="${not empty mainModel.dealModel}">
+	<table border="0" width="100%">
+		<tr>
+			<c:if test="${mainModel.isUser}">
+				<td><b>Suggestion Type</b></td>
+			</c:if>
+			<th width="20%">Title</th>
+			<th width="20%">Deal URL</th>
+			<th width="10%">Status</th>
+			<th width="10%">Start_At</th>
+			<th width="10%">End_AT</th>
+		</tr>
+	</table>
+	<table border="0" width="100%">
+		<c:forEach var="searchedContent" items="${mainModel.dealModel}">
+			<tr>
+				<c:if test="${mainModel.isUser}">
+					<c:forEach items="${searchedContent.userdealssuggestions}"
+						var="userdealssuggestionsObj">
+						<c:if
+							test="${userdealssuggestionsObj.user.emailId eq mainModel.name}">
+							<td>${userdealssuggestionsObj.suggestionType}</td>
 						</c:if>
-						<c:if test="${not empty mainModel.dealModel}">
-						   <table border="0" width="100%">
-							<tr>
-								<th width="20%">Title</th>
-								<th width="20%">Deal URL</th>
-								<th width="10%">Status</th>
-								<th width="10%">Start_At</th>
-								<th width="10%">End_AT</th>
-							</tr>
-							</table>
-							<table border="0" width="100%">	
-								<c:forEach var="searchedContent" items="${mainModel.dealModel}">
-								<tr>
-									<td width="20%">${searchedContent.title }</td>
-									<td width="20%">${searchedContent.dealUrl }</td>
-									<td width="10%">${searchedContent.status }</td>
-									<td width="10%">${searchedContent.startAt }</td>
-									<td width="10%">${searchedContent.endAt }</td>
-								</tr>
-							 </c:forEach>   
 
-						</table>
-						</c:if>
-						
-					</div>
-	                
-	         </div>  
-	</body>
+					</c:forEach>
+				</c:if>
+				<td width="20%">${searchedContent.title }</td>
+				<td width="20%">${searchedContent.dealUrl }</td>
+				<td width="10%">${searchedContent.status }</td>
+				<td width="10%">${searchedContent.startAt }</td>
+				<td width="10%">${searchedContent.endAt }</td>
+			</tr>
+		</c:forEach>
+
+	</table>
+</c:if></div>
+
+</div>
+</body>
 </html>

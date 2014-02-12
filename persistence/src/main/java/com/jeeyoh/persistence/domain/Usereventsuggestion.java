@@ -18,6 +18,7 @@ public class Usereventsuggestion implements Serializable{
     private Boolean isRedempted;
     private Date createdTime;
     private Date updatedTime;
+    private String suggestionType;
     
     public Usereventsuggestion()
     {
@@ -77,6 +78,20 @@ public class Usereventsuggestion implements Serializable{
 	}
 	public Date getUpdatedTime() {
 		return updatedTime;
+	}
+
+	/**
+	 * @param suggestionType the suggestionType to set
+	 */
+	public void setSuggestionType(String suggestionType) {
+		this.suggestionType = suggestionType;
+	}
+
+	/**
+	 * @return the suggestionType
+	 */
+	public String getSuggestionType() {
+		return suggestionType;
 	}
 
 }

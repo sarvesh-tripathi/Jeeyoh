@@ -19,6 +19,7 @@ public class MainModel {
 	private List<Deals> dealList = new ArrayList<Deals>();
 	private List<Events> eventsList = new ArrayList<Events>();
 	private Set<Deals> dealModel;
+	private boolean isUser;
 	/**
 	 * @param name the name to set
 	 */
@@ -104,5 +105,17 @@ public class MainModel {
 	 */
 	public List<Events> getEventsList() {
 		return eventsList;
+	}
+	/**
+	 * @param isUser the isUser to set
+	 */
+	public void setIsUser(boolean isUser) {
+		this.isUser = isUser;
+	}
+	/**
+	 * @return the isUser
+	 */
+	public boolean getIsUser() {
+		return isUser;
 	}
 }

@@ -21,8 +21,8 @@ public class NonDealSuggestionSearch implements INonDealSuggestionSearch{
 
 	@Override
 	@Transactional
-	public List<Business> search(String userEmail, String searchText, String category, String location) {
-		List<Business> rows = businessDAO.getBusinessByCriteria(userEmail, searchText, category, location);
+	public List<Business> search(String userEmail, String searchText, String category, String location, String rating) {
+		List<Business> rows = businessDAO.getBusinessByCriteria(userEmail, searchText, category, location, rating);
 		logger.debug("NonDealSuggestionSearch ==> rows ==> "+rows);
 		return rows;
 

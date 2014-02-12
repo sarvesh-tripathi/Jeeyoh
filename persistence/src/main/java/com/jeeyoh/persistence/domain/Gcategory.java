@@ -5,7 +5,7 @@ public class Gcategory   implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private String category;
-	private String parentCategoryId;
+	private Gcategory gcategory;
 	/**
 	 * @param id the id to set
 	 */
@@ -31,16 +31,17 @@ public class Gcategory   implements java.io.Serializable {
 		return category;
 	}
 	/**
-	 * @param parentCategoryId the parentCategoryId to set
+	 * @param gcategory the gcategory to set
 	 */
-	public void setParentCategoryId(String parentCategoryId) {
-		this.parentCategoryId = parentCategoryId;
+	public void setGcategory(Gcategory gcategory) {
+		this.gcategory = gcategory;
 	}
 	/**
-	 * @return the parentCategoryId
+	 * @return the gcategory
 	 */
-	public String getParentCategoryId() {
-		return parentCategoryId;
+	public Gcategory getGcategory() {
+		return gcategory;
 	}
+	
 
 }

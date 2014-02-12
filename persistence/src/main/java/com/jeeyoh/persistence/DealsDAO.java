@@ -90,6 +90,7 @@ public class DealsDAO implements IDealsDAO {
 		catch (HibernateException e) {
 			if (tx!=null) tx.rollback();
 			e.printStackTrace(); 
+			logger.error("EXCEPTION IN saveDeal==>  "+e);
 		}
 		finally
 		{

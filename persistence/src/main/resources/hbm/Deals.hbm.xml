@@ -116,5 +116,11 @@
             </key>
             <one-to-many class="com.jeeyoh.persistence.domain.Tags" />
         </set>
+         <set name="userdealssuggestions" inverse="true" cascade="all" lazy="false">
+            <key>
+                <column name="dealId" not-null="true" />
+            </key>
+            <one-to-many class="com.jeeyoh.persistence.domain.Userdealssuggestion" />
+        </set>
     </class>
 </hibernate-mapping>

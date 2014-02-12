@@ -240,6 +240,11 @@ public class AccountController {
 		logger.debug("PARAMETER :: "+keyword+ " category "+ category + "Location" + location);
 		Set<Deals> deals = searchDeals.getDeals(keyword,category,location,emailId);		
 		MainModel mainModel = new MainModel();
+		if(emailId != null && !emailId.trim().equals(""))
+		{
+			mainModel.setIsUser(true);
+			mainModel.setName(emailId);
+		}
 		if(deals != null)
 		{
 			mainModel.setDealModel(deals);
@@ -296,9 +301,16 @@ public class AccountController {
 		String searchText = request.getParameter("searchText");
 		String location = request.getParameter("location");
 		String category = request.getParameter("businessCategory");
-		List<Business> businessList = nonDealSuggestionSearch.search(userEmail.trim(), searchText.trim(), category.trim(), location.trim());
+		String rating = request.getParameter("businessRating");
+		List<Business> businessList = nonDealSuggestionSearch.search(userEmail.trim(), searchText.trim(), category.trim(), location.trim(),rating);
 		MainModel model = new MainModel();
 		model.setBusinessList(businessList);
+		if(userEmail != null && !userEmail.trim().equals(""))
+		{
+			model.setIsUser(true);
+			model.setName(userEmail);
+		}
+			
 		modelAndView.addObject("mainModel", model);
 		return modelAndView;
 	}
@@ -357,6 +369,11 @@ public class AccountController {
 		List<Events> eventsList = eventsSuggestionSearch.search(userEmail.trim(), searchText.trim(), category.trim(), location.trim());
 		MainModel model = new MainModel();
 		model.setEventsList(eventsList);
+		if(userEmail != null && !userEmail.trim().equals(""))
+		{
+			model.setIsUser(true);
+			model.setName(userEmail);
+		}
 		modelAndView.addObject("mainModel", model);
 		return modelAndView;
 	}

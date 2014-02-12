@@ -1,6 +1,8 @@
 package com.jeeyoh.utils;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.security.MessageDigest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -317,23 +319,23 @@ public class Utils {
 			GeocodeResponse geocoderResponse = geocoder.geocode(geocoderRequest);
 			List<GeocoderResult> results = geocoderResponse.getResults();
 			outerloop:
-			for(int k =0; k < results.size(); k++)
-			{
-				List<GeocoderAddressComponent> geList= results.get(k).getAddressComponents();
-				for(int i =0; i < geList.size(); i++)
+				for(int k =0; k < results.size(); k++)
 				{
-					List<String> types = geList.get(i).getTypes();
-					for(int j =0; j < types.size(); j++)
+					List<GeocoderAddressComponent> geList= results.get(k).getAddressComponents();
+					for(int i =0; i < geList.size(); i++)
 					{
-						if(types.get(j).equalsIgnoreCase("postal_code"))
+						List<String> types = geList.get(i).getTypes();
+						for(int j =0; j < types.size(); j++)
 						{
-							addressArray[0] = geList.get(i).getLongName();
-							 break outerloop;
+							if(types.get(j).equalsIgnoreCase("postal_code"))
+							{
+								addressArray[0] = geList.get(i).getLongName();
+								break outerloop;
+							}
 						}
 					}
 				}
-			}
-			
+
 			addressArray[1] = results.get(0).getFormattedAddress();
 			logger.debug("zipcode :  " + addressArray);
 
@@ -343,5 +345,28 @@ public class Utils {
 		}
 		return addressArray;
 	}
+
+	
+	/**
+	 * This method encode the provided string
+	 * @param text
+	 * @return
+	 */
+	public static String MD5(String text)
+	{
+		String md5Text = "";
+		try {
+			MessageDigest digest = MessageDigest.getInstance("MD5");
+			md5Text = new BigInteger(1, digest.digest((text).getBytes())).toString(16);
+		} catch (Exception e) {
+			System.out.println("Error in call to MD5");
+		}
+
+		if (md5Text.length() == 31) {
+			md5Text = "0" + md5Text;
+		}
+		return md5Text;
+	}
+
 
 }

@@ -165,13 +165,16 @@ public class NonDealSearch implements INonDealSearch {
 														rating = business.getRating();
 													}
 													if(rating > 3) {
-														if(business.getSource().equalsIgnoreCase("yelp"))
+														if(business.getSource() != null)
 														{
-															if(type.equalsIgnoreCase(RESTAURANT_CATEGORY)) {
-																if(!ambiance.equalsIgnoreCase("GOOD") && !musicType.equalsIgnoreCase("SOFT")) {
-																	includePage = false;
-																} else {
-																	includePage = true;
+															if(business.getSource().equalsIgnoreCase("yelp"))
+															{
+																if(type.equalsIgnoreCase(RESTAURANT_CATEGORY)) {
+																	if(!ambiance.equalsIgnoreCase("GOOD") && !musicType.equalsIgnoreCase("SOFT")) {
+																		includePage = false;
+																	} else {
+																		includePage = true;
+																	}
 																}
 															}
 														}else {
@@ -191,6 +194,12 @@ public class NonDealSearch implements INonDealSearch {
 														suggestion.setIsRelevant(true);
 														suggestion.setUpdatedtime(new Date());
 														suggestion.setUser(user);
+														if(isGroupMember)
+															suggestion.setSuggestionType("Group Member's Like");
+														else if(isContactsAccessed)
+															suggestion.setSuggestionType("Friend's Like");
+														else if(forUser)
+															suggestion.setSuggestionType("User's Like");
 														userDAO.saveNonDealSuggestions(suggestion,countMain);
 														countMain ++;
 													}
@@ -354,13 +363,16 @@ public class NonDealSearch implements INonDealSearch {
 										logger.debug("NonDealSearch ==> search ==> pageProperties ==> includePage ==> " + includePage);
 										logger.debug("NonDealSearch ==> search ==> rating ==> " + rating);
 										if(rating > 3) {
-											if(business.getSource().equalsIgnoreCase("yelp"))
+											if(business.getSource() != null)
 											{
-												if(type.equalsIgnoreCase(RESTAURANT_CATEGORY)) {
-													if(!ambiance.equalsIgnoreCase("GOOD") && !musicType.equalsIgnoreCase("SOFT")) {
-														includePage = false;
-													} else {
-														includePage = true;
+												if(business.getSource().equalsIgnoreCase("yelp"))
+												{
+													if(type.equalsIgnoreCase(RESTAURANT_CATEGORY)) {
+														if(!ambiance.equalsIgnoreCase("GOOD") && !musicType.equalsIgnoreCase("SOFT")) {
+															includePage = false;
+														} else {
+															includePage = true;
+														}
 													}
 												}
 											}else {
@@ -380,6 +392,12 @@ public class NonDealSearch implements INonDealSearch {
 											suggestion.setIsRelevant(true);
 											suggestion.setUpdatedtime(new Date());
 											suggestion.setUser(user);
+											if(isGroupMember)
+												suggestion.setSuggestionType("Group Member's Community Like");
+											else if(isContactsAccessed)
+												suggestion.setSuggestionType("Friend's Community Like");
+											else if(forUser)
+												suggestion.setSuggestionType("User's Community Like");
 											userDAO.saveNonDealSuggestions(suggestion,countMain);
 											countMain ++;
 										}

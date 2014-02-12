@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 
 import com.jeeyoh.persistence.domain.Business;
 import com.jeeyoh.persistence.domain.Businesstype;
+import com.jeeyoh.persistence.domain.Gcategory;
 
 @Repository("businessDAO")
 public class BusinessDAO implements IBusinessDAO {
@@ -190,7 +191,7 @@ public class BusinessDAO implements IBusinessDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Business> getBusinessByCriteria(String userEmail, String searchText,
-			String category, String location) {
+			String category, String location, String rating) {
 		
 		logger.debug("getBusinessByCriteria ==> "+searchText +" ==> "+category+" ==> "+location);
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Business.class, "business").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
@@ -221,6 +222,10 @@ public class BusinessDAO implements IBusinessDAO {
 					.add(Restrictions.like("business.city", "%" + searchText + "%"))
 					.add(Restrictions.like("business.displayAddress", "%" + searchText + "%"))
 					.add(Restrictions.like("business.name", "%" + searchText + "%")));
+		}
+		if(rating != null && !rating.trim().equals(""))
+		{
+			criteria.add(Restrictions.eq("business.rating", Long.parseLong(rating)));
 		}
 		
 		List<Business> businessList = criteria.list();
@@ -259,5 +264,26 @@ public class BusinessDAO implements IBusinessDAO {
 		List<Business> businessList = criteria.list();
 	
 		return businessList;
+	}
+
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Gcategory getBusinessCategory(String name) {
+		logger.debug("getBusinessCategory ::: "+name);
+		  List<Gcategory> gCategory = null;
+		  Session session = sessionFactory.getCurrentSession();
+		  String hqlQuery = "from Gcategory where category =:name)";
+		  try
+		  {
+		   Query query = session.createQuery(hqlQuery);
+		   query.setParameter("name", name);
+		   gCategory = (List<Gcategory>) query.list();
+		  }
+		  catch(HibernateException e)
+		  {
+		   e.printStackTrace();
+		  }
+		  return gCategory != null && !gCategory.isEmpty() ? gCategory.get(0) : null;
 	}
 }

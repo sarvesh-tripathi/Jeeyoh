@@ -45,6 +45,7 @@ public class Deals  implements java.io.Serializable {
      private Set dealoptions = new HashSet(0);
      private Set userdealmaps = new HashSet(0);
      private Set tags = new HashSet(0);
+     private Set userdealssuggestions = new HashSet(0);
  
 
 	public Set getTags() {
@@ -324,6 +325,16 @@ public class Deals  implements java.io.Serializable {
 
 	public void setUserdealmaps(Set userdealmaps) {
 		this.userdealmaps = userdealmaps;
+	}
+
+
+	public void setUserdealssuggestions(Set userdealssuggestions) {
+		this.userdealssuggestions = userdealssuggestions;
+	}
+
+
+	public Set getUserdealssuggestions() {
+		return userdealssuggestions;
 	}
 
    

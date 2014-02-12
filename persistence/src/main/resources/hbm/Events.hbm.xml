@@ -104,7 +104,7 @@
             </key>
             <one-to-many class="com.jeeyoh.persistence.domain.Eventuserlikes" />
         </set>
-         <set name="usereventsuggestions" inverse="true">
+         <set name="usereventsuggestions" inverse="true" lazy="false">
             <key>
                 <column name="eventId" not-null="true" />
             </key>

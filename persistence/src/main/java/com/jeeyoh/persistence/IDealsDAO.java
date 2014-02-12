@@ -2,6 +2,7 @@ package com.jeeyoh.persistence;
 
 import java.util.List;
 import com.jeeyoh.persistence.domain.Deals;
+import com.jeeyoh.persistence.domain.Gcategory;
 import com.jeeyoh.persistence.domain.Userdealssuggestion;
 import com.jeeyoh.persistence.domain.Usernondealsuggestion;
 
@@ -28,5 +29,5 @@ public interface IDealsDAO {
 	public List<Deals> getDealsByUserEmail(String userEmail);
 	public List<Userdealssuggestion>userDealsSuggestedByJeeyoh(String keyword, String category,
 			String location, int id);
-	public int userCategoryLikeCount(Integer userCategoryId);	
+	public int userCategoryLikeCount(Integer userCategoryId);
 }

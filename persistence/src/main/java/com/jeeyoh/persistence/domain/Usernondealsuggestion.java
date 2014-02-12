@@ -19,6 +19,7 @@ public class Usernondealsuggestion  implements java.io.Serializable {
      private Business business;
      private Boolean isChecked;
      private Boolean isRelevant;
+     private String suggestionType;
      private Date createdtime;
      private Date updatedtime;
 
@@ -90,6 +91,22 @@ public class Usernondealsuggestion  implements java.io.Serializable {
     public void setUpdatedtime(Date updatedtime) {
         this.updatedtime = updatedtime;
     }
+
+
+	/**
+	 * @param suggestionType the suggestionType to set
+	 */
+	public void setSuggestionType(String suggestionType) {
+		this.suggestionType = suggestionType;
+	}
+
+
+	/**
+	 * @return the suggestionType
+	 */
+	public String getSuggestionType() {
+		return suggestionType;
+	}
 
 
 

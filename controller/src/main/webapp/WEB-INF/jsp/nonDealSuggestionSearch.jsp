@@ -28,12 +28,16 @@
 		<td>Category:</td>
 		<td>
 		<div align="center"><select name="businessCategory">
+
+			<option value=""></option>
 			<option value="MOVIE">MOVIE</option>
 			<option value="RESTAURANT">RESTAURANT</option>
 			<!--<option value="NIGHT LIFE">NIGHT LIFE</option>
-			--><!--<option value="EVENT">EVENT</option>
+			-->
+			<!--<option value="EVENT">EVENT</option>
 			<option value="GETAWAYS">GETAWAYS</option>
-			--><option value="SPORT">SPORT</option>
+			-->
+			<option value="SPORT">SPORT</option>
 		</select></div>
 		</td>
 
@@ -43,12 +47,30 @@
 		<td><input type='text' id='location' name='location' value='' /></td>
 	</tr>
 	<tr>
+		<td>Rating :</td>
+		<td>
+		<div align="center"><select name="businessRating">
+
+			<option value=""></option>
+			<option value="1">1</option>
+			<option value="2">2</option>
+			<option value="3">3</option>
+			<option value="4">4</option>
+			<option value="5">5</option>
+		</select></div>
+		</td>
+	</tr>
+	<tr>
 		<td colspan='2'><input name="submit" type="submit"
 			onClick="validateUser()"></td>
 	</tr>
 </table>
 <table cellpadding="15">
 	<tr>
+		<c:if test="${mainModel.isUser}">
+			<td><b>Suggestion Type</b></td>
+		</c:if>
+
 		<td><b>Name</b></td>
 		<td><b>WebsiteUrl</b></td>
 		<td><b>City</b></td>
@@ -57,6 +79,18 @@
 	</tr>
 	<c:forEach items="${mainModel.businessList}" var="mainModelObj">
 		<tr>
+			<c:if test="${mainModel.isUser}">
+				<c:forEach items="${mainModelObj.usernondealsuggestions}"
+					var="usernondealsuggestionsObj">
+					<c:if
+						test="${usernondealsuggestionsObj.user.emailId eq mainModel.name}">
+						<td>${usernondealsuggestionsObj.suggestionType}</td>
+					</c:if>
+
+				</c:forEach>
+			</c:if>
+
+
 			<td>${mainModelObj.name}</td>
 			<td>${mainModelObj.websiteUrl}</td>
 			<td>${mainModelObj.city}</td>

@@ -10,100 +10,122 @@ import java.util.Date;
 public class Userdealssuggestion  implements java.io.Serializable {
 
 
-     private Integer userDealMapId;
-     private User user;
-     private Deals deals;
-     private Boolean isFavorite;
-     private Boolean isFollowing;
-     private Boolean isLike;
-     private Boolean isRedempted;
-     private Date createdtime;
-     private Date updatedtime;
 
-    public Userdealssuggestion() {
-    }
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private Integer userDealMapId;
+	private User user;
+	private Deals deals;
+	private Boolean isFavorite;
+	private Boolean isFollowing;
+	private Boolean isLike;
+	private Boolean isRedempted;
+	private Date createdtime;
+	private Date updatedtime;
+	private String suggestionType;
 
-	
-    public Userdealssuggestion(User user, Deals deals, Date createdtime, Date updatedtime) {
-        this.user = user;
-        this.deals = deals;
-        this.createdtime = createdtime;
-        this.updatedtime = updatedtime;
-    }
-    public Userdealssuggestion(User user, Deals deals, Boolean isFavorite, Boolean isFollowing, Boolean isLike, Boolean isRedempted, Date createdtime, Date updatedtime) {
-       this.user = user;
-       this.deals = deals;
-       this.isFavorite = isFavorite;
-       this.isFollowing = isFollowing;
-       this.isLike = isLike;
-       this.isRedempted = isRedempted;
-       this.createdtime = createdtime;
-       this.updatedtime = updatedtime;
-    }
-   
-    public Integer getUserDealMapId() {
-        return this.userDealMapId;
-    }
-    
-    public void setUserDealMapId(Integer userDealMapId) {
-        this.userDealMapId = userDealMapId;
-    }
-    public User getUser() {
-        return this.user;
-    }
-    
-    public void setUser(User user) {
-        this.user = user;
-    }
-    public Deals getDeals() {
-        return this.deals;
-    }
-    
-    public void setDeals(Deals deals) {
-        this.deals = deals;
-    }
-    public Boolean getIsFavorite() {
-        return this.isFavorite;
-    }
-    
-    public void setIsFavorite(Boolean isFavorite) {
-        this.isFavorite = isFavorite;
-    }
-    public Boolean getIsFollowing() {
-        return this.isFollowing;
-    }
-    
-    public void setIsFollowing(Boolean isFollowing) {
-        this.isFollowing = isFollowing;
-    }
-    public Boolean getIsLike() {
-        return this.isLike;
-    }
-    
-    public void setIsLike(Boolean isLike) {
-        this.isLike = isLike;
-    }
-    public Boolean getIsRedempted() {
-        return this.isRedempted;
-    }
-    
-    public void setIsRedempted(Boolean isRedempted) {
-        this.isRedempted = isRedempted;
-    }
-    public Date getCreatedtime() {
-        return this.createdtime;
-    }
-    
-    public void setCreatedtime(Date createdtime) {
-        this.createdtime = createdtime;
-    }
-    public Date getUpdatedtime() {
-        return this.updatedtime;
-    }
-    
-    public void setUpdatedtime(Date updatedtime) {
-        this.updatedtime = updatedtime;
-    }
+	public Userdealssuggestion() {
+	}
+
+
+	public Userdealssuggestion(User user, Deals deals, Date createdtime, Date updatedtime) {
+		this.user = user;
+		this.deals = deals;
+		this.createdtime = createdtime;
+		this.updatedtime = updatedtime;
+	}
+	public Userdealssuggestion(User user, Deals deals, Boolean isFavorite, Boolean isFollowing, Boolean isLike, Boolean isRedempted, Date createdtime, Date updatedtime) {
+		this.user = user;
+		this.deals = deals;
+		this.isFavorite = isFavorite;
+		this.isFollowing = isFollowing;
+		this.isLike = isLike;
+		this.isRedempted = isRedempted;
+		this.createdtime = createdtime;
+		this.updatedtime = updatedtime;
+	}
+
+	public Integer getUserDealMapId() {
+		return this.userDealMapId;
+	}
+
+	public void setUserDealMapId(Integer userDealMapId) {
+		this.userDealMapId = userDealMapId;
+	}
+	public User getUser() {
+		return this.user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+	public Deals getDeals() {
+		return this.deals;
+	}
+
+	public void setDeals(Deals deals) {
+		this.deals = deals;
+	}
+	public Boolean getIsFavorite() {
+		return this.isFavorite;
+	}
+
+	public void setIsFavorite(Boolean isFavorite) {
+		this.isFavorite = isFavorite;
+	}
+	public Boolean getIsFollowing() {
+		return this.isFollowing;
+	}
+
+	public void setIsFollowing(Boolean isFollowing) {
+		this.isFollowing = isFollowing;
+	}
+	public Boolean getIsLike() {
+		return this.isLike;
+	}
+
+	public void setIsLike(Boolean isLike) {
+		this.isLike = isLike;
+	}
+	public Boolean getIsRedempted() {
+		return this.isRedempted;
+	}
+
+	public void setIsRedempted(Boolean isRedempted) {
+		this.isRedempted = isRedempted;
+	}
+	public Date getCreatedtime() {
+		return this.createdtime;
+	}
+
+	public void setCreatedtime(Date createdtime) {
+		this.createdtime = createdtime;
+	}
+	public Date getUpdatedtime() {
+		return this.updatedtime;
+	}
+
+	public void setUpdatedtime(Date updatedtime) {
+		this.updatedtime = updatedtime;
+	}
+
+
+	/**
+	 * @param suggestionType the suggestionType to set
+	 */
+	 public void setSuggestionType(String suggestionType) {
+		this.suggestionType = suggestionType;
+	}
+
+
+	/**
+	 * @return the suggestionType
+	 */
+	 public String getSuggestionType() {
+		return suggestionType;
+	}
 
 
 
