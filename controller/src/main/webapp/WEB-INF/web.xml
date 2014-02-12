@@ -47,6 +47,28 @@
 		<url-pattern>/app/*</url-pattern>		
 	</servlet-mapping>
 	
+	<!--Mobile Rest Full Services-->
+	<servlet>
+		<servlet-name>Storistic Mobile REST Service</servlet-name>
+		<servlet-class>
+			com.sun.jersey.spi.spring.container.servlet.SpringServlet			
+		</servlet-class>
+		<init-param>
+			<param-name>com.sun.jersey.config.property.packages</param-name>
+			<param-value>com.jeeyoh.mobile.endpoint</param-value>
+		</init-param>
+		<init-param>
+			<param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Storistic Mobile REST Service</servlet-name>
+		<url-pattern>/mobile/*</url-pattern>
+	</servlet-mapping>
+	<!--Mobile Rest Full Services-->
+	
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>

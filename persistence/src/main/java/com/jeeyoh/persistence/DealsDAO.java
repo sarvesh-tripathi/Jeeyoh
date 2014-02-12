@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.jeeyoh.persistence.domain.Deals;
+import com.jeeyoh.persistence.domain.Gcategory;
 import com.jeeyoh.persistence.domain.Userdealssuggestion;
 import com.jeeyoh.persistence.domain.Usernondealsuggestion;
 
@@ -404,6 +405,27 @@ public class DealsDAO implements IDealsDAO {
 			e.printStackTrace();
 		}
 		return rowCount;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Gcategory getBusinessCategory(String name) {
+		// TODO Auto-generated method stub
+		logger.debug("getBusinessCategory ::: "+name);
+		List<Gcategory> gCategory = null;
+		Session session = sessionFactory.getCurrentSession();
+		String hqlQuery = "from Gcategory where id in (select parentCategoryId from Gcategory where category =:name)";
+		try
+		{
+			Query query = session.createQuery(hqlQuery);
+			query.setParameter("name", name);
+			gCategory = (List<Gcategory>) query.list();
+		}
+		catch(HibernateException e)
+		{
+			e.printStackTrace();
+		}
+		return gCategory != null && !gCategory.isEmpty() ? gCategory.get(0) : null;
 	}
 		
 }

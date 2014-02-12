@@ -21,6 +21,7 @@ import com.jeeyoh.persistence.domain.Business;
 import com.jeeyoh.persistence.domain.Businesstype;
 import com.jeeyoh.persistence.domain.Dealoption;
 import com.jeeyoh.persistence.domain.Deals;
+import com.jeeyoh.persistence.domain.Gcategory;
 import com.jeeyoh.persistence.domain.Gdeal;
 import com.jeeyoh.persistence.domain.Gdealoption;
 import com.jeeyoh.persistence.domain.Gdivision;
@@ -124,8 +125,39 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 											{
 												String name = gtag.getName();
 												logger.debug("Check Tag Name ::: "+name);
+												Gcategory gcategory = dealsDAO.getBusinessCategory(name);
+												if(gcategory != null)
+												{
+													String category = gcategory.getCategory();
+													if(category.equalsIgnoreCase("Arts and Entertainment"))
+													{
+														businesstype = businessDAO.getBusinesstypeByType("SPORT");
+														break;
+													}
+													else if(category.equalsIgnoreCase("Restaurants"))
+													{
+														businesstype = businessDAO.getBusinesstypeByType("RESTAURANT");
+														break;
+													}
+													else if(category.equalsIgnoreCase("Beauty & Spas"))
+													{
+														businesstype = businessDAO.getBusinesstypeByType("SPA");
+														break;
+													}
+													else if(category.equalsIgnoreCase("Nightlife"))
+													{
+														businesstype = businessDAO.getBusinesstypeByType("Nightlife");
+														break;
+													}
+													else if(category.equalsIgnoreCase("Health & Fitness"))
+													{
+														businesstype = businessDAO.getBusinesstypeByType("YOGA");
+														break;
+													}
+														
+												}
 
-												if(name.toLowerCase().contains("restaurants"))
+												/*if(name.toLowerCase().contains("restaurants"))
 												{
 													businesstype = businessDAO.getBusinesstypeByType("RESTAURANT");
 													break;
@@ -149,7 +181,7 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 												{
 													businesstype = businessDAO.getBusinesstypeByType("MOVIE");
 													break;
-												}
+												}*/
 											}
 											
 											Gdivision gdivision = gdeal.getGdivision();

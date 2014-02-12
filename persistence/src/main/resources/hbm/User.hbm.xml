@@ -62,6 +62,9 @@
         <property name="country" type="string">
             <column name="country" length="250" />
         </property>
+        <property name="confirmationId" type="string">
+            <column name="confirmationId" length="100" />
+        </property>
         <property name="zipcode" type="string">
             <column name="zipcode" length="12" not-null="true" />
         </property>

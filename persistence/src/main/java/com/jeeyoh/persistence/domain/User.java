@@ -34,6 +34,7 @@ public class User  implements java.io.Serializable {
      private String zipcode;
      private String longitude;
      private String lattitude;
+     private String confirmationId;
      private Date createdtime;
      private Date updatedtime;
      private Set jeeyohgroupsForOwnerId = new HashSet(0);
@@ -363,6 +364,16 @@ public class User  implements java.io.Serializable {
 	 */
 	public Set getUsereventsuggestions() {
 		return usereventsuggestions;
+	}
+
+
+	public void setConfirmationId(String confirmationId) {
+		this.confirmationId = confirmationId;
+	}
+
+
+	public String getConfirmationId() {
+		return confirmationId;
 	}
 
 

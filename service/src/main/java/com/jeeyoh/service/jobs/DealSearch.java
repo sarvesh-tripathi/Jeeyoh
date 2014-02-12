@@ -56,14 +56,14 @@ public class DealSearch implements IDealSearch {
 		List<Businesstype> businesstypes = businessDAO.getBusinesstypeByTypeArray(type);	*/
 		List<User> userList = userDAO.getUsers();
 		// Iterate user list for suggestion
-		int count = 0;
+		
 		for (User user : userList)
 		{
 			if(user != null)
 			{
 				  //for user Contacts affinity level
 				  List<Usercontacts> userContactsList = userDAO.getAllUserContacts(user.getUserId());
-	              saveDealSuggestion(user,user,false,false);
+	              saveDealSuggestion(user,user,false,false,false,null);
 				  if(userContactsList != null)
 					{
 						for(Usercontacts usercontacts:userContactsList)
@@ -73,16 +73,32 @@ public class DealSearch implements IDealSearch {
 							User contact = usercontacts.getUserByContactId();
 							logger.debug("Friend Name ::"+contact.getFirstName());
 							logger.debug("IS STAR ::"+isStar);
-							saveDealSuggestion(contact,user,true,false);
+							saveDealSuggestion(contact,user,true,isStar,false,null);
 							
 						}
 					}
+				  List<Jeeyohgroup> jeeyohGroup = userDAO.getUserGroups(user.getUserId());
+				  if(jeeyohGroup != null)
+				  {
+					  for(Jeeyohgroup jeeyohGroup1 : jeeyohGroup) {
+						   
+						   String groupType = jeeyohGroup1.getGroupType();
+						   Set<Groupusermap> groups   = jeeyohGroup1.getGroupusermaps();
+						   for (Groupusermap groups1 : groups)
+						   {
+							   User groupMember = groups1.getUser();
+							   if(groupMember.getUserId() != user.getUserId())
+							   {
+								   saveDealSuggestion(groupMember,user,false,false,true,groupType);
+							   }
+						   }
+					  }
+				  }
+					
+					
+					
 			}
-			count++;
-			if(count == 5)
-			{
-				break;
-			}
+			
 		}
 				
 		
@@ -90,26 +106,57 @@ public class DealSearch implements IDealSearch {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void saveDealSuggestion(User user,User userFor,Boolean contactFlag,Boolean isStar)
+	private void saveDealSuggestion(User user,User userFor,Boolean contactFlag,Boolean isStar, Boolean isGroupMember, String groupType)
 	{
 		
-		//get user detail and deal usage			
-		Set<Dealsusage> dealUsage = user.getDealsusages();		
+		//get user detail and deal usage	
+		Set<Dealsusage> dealUsage = null;
+		if(!isGroupMember)
+		{
+			dealUsage = user.getDealsusages();		
+		}
+		else
+		{
+			dealUsage = userDAO.getUserDealUsageByType(user.getUserId(),groupType);
+			logger.debug("Group MEMBER "+isGroupMember);
+			if(dealUsage != null)
+			{
+				logger.debug("size of deal usage :: "+dealUsage.size());
+			}
+		}
 			
 		// user commuinty 
-		List<Page> userCommunities = userDAO.getUserCommunities(user.getUserId());
+		List<Page> userCommunities = null;
+		if(!isGroupMember)
+		{
+			userCommunities = userDAO.getUserCommunities(user.getUserId());
+		}
+		else
+		{
+			userCommunities = userDAO.getUserCommunitiesByPageType(user.getUserId(), groupType);
+		}
+		
+		
 		
 		//user category
-		
-		List<UserCategory> userCategoryList = userDAO.getUserCategoryLikesById(user.getUserId());
+		List<UserCategory> userCategoryList =null;
+		if(!isGroupMember)
+		{
+			userCategoryList = userDAO.getUserCategoryLikesById(user.getUserId());
+		}
+		else
+		{
+			userCategoryList = userDAO.getUserCategoryLikesByType(user.getUserId(),groupType);
+		}
 		// user group member
-		List<Jeeyohgroup> jeeyohGroup = null;
+		/*List<Jeeyohgroup> jeeyohGroup = null;
 		if(!contactFlag)
 		{
 			jeeyohGroup = userDAO.getUserGroups(user.getUserId());
-		}
+		}*/
 	   
-	    double[] array = null;		
+	    double[] array = null;	
+	    if(dealUsage != null){
 		for(Dealsusage dealsusage : dealUsage) {
 			//logger.debug("DealSearch ==> search ==> dealusage ==> " + dealsusage.getIsFavorite());
 			Deals deal = dealsusage.getDeals();
@@ -145,6 +192,7 @@ public class DealSearch implements IDealSearch {
 			}
 			
 		}
+	    }
 			//	For Community							
 			if(userCommunities != null) {
 				
@@ -308,7 +356,7 @@ public class DealSearch implements IDealSearch {
 						
 				
 								
-				//// for jeeyohgroups
+				/*//// for jeeyohgroups
 				if(!contactFlag)
 				{
 						
@@ -367,8 +415,8 @@ public class DealSearch implements IDealSearch {
 			 
 				}
 
-					}
-				
+			}
+				*/
 			
 			
 		
