@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jeeyoh.model.search.DealModel;
 import com.jeeyoh.persistence.IDealsDAO;
 import com.jeeyoh.persistence.IUserDAO;
 import com.jeeyoh.persistence.domain.Deals;
@@ -33,7 +34,7 @@ public class SearchDeals implements ISearchDeals {
 
 	@Override
 	@Transactional
-	public Set<Deals> getDeals(String keyword, String category, String location, String emailId) {
+	public Set<DealModel> getDeals(String keyword, String category, String location, String emailId) {
 		// TODO Auto-generated method stub
 		logger.debug("Get deal ::: ");
 		List<Deals> deals =  null;
@@ -52,7 +53,7 @@ public class SearchDeals implements ISearchDeals {
 		}
 		
 		//List<DealModel> dealModels = new ArrayList<DealModel>();
-		Set<Deals> dealModels = new HashSet<Deals>();
+		Set<DealModel> dealModels = new HashSet<DealModel>();
 		if(deals != null)
 		{
 			
@@ -65,7 +66,34 @@ public class SearchDeals implements ISearchDeals {
 					{
 						if(dealsuggestion.getDeals() != null)
 						{
-							dealModels.add(dealsuggestion.getDeals());
+							DealModel dealModel = new DealModel();
+							Deals deal1 = dealsuggestion.getDeals();
+							if(deal1.getTitle() != null)
+							{
+								dealModel.setTitle(deal1.getTitle());
+							}
+							if(deal1.getDealUrl() != null)
+							{
+								dealModel.setDealUrl(deal1.getDealUrl());
+							}
+							if(deal1.getStartAt() != null)
+							{
+								dealModel.setStartAt(deal1.getStartAt().toString());
+							}
+							if(deal1.getEndAt() != null)
+							{
+								dealModel.setEndAt(deal1.getEndAt().toString());
+							}
+							if(deal1.getStatus() != null)
+							{
+								dealModel.setStatus(deal1.getStatus());
+							}
+							if(dealsuggestion.getSuggestionType() != null)
+							{
+								dealModel.setSuggestionType(dealsuggestion.getSuggestionType());
+							}
+							
+							dealModels.add(dealModel);
 						}
 						
 					}
@@ -75,7 +103,30 @@ public class SearchDeals implements ISearchDeals {
 				{
 					if(deal != null)
 					{
-						dealModels.add(deal);
+						//dealModels.add(deal);
+						DealModel dealModel = new DealModel();
+						if(deal.getTitle() != null)
+						{
+							dealModel.setTitle(deal.getTitle());
+						}
+						if(deal.getDealUrl() != null)
+						{
+							dealModel.setDealUrl(deal.getDealUrl());
+						}
+						if(deal.getStartAt() != null)
+						{
+							dealModel.setStartAt(deal.getStartAt().toString());
+						}
+						if(deal.getEndAt() != null)
+						{
+							dealModel.setEndAt(deal.getEndAt().toString());
+						}
+						if(deal.getStatus() != null)
+						{
+							dealModel.setStatus(deal.getStatus());
+						}
+						
+						dealModels.add(dealModel);
 					}
 				}
 				
@@ -94,7 +145,33 @@ public class SearchDeals implements ISearchDeals {
 			
 					if(dealsuggestion.getDeals() != null)
 					{
-						dealModels.add(dealsuggestion.getDeals());
+						DealModel dealModel = new DealModel();
+						Deals deal1 = dealsuggestion.getDeals();
+						if(deal1.getTitle() != null)
+						{
+							dealModel.setTitle(deal1.getTitle());
+						}
+						if(deal1.getDealUrl() != null)
+						{
+							dealModel.setDealUrl(deal1.getDealUrl());
+						}
+						if(deal1.getStartAt() != null)
+						{
+							dealModel.setStartAt(deal1.getStartAt().toString());
+						}
+						if(deal1.getEndAt() != null)
+						{
+							dealModel.setEndAt(deal1.getEndAt().toString());
+						}
+						if(deal1.getStatus() != null)
+						{
+							dealModel.setStatus(deal1.getStatus());
+						}
+						if(dealsuggestion.getSuggestionType() != null)
+						{
+							dealModel.setSuggestionType(dealsuggestion.getSuggestionType());
+						}
+						dealModels.add(dealModel);
 					}
 			    }
 					
@@ -107,11 +184,11 @@ public class SearchDeals implements ISearchDeals {
 
 	@Override
 	@Transactional
-	public Set<Deals> getUserDeals(String emailId) {
+	public Set<DealModel> getUserDeals(String emailId) {
 		
 		List<Deals> deals = null;
 		//List<DealModel> dealModels = new ArrayList<DealModel>();
-		Set<Deals> dealModels = new HashSet<Deals>();
+		Set<DealModel> dealModels = new HashSet<DealModel>();
 		if(emailId != null && emailId  != "")
 		{			
 			User user = userDAO.getUsersById(emailId);
@@ -128,7 +205,29 @@ public class SearchDeals implements ISearchDeals {
 				
 				if(deal != null)
 				{
-					dealModels.add(deal);
+					DealModel dealModel = new DealModel();
+					if(deal.getTitle() != null)
+					{
+						dealModel.setTitle(deal.getTitle());
+					}
+					if(deal.getDealUrl() != null)
+					{
+						dealModel.setDealUrl(deal.getDealUrl());
+					}
+					if(deal.getStartAt() != null)
+					{
+						dealModel.setStartAt(deal.getStartAt().toString());
+					}
+					if(deal.getEndAt() != null)
+					{
+						dealModel.setEndAt(deal.getEndAt().toString());
+					}
+					if(deal.getStatus() != null)
+					{
+						dealModel.setStatus(deal.getStatus());
+					}
+					
+					dealModels.add(dealModel);
 				}
 			}
 			
@@ -140,10 +239,10 @@ public class SearchDeals implements ISearchDeals {
 	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional
-	public Set<Deals> getUserContactAndCommunityDeals(String emailId){
+	public Set<DealModel> getUserContactAndCommunityDeals(String emailId){
 		
 		List<Deals> deals = null;
-		List<Deals> dealModels = new ArrayList<Deals>();
+		List<DealModel> dealModels = new ArrayList<DealModel>();
 		//Set<DealModel> dealModels = new HashSet<DealModel>();
 		if(emailId != null && emailId  != "")
 		{			
@@ -173,7 +272,29 @@ public class SearchDeals implements ISearchDeals {
 							if(deal != null)
 							{
 								
-								dealModels.add(deal);
+								DealModel dealModel = new DealModel();
+								if(deal.getTitle() != null)
+								{
+									dealModel.setTitle(deal.getTitle());
+								}
+								if(deal.getDealUrl() != null)
+								{
+									dealModel.setDealUrl(deal.getDealUrl());
+								}
+								if(deal.getStartAt() != null)
+								{
+									dealModel.setStartAt(deal.getStartAt().toString());
+								}
+								if(deal.getEndAt() != null)
+								{
+									dealModel.setEndAt(deal.getEndAt().toString());
+								}
+								if(deal.getStatus() != null)
+								{
+									dealModel.setStatus(deal.getStatus());
+								}
+								
+								dealModels.add(dealModel);
 							}
 						}
 						
@@ -197,7 +318,29 @@ public class SearchDeals implements ISearchDeals {
 						
 						if(deal != null)
 						{
-							dealModels.add(deal);
+							DealModel dealModel = new DealModel();
+							if(deal.getTitle() != null)
+							{
+								dealModel.setTitle(deal.getTitle());
+							}
+							if(deal.getDealUrl() != null)
+							{
+								dealModel.setDealUrl(deal.getDealUrl());
+							}
+							if(deal.getStartAt() != null)
+							{
+								dealModel.setStartAt(deal.getStartAt().toString());
+							}
+							if(deal.getEndAt() != null)
+							{
+								dealModel.setEndAt(deal.getEndAt().toString());
+							}
+							if(deal.getStatus() != null)
+							{
+								dealModel.setStatus(deal.getStatus());
+							}
+							
+							dealModels.add(dealModel);
 						}
 					}
 					
@@ -223,7 +366,29 @@ public class SearchDeals implements ISearchDeals {
 							{
 								if(deal != null)
 								{
-									dealModels.add(deal);
+									DealModel dealModel = new DealModel();
+									if(deal.getTitle() != null)
+									{
+										dealModel.setTitle(deal.getTitle());
+									}
+									if(deal.getDealUrl() != null)
+									{
+										dealModel.setDealUrl(deal.getDealUrl());
+									}
+									if(deal.getStartAt() != null)
+									{
+										dealModel.setStartAt(deal.getStartAt().toString());
+									}
+									if(deal.getEndAt() != null)
+									{
+										dealModel.setEndAt(deal.getEndAt().toString());
+									}
+									if(deal.getStatus() != null)
+									{
+										dealModel.setStatus(deal.getStatus());
+									}
+									
+									dealModels.add(dealModel);
 								}
 							}
 						}
@@ -241,7 +406,29 @@ public class SearchDeals implements ISearchDeals {
 			   {
 				   if(deal != null)
 					{
-						dealModels.add(deal);
+					   DealModel dealModel = new DealModel();
+						if(deal.getTitle() != null)
+						{
+							dealModel.setTitle(deal.getTitle());
+						}
+						if(deal.getDealUrl() != null)
+						{
+							dealModel.setDealUrl(deal.getDealUrl());
+						}
+						if(deal.getStartAt() != null)
+						{
+							dealModel.setStartAt(deal.getStartAt().toString());
+						}
+						if(deal.getEndAt() != null)
+						{
+							dealModel.setEndAt(deal.getEndAt().toString());
+						}
+						if(deal.getStatus() != null)
+						{
+							dealModel.setStatus(deal.getStatus());
+						}
+						
+						dealModels.add(dealModel);
 						
 					}
 			   }
@@ -251,7 +438,7 @@ public class SearchDeals implements ISearchDeals {
 		logger.debug("deal Model size after community " + dealModels.size());
 		
 	}
-		Set<Deals> aSet = new HashSet<Deals>(dealModels);		
+		Set<DealModel> aSet = new HashSet<DealModel>(dealModels);		
 		logger.debug("SIZE OF SET :::: "+aSet.size());
 		
 		return aSet;

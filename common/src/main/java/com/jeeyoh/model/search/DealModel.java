@@ -1,12 +1,30 @@
 package com.jeeyoh.model.search;
 
-public class DealModel {
+import java.io.Serializable;
+
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_DEFAULT)
+public class DealModel implements Serializable{
 	
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	@JsonProperty
 	private String title;
+	@JsonProperty
 	private String dealUrl;
+	@JsonProperty
 	private String status;
+	@JsonProperty
 	private String startAt;
+	@JsonProperty
+	private String suggestionType;
 	public String getTitle() {
 		return title;
 	}
@@ -36,6 +54,18 @@ public class DealModel {
 	}
 	public void setEndAt(String endAt) {
 		this.endAt = endAt;
+	}
+	/**
+	 * @param suggestionType the suggestionType to set
+	 */
+	public void setSuggestionType(String suggestionType) {
+		this.suggestionType = suggestionType;
+	}
+	/**
+	 * @return the suggestionType
+	 */
+	public String getSuggestionType() {
+		return suggestionType;
 	}
 	private String endAt;
 

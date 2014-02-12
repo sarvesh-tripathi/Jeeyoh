@@ -80,22 +80,13 @@
 	<c:forEach items="${mainModel.businessList}" var="mainModelObj">
 		<tr>
 			<c:if test="${mainModel.isUser}">
-				<c:forEach items="${mainModelObj.usernondealsuggestions}"
-					var="usernondealsuggestionsObj">
-					<c:if
-						test="${usernondealsuggestionsObj.user.emailId eq mainModel.name}">
-						<td>${usernondealsuggestionsObj.suggestionType}</td>
-					</c:if>
-
-				</c:forEach>
+				<td>${mainModelObj.suggestionType}</td>
 			</c:if>
-
-
 			<td>${mainModelObj.name}</td>
 			<td>${mainModelObj.websiteUrl}</td>
 			<td>${mainModelObj.city}</td>
 			<td>${mainModelObj.displayAddress}</td>
-			<td>${mainModelObj.businesstype.businessType}</td>
+			<td>${mainModelObj.businessType}</td>
 		</tr>
 
 	</c:forEach>

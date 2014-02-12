@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.jeeyoh.model.responce.LoginResponce;
+import com.jeeyoh.model.response.LoginResponse;
 import com.jeeyoh.model.user.UserModel;
 import com.jeeyoh.service.userservice.IUserService;
 
@@ -38,10 +38,10 @@ public class UserAccountService {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-	public LoginResponce  login(@PathParam("name") UserModel user)
+	public LoginResponse  login(@PathParam("name") UserModel user)
 	{
 		logger.debug("Enter in mobile app "+user);
-		LoginResponce loginResponce = userService.loginUser(user);
+		LoginResponse loginResponce = userService.loginUser(user);
 		return loginResponce;
 	}
 	@Path("/regiteration/{name}")

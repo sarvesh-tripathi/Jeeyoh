@@ -4,21 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import com.jeeyoh.persistence.domain.Business;
-import com.jeeyoh.persistence.domain.Deals;
-import com.jeeyoh.persistence.domain.Events;
-import com.jeeyoh.persistence.domain.Page;
-
 public class MainModel {
 	
 	private String name;
 	private String city;
 	private String address;
-	private List<Business> businessList = new ArrayList<Business>();
-	private List<Page> pageList = new ArrayList<Page>();
-	private List<Deals> dealList = new ArrayList<Deals>();
-	private List<Events> eventsList = new ArrayList<Events>();
-	private Set<Deals> dealModel;
+	private List<BusinessModel> businessList = new ArrayList<BusinessModel>();
+	private List<PageModel> pageList = new ArrayList<PageModel>();
+	private List<DealModel> dealList = new ArrayList<DealModel>();
+	private List<EventModel> eventsList = new ArrayList<EventModel>();
+	private Set<DealModel> dealModel;
 	private boolean isUser;
 	/**
 	 * @param name the name to set
@@ -59,51 +54,51 @@ public class MainModel {
 	/**
 	 * @param businessList the businessList to set
 	 */
-	public void setBusinessList(List<Business> businessList) {
+	public void setBusinessList(List<BusinessModel> businessList) {
 		this.businessList = businessList;
 	}
 	/**
 	 * @return the businessList
 	 */
-	public List<Business> getBusinessList() {
+	public List<BusinessModel> getBusinessList() {
 		return businessList;
 	}
 	/**
 	 * @param pageList the pageList to set
 	 */
-	public void setPageList(List<Page> pageList) {
+	public void setPageList(List<PageModel> pageList) {
 		this.pageList = pageList;
 	}
 	/**
 	 * @return the pageList
 	 */
-	public List<Page> getPageList() {
+	public List<PageModel> getPageList() {
 		return pageList;
 	}
-	public void setDealList(List<Deals> dealList) {
+	public void setDealList(List<DealModel> dealList) {
 		this.dealList = dealList;
 	}
-	public List<Deals> getDealList() {
+	public List<DealModel> getDealList() {
 		return dealList;
 	}
 	
-	public Set<Deals> getDealModel() {
+	public Set<DealModel> getDealModel() {
 		return dealModel;
 	}
 
-	public void setDealModel(Set<Deals> dealModel) {
+	public void setDealModel(Set<DealModel> dealModel) {
 		this.dealModel = dealModel;
 	}
 	/**
 	 * @param eventsList the eventsList to set
 	 */
-	public void setEventsList(List<Events> eventsList) {
+	public void setEventsList(List<EventModel> eventsList) {
 		this.eventsList = eventsList;
 	}
 	/**
 	 * @return the eventsList
 	 */
-	public List<Events> getEventsList() {
+	public List<EventModel> getEventsList() {
 		return eventsList;
 	}
 	/**

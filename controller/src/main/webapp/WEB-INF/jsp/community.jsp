@@ -40,9 +40,9 @@
 				<tr>
 					<td>${mainModelObj.about}</td>
 					<td>${mainModelObj.pageUrl}</td>
-					<td>${mainModelObj.userByOwnerId.firstName}</td>
-					<td>${mainModelObj.createdtime}</td>
-					<td>${mainModelObj.pagetype.pageType}</td>
+					<td>${mainModelObj.owner}</td>
+					<td>${mainModelObj.createdDate}</td>
+					<td>${mainModelObj.pageType}</td>
 				</tr>
 			</c:forEach>
 		</table>

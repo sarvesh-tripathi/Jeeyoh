@@ -65,14 +65,9 @@
 	<c:forEach items="${mainModel.eventsList}" var="mainModelObj">
 		<tr>
 			<c:if test="${mainModel.isUser}">
-				<c:forEach items="${mainModelObj.usereventsuggestions}"
-					var="usereventsuggestionsObj">
-					<c:if
-						test="${usereventsuggestionsObj.user.emailId eq mainModel.name}">
-						<td>${usereventsuggestionsObj.suggestionType}</td>
-					</c:if>
 
-				</c:forEach>
+				<td>${mainModelObj.suggestionType}</td>
+
 			</c:if>
 
 			<td>${mainModelObj.description}</td>

@@ -41,14 +41,9 @@
 		<c:forEach var="searchedContent" items="${mainModel.dealModel}">
 			<tr>
 				<c:if test="${mainModel.isUser}">
-					<c:forEach items="${searchedContent.userdealssuggestions}"
-						var="userdealssuggestionsObj">
-						<c:if
-							test="${userdealssuggestionsObj.user.emailId eq mainModel.name}">
-							<td>${userdealssuggestionsObj.suggestionType}</td>
-						</c:if>
-
-					</c:forEach>
+					
+					<td>${searchedContent.suggestionType}</td>
+						
 				</c:if>
 				<td width="20%">${searchedContent.title }</td>
 				<td width="20%">${searchedContent.dealUrl }</td>

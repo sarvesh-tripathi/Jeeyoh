@@ -29,7 +29,6 @@
 	<tr>
 		<td><b>Title</b></td>
 		<td><b>DealUrl</b></td>
-		<td><b>DealType</b></td>
 		<td><b>StartAt</b></td>
 		<td><b>EndAt</b></td>
 	</tr>
@@ -37,7 +36,6 @@
 		<tr>
 			<td>${mainModelObj.title}</td>
 			<td>${mainModelObj.dealUrl}</td>
-			<td>${mainModelObj.dealType}</td>
 			<td>${mainModelObj.startAt}</td>
 			<td>${mainModelObj.endAt}</td>
 		</tr>

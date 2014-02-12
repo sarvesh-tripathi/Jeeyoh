@@ -7,13 +7,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.jeeyoh.model.response.LoginResponse;
 import com.jeeyoh.model.response.UserRegistrationResponse;
 import com.jeeyoh.model.user.UserModel;
 import com.jeeyoh.persistence.IUserDAO;
 import com.jeeyoh.persistence.domain.User;
 import com.jeeyoh.utils.RandomGUID;
 import com.jeeyoh.utils.Utils;
-import com.jeeyoh.model.responce.LoginResponce;
 
 @Component("userService")
 public class UserService implements IUserService{
@@ -55,10 +55,10 @@ public class UserService implements IUserService{
 	}
 
 	@Override
-	public LoginResponce loginUser(UserModel user) {
+	public LoginResponse loginUser(UserModel user) {
 		// TODO Auto-generated method stub
 		User user1 = userDAO.loginUser(user);
-		LoginResponce loginRespoce = new LoginResponce();
+		LoginResponse loginRespoce = new LoginResponse();
 		if(user1 != null)
 		{
 			

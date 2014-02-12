@@ -2,11 +2,11 @@ package com.jeeyoh.service.search;
 
 import java.util.List;
 
-import com.jeeyoh.persistence.domain.Business;
+import com.jeeyoh.model.search.BusinessModel;
 
 public interface INonDealSuggestionSearch {
 	
-	public List<Business> search(String userEmail, String searchText, String category, String location, String rating);
+	public List<BusinessModel> search(String userEmail, String searchText, String category, String location, String rating);
 	
 
 }

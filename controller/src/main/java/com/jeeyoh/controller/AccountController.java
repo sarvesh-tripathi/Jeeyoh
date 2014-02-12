@@ -14,7 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.jeeyoh.model.search.BusinessModel;
+import com.jeeyoh.model.search.DealModel;
+import com.jeeyoh.model.search.EventModel;
 import com.jeeyoh.model.search.MainModel;
+import com.jeeyoh.model.search.PageModel;
 import com.jeeyoh.persistence.domain.Business;
 import com.jeeyoh.persistence.domain.Deals;
 import com.jeeyoh.persistence.domain.Events;
@@ -238,12 +242,11 @@ public class AccountController {
 		String location = request.getParameter("location");
 		String emailId = request.getParameter("emailId");
 		logger.debug("PARAMETER :: "+keyword+ " category "+ category + "Location" + location);
-		Set<Deals> deals = searchDeals.getDeals(keyword,category,location,emailId);		
+		Set<DealModel> deals = searchDeals.getDeals(keyword,category,location,emailId);		
 		MainModel mainModel = new MainModel();
 		if(emailId != null && !emailId.trim().equals(""))
 		{
 			mainModel.setIsUser(true);
-			mainModel.setName(emailId);
 		}
 		if(deals != null)
 		{
@@ -263,7 +266,7 @@ public class AccountController {
 		ModelAndView modelAndView = new ModelAndView("mydeals");
 		
 		String emailId = request.getParameter("emailId");
-		Set<Deals> deals = searchDeals.getUserDeals(emailId);		
+		Set<DealModel> deals = searchDeals.getUserDeals(emailId);		
 		MainModel mainModel = new MainModel();
 		if(deals != null)
 		{
@@ -284,7 +287,7 @@ public class AccountController {
 		ModelAndView modelAndView = new ModelAndView("contactandcommunitydeals");
 		String emailId = request.getParameter("emailId");
 		///Set<DealModel> deals = searchDeals.getUserContactAndCommunityDeals(emailId);		
-		Set<Deals> deals = searchDeals.getUserContactAndCommunityDeals(emailId);	
+		Set<DealModel> deals = searchDeals.getUserContactAndCommunityDeals(emailId);	
 		MainModel mainModel = new MainModel();
 		if(deals != null)
 		{
@@ -302,7 +305,7 @@ public class AccountController {
 		String location = request.getParameter("location");
 		String category = request.getParameter("businessCategory");
 		String rating = request.getParameter("businessRating");
-		List<Business> businessList = nonDealSuggestionSearch.search(userEmail.trim(), searchText.trim(), category.trim(), location.trim(),rating);
+		List<BusinessModel> businessList = nonDealSuggestionSearch.search(userEmail.trim(), searchText.trim(), category.trim(), location.trim(),rating);
 		MainModel model = new MainModel();
 		model.setBusinessList(businessList);
 		if(userEmail != null && !userEmail.trim().equals(""))
@@ -323,7 +326,7 @@ public class AccountController {
 		/*String searchText = request.getParameter("searchText");
 		String location = request.getParameter("location");
 		String category = request.getParameter("businessCategory");*/
-		List<Page> pageList = communitySearch.search(userEmail.trim());
+		List<PageModel> pageList = communitySearch.search(userEmail.trim());
 		MainModel model = new MainModel();
 		model.setPageList(pageList);
 		modelAndView.addObject("mainModel", model);
@@ -337,7 +340,7 @@ public class AccountController {
 		/*String searchText = request.getParameter("searchText");
 		String location = request.getParameter("location");
 		String category = request.getParameter("businessCategory");*/
-		List<Deals> dealList = userDealsSearch.search(userEmail.trim());
+		List<DealModel> dealList = userDealsSearch.search(userEmail.trim());
 		MainModel model = new MainModel();
 		model.setDealList(dealList);
 		modelAndView.addObject("mainModel", model);
@@ -366,13 +369,12 @@ public class AccountController {
 		String searchText = request.getParameter("searchText");
 		String location = request.getParameter("location");
 		String category = request.getParameter("eventCategory");
-		List<Events> eventsList = eventsSuggestionSearch.search(userEmail.trim(), searchText.trim(), category.trim(), location.trim());
+		List<EventModel> eventsList = eventsSuggestionSearch.search(userEmail.trim(), searchText.trim(), category.trim(), location.trim());
 		MainModel model = new MainModel();
 		model.setEventsList(eventsList);
 		if(userEmail != null && !userEmail.trim().equals(""))
 		{
 			model.setIsUser(true);
-			model.setName(userEmail);
 		}
 		modelAndView.addObject("mainModel", model);
 		return modelAndView;

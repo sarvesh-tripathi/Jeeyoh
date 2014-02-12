@@ -2,10 +2,10 @@ package com.jeeyoh.service.search;
 
 import java.util.List;
 
-import com.jeeyoh.persistence.domain.Page;
+import com.jeeyoh.model.search.PageModel;
 
 public interface ICommunitySearch {
 	
-	public List<Page> search(String userEmail);
+	public List<PageModel> search(String userEmail);
 
 }
