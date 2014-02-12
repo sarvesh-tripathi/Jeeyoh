@@ -56,6 +56,7 @@ public class UserModel implements Serializable {
     private Date createdtime;
     @JsonProperty
     private Date updatedtime;
+
     @JsonProperty
     private String confirmationId;
     

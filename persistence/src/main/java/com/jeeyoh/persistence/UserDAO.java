@@ -1,6 +1,8 @@
 package com.jeeyoh.persistence;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -14,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.jeeyoh.model.user.UserModel;
+import com.jeeyoh.persistence.domain.Dealsusage;
 import com.jeeyoh.persistence.domain.Events;
 import com.jeeyoh.persistence.domain.Eventuserlikes;
 import com.jeeyoh.persistence.domain.Jeeyohgroup;
@@ -23,8 +27,8 @@ import com.jeeyoh.persistence.domain.Pageuserlikes;
 import com.jeeyoh.persistence.domain.User;
 import com.jeeyoh.persistence.domain.UserCategory;
 import com.jeeyoh.persistence.domain.Usercontacts;
-import com.jeeyoh.persistence.domain.Usereventsuggestion;
 import com.jeeyoh.persistence.domain.Userdealssuggestion;
+import com.jeeyoh.persistence.domain.Usereventsuggestion;
 import com.jeeyoh.persistence.domain.Usernondealsuggestion;
 
 @Repository("userDAO")
@@ -510,5 +514,46 @@ public class UserDAO implements IUserDAO {
 	@Override
 	public void registerUser(User user) {
 		sessionFactory.getCurrentSession().saveOrUpdate(user);   
+}
+	@SuppressWarnings("unchecked")
+	@Override
+	public Set<Dealsusage> getUserDealUsageByType(Integer userId,
+			String groupType) {
+		// TODO Auto-generated method stub
+		Set<Dealsusage> dealUsage = null;
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Dealsusage.class);
+		criteria.add(Restrictions.eq("user.userId", userId));
+		criteria.createAlias("deals", "deals");
+		criteria.createAlias("deals.business", "business");
+		criteria.createAlias("business.businesstype", "businesstype");
+		criteria.add(Restrictions.eq("businesstype.businessType", groupType));
+		List<Dealsusage> dealUsageList = criteria.list();	
+		if(dealUsage != null)
+		{
+			dealUsage = new HashSet<Dealsusage>(dealUsageList);
+		}
+		return dealUsage ;
+	}
+
+	@Override
+	public User loginUser(UserModel user) {
+		// TODO Auto-generated method stub
+		String emailId  = user.getEmailId();
+		String password = user.getPassword();
+		
+		List<User> users = null;
+		String hqlQuery = "from User where emailId=:emaiId and password=:password";
+		try{
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("emailId", emailId);
+			query.setParameter("password", password);
+			users = query.list();
+			
+		}catch(HibernateException e)
+		{
+			
+		}
+		return users != null && !users.isEmpty() ? users.get(0) : null;
 	}
 }

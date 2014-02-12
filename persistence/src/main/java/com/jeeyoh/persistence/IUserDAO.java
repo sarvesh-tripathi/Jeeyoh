@@ -1,7 +1,10 @@
 package com.jeeyoh.persistence;
 
 import java.util.List;
+import java.util.Set;
 
+import com.jeeyoh.model.user.UserModel;
+import com.jeeyoh.persistence.domain.Dealsusage;
 import com.jeeyoh.persistence.domain.Events;
 import com.jeeyoh.persistence.domain.Eventuserlikes;
 import com.jeeyoh.persistence.domain.Jeeyohgroup;
@@ -11,8 +14,8 @@ import com.jeeyoh.persistence.domain.Pageuserlikes;
 import com.jeeyoh.persistence.domain.User;
 import com.jeeyoh.persistence.domain.UserCategory;
 import com.jeeyoh.persistence.domain.Usercontacts;
-import com.jeeyoh.persistence.domain.Usereventsuggestion;
 import com.jeeyoh.persistence.domain.Userdealssuggestion;
+import com.jeeyoh.persistence.domain.Usereventsuggestion;
 import com.jeeyoh.persistence.domain.Usernondealsuggestion;
 
 public interface IUserDAO {
@@ -51,5 +54,10 @@ public interface IUserDAO {
 	public List<Userdealssuggestion> isDealSuggestionExists(Integer userId,
 			Integer id);
 	public void registerUser(User user);
+
+	public Set<Dealsusage> getUserDealUsageByType(Integer userId,
+			String groupType);
+
+	public User loginUser(UserModel user);
 
 }

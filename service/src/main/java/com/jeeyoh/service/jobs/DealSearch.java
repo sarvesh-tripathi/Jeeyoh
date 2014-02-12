@@ -346,75 +346,9 @@ public class DealSearch implements IDealSearch {
 				{
 					e.printStackTrace();
 				}
-
-
 			}
 		}
 
-
-
-
-		/*//// for jeeyohgroups
-				if(!contactFlag)
-				{
-
-				  if(jeeyohGroup != null)
-				  {
-				   for(Jeeyohgroup jeeyohGroup1 : jeeyohGroup) {
-
-					   String groupType = jeeyohGroup1.getGroupType();
-					   Set<Groupusermap> groups   = jeeyohGroup1.getGroupusermaps();
-					   for (Groupusermap groups1 : groups)
-					   {
-						   User groupMember = groups1.getUser();
-						   if(groupMember.getUserId() != userFor.getUserId())
-						   {
-							   //List<UserCategory> userCategoryList1 = userDAO.getUserCategoryLikesById(groupMember.getUserId());
-							   List<UserCategory> userCategoryList1   = userDAO.getUserCategoryLikesByType(groupMember.getUserId(), groupType);
-								  if(userCategoryList != null)
-								  {
-								   for(UserCategory userCategory : userCategoryList1) {											  
-
-										   List<Deals> catDeals = dealDAO.getDealsByUserCategory(userCategory.getItemCategory(),userCategory.getItemType(),userCategory.getProviderName());
-										   for(Deals catdeal:catDeals)
-										   {
-											   Business business = catdeal.getBusiness();
-											    if(business != null)
-												{
-
-														if(business.getLattitude() == null && business.getLongitude() == null || (business.getLattitude().trim().equals("") && business.getLongitude().trim().equals(""))  || (business.getLattitude().trim().equals("0.0") && business.getLongitude().trim().equals("0.0")))
-														{
-															array = getLatLong(business.getPostalCode());
-															business.setLattitude(Double.toString(array[0]));
-															business.setLongitude(Double.toString(array[1]));
-														}
-														double distance = distance(Double.parseDouble(userFor.getLattitude()), Double.parseDouble(userFor.getLongitude()), Double.parseDouble(business.getLattitude()), Double.parseDouble(business.getLongitude()), "M");
-														logger.debug("Distance::  "+distance +" lat::  "+userFor.getLattitude()+" lon::  "+userFor.getLongitude());
-														if(distance <= 50)
-														{
-															List<Userdealssuggestion> userdealsuggestions = userDAO.isDealSuggestionExists(userFor.getUserId(), catdeal.getId());
-															if(userdealsuggestions == null || userdealsuggestions.size() == 0)
-															{
-																saveDealsSuggestionInDataBase(catdeal,userFor);
-															}
-														}
-												}
-
-										   }
-
-
-								    }
-						        }
-
-					       }
-
-				       }
-				  }
-
-				}
-
-			}
-		 */
 	}
 
 
@@ -540,7 +474,4 @@ public class DealSearch implements IDealSearch {
 		}
 		return array;
 	}
-
-
-
 }

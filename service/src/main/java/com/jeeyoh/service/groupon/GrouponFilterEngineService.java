@@ -126,6 +126,7 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 											{
 												String name = gtag.getName();
 												logger.debug("Check Tag Name ::: "+name);
+
 												Gcategory gcategory = businessDAO.getBusinessCategory(name);
 												if(gcategory != null)
 												{

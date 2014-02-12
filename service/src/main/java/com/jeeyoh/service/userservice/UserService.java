@@ -13,6 +13,7 @@ import com.jeeyoh.persistence.IUserDAO;
 import com.jeeyoh.persistence.domain.User;
 import com.jeeyoh.utils.RandomGUID;
 import com.jeeyoh.utils.Utils;
+import com.jeeyoh.model.responce.LoginResponce;
 
 @Component("userService")
 public class UserService implements IUserService{
@@ -54,8 +55,25 @@ public class UserService implements IUserService{
 	}
 
 	@Override
-	public void loginUser(UserModel user) {
+	public LoginResponce loginUser(UserModel user) {
 		// TODO Auto-generated method stub
+		User user1 = userDAO.loginUser(user);
+		LoginResponce loginRespoce = new LoginResponce();
+		if(user1 != null)
+		{
+			
+			loginRespoce.setUser(user);
+			loginRespoce.setStatus("OK");
+			loginRespoce.setError("");
+			
+		}
+		else
+		{
+			loginRespoce.setUser(null);
+			loginRespoce.setStatus("OK");
+			loginRespoce.setError("Invalid credentials");
+		}
+		return loginRespoce;
 		
 	}
 

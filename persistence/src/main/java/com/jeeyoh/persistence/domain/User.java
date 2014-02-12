@@ -34,9 +34,9 @@ public class User  implements java.io.Serializable {
      private String zipcode;
      private String longitude;
      private String lattitude;
+     private String confirmationId;
      private Date createdtime;
      private Date updatedtime;
-     private String confirmationId;
      private Set jeeyohgroupsForOwnerId = new HashSet(0);
      private Set dealsusages = new HashSet(0);
      private Set pagesForCreatorId = new HashSet(0);
@@ -367,7 +367,6 @@ public class User  implements java.io.Serializable {
 		return usereventsuggestions;
 	}
 
-
 	/**
 	 * @param userdealssuggestions the userdealssuggestions to set
 	 */
@@ -390,6 +389,7 @@ public class User  implements java.io.Serializable {
 	public void setConfirmationId(String confirmationId) {
 		this.confirmationId = confirmationId;
 	}
+
 
 
 	/**
