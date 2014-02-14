@@ -19,6 +19,7 @@ import com.jeeyoh.model.search.DealModel;
 import com.jeeyoh.model.search.EventModel;
 import com.jeeyoh.model.search.MainModel;
 import com.jeeyoh.model.search.PageModel;
+import com.jeeyoh.notification.service.IMessagingEventPublisher;
 import com.jeeyoh.persistence.domain.Business;
 import com.jeeyoh.persistence.domain.Deals;
 import com.jeeyoh.persistence.domain.Events;
@@ -31,6 +32,7 @@ import com.jeeyoh.service.jobs.IEventSearch;
 import com.jeeyoh.service.jobs.INonDealSearch;
 import com.jeeyoh.service.search.ICommunitySearch;
 import com.jeeyoh.service.search.IEventsSuggestionSearch;
+import com.jeeyoh.service.search.IManualUpload;
 import com.jeeyoh.service.search.INonDealSuggestionSearch;
 import com.jeeyoh.service.search.ISearchDeals;
 import com.jeeyoh.service.search.IUserDealsSearch;
@@ -88,6 +90,12 @@ public class AccountController {
 	
 	@Autowired
 	private IEventsSuggestionSearch eventsSuggestionSearch;
+	
+	@Autowired
+    IMessagingEventPublisher eventPublisher;
+	
+	@Autowired
+	IManualUpload manualUpload;
 	
 	
 	
@@ -379,6 +387,29 @@ public class AccountController {
 		modelAndView.addObject("mainModel", model);
 		return modelAndView;
 	}
+	@RequestMapping(value = "/testing", method = RequestMethod.GET)
+	public ModelAndView testing(HttpServletRequest request, HttpServletResponse httpresponse){
+		
+		ModelAndView modelAndView = new ModelAndView("home");
+		//eventPublisher.sendConfirmationEmail();
+		return modelAndView;
+		
+	}
+	
+	@RequestMapping(value = "/manualUpload", method = RequestMethod.GET)
+	 public ModelAndView manualUpload(HttpServletRequest request,
+	   HttpServletResponse response) {
+	  ModelAndView modelAndView = new ModelAndView("manualUpload");
+	  return modelAndView;
+	 }
+	 
+	 @RequestMapping(value = "/uploadFile", method = RequestMethod.GET)
+	 public ModelAndView uploadFile(HttpServletRequest request, HttpServletResponse response) {
+	  ModelAndView modelAndView = new ModelAndView("manualUpload");
+	  String filename = request.getParameter("file");     
+	  manualUpload.uploadExcel(filename);
+	  return modelAndView;
+	 }
 	
 	
 }

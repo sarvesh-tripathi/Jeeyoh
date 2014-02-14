@@ -35,6 +35,12 @@ default-autowire="byName">
 	<context:component-scan base-package="com.jeeyoh.service.userservice" use-default-filters="true">
 		<context:include-filter type="annotation" expression="org.springframework.stereotype.Service" />
 	</context:component-scan>	
+	<context:component-scan base-package="com.jeeyoh.notification.service" use-default-filters="true">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Service" />
+	</context:component-scan>
+	<context:component-scan base-package="com.jeeyoh.notification.service.email" use-default-filters="true">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Service" />
+	</context:component-scan>
 	<bean id="grouponClient" class="com.jeeyoh.service.groupon.GrouponClient">
         <constructor-arg ref="restTemplate"/>        
     </bean>
@@ -80,5 +86,45 @@ default-autowire="byName">
         class="org.springframework.orm.hibernate3.HibernateTransactionManager">
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>
+    
+    <!--  Email notification framework beans -->
+    
+    <!-- ApplicationEventMulticaster for async messaging -->
+	<bean id="applicationEventMulticaster"
+		class="org.springframework.context.event.SimpleApplicationEventMulticaster">  
+        <property name="taskExecutor">
+        	<bean class="org.springframework.scheduling.timer.TimerTaskExecutor"/>  
+		</property>
+	</bean>
+	
+	<!-- This is using for Email purpose -->
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="username" value="${mail.smtp.loginid}" />
+		<property name="password" value="${mail.smtp.password}" />
+		<property name="host" value="${mail.smtp.host.value}" />
+		<property name="port" value="${mail.smtp.port.num}" />
+		<property name="javaMailProperties">
+			<props>
+				<!-- Use SMTP transport protocol -->
+				<prop key="mail.transport.protocol">smtp</prop>
+				<prop key="mail.smtp.starttls.enable">true</prop> 
+				<!-- Use SMTP-AUTH to authenticate to SMTP server -->
+				<prop key="mail.smtp.auth">true</prop>				
+				<prop key="mail.debug">true</prop>
+			</props>
+		</property>
+			
+	</bean>
+	
+	<!-- Create Message Classifier Bean here not using annotation since Spring Frowns at constructor value injection  -->
+	<bean id="messageClassifierHelper" class="com.jeeyoh.notification.service.MessageClassifierHelper">
+	  <constructor-arg type="java.lang.String" value="${app.storistic.messages.filename}"/>
+	  <constructor-arg type="java.lang.String" value="${app.storistic.messages.smtpNotifier}"/>	  
+	  <constructor-arg type="java.lang.String" value="${app.storistic.messages.priority}"/>
+	  <constructor-arg type="java.lang.String" value="${app.storistic.messages.messageGroup}"/>
+	  <constructor-arg type="java.lang.String" value="${app.storistic.messages.messageID}"/>
+	  <constructor-arg type="java.lang.String" value="${app.storistic.messages.messageVersion}"/>
+	</bean>
+	
 		
 </beans>

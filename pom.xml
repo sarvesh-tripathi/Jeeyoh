@@ -280,7 +280,18 @@
 				<groupon.deals.bylatlng.api.url>http://api.groupon.com/v2/deals?client_id={clientId}&amp;lng={longitude}&amp;lat={lattitude}&amp;radius={radius}</groupon.deals.bylatlng.api.url>
 				<groupon.deal.post.api.url>http://api.groupon.com/v2/deals/{dealId}/posts?client_id={clientId}</groupon.deal.post.api.url>
 				<groupon.deal.image.api.url>https://api.groupon.com/v2/deals/{dealId}/images?client_id={clientId}</groupon.deal.image.api.url>
-				<groupon.says.api.url>http://api.groupon.com/v2/groupon_says?client_id={clientId}</groupon.says.api.url>				
+				<groupon.says.api.url>http://api.groupon.com/v2/groupon_says?client_id={clientId}</groupon.says.api.url>
+				
+				<!-- smtp email -->
+				<sender.name></sender.name>
+				<sender.email></sender.email>
+				<mail.smtp.loginid></mail.smtp.loginid>
+				<mail.smtp.password></mail.smtp.password>
+				<mail.smtp.host.value>smtp.gmail.com</mail.smtp.host.value>
+				<mail.smtp.port.num>587</mail.smtp.port.num>				
+			
+			
+			
 			</properties>
 		</profile>		
 	</profiles>

@@ -83,6 +83,9 @@
 		<property name="confirmationId" type="string">
 			<column name="confirmationId" length="100" />
 		</property>
+		<property name="sessionId" type="string">
+			<column name="sessionId" length="100" />
+		</property>
 
 		<set name="jeeyohgroupsForOwnerId" inverse="true">
 			<key>

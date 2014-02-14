@@ -11,6 +11,8 @@ import com.jeeyoh.persistence.domain.Jeeyohgroup;
 import com.jeeyoh.persistence.domain.Page;
 import com.jeeyoh.persistence.domain.Pagetype;
 import com.jeeyoh.persistence.domain.Pageuserlikes;
+import com.jeeyoh.persistence.domain.Privacy;
+import com.jeeyoh.persistence.domain.Profiletype;
 import com.jeeyoh.persistence.domain.User;
 import com.jeeyoh.persistence.domain.UserCategory;
 import com.jeeyoh.persistence.domain.Usercontacts;
@@ -59,5 +61,12 @@ public interface IUserDAO {
 			String groupType);
 
 	public User loginUser(UserModel user);
+
+	public Privacy getUserPrivacyType(String string);
+
+	public Profiletype getUserprofileType(String string);
+	public void updateUser(User user);
+
+	public void confirmUser(String confirmationCode);
 
 }
