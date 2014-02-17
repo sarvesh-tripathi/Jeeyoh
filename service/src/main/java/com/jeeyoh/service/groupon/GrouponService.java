@@ -19,6 +19,7 @@ import com.jeeyoh.model.groupon.ErrorMessage;
 import com.jeeyoh.model.groupon.MerchantModel;
 import com.jeeyoh.model.groupon.OptionModel;
 import com.jeeyoh.model.groupon.PriceModel;
+import com.jeeyoh.model.groupon.RatingModel;
 import com.jeeyoh.model.groupon.RedemptionLocationModel;
 import com.jeeyoh.model.groupon.ResponseModel;
 import com.jeeyoh.model.groupon.TagModel;
@@ -30,6 +31,7 @@ import com.jeeyoh.persistence.domain.Gdealprice;
 import com.jeeyoh.persistence.domain.Gdealtype;
 import com.jeeyoh.persistence.domain.Gdivision;
 import com.jeeyoh.persistence.domain.Gmerchant;
+import com.jeeyoh.persistence.domain.Gmerchantrating;
 import com.jeeyoh.persistence.domain.Goptiondetail;
 import com.jeeyoh.persistence.domain.Gredemptionlocation;
 import com.jeeyoh.persistence.domain.Gtags;
@@ -148,6 +150,14 @@ public class GrouponService implements IGrouponService {
 									merchant.setMerchantId(merchantModel.getMerchantId());
 									merchant.setName(merchantModel.getName());
 									merchant.setWebsiteUrl(merchantModel.getWebsiteUrl());
+									RatingModel ratingModel = new RatingModel();
+									Gmerchantrating gmerchantrating = new Gmerchantrating();
+									gmerchantrating.setLinkText(ratingModel.getLinkText());
+									gmerchantrating.setRating(ratingModel.getRating());
+									gmerchantrating.setRatingId(ratingModel.getId());
+									gmerchantrating.setReviewsCount(ratingModel.getReviewsCount());
+									gmerchantrating.setUrl(ratingModel.getUrl());
+									merchant.setGmerchantByRatingId(gmerchantrating);
 									deal.setGmerchant(merchant);
 								}
 								

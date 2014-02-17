@@ -19,6 +19,8 @@ import com.jeeyoh.model.search.DealModel;
 import com.jeeyoh.model.search.EventModel;
 import com.jeeyoh.model.search.MainModel;
 import com.jeeyoh.model.search.PageModel;
+import com.jeeyoh.model.search.SearchRequest;
+import com.jeeyoh.model.search.SearchResult;
 import com.jeeyoh.persistence.domain.Business;
 import com.jeeyoh.persistence.domain.Deals;
 import com.jeeyoh.persistence.domain.Events;
@@ -30,10 +32,12 @@ import com.jeeyoh.service.jobs.IDealSearch;
 import com.jeeyoh.service.jobs.IEventSearch;
 import com.jeeyoh.service.jobs.INonDealSearch;
 import com.jeeyoh.service.search.ICommunitySearch;
-import com.jeeyoh.service.search.IEventsSuggestionSearch;
+import com.jeeyoh.service.search.IEventsSuggestionSearchService;
+import com.jeeyoh.service.search.IManualUpload;
 import com.jeeyoh.service.search.INonDealSuggestionSearch;
-import com.jeeyoh.service.search.ISearchDeals;
-import com.jeeyoh.service.search.IUserDealsSearch;
+import com.jeeyoh.service.search.ISearchDealsService;
+import com.jeeyoh.service.search.ISpotSearchService;
+import com.jeeyoh.service.search.IUserDealsSearchService;
 import com.jeeyoh.service.stubhub.IStubhubFilterEngineService;
 import com.jeeyoh.service.stubhub.IStubhubService;
 import com.jeeyoh.service.yelp.IYelpFilterEngineService;
@@ -72,13 +76,13 @@ public class AccountController {
 	private ICommunitySearch communitySearch;
 	
 	@Autowired
-	private IUserDealsSearch userDealsSearch;
+	private IUserDealsSearchService userDealsSearch;
 	
 	@Autowired
 	private INonDealSuggestionSearch nonDealSuggestionSearch;
 	
 	@Autowired
-	private ISearchDeals searchDeals;
+	private ISearchDealsService searchDeals;
 	
 	@Autowired
 	private IStubhubFilterEngineService stubhubFilterEngineService;
@@ -87,9 +91,13 @@ public class AccountController {
 	private IEventSearch eventSearch;
 	
 	@Autowired
-	private IEventsSuggestionSearch eventsSuggestionSearch;
+	private IEventsSuggestionSearchService eventsSuggestionSearch;
 	
+	@Autowired
+	private ISpotSearchService spotSearchService;
 	
+	@Autowired
+	private IManualUpload manualUpload;
 	
 	@RequestMapping(value = "/home", method = RequestMethod.GET)
 	public ModelAndView home(HttpServletRequest request,
@@ -142,6 +150,13 @@ public class AccountController {
 	public ModelAndView eventSuggestionSearch(HttpServletRequest request,
 			HttpServletResponse response) {
 		ModelAndView modelAndView = new ModelAndView("eventSuggestionSearch");
+		return modelAndView;
+	}
+	
+	@RequestMapping(value = "/spotSearch", method = RequestMethod.GET)
+	public ModelAndView spotSearch(HttpServletRequest request,
+			HttpServletResponse response) {
+		ModelAndView modelAndView = new ModelAndView("spotSearch");
 		return modelAndView;
 	}
 
@@ -305,7 +320,7 @@ public class AccountController {
 		String location = request.getParameter("location");
 		String category = request.getParameter("businessCategory");
 		String rating = request.getParameter("businessRating");
-		List<BusinessModel> businessList = nonDealSuggestionSearch.search(userEmail.trim(), searchText.trim(), category.trim(), location.trim(),rating);
+		List<BusinessModel> businessList = nonDealSuggestionSearch.search(userEmail.trim(), searchText.trim(), category.trim(), location.trim(),rating.trim());
 		MainModel model = new MainModel();
 		model.setBusinessList(businessList);
 		if(userEmail != null && !userEmail.trim().equals(""))
@@ -379,6 +394,36 @@ public class AccountController {
 		modelAndView.addObject("mainModel", model);
 		return modelAndView;
 	}
+	
+	@RequestMapping(value = "/spotSearchResult", method = RequestMethod.GET)
+	public ModelAndView spotSearchResult(HttpServletRequest request, HttpServletResponse httpresponse){
+		ModelAndView modelAndView = new ModelAndView("spotSearch");
+		
+		String searchText = request.getParameter("searchText");
+		SearchRequest searchRequest = new SearchRequest();
+		searchRequest.setSearchText(searchText.trim());
+		List<SearchResult> searchResult = spotSearchService.search(searchRequest);
+		MainModel model = new MainModel();
+		model.setSearchResult(searchResult);
+		modelAndView.addObject("mainModel", model);
+		return modelAndView;
+	}
+	
+	
+	 @RequestMapping(value = "/manualUpload", method = RequestMethod.GET)
+	 public ModelAndView manualUpload(HttpServletRequest request,
+	   HttpServletResponse response) {
+	  ModelAndView modelAndView = new ModelAndView("manualUpload");
+	  return modelAndView;
+	 }
+	 
+	 @RequestMapping(value = "/uploadFile", method = RequestMethod.GET)
+	 public ModelAndView uploadFile(HttpServletRequest request, HttpServletResponse response) {
+	  ModelAndView modelAndView = new ModelAndView("manualUpload");
+	  String filename = request.getParameter("file");     
+	  manualUpload.uploadExcel(filename);
+	  return modelAndView;
+	 }
 	
 	
 }

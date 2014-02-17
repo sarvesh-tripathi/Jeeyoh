@@ -5,7 +5,7 @@ import java.util.Set;
 import com.jeeyoh.model.search.DealModel;
 import com.jeeyoh.persistence.domain.Deals;
 
-public interface ISearchDeals {
+public interface ISearchDealsService {
 
 	Set<DealModel> getDeals(String keyword, String category, String location , String emailId);
 

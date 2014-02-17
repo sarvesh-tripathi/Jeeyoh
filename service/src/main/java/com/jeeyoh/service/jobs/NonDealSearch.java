@@ -121,14 +121,14 @@ public class NonDealSearch implements INonDealSearch {
 
 					try {
 						logger.debug("userLikeWeekend: "+userLikeWeekend +" weekendDate: "+weekendDate);
-						if(userLikeWeekend.compareTo(weekendDate) == 0)
+						if(userLikeWeekend.compareTo(weekendDate) <= 0)
 						{
 							if(isContactsAccessed)
 								categoryLikesCount = userDAO.userCategoryLikeCount(userCategory.getUserCategoryId());
 							logger.debug("categoryLikesCount: "+categoryLikesCount);
 							if(forUser ||isGroupMember || isStar || categoryLikesCount >= 2)
 							{
-								List<Business> businessList = businessDAO.getBusinessByuserLikes(userCategory.getItemType(),userCategory.getItemCategory(),userCategory.getProviderName());
+								List<Business> businessList = businessDAO.getBusinessByuserLikes(userCategory.getItemType().trim(),userCategory.getItemCategory().trim(),userCategory.getProviderName());
 								if(businessList != null)
 								{
 									boolean includePage = true;
@@ -159,12 +159,12 @@ public class NonDealSearch implements INonDealSearch {
 													if(business.getMusicType() != null)
 														musicType = business.getMusicType();
 
-													long rating = 0;
+													Double rating = 0.0;
 													if(business.getRating() != null)
 													{
 														rating = business.getRating();
 													}
-													if(rating > 3) {
+													if(rating > 3.0) {
 														if(business.getSource() != null)
 														{
 															if(business.getSource().equalsIgnoreCase("yelp"))
@@ -298,7 +298,7 @@ public class NonDealSearch implements INonDealSearch {
 										if(business.getMusicType() != null)
 											musicType = business.getMusicType();
 
-										long rating = 0;
+										Double rating = 0.0;
 										if(business.getRating() != null)
 										{
 											rating = business.getRating();
@@ -362,7 +362,7 @@ public class NonDealSearch implements INonDealSearch {
 										}
 										logger.debug("NonDealSearch ==> search ==> pageProperties ==> includePage ==> " + includePage);
 										logger.debug("NonDealSearch ==> search ==> rating ==> " + rating);
-										if(rating > 3) {
+										if(rating > 3.0) {
 											if(business.getSource() != null)
 											{
 												if(business.getSource().equalsIgnoreCase("yelp"))
@@ -411,7 +411,6 @@ public class NonDealSearch implements INonDealSearch {
 
 			if(forUser && !isContactsAccessed)
 			{
-				logger.debug("Else..................");
 				isContactsAccessed = true;
 				List<Usercontacts> userContactsList = userDAO.getAllUserContacts(user.getUserId());
 				List<User> userList = userDAO.getUserById(userId);
@@ -420,27 +419,12 @@ public class NonDealSearch implements INonDealSearch {
 				{
 					for(Usercontacts usercontacts:userContactsList)
 					{
-
-						//Boolean isStar = usercontacts.getIsStar();
 						User contact = usercontacts.getUserByContactId();
 						logger.debug("Friend Name ::"+contact.getFirstName());
-						logger.debug("IS STAR ::"+isStar);
 						int contactId = contact.getUserId();
 						saveNonDealSuggestion(contactId, userList.get(0), false , isContactsAccessed,weekendDate,false,null,usercontacts.getIsStar());
 					}
 				}
-				/*List<User> userContacts = userDAO.getUserContacts(userId);
-				List<User> userList = userDAO.getUserById(userId);
-				logger.debug("Contacts Size..............==> "+userContacts.size());
-				if(userContacts != null) {
-					for(User contact : userContacts) {
-						if(contact != null) {
-							Usercontacts usercontacts2 = (Usercontacts)contact.getUsercontactsesForContactId().iterator().next();
-							int contactId = contact.getUserId();
-							saveNonDealSuggestion(contactId, userList.get(0), false , isContactsAccessed,weekendDate,false,null,usercontacts2.getIsStar());
-						}
-					}
-				}*/
 			}
 		}
 

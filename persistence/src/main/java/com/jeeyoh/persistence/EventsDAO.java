@@ -1,5 +1,6 @@
 package com.jeeyoh.persistence;
 
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Repository;
 
 import com.jeeyoh.persistence.domain.Events;
 import com.jeeyoh.persistence.domain.Page;
+import com.jeeyoh.utils.Utils;
 
 @Repository("eventsDAO")
 public class EventsDAO implements IEventsDAO{
@@ -80,7 +82,7 @@ public class EventsDAO implements IEventsDAO{
 			criteria.add(Restrictions.eq("user.emailId", userEmail));
 		}
 
-		
+
 		if(category != null && !category.trim().equals(""))
 		{
 			criteria.createAlias("page.pagetype", "pagetypes");
@@ -104,7 +106,7 @@ public class EventsDAO implements IEventsDAO{
 		return eventsList;
 	}
 
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Page> getCommunities() {
@@ -155,6 +157,85 @@ public class EventsDAO implements IEventsDAO{
 			logger.debug(e.toString());
 			logger.debug(e.getLocalizedMessage());
 		}
+		return eventsList;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Page> getCommunityBySearchKeyword(String searchText) {
+		logger.debug("getCommunityBySearchKeyword ==> "+searchText);
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Page.class, "page").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+
+		if(searchText != null && !searchText.trim().equals(""))
+		{
+			criteria.add(Restrictions.disjunction().add(Restrictions.eq("page.about", searchText))
+					.add(Restrictions.eq("page.pageUrl", searchText)));
+		}
+
+		List<Page> pageList = criteria.list();
+		return pageList;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Page> getCommunityByLikeSearchKeyword(String searchText) {
+		logger.debug("getCommunityByLikeSearchKeyword ==> "+searchText);
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Page.class, "page").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+
+		if(searchText != null && !searchText.trim().equals(""))
+		{
+			criteria.add(Restrictions.disjunction().add(Restrictions.like("page.about", "%" + searchText + "%"))
+					.add(Restrictions.like("page.pageUrl", "%" + searchText + "%"))).add(Restrictions.conjunction().add(Restrictions.ne("page.about", searchText))
+							.add(Restrictions.ne("page.pageUrl", searchText)));
+
+		}
+
+		List<Page> pageList = criteria.list();
+		return pageList;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Events> getEventsBySearchKeyword(String searchText) {
+		logger.debug("getEventsByCriteria ==> "+searchText);
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Events.class, "events").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		if(searchText != null && !searchText.trim().equals(""))
+		{
+			criteria.add(Restrictions.disjunction().add(Restrictions.eq("events.description", searchText))
+					.add(Restrictions.eq("events.channel", "%" + searchText + "%"))
+					.add(Restrictions.eq("events.ancestorGenreDescriptions", searchText))
+					.add(Restrictions.eq("events.venue_name", searchText)));
+		}
+
+		criteria.add(Restrictions.conjunction().add(Restrictions.ge("events.event_date", Utils.getCurrentDate()))
+				.add(Restrictions.le("events.event_date", Utils.getNearestWeekend(null))));
+
+		List<Events> eventsList = criteria.list();
+		return eventsList;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Events> getEventsByLikeSearchKeyword(String searchText) {
+		logger.debug("getEventsByCriteria ==> "+searchText);
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Events.class, "events").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+
+
+		if(searchText != null && !searchText.trim().equals(""))
+		{
+			criteria.add(Restrictions.disjunction().add(Restrictions.like("events.description", "%" + searchText + "%"))
+					.add(Restrictions.like("events.city", "%" + searchText + "%"))
+					.add(Restrictions.like("events.ancestorGenreDescriptions", "%" + searchText + "%"))
+					.add(Restrictions.like("events.venue_name", "%" + searchText + "%"))).add(Restrictions.conjunction().add(Restrictions.ne("events.description", searchText))
+							.add(Restrictions.ne("events.city", "%" + searchText + "%"))
+							.add(Restrictions.ne("events.ancestorGenreDescriptions", searchText))
+							.add(Restrictions.ne("events.venue_name", searchText)));
+		}
+
+		criteria.add(Restrictions.conjunction().add(Restrictions.ge("events.event_date", Utils.getCurrentDate()))
+				.add(Restrictions.le("events.event_date", Utils.getNearestWeekend(null))));
+
+		List<Events> eventsList = criteria.list();
 		return eventsList;
 	}
 

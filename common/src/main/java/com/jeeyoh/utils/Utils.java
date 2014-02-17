@@ -163,16 +163,16 @@ public class Utils {
 			if(date != null)
 				c.setTime(date);
 			c.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-			Date weekendDate = sdf.parse(sdf.format(c.getTime()));
-			return weekendDate;
-		} catch (ParseException e) {
+			//SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			//Date weekendDate = sdf.parse(sdf.format(c.getTime()));
+			return c.getTime();
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 
 	}
-
+	
 
 	/**
 	 * Get Weekend date for the event date
@@ -183,22 +183,22 @@ public class Utils {
 	{
 		Date eventDate = null;
 		try {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			//SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(date);
 			switch(cal.get(Calendar.DAY_OF_WEEK)){
 			case Calendar.FRIDAY: 
-				eventDate = sdf.parse(sdf.format(cal.getTime()));
+				eventDate = cal.getTime();
 				break;	
 			case Calendar.SATURDAY: 
-				eventDate =  sdf.parse(sdf.format(cal.getTime()));
+				eventDate = cal.getTime();
 				break;	
 			case Calendar.SUNDAY: 
-				eventDate =  sdf.parse(sdf.format(cal.getTime()));
+				eventDate =  cal.getTime();
 				break;	
 
 			}
-		} catch (ParseException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -213,15 +213,15 @@ public class Utils {
 	public static Date getCurrentDate()
 	{
 		Date currentDate = null;
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		//SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		try {
-			currentDate = sdf.parse(sdf.format(Calendar.getInstance().getTime()));
-		} catch (ParseException e1) {
+			currentDate = Calendar.getInstance().getTime();
+		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
 		return currentDate;
 	}
-
+	
 
 	/**
 	 * Get address from latitude/longitude

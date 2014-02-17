@@ -8,6 +8,9 @@
             <column name="id" />
             <generator class="identity" />
         </id>
+        <many-to-one name="gmerchantByRatingId" class="com.jeeyoh.persistence.domain.Gmerchantrating" fetch="select" cascade="all">
+            <column name="ratingId" not-null="true" />
+        </many-to-one>
         <property name="merchantId" type="string">
             <column name="merchantId" length="250" not-null="true" />
         </property>

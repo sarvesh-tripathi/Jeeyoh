@@ -59,5 +59,6 @@ public interface IUserDAO {
 			String groupType);
 
 	public User loginUser(UserModel user);
+	public List<Events> getCommunityAllEvents(int pageId);
 
 }

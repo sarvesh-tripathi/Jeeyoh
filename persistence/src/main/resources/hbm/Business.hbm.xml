@@ -43,8 +43,8 @@
 		<property name="distance" type="java.lang.Long">
 			<column name="distance" precision="10" scale="0" />
 		</property>
-		<property name="rating" type="java.lang.Long">
-			<column name="rating" precision="10" scale="0" />
+		<property name="rating" type="java.lang.Double">
+			<column name="rating"/>
 		</property>
 		<property name="ratingImgUrl" type="string">
 			<column name="ratingImgUrl" length="250" />

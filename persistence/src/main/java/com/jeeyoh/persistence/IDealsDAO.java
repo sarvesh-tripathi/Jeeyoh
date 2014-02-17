@@ -1,10 +1,9 @@
 package com.jeeyoh.persistence;
 
 import java.util.List;
+
 import com.jeeyoh.persistence.domain.Deals;
-import com.jeeyoh.persistence.domain.Gcategory;
 import com.jeeyoh.persistence.domain.Userdealssuggestion;
-import com.jeeyoh.persistence.domain.Usernondealsuggestion;
 
 public interface IDealsDAO {
 	public List<Deals> getDeals();
@@ -17,7 +16,6 @@ public interface IDealsDAO {
 	public void saveFilterdDeal(Deals deal);
 	public List<Deals> getDealsByBusinessId(String businessId);
 	public void saveSuggestions(Userdealssuggestion dealSuggestion);
-	public void saveNonDealSuggestion(Usernondealsuggestion nondeal);
 	public int getDealsLikeCounts(Integer id);
 	public List<Deals> getDealsByKeywords(String keyword, String category,
 			String location);
@@ -30,4 +28,6 @@ public interface IDealsDAO {
 	public List<Userdealssuggestion>userDealsSuggestedByJeeyoh(String keyword, String category,
 			String location, int id);
 	public int userCategoryLikeCount(Integer userCategoryId);
+	public List<Deals> getDealsByLikeSearchKeyword(String searchText);
+	public List<Deals> getDealsBySearchKeyword(String searchText);
 }

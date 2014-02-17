@@ -1,102 +1,133 @@
 <?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <artifactId>jeeyoh</artifactId>
-    <groupId>jeeyoh</groupId>
-    <version>1.0</version>
-  </parent>
-  <artifactId>service</artifactId>
-  <packaging>jar</packaging>
-  <version>1.0</version>
-  <name>service</name>
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
-  <dependencies>
-	<dependency>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>jeeyoh</artifactId>
 		<groupId>jeeyoh</groupId>
-		<artifactId>persistence</artifactId>
 		<version>1.0</version>
-	</dependency>
-	<dependency>
-		<groupId>jeeyoh</groupId>
-		<artifactId>common</artifactId>
-		<version>1.0</version>
-	</dependency>	
-	
-	<!-- Java mail -->
-	<dependency>
-		<groupId>javax.mail</groupId>
-		<artifactId>mail</artifactId>
-		<version>1.4.1</version>
-	</dependency>
+	</parent>
+	<artifactId>service</artifactId>
+	<packaging>jar</packaging>
+	<version>1.0</version>
+	<name>service</name>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>jeeyoh</groupId>
+			<artifactId>persistence</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>jeeyoh</groupId>
+			<artifactId>common</artifactId>
+			<version>1.0</version>
+		</dependency>
 
-	<!-- Velocity templating engine for emails -->
-	<dependency>
-		<groupId>velocity</groupId>
-		<artifactId>velocity</artifactId>
-		<version>1.5</version>
-	</dependency>
-	<dependency>
-		<groupId>velocity</groupId>
-		<artifactId>velocity-dep</artifactId>
-		<version>1.4</version>
-	</dependency>
-	
-	<!-- Amazon S3 dependency -->
-	<dependency>
-		<groupId>com.amazonaws</groupId>
-		<artifactId>aws-java-sdk</artifactId>
-		<version>1.4.1</version>
-	</dependency>
-	
-	<!--  Http Client dependency for Basic authentication -->
-	<dependency>
-        <groupId>commons-httpclient</groupId>
-        <artifactId>commons-httpclient</artifactId>
-        <version>3.1</version>
-    </dependency>
-    
-    <!-- QuartzJobBean in spring-context-support.jar -->
-	<dependency>
-		<groupId>org.springframework</groupId>
-		<artifactId>spring-context-support</artifactId>
-		<version>3.1.2.RELEASE</version>
-	</dependency>
- 
-	<!-- Spring + Quartz need transaction -->
-	<dependency>
-		<groupId>org.springframework</groupId>
-		<artifactId>spring-tx</artifactId>
-		<version>3.1.2.RELEASE</version>
-	</dependency>
-	
-	<!-- Quartz framework -->
-	<dependency>
-		<groupId>org.quartz-scheduler</groupId>
-		<artifactId>quartz</artifactId>
-		<version>1.8.6</version>
-	</dependency>
-	
-	    <!-- RSS -->
+		<!-- Java mail -->
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.4.1</version>
+		</dependency>
+
+		<!-- Velocity templating engine for emails -->
+		<dependency>
+			<groupId>velocity</groupId>
+			<artifactId>velocity</artifactId>
+			<version>1.5</version>
+		</dependency>
+		<dependency>
+			<groupId>velocity</groupId>
+			<artifactId>velocity-dep</artifactId>
+			<version>1.4</version>
+		</dependency>
+
+		<!-- Amazon S3 dependency -->
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk</artifactId>
+			<version>1.4.1</version>
+		</dependency>
+
+		<!--  Http Client dependency for Basic authentication -->
+		<dependency>
+			<groupId>commons-httpclient</groupId>
+			<artifactId>commons-httpclient</artifactId>
+			<version>3.1</version>
+		</dependency>
+
+		<!-- QuartzJobBean in spring-context-support.jar -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+			<version>3.1.2.RELEASE</version>
+		</dependency>
+
+		<!-- Spring + Quartz need transaction -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>3.1.2.RELEASE</version>
+		</dependency>
+
+		<!-- Quartz framework -->
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz</artifactId>
+			<version>1.8.6</version>
+		</dependency>
+
+		<!-- RSS -->
 		<dependency>
 			<groupId>net.java.dev.rome</groupId>
 			<artifactId>rome</artifactId>
 			<version>1.0.0</version>
 		</dependency>
- 
-    <dependency>
-		<groupId>joda-time</groupId>
-		<artifactId>joda-time</artifactId>
-		<version>1.5.2</version>
-	</dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>1.5.2</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>3.9</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-scratchpad</artifactId>
+			<version>3.9</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.9</version>
+		</dependency>
+		<dependency>
+			<groupId>stax</groupId>
+			<artifactId>stax-api</artifactId>
+			<version>1.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-excelant</artifactId>
+			<version>3.9</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-examples</artifactId>
+			<version>3.9</version>
+		</dependency>
+	</dependencies>
 </project>

@@ -67,7 +67,7 @@ public class StubhubFilterEngineService implements IStubhubFilterEngineService{
 								{
 									String ancestorGenreDescriptions = stubhubEvent.getAncestorGenreDescriptions().toLowerCase();
 									String about = community.getAbout().toLowerCase();
-									if(stubhubEvent.getChannel().toLowerCase().contains(community.getPagetype().getPageType().toLowerCase()) && ancestorGenreDescriptions.contains(about))
+									if(stubhubEvent.getChannel().toLowerCase().contains("concert") && ancestorGenreDescriptions.contains(about))
 									{
 										batch_size++;
 										Events events = new Events();

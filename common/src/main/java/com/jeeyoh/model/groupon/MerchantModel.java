@@ -1,6 +1,7 @@
 package com.jeeyoh.model.groupon;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -19,6 +20,9 @@ public class MerchantModel implements Serializable {
 	
 	@JsonProperty("id")
 	private String merchantId;
+	
+	@JsonProperty
+	private List<RatingModel> ratings;
 
 	public String getName() {
 		return name;
@@ -44,5 +48,19 @@ public class MerchantModel implements Serializable {
 	@JsonProperty("id")
 	public void setMerchantId(String merchantId) {
 		this.merchantId = merchantId;
+	}
+
+	/**
+	 * @param ratings the ratings to set
+	 */
+	public void setRatings(List<RatingModel> ratings) {
+		this.ratings = ratings;
+	}
+
+	/**
+	 * @return the ratings
+	 */
+	public List<RatingModel> getRatings() {
+		return ratings;
 	}
 }

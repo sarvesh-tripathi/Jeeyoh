@@ -23,7 +23,7 @@ public class Ybusiness  implements java.io.Serializable {
      private String displayPhone;
      private String reviewCount;
      private Long distance;
-     private Long rating;
+     private Double rating;
      private String ratingImgUrl;
      private String ratingSmallImgUrl;
      private String ratingLargeImgUrl;
@@ -47,7 +47,7 @@ public class Ybusiness  implements java.io.Serializable {
     public Ybusiness() {
     }
 
-    public Ybusiness(String businessId, Boolean isClaimed, Boolean isClosed, String name, String url, String mobileUrl, String phone, String displayPhone, String reviewCount, Long distance, Long rating, String ratingImgUrl, String ratingSmallImgUrl, String ratingLargeImgUrl, String snippetText, String snippetImageUrl, String menuProvider, Long menuProviderDate, String crossStreets, String city, String displayAddress, String postalCode, String countryCode, String address, String stateCode, String neighborhoods, Set ydeals, Set ybusinessregionmaps, Set ybusinesscategorymaps, Set yreviews) {
+    public Ybusiness(String businessId, Boolean isClaimed, Boolean isClosed, String name, String url, String mobileUrl, String phone, String displayPhone, String reviewCount, Long distance, Double rating, String ratingImgUrl, String ratingSmallImgUrl, String ratingLargeImgUrl, String snippetText, String snippetImageUrl, String menuProvider, Long menuProviderDate, String crossStreets, String city, String displayAddress, String postalCode, String countryCode, String address, String stateCode, String neighborhoods, Set ydeals, Set ybusinessregionmaps, Set ybusinesscategorymaps, Set yreviews) {
        this.businessId = businessId;
        this.isClaimed = isClaimed;
        this.isClosed = isClosed;
@@ -157,11 +157,11 @@ public class Ybusiness  implements java.io.Serializable {
     public void setDistance(Long distance) {
         this.distance = distance;
     }
-    public Long getRating() {
+    public Double getRating() {
         return this.rating;
     }
     
-    public void setRating(Long rating) {
+    public void setRating(Double rating) {
         this.rating = rating;
     }
     public String getRatingImgUrl() {

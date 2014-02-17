@@ -23,7 +23,7 @@ import com.jeeyoh.persistence.domain.UserCategory;
 import com.jeeyoh.persistence.domain.Userdealssuggestion;
 
 @Component("searchDeals")
-public class SearchDeals implements ISearchDeals {
+public class SearchDealsService implements ISearchDealsService {
 	
 	static final Logger logger = LoggerFactory.getLogger("debugLogger");
 	

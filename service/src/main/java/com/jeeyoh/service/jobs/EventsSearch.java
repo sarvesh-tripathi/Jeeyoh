@@ -18,6 +18,7 @@ import com.jeeyoh.persistence.domain.Eventuserlikes;
 import com.jeeyoh.persistence.domain.Groupusermap;
 import com.jeeyoh.persistence.domain.Jeeyohgroup;
 import com.jeeyoh.persistence.domain.Page;
+import com.jeeyoh.persistence.domain.Pageuserlikes;
 import com.jeeyoh.persistence.domain.User;
 import com.jeeyoh.persistence.domain.Usercontacts;
 import com.jeeyoh.persistence.domain.Usereventsuggestion;
@@ -92,15 +93,45 @@ public class EventsSearch implements IEventSearch{
 			{
 				int batch_size = 0;
 				for(Page community : userCommunities) {
-
-					List<Events> events = userDAO.getUserCommunityEvents(userId, community.getPageId());
-
-					if(events != null)
+					boolean communityLiked = false;
+					boolean isLiked = false;
+					boolean isFavorite = false;
+					boolean isVisited = false;
+					boolean isFollowing = false;
+					List<Pageuserlikes> pageProperties = userDAO.getUserPageProperties(userId, community.getPageId());
+					if(pageProperties != null)
 					{
-						logger.debug("EventSearch => Events List => "+events.size());
-						for(Events event : events)
+						logger.debug("NonDealSearch ==> search ==> pageProperties ==> not null" );
+						Pageuserlikes pageProperty = pageProperties.get(0);
+						if(pageProperty != null) {
+							logger.debug("NonDealSearch ==> search ==> pageProperty ==> not null" );
+							isLiked = pageProperty.getIsLike();
+							isFavorite = pageProperty.getIsFavorite();
+							isVisited = pageProperty.getIsVisited();
+							isFollowing = pageProperty.getIsFollowing();
+							if(isLiked || isFavorite || isVisited || isFollowing) {											
+								communityLiked = true;
+							} else
+							{
+								communityLiked = false;
+							}
+							logger.debug("NonDealSearch ==> search ==> pageProperty ==> includePage ==> " + communityLiked);
+						}
+					} else
+					{
+						communityLiked = false;
+					}
+					if(communityLiked)
+					{
+						List<Events> events = userDAO.getCommunityAllEvents(community.getPageId());
+
+						if(events != null)
 						{
-							saveEventSuggesstion(event, userId, user, batch_size, currentDate, isGroupMember, isContactsAccessed, forUser, true);
+							logger.debug("EventSearch => Events List => "+events.size());
+							for(Events event : events)
+							{
+								saveEventSuggesstion(event, userId, user, batch_size, currentDate, isGroupMember, isContactsAccessed, forUser, true,isLiked,isFavorite,isFollowing,isVisited);
+							}
 						}
 					}
 				}
@@ -115,12 +146,13 @@ public class EventsSearch implements IEventSearch{
 			{
 				eventsList = userDAO.getUserLikesEvents(userId);
 			}
+			logger.debug("EventSearch => UserLikeEvents List => "+eventsList.size());
 			if(eventsList != null)
 			{
 				int batch_size = 0;
 				for(Events event : eventsList) {
 
-					saveEventSuggesstion(event, userId, user, batch_size, currentDate, isGroupMember, isContactsAccessed, forUser, false);
+					saveEventSuggesstion(event, userId, user, batch_size, currentDate, isGroupMember, isContactsAccessed, forUser, false,false,false,false,false);
 				}
 			}
 
@@ -178,7 +210,7 @@ public class EventsSearch implements IEventSearch{
 	 * @param events
 	 * @param user
 	 */
-	private void saveEventSuggesstion(Events event, int userId, User user,int batch_size, Date currentDate, boolean isGroupMember, boolean isContactAccessed, boolean forUser, boolean isCommunityLike)
+	private void saveEventSuggesstion(Events event, int userId, User user,int batch_size, Date currentDate, boolean isGroupMember, boolean isContactAccessed, boolean forUser, boolean isCommunityLike, boolean isLiked, boolean isFavorite,boolean isFollowing, boolean isVisited)
 	{
 		try
 		{
@@ -188,35 +220,37 @@ public class EventsSearch implements IEventSearch{
 			{
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 				boolean includePage = true;
-				if(sdf.parse(sdf.format(event.getEvent_date())).compareTo(currentDate) >= 0)
-				{
+				//if(event.getEvent_date().compareTo(currentDate) >= 0)
+				//{
 					double distance = Utils.distance(Double.parseDouble(user.getLattitude()), Double.parseDouble(user.getLongitude()), Double.parseDouble(event.getLatitude()), Double.parseDouble(event.getLongitude()), "M");
 					logger.debug("Distance::  "+distance +" lat::  "+user.getLattitude()+" lon::  "+user.getLongitude());
 					if(distance <=50)
 					{
-						List<Eventuserlikes> eventproperties = userDAO.getUserEventProperties(userId, event.getEventId());
-						boolean isLiked = false,isFavorite = false,isVisited,isFollowing = false;
-						if(eventproperties != null && !eventproperties.isEmpty())
+						if(!isCommunityLike)
 						{
-							logger.debug("EventSearch ==> search ==> eventProperty ==> not null" );
-							Eventuserlikes eventProperty = eventproperties.get(0);
-							if(eventProperty != null) {
-								logger.debug("NonDealSearch ==> search ==> eventProperty ==> not null" );
-								isLiked = eventProperty.getIsLike();
-								isFavorite = eventProperty.getIsFavorite();
-								isVisited = eventProperty.getIsVisited();
-								isFollowing = eventProperty.getIsFollowing();
-								if(isLiked || isFavorite || isVisited || isFollowing) {											
-									includePage = true;
-								} else
-								{
-									includePage = false;
+							List<Eventuserlikes> eventproperties = userDAO.getUserEventProperties(userId, event.getEventId());
+							if(eventproperties != null && !eventproperties.isEmpty())
+							{
+								logger.debug("EventSearch ==> search ==> eventProperty ==> not null" );
+								Eventuserlikes eventProperty = eventproperties.get(0);
+								if(eventProperty != null) {
+									logger.debug("NonDealSearch ==> search ==> eventProperty ==> not null" );
+									isLiked = eventProperty.getIsLike();
+									isFavorite = eventProperty.getIsFavorite();
+									isVisited = eventProperty.getIsVisited();
+									isFollowing = eventProperty.getIsFollowing();
+									if(isLiked || isFavorite || isVisited || isFollowing) {											
+										includePage = true;
+									} else
+									{
+										includePage = false;
+									}
+									logger.debug("EventSearch ==> search ==> eventProperty ==> includePage ==> " + includePage);
 								}
-								logger.debug("EventSearch ==> search ==> eventProperty ==> includePage ==> " + includePage);
+							} else
+							{
+								includePage = false;
 							}
-						} else
-						{
-							includePage = false;
 						}
 
 						if(includePage)
@@ -251,7 +285,7 @@ public class EventsSearch implements IEventSearch{
 							batch_size++;
 						}
 					}
-				}
+				//}
 			}
 		}
 		catch (Exception e) {

@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+	<!-- Generated Oct 10, 2013 9:08:14 AM by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+	<class name="com.jeeyoh.persistence.domain.Gmerchantrating" table="gmerchantrating"
+		catalog="jeeyoh">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+		
+		<property name="ratingId" type="string">
+			<column name="ratingId" length="250" />
+		</property>
+		<property name="reviewsCount" type="string">
+			<column name="reviewsCount" length="16777215" />
+		</property>
+		<property name="rating" type="java.lang.Double">
+			<column name="rating"/>
+		</property>
+		<property name="url" type="string">
+			<column name="url" length="250" />
+		</property>
+		<set name="gmerchantByRatingId" inverse="true" cascade="all">
+            <key>
+                <column name="ratingId" not-null="true" />
+            </key>
+            <one-to-many class="com.jeeyoh.persistence.domain.Gmerchantrating" />
+        </set>
+	</class>
+</hibernate-mapping>

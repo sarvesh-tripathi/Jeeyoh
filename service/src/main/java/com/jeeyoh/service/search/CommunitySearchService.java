@@ -12,7 +12,7 @@ import com.jeeyoh.persistence.IUserDAO;
 import com.jeeyoh.persistence.domain.Page;
 
 @Component("communitySearch")
-public class CommunitySearch implements ICommunitySearch{
+public class CommunitySearchService implements ICommunitySearch{
 
 	@Autowired
 	private IUserDAO userDAO;

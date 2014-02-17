@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import com.jeeyoh.persistence.domain.Gdeal;
 import com.jeeyoh.persistence.domain.Gdealoption;
+import com.jeeyoh.utils.Utils;
 @Repository("gDealsDAO")
 public class GDealsDAO implements IGDealsDAO {
 
@@ -51,10 +52,11 @@ public class GDealsDAO implements IGDealsDAO {
 
 		List<Gdealoption> gDealList = null;
 		logger.debug("loadDeals => getDeals... ");
-		String h = "select b from Gdeal a, Gdealoption b, Gtags c, Gcategory d where d.category = c.name and b.discountPercent > 20 and c.gdeal.id = a.id and b.gdeal.id = a.id";
+		String h = "select b from Gdeal a, Gdealoption b, Gtags c, Gcategory d where a.endAt >= :currentDate and d.category = c.name and b.discountPercent > 20 and c.gdeal.id = a.id and b.gdeal.id = a.id";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					h);
+			query.setParameter("currentDate", Utils.getCurrentDate());
 			logger.debug("loadDeals => query.list() size " + query.list().size());
 			gDealList = (List<Gdealoption>) query.list();
 

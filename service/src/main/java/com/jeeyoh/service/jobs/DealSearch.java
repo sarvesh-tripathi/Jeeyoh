@@ -12,12 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.code.geocoder.Geocoder;
-import com.google.code.geocoder.GeocoderRequestBuilder;
-import com.google.code.geocoder.model.GeocodeResponse;
-import com.google.code.geocoder.model.GeocoderRequest;
-import com.google.code.geocoder.model.GeocoderResult;
-import com.jeeyoh.persistence.IBusinessDAO;
 import com.jeeyoh.persistence.IDealsDAO;
 import com.jeeyoh.persistence.IUserDAO;
 import com.jeeyoh.persistence.domain.Business;
@@ -31,6 +25,7 @@ import com.jeeyoh.persistence.domain.UserCategory;
 import com.jeeyoh.persistence.domain.UserCategoryLikes;
 import com.jeeyoh.persistence.domain.Usercontacts;
 import com.jeeyoh.persistence.domain.Userdealssuggestion;
+import com.jeeyoh.utils.Utils;
 
 @Component("dealSearch")
 public class DealSearch implements IDealSearch {
@@ -42,9 +37,7 @@ public class DealSearch implements IDealSearch {
 	@Autowired
 	private IDealsDAO dealDAO;
 
-	@Autowired
-	private IBusinessDAO businessDAO;
-
+	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional
 	public void search() {
@@ -167,11 +160,11 @@ public class DealSearch implements IDealSearch {
 
 						if(business.getLattitude() == null && business.getLongitude() == null || (business.getLattitude().trim().equals("") && business.getLongitude().trim().equals(""))  || (business.getLattitude().trim().equals("0.0") && business.getLongitude().trim().equals("0.0")))
 						{
-							array = getLatLong(business.getPostalCode());
+							array = Utils.getLatLong(business.getPostalCode());
 							business.setLattitude(Double.toString(array[0]));
 							business.setLongitude(Double.toString(array[1]));
 						}
-						double distance = distance(Double.parseDouble(userFor.getLattitude()), Double.parseDouble(userFor.getLongitude()), Double.parseDouble(business.getLattitude()), Double.parseDouble(business.getLongitude()), "M");
+						double distance = Utils.distance(Double.parseDouble(userFor.getLattitude()), Double.parseDouble(userFor.getLongitude()), Double.parseDouble(business.getLattitude()), Double.parseDouble(business.getLongitude()), "M");
 						logger.debug("Distance::  "+distance +" lat::  "+userFor.getLattitude()+" lon::  "+userFor.getLongitude());
 						if(distance <= 50)
 						{
@@ -180,7 +173,6 @@ public class DealSearch implements IDealSearch {
 							if(dealsusage.getIsFavorite() || dealsusage.getIsLike() || likeCount >= 2)
 							{
 								logger.debug("Cross basic three level3",deal.getId());									
-								//saveDealsSuggestionInDataBase(deal,userFor);
 								saveDealsSuggestionInDataBase(deal,userFor,isGroupMember, contactFlag, false);
 							}
 						}
@@ -202,11 +194,11 @@ public class DealSearch implements IDealSearch {
 
 					if(business.getLattitude() == null && business.getLongitude() == null || (business.getLattitude().trim().equals("") && business.getLongitude().trim().equals(""))  || (business.getLattitude().trim().equals("0.0") && business.getLongitude().trim().equals("0.0")))
 					{
-						array = getLatLong(business.getPostalCode());
+						array = Utils.getLatLong(business.getPostalCode());
 						business.setLattitude(Double.toString(array[0]));
 						business.setLongitude(Double.toString(array[1]));
 					}
-					double distance = distance(Double.parseDouble(userFor.getLattitude()), Double.parseDouble(userFor.getLongitude()), Double.parseDouble(business.getLattitude()), Double.parseDouble(business.getLongitude()), "M");
+					double distance = Utils.distance(Double.parseDouble(userFor.getLattitude()), Double.parseDouble(userFor.getLongitude()), Double.parseDouble(business.getLattitude()), Double.parseDouble(business.getLongitude()), "M");
 					logger.debug("Distance::  "+distance +" lat::  "+userFor.getLattitude()+" lon::  "+userFor.getLongitude());
 					if(distance <= 50)
 					{
@@ -258,11 +250,11 @@ public class DealSearch implements IDealSearch {
 
 									if(business.getLattitude() == null && business.getLongitude() == null || (business.getLattitude().trim().equals("") && business.getLongitude().trim().equals(""))  || (business.getLattitude().trim().equals("0.0") && business.getLongitude().trim().equals("0.0")))
 									{
-										array = getLatLong(business.getPostalCode());
+										array = Utils.getLatLong(business.getPostalCode());
 										business.setLattitude(Double.toString(array[0]));
 										business.setLongitude(Double.toString(array[1]));
 									}
-									double distance = distance(Double.parseDouble(userFor.getLattitude()), Double.parseDouble(userFor.getLongitude()), Double.parseDouble(business.getLattitude()), Double.parseDouble(business.getLongitude()), "M");
+									double distance = Utils.distance(Double.parseDouble(userFor.getLattitude()), Double.parseDouble(userFor.getLongitude()), Double.parseDouble(business.getLattitude()), Double.parseDouble(business.getLongitude()), "M");
 									logger.debug("Distance::  "+distance +" lat::  "+userFor.getLattitude()+" lon::  "+userFor.getLongitude());
 									if(distance <= 50)
 									{
@@ -290,11 +282,11 @@ public class DealSearch implements IDealSearch {
 
 										if(business.getLattitude() == null && business.getLongitude() == null || (business.getLattitude().trim().equals("") && business.getLongitude().trim().equals(""))  || (business.getLattitude().trim().equals("0.0") && business.getLongitude().trim().equals("0.0")))
 										{
-											array = getLatLong(business.getPostalCode());
+											array = Utils.getLatLong(business.getPostalCode());
 											business.setLattitude(Double.toString(array[0]));
 											business.setLongitude(Double.toString(array[1]));
 										}
-										double distance = distance(Double.parseDouble(userFor.getLattitude()), Double.parseDouble(userFor.getLongitude()), Double.parseDouble(business.getLattitude()), Double.parseDouble(business.getLongitude()), "M");
+										double distance = Utils.distance(Double.parseDouble(userFor.getLattitude()), Double.parseDouble(userFor.getLongitude()), Double.parseDouble(business.getLattitude()), Double.parseDouble(business.getLongitude()), "M");
 										logger.debug("Distance::  "+distance +" lat::  "+userFor.getLattitude()+" lon::  "+userFor.getLongitude());
 										if(distance <= 50)
 										{
@@ -321,11 +313,11 @@ public class DealSearch implements IDealSearch {
 
 											if(business.getLattitude() == null && business.getLongitude() == null || (business.getLattitude().trim().equals("") && business.getLongitude().trim().equals(""))  || (business.getLattitude().trim().equals("0.0") && business.getLongitude().trim().equals("0.0")))
 											{
-												array = getLatLong(business.getPostalCode());
+												array = Utils.getLatLong(business.getPostalCode());
 												business.setLattitude(Double.toString(array[0]));
 												business.setLongitude(Double.toString(array[1]));
 											}
-											double distance = distance(Double.parseDouble(userFor.getLattitude()), Double.parseDouble(userFor.getLongitude()), Double.parseDouble(business.getLattitude()), Double.parseDouble(business.getLongitude()), "M");
+											double distance = Utils.distance(Double.parseDouble(userFor.getLattitude()), Double.parseDouble(userFor.getLongitude()), Double.parseDouble(business.getLattitude()), Double.parseDouble(business.getLongitude()), "M");
 											logger.debug("Distance::  "+distance +" lat::  "+userFor.getLattitude()+" lon::  "+userFor.getLongitude());
 											if(distance <= 50)
 											{
@@ -398,80 +390,5 @@ public class DealSearch implements IDealSearch {
 			e.printStackTrace();
 			return null;
 		}
-
-	}
-
-	private double distance(double lat1, double lon1,double lat2, double lon2, String unit)
-	{
-
-		if(lat1 !=0)
-		{
-			double theta = lon1 - lon2;
-			double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
-			dist = Math.acos(dist);
-			dist = rad2deg(dist);
-			dist = dist * 60 * 1.1515;
-			if (unit == "K") 
-			{
-				dist = dist * 1.609344;
-			} else if (unit == "N") 
-			{
-				dist = dist * 0.8684;
-			}
-			return Math.round(dist);
-		}
-		else
-		{
-			return 0;
-		}
-	}
-
-	/**
-	 * This function converts decimal degrees to radians  
-	 * @param deg
-	 * @return
-	 */
-	private double deg2rad(double deg) {
-		return (deg * Math.PI / 180.0);
-	}
-
-
-	/**
-	 * This function converts radians to decimal degrees   
-	 * @param rad
-	 * @return
-	 */
-	private double rad2deg(double rad) {
-		return (rad * 180.0 / Math.PI);
-	}
-
-
-	/**
-	 * Get latitude and longitude for ZipCode
-	 * @param postCode
-	 */
-	private double[] getLatLong(String postCode)
-	{
-		double[] array = new double[2];
-		try
-		{
-			logger.debug("Lat/Long :  "+postCode);
-			final Geocoder geocoder = new Geocoder();
-			GeocoderRequest geocoderRequest = new GeocoderRequestBuilder().setAddress(postCode).getGeocoderRequest();
-			GeocodeResponse geocoderResponse = geocoder.geocode(geocoderRequest);
-			List<GeocoderResult> results = geocoderResponse.getResults();
-			logger.debug("results :  "+results);
-			float latitude = results.get(0).getGeometry().getLocation().getLat().floatValue();
-			float longitude = results.get(0).getGeometry().getLocation().getLng().floatValue();
-
-			array[0] = (double)latitude;
-			array[1] = (double)longitude;
-			logger.debug("Lat/Long :  " + latitude +" , "+longitude);
-
-		}catch (Exception e) {
-			logger.debug(e.toString());
-			logger.debug(e.getLocalizedMessage());
-		}
-		return array;
 	}
 }

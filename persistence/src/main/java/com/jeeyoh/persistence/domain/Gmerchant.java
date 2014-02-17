@@ -15,6 +15,7 @@ public class Gmerchant  implements java.io.Serializable {
      private String merchantId;
      private String name;
      private String websiteUrl;
+     private Gmerchantrating gmerchantByRatingId;
      private Set gdeals = new HashSet(0);
 
     public Gmerchant() {
@@ -66,6 +67,18 @@ public class Gmerchant  implements java.io.Serializable {
     public void setGdeals(Set gdeals) {
         this.gdeals = gdeals;
     }
+
+
+	public void setGmerchantByRatingId(Gmerchantrating gmerchantByRatingId) {
+		this.gmerchantByRatingId = gmerchantByRatingId;
+	}
+
+
+	public Gmerchantrating getGmerchantByRatingId() {
+		return gmerchantByRatingId;
+	}
+
+
 
 
 

@@ -14,6 +14,7 @@ public class MainModel {
 	private List<DealModel> dealList = new ArrayList<DealModel>();
 	private List<EventModel> eventsList = new ArrayList<EventModel>();
 	private Set<DealModel> dealModel;
+	private List<SearchResult> searchResult = new ArrayList<SearchResult>();
 	private boolean isUser;
 	/**
 	 * @param name the name to set
@@ -112,5 +113,17 @@ public class MainModel {
 	 */
 	public boolean getIsUser() {
 		return isUser;
+	}
+	/**
+	 * @param searchResult the searchResult to set
+	 */
+	public void setSearchResult(List<SearchResult> searchResult) {
+		this.searchResult = searchResult;
+	}
+	/**
+	 * @return the searchResult
+	 */
+	public List<SearchResult> getSearchResult() {
+		return searchResult;
 	}
 }

@@ -2,7 +2,6 @@ package com.jeeyoh.service.search;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,14 +10,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jeeyoh.model.search.DealModel;
-import com.jeeyoh.model.search.EventModel;
 import com.jeeyoh.persistence.IDealsDAO;
 import com.jeeyoh.persistence.domain.Deals;
-import com.jeeyoh.persistence.domain.Events;
-import com.jeeyoh.persistence.domain.Usereventsuggestion;
 
 @Component("userDealsSearch")
-public class UserDealsSearch implements IUserDealsSearch{
+public class UserDealsSearchService implements IUserDealsSearchService{
 
 	static final Logger logger = LoggerFactory.getLogger("debugLogger");
 

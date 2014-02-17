@@ -16,7 +16,7 @@ import com.jeeyoh.persistence.domain.Events;
 import com.jeeyoh.persistence.domain.Usereventsuggestion;
 
 @Component("eventsSuggestionSearch")
-public class EventsSuggestionSearch implements IEventsSuggestionSearch{
+public class EventsSuggestionSearchService implements IEventsSuggestionSearchService{
 
 	static final Logger logger = LoggerFactory.getLogger("debugLogger");
 	

@@ -125,7 +125,7 @@ public class YelpService implements IYelpService {
 				business.setBusinessId(businessModel.getBusinessId());
 				business.setIsClaimed(businessModel.isClaimed());
 				business.setIsClosed(businessModel.isClosed());
-				business.setRating((long)businessModel.getRating());
+				business.setRating(businessModel.getRating());
 				business.setMobileUrl(businessModel.getMobileUrl());
 				business.setRatingImgUrl(businessModel.getRatingImageUrl());
 				business.setReviewCount(businessModel.getReviewCount()+"");

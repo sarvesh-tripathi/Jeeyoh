@@ -23,7 +23,7 @@ public class Business  implements java.io.Serializable {
      private String displayPhone;
      private String reviewCount;
      private Long distance;
-     private Long rating;
+     private Double rating;
      private String ratingImgUrl;
      private String ratingSmallImgUrl;
      private String ratingLargeImgUrl;
@@ -65,7 +65,7 @@ public class Business  implements java.io.Serializable {
     public Business(Businesstype businesstype) {
         this.businesstype = businesstype;
     }
-    public Business(Businesstype businesstype, String businessId, String name, String websiteUrl, Boolean isClaimed, Boolean isClosed, String mobileUrl, String phone, String displayPhone, String reviewCount, Long distance, Long rating, String ratingImgUrl, String ratingSmallImgUrl, String ratingLargeImgUrl, String snippetText, String snippetImageUrl, String menuProvider, Long menuProviderDate, String crossStreets, String city, String displayAddress, String postalCode, String countryCode, String address, String stateCode, String neighborhoods, String lattitude, String longitude, String ambience, Boolean isParkingAvailable, String traffic, String serviceLevel, String noiseLevel, String likeCount, Boolean isActive, String imageUrl, String workingHours, String musicType, Set reviews, Set foodmenuitems, Set dealses, Set pages) {
+    public Business(Businesstype businesstype, String businessId, String name, String websiteUrl, Boolean isClaimed, Boolean isClosed, String mobileUrl, String phone, String displayPhone, String reviewCount, Long distance, Double rating, String ratingImgUrl, String ratingSmallImgUrl, String ratingLargeImgUrl, String snippetText, String snippetImageUrl, String menuProvider, Long menuProviderDate, String crossStreets, String city, String displayAddress, String postalCode, String countryCode, String address, String stateCode, String neighborhoods, String lattitude, String longitude, String ambience, Boolean isParkingAvailable, String traffic, String serviceLevel, String noiseLevel, String likeCount, Boolean isActive, String imageUrl, String workingHours, String musicType, Set reviews, Set foodmenuitems, Set dealses, Set pages) {
        this.businesstype = businesstype;
        this.businessId = businessId;
        this.name = name;
@@ -195,11 +195,11 @@ public class Business  implements java.io.Serializable {
     public void setDistance(Long distance) {
         this.distance = distance;
     }
-    public Long getRating() {
+    public Double getRating() {
         return this.rating;
     }
     
-    public void setRating(Long rating) {
+    public void setRating(Double rating) {
         this.rating = rating;
     }
     public String getRatingImgUrl() {

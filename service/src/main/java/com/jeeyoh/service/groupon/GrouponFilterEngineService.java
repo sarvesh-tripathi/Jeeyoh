@@ -81,8 +81,7 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 							try {
 								logger.debug("Date::  "+ gdeal.getEndAt() +"  :  "+ sdf.parse(sdf.format((Date)weekendList.get(j))));
 
-								if(sdf.parse(sdf.format(gdeal.getEndAt())).compareTo(currentDate) >= 0 && gdeal.getEndAt().before(sdf.parse(sdf.format((Date)weekendList.get(j)))))
-
+								if(gdeal.getEndAt().compareTo(currentDate) >= 0 && gdeal.getEndAt().before(sdf.parse(sdf.format((Date)weekendList.get(j)))))
 								{
 									batch_size++;
 									logger.debug("gdeal id:: "+ gdeal.getId());

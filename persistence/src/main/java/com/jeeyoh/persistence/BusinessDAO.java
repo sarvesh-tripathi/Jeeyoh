@@ -238,7 +238,7 @@ public class BusinessDAO implements IBusinessDAO {
 	@Override
 	public List<Business> getBusinessByuserLikes(String likekeyword,
 			String itemCategory, String providerName) {
-		logger.debug("getBusinessByuserLikes ==> "+likekeyword);
+		logger.debug("getBusinessByuserLikes ==> "+likekeyword +" : "+providerName+ " : "+itemCategory);
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Business.class, "business").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		
 		criteria.createAlias("business.businesstype", "businessTypes");
@@ -253,7 +253,7 @@ public class BusinessDAO implements IBusinessDAO {
 		}
 		if(providerName != null && !providerName.trim().equals(""))
 		{
-			criteria.add(Restrictions.eq("business.name", providerName));
+			criteria.add(Restrictions.eq("business.name", providerName.trim()));
 		}
 		if(itemCategory != null && !itemCategory.trim().equals(""))
 		{
@@ -285,5 +285,108 @@ public class BusinessDAO implements IBusinessDAO {
 		   e.printStackTrace();
 		  }
 		  return gCategory != null && !gCategory.isEmpty() ? gCategory.get(0) : null;
+	}
+
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Business> getBusinessBySearchKeyword(String searchText) {
+		logger.debug("getBusinessBySearchKeyword ==> "+searchText);
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Business.class, "business").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		
+		criteria.createAlias("business.businesstype", "businessTypes");
+		
+		if(searchText != null && !searchText.trim().equals(""))
+		{
+			criteria.add(Restrictions.disjunction().add(Restrictions.eq("business.businessId", searchText))
+					.add(Restrictions.eq("business.websiteUrl", searchText))
+					.add(Restrictions.eq("business.city", searchText))
+					.add(Restrictions.eq("business.displayAddress", searchText))
+					.add(Restrictions.eq("business.name", searchText)));
+		}
+		/*if(rating != null && !rating.trim().equals(""))
+		{
+			criteria.add(Restrictions.eq("business.rating", Long.parseLong(rating)));
+		}*/
+		
+		List<Business> businessList = criteria.list();
+	
+		return businessList;
+	}
+
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Business> getBusinessByLikeSearchKeyword(String searchText) {
+		logger.debug("getBusinessByLikeSearchKeyword ==> "+searchText);
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Business.class, "business").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		
+		criteria.createAlias("business.businesstype", "businessTypes");
+		
+		if(searchText != null && !searchText.trim().equals(""))
+		{
+			criteria.add(Restrictions.disjunction().add(Restrictions.like("business.businessId", "%" + searchText + "%"))
+					.add(Restrictions.like("business.websiteUrl", "%" + searchText + "%"))
+					.add(Restrictions.like("business.city", "%" + searchText + "%"))
+					.add(Restrictions.like("business.displayAddress", "%" + searchText + "%"))
+					.add(Restrictions.like("business.name", "%" + searchText + "%"))).add(Restrictions.conjunction().add(Restrictions.ne("business.businessId", searchText))
+							.add(Restrictions.ne("business.websiteUrl", searchText))
+							.add(Restrictions.ne("business.city", searchText))
+							.add(Restrictions.ne("business.displayAddress", searchText))
+							.add(Restrictions.ne("business.name", searchText)));
+		}
+		/*if(rating != null && !rating.trim().equals(""))
+		{
+			criteria.add(Restrictions.eq("business.rating", Long.parseLong(rating)));
+		}*/
+		
+		List<Business> businessList = criteria.list();
+	
+		return businessList;
+	}
+
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Business> getBusinessByCriteriaWithoutRating(String userEmail,
+			String searchText, String category, String location, String rating) {
+		logger.debug("getBusinessByCriteriaWithoutRating ==> "+searchText +" ==> "+category+" ==> "+location);
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Business.class, "business").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		
+		criteria.createAlias("business.businesstype", "businessTypes");
+		if(userEmail != null && !userEmail.trim().equals(""))
+		{
+			criteria.createAlias("business.usernondealsuggestions", "usernondealsuggestion");
+			criteria.createAlias("usernondealsuggestion.user", "user");
+			criteria.add(Restrictions.eq("user.emailId", userEmail));
+		}
+		
+		if(category != null && !category.trim().equals(""))
+		{
+			criteria.add(Restrictions.eq("businessTypes.businessType", category));
+		}
+		if(location != null && !location.trim().equals(""))
+		{
+			criteria.add(Restrictions.disjunction().add(Restrictions.like("business.displayAddress", "%" + location + "%"))
+					.add(Restrictions.like("business.businessId", "%" + location + "%"))
+					.add(Restrictions.eq("business.postalCode", location))
+					.add(Restrictions.like("business.city", "%" + location + "%")));
+		}
+		if(searchText != null && !searchText.trim().equals(""))
+		{
+			criteria.add(Restrictions.disjunction().add(Restrictions.like("business.businessId", "%" + searchText + "%"))
+					.add(Restrictions.like("business.websiteUrl", "%" + searchText + "%"))
+					.add(Restrictions.like("business.city", "%" + searchText + "%"))
+					.add(Restrictions.like("business.displayAddress", "%" + searchText + "%"))
+					.add(Restrictions.like("business.name", "%" + searchText + "%")));
+		}
+		if(rating != null && !rating.trim().equals(""))
+		{
+			criteria.add(Restrictions.isNull("business.rating"));
+		}
+		
+		List<Business> businessList = criteria.list();
+	
+		return businessList;
 	}
 }

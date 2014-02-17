@@ -30,6 +30,7 @@ import com.jeeyoh.persistence.domain.Usercontacts;
 import com.jeeyoh.persistence.domain.Userdealssuggestion;
 import com.jeeyoh.persistence.domain.Usereventsuggestion;
 import com.jeeyoh.persistence.domain.Usernondealsuggestion;
+import com.jeeyoh.utils.Utils;
 
 @Repository("userDAO")
 public class UserDAO implements IUserDAO {
@@ -456,11 +457,12 @@ public class UserDAO implements IUserDAO {
 	public List<Events> getUserLikesEvents(int userId) {
 		logger.debug("getUserLikesEvents => ");
 		List<Events> eventsList = null;
-		String hqlQuery = "select b from User a, Events b, Eventuserlikes c where a.userId = :userId and c.user.userId = a.userId and b.eventId = c.event.eventId";
+		String hqlQuery = "select b from User a, Events b, Eventuserlikes c where a.userId = :userId and c.user.userId = a.userId and b.eventId = c.event.eventId and b.endAt >= :currentDate";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
 			query.setParameter("userId", userId);
+			query.setParameter("currentDate", Utils.getCurrentDate());
 			eventsList = (List<Events>) query.list();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -476,6 +478,7 @@ public class UserDAO implements IUserDAO {
 		logger.debug("getUserLikesEventsByType => ");
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Events.class);
 		criteria.add(Restrictions.eq("eventuserlikes.user.userId", userId));
+		criteria.add(Restrictions.ge("endAt", Utils.getCurrentDate()));
 		criteria.createAlias("page", "page");
 		criteria.createAlias("page.pagetype", "pagetype");  
 		criteria.add(Restrictions.eq("pagetype.pageType", pageType));  
@@ -555,5 +558,25 @@ public class UserDAO implements IUserDAO {
 			
 		}
 		return users != null && !users.isEmpty() ? users.get(0) : null;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Events> getCommunityAllEvents(int pageId) {
+		logger.debug("getUserCommunityEvents => ");
+		List<Events> eventsList = null;
+		String hqlQuery = "select a from Events a where a.page.pageId = :pageId and a.event_date >= :currentDate";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("pageId", pageId);
+			query.setParameter("currentDate", Utils.getCurrentDate());
+			eventsList = (List<Events>) query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.debug(e.toString());
+			logger.debug(e.getLocalizedMessage());
+		}
+		return eventsList;
 	}
 }

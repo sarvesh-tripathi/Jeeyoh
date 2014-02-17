@@ -27,8 +27,18 @@ public class NonDealSuggestionSearch implements INonDealSuggestionSearch{
 	@Override
 	@Transactional
 	public List<BusinessModel> search(String userEmail, String searchText, String category, String location, String rating) {
-		List<Business> rows = businessDAO.getBusinessByCriteria(userEmail, searchText, category, location, rating);
-		logger.debug("NonDealSuggestionSearch ==> rows ==> "+rows);
+		
+		List<Business> rows = null;
+		rows = businessDAO.getBusinessByCriteria(userEmail, searchText, category, location, rating);
+		if(rating != null && !rating.equals(""))
+		{
+			if(rows == null || rows.isEmpty())
+			{
+				rows = businessDAO.getBusinessByCriteriaWithoutRating(userEmail, searchText, category, location, rating);
+			}
+		}
+			
+		logger.debug("NonDealSuggestionSearch ==> rows ==> "+rows.size());
 		List<BusinessModel> businessModelList = new ArrayList<BusinessModel>();
 		for(Business business : rows)
 		{
