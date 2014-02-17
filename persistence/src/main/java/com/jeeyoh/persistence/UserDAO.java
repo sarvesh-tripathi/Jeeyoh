@@ -545,12 +545,13 @@ public class UserDAO implements IUserDAO {
 		String password = user.getPassword();
 		
 		List<User> users = null;
-		String hqlQuery = "from User where emailId=:emailId and password=:password";
+		String hqlQuery = "from User where emailId=:emailId and password=:password and isActive=:isActive ";
 		try{
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
 			query.setParameter("emailId", emailId);
 			query.setParameter("password", password);
+			query.setParameter("isActive",true);
 			users = query.list();
 			
 		}catch(HibernateException e)

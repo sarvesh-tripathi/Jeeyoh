@@ -15,7 +15,7 @@
 <body>
 <p class="p1">Hi $userName!</p>
 <p class="p2"></p>
-<p class="p1">You're on your way to create incredible stories! Just confirm your email.</p>
+<p class="p1">You're on your way to create incredible deals in your area</p>
 <p class="p2"></p>
 <p class="p1"><span class="Apple-converted-space"></span>
 #if ($entity)

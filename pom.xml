@@ -283,10 +283,10 @@
 				<groupon.says.api.url>http://api.groupon.com/v2/groupon_says?client_id={clientId}</groupon.says.api.url>
 				
 				<!-- smtp email -->
-				<sender.name></sender.name>
-				<sender.email></sender.email>
-				<mail.smtp.loginid></mail.smtp.loginid>
-				<mail.smtp.password></mail.smtp.password>
+				<sender.name>Jeeyoh</sender.name>
+				<sender.email>jeeyoh.testing@gmail.com</sender.email>
+				<mail.smtp.loginid>jeeyoh.testing@gmail.com</mail.smtp.loginid>
+				<mail.smtp.password>jeeyoh123</mail.smtp.password>
 				<mail.smtp.host.value>smtp.gmail.com</mail.smtp.host.value>
 				<mail.smtp.port.num>587</mail.smtp.port.num>				
 			

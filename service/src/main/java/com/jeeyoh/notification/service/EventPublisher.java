@@ -33,7 +33,7 @@ public class EventPublisher implements IMessagingEventPublisher
     private String fromEmailId;
 
     //@Value("${app.storistic.server.url}")
-    private String serverURL = "http://www.jeeyoh.com/";
+    private String serverURL = "http://localhost:9090/jeeyoh/mobile/userService";
     
     
     
