@@ -87,6 +87,7 @@
 			<artifactId>rome</artifactId>
 			<version>1.0.0</version>
 		</dependency>
+<<<<<<< HEAD
 
 		<dependency>
 			<groupId>joda-time</groupId>
@@ -130,4 +131,51 @@
 			<version>3.9</version>
 		</dependency>
 	</dependencies>
+=======
+		
+		<!-- POI dependencies -->
+		    <dependency>
+		      <groupId>org.apache.poi</groupId>
+		      <artifactId>poi</artifactId>
+		      <version>3.9</version>
+		  </dependency>
+		  <dependency>
+		   <groupId>org.apache.poi</groupId>
+		   <artifactId>poi-scratchpad</artifactId>
+		   <version>3.9</version>
+		  </dependency>
+		  <dependency>
+		   <groupId>org.apache.poi</groupId>
+		   <artifactId>poi-ooxml</artifactId>
+		   <version>3.9</version>
+		  </dependency>
+		  <dependency>
+		   <groupId>stax</groupId>
+		   <artifactId>stax-api</artifactId>
+		   <version>1.0.1</version>
+		  </dependency>
+		  <dependency>
+		   <groupId>org.apache.poi</groupId>
+		   <artifactId>poi-excelant</artifactId>
+		   <version>3.9</version>
+		  </dependency>
+		  <dependency>
+		   <groupId>org.apache.poi</groupId>
+		   <artifactId>poi-examples</artifactId>
+		   <version>3.9</version>
+		  </dependency>
+		 
+    <dependency>
+		<groupId>joda-time</groupId>
+		<artifactId>joda-time</artifactId>
+		<version>1.5.2</version>
+	</dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+>>>>>>> a5a86cd718d0da26f0d14b1959bf77d9ed4a2097
 </project>

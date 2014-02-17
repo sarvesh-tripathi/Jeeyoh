@@ -3,6 +3,7 @@ package com.jeeyoh.model.response;
 import java.io.Serializable;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -13,7 +14,9 @@ public class BaseResponse implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	@JsonProperty
 	private String status ;
+	@JsonProperty
 	private String error ;
 	
 	public String getStatus() {

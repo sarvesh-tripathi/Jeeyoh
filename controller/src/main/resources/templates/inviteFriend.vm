@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Storistic</title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1187.34">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 13.0px 0.0px; font: 13.0px Calibri; color: #333333}
+    p.p2 {margin: 0.0px 0.0px 13.0px 0.0px; font: 13.0px Calibri; color: #042eee}
+    p.p3 {margin: 0.0px 0.0px 13.0px 0.0px; font: 13.0px Calibri; color: #333333; min-height: 15.0px}
+    span.s1 {text-decoration: underline}
+  </style>
+</head>
+<body>
+<p class="p1">Hi $inviteFriendName,</p>
+<p class="p1">I would like to add you as a friend on Storistic.</p>
+<p class="p2">
+	<span class="s1">
+		<span class="Apple-converted-space"></span>
+		<a href="$serverURL/connect?trackingId=$invitationCode&amp;userEmail=${userEmail}">
+			<img src="$imageURL/images/accept_invitation_button.png">
+		</a>
+	</span>
+</p>
+<p class="p1">- $userName</p>
+<p class="p3"><span class="Apple-converted-space"></span></p>
+</body>
+</html>

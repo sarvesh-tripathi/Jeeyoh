@@ -1,9 +1,13 @@
 package com.jeeyoh.model.response;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import com.jeeyoh.model.user.UserModel;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_DEFAULT)
 public class LoginResponse extends BaseResponse{
 
 	/**

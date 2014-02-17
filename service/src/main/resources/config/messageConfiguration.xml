@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<messages>
+
+	<!--  .............. -->
+	<!--  Welcome Email -->
+	<!--  .............. -->
+	<!-- Msg ID : 01 Done By : Sarvesh -->
+
+	<message id="WELCOME_EMAIL" smtp="sendWelcomeEmail.vm" priority="0" messageGroup="0"
+		 messageID="01" messageVersion="0">
+		<param name="userFirstName">forced</param>					
+		<param name="to">forced</param>
+		<param name="from">forced</param>
+		<param name="subject">forced</param>		
+		<param name="messageID">optional</param>
+		<param name="messageVersion">optional</param>
+	</message>	
+
+	<!--  .............. -->
+	<!--  Change Password Email -->
+	<!--  .............. -->
+	<!-- Msg ID : 02 Done By : Sarvesh -->
+
+	<message id="CHANGE_PASSWORD" smtp="sendChangePassword.vm" priority="0" messageGroup="0"
+		 messageID="02" messageVersion="0">
+		<param name="userFullName">forced</param>
+		<param name="newPassword">forced</param>			
+		<param name="to">forced</param>
+		<param name="from">forced</param>
+		<param name="subject">forced</param>		
+		<param name="messageID">optional</param>
+		<param name="messageVersion">optional</param>
+	</message>	
+	
+	<!--  .............. -->
+	<!--  Reset Password Email message -->
+	<!--  .............. -->
+	<!-- Msg ID : 03 Done By : Sarvesh -->
+
+	<message id="RESET_PASSWORD" smtp="sendResetPassword.vm" priority="0" messageGroup="0"
+		 messageID="03" messageVersion="0">
+		<param name="userFirstName">forced</param>
+		<param name="newPassword">forced</param>			
+		<param name="to">forced</param>
+		<param name="from">forced</param>
+		<param name="subject">forced</param>		
+		<param name="messageID">optional</param>
+		<param name="messageVersion">optional</param>
+	</message>
+	
+	<!--  .............. -->
+	<!--  Share Storyline Email message -->
+	<!--  .............. -->
+	<!-- Msg ID : 04 Done By : Sarvesh -->
+
+	<message id="SHARE_STORYLINE" smtp="shareStoryline.vm" priority="0" messageGroup="0"
+		 messageID="04" messageVersion="0">
+		<param name="userName">forced</param>
+		<param name="sharedStorylineId">forced</param>
+		<param name="serverURL">forced</param>	
+		<param name="imageURL">forced</param>				
+		<param name="to">forced</param>
+		<param name="from">forced</param>
+		<param name="subject">forced</param>		
+		<param name="messageID">optional</param>
+		<param name="messageVersion">optional</param>
+	</message>	
+	
+	<!--  .............. -->
+	<!--  Share Moment Email message -->
+	<!--  .............. -->
+	<!-- Msg ID : 05 Done By : Sarvesh -->
+
+	<message id="SHARE_MOMENT" smtp="shareMoment.vm" priority="0" messageGroup="0"
+		 messageID="05" messageVersion="0">
+		<param name="userName">forced</param>
+		<param name="sharedMomentId">forced</param>
+		<param name="serverURL">forced</param>	
+		<param name="imageURL">forced</param>				
+		<param name="to">forced</param>
+		<param name="from">forced</param>
+		<param name="subject">forced</param>		
+		<param name="messageID">optional</param>
+		<param name="messageVersion">optional</param>
+	</message>	
+	
+	<!--  .............. -->
+	<!--  Sent invitation email  message -->
+	<!--  .............. -->
+	<!-- Msg ID : 06 Done By : Rakesh -->
+
+	<message id="INVITE_FRIEND" smtp="inviteFriend.vm" priority="0" messageGroup="0"
+		 messageID="06" messageVersion="0">
+		<param name="userName">forced</param>
+		<param name="userEmail">forced</param>
+		<param name="invitationCode">forced</param>
+		<param name="serverURL">forced</param>
+		<param name="inviteFriendName">forced</param>
+		<param name="to">forced</param>
+		<param name="from">forced</param>
+		<param name="subject">forced</param>		
+		<param name="messageID">optional</param>
+		<param name="messageVersion">optional</param>
+	</message>
+	
+	<!--  .............. -->
+	<!--  Share Moment Email message -->
+	<!--  .............. -->
+	<!-- Msg ID : 07 Done By : Sarvesh -->
+
+	<message id="REGISTRATION_CONFIRMATION" smtp="registrationConfirmation.vm" priority="0" messageGroup="0"
+		 messageID="07" messageVersion="0">
+		<param name="userName">forced</param>
+		<param name="encUserName">optional</param>
+		<param name="encEmail">forced</param>
+		<param name="serverURL">forced</param>
+		<param name="confirmationCode">forced</param>
+		<param name="entity">optional</param>
+		<param name="entityId">optional</param>					
+		<param name="to">forced</param>
+		<param name="from">forced</param>
+		<param name="subject">forced</param>		
+		<param name="messageID">optional</param>
+		<param name="messageVersion">optional</param>
+	</message>
+	
+	<!--  .............. -->
+	<!--  Add storyline Contributor  Email message -->
+	<!--  .............. -->
+	<!-- Msg ID : 08 Done By : Sarvesh -->
+
+	<message id="ADD_CONTRIBUTOR" smtp="addContributorMessage.vm" priority="0" messageGroup="0"
+		 messageID="08" messageVersion="0">
+		<param name="contributorName">forced</param>
+		<param name="senderName">optional</param>		
+		<param name="title">forced</param>
+		<param name="entityType">forced</param>
+		<param name="entityId">forced</param>
+		<param name="serverURL">forced</param>	
+		<param name="imageURL">forced</param>					
+		<param name="to">forced</param>
+		<param name="from">forced</param>
+		<param name="subject">forced</param>		
+		<param name="messageID">optional</param>
+		<param name="messageVersion">optional</param>
+	</message>	
+	
+	<!--  .............. -->
+	<!--  Add Viewer Email message -->
+	<!--  .............. -->
+	<!-- Msg ID : 09  -->
+
+	<message id="ADD_VIEWER" smtp="addViewerMessage.vm" priority="0" messageGroup="0"
+		 messageID="08" messageVersion="0">
+		<param name="viewerName">forced</param>
+		<param name="senderName">optional</param>		
+		<param name="title">forced</param>
+		<param name="entityType">forced</param>
+		<param name="entityId">forced</param>
+		<param name="imageURL">forced</param>
+		<param name="serverURL">forced</param>						
+		<param name="to">forced</param>
+		<param name="from">forced</param>
+		<param name="subject">forced</param>		
+		<param name="messageID">optional</param>
+		<param name="messageVersion">optional</param>
+	</message>	
+</messages>

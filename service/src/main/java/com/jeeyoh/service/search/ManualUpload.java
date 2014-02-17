@@ -38,6 +38,7 @@ public class ManualUpload implements IManualUpload {
 	@Autowired
 	private IUserDAO userDAO;
 
+
 	@SuppressWarnings("deprecation")
 	@Override
 	public ArrayList<ExcelUpload> parseData(String filename) {
@@ -76,48 +77,71 @@ public class ManualUpload implements IManualUpload {
 								switch (c) {
 								case 0:
 									excelUpload.setEventType(cell.toString());
+									break;
 								case 1:
 									excelUpload.setDescription(cell.toString());
+									break;
 								case 2:
 									excelUpload.setPlace(cell.toString());
+									break;
 								case 3: 
+									cell.setCellType(Cell.CELL_TYPE_STRING); 
 									excelUpload.setZipCode(cell.toString());
+									break;
 								case 4:
 									excelUpload.setOriginalPrice(cell.toString());
+									break;
 								case 5:
 									excelUpload.setDiscountedPrice(cell.toString());
+									break;
 								case 6:
 									excelUpload.setPictureUrl(cell.toString());
+									break;
 								case 7: 
 									excelUpload.setValidityStartDate(cell.toString());
+									break;
 								case 8:
 									excelUpload.setValidityEndDate(cell.toString());
+									break;
 								case 9:
 									excelUpload.setValidityTiming(cell.toString());
+									break;
 								case 10:
 									excelUpload.setIfDeal(cell.toString());
+									break;
 								case 11:
 									excelUpload.setHighlight(cell.toString());
+									break;
 								case 12: 
 									excelUpload.setFinePrints(cell.toString());
+									break;
 								case 13:
 									excelUpload.setOfferDetails(cell.toString());
+									break;
 								case 14:
 									excelUpload.setVendorDealProvider(cell.toString());
+									break;
 								case 15:
 									excelUpload.setAddressVendor(cell.toString());
+									break;
 								case 16:
 									excelUpload.setContactVendor(cell.toString());
+									break;
 								case 17:
 									excelUpload.setPaymentOption(cell.toString());
+									break;
 								case 18:
 									excelUpload.setOffers(cell.toString());
+									break;
 								case 19:
 									excelUpload.setUploadByUsername(cell.toString());
+									break;
 								case 20:
 									excelUpload.setTimeStamp(cell.toString());
+									break;
 								case 21:
 									excelUpload.setChangeUserUpdate(cell.toString());
+									break;
 								}
 
 							}
@@ -170,9 +194,11 @@ public class ManualUpload implements IManualUpload {
 				business.setCity(place);
 				event.setCity(place);
 			}
+
 			//businessType.setBusinessType("Sport");
 			//businessType.setBusinessTypeId(8);
 			businessType = businessDAO.getBusinesstypeByType("SPORT");
+
 			business.setBusinesstype(businessType);
 			business.setBusinessId(exUpload.get(i).getDescription());
 			business.setName(exUpload.get(i).getDescription());

@@ -60,6 +60,9 @@ public class UserModel implements Serializable {
     @JsonProperty
     private String confirmationId;
     
+    @JsonProperty
+    private String sessionId;
+    
 	public Integer getUserId() {
 		return userId;
 	}
@@ -185,6 +188,12 @@ public class UserModel implements Serializable {
 	}
 	public String getConfirmationId() {
 		return confirmationId;
+	}
+	public void setSessionId(String sessionId) {
+		this.sessionId = sessionId;
+	}
+	public String getSessionId() {
+		return sessionId;
 	}
 
 }

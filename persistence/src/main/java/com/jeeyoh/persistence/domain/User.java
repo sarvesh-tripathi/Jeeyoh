@@ -35,6 +35,7 @@ public class User  implements java.io.Serializable {
      private String longitude;
      private String lattitude;
      private String confirmationId;
+     private String sessionId;
      private Date createdtime;
      private Date updatedtime;
      private Set jeeyohgroupsForOwnerId = new HashSet(0);
@@ -397,6 +398,16 @@ public class User  implements java.io.Serializable {
 	 */
 	public String getConfirmationId() {
 		return confirmationId;
+	}
+
+
+	public void setSessionId(String sessionId) {
+		this.sessionId = sessionId;
+	}
+
+
+	public String getSessionId() {
+		return sessionId;
 	}
 
 

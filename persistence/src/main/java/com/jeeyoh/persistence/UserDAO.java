@@ -24,6 +24,8 @@ import com.jeeyoh.persistence.domain.Jeeyohgroup;
 import com.jeeyoh.persistence.domain.Page;
 import com.jeeyoh.persistence.domain.Pagetype;
 import com.jeeyoh.persistence.domain.Pageuserlikes;
+import com.jeeyoh.persistence.domain.Privacy;
+import com.jeeyoh.persistence.domain.Profiletype;
 import com.jeeyoh.persistence.domain.User;
 import com.jeeyoh.persistence.domain.UserCategory;
 import com.jeeyoh.persistence.domain.Usercontacts;
@@ -517,7 +519,8 @@ public class UserDAO implements IUserDAO {
 	@Override
 	public void registerUser(User user) {
 		sessionFactory.getCurrentSession().saveOrUpdate(user);   
-}
+    }
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public Set<Dealsusage> getUserDealUsageByType(Integer userId,
@@ -545,12 +548,13 @@ public class UserDAO implements IUserDAO {
 		String password = user.getPassword();
 		
 		List<User> users = null;
-		String hqlQuery = "from User where emailId=:emaiId and password=:password";
+		String hqlQuery = "from User where emailId=:emailId and password=:password and isActive=:isActive ";
 		try{
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
 			query.setParameter("emailId", emailId);
 			query.setParameter("password", password);
+			query.setParameter("isActive",true);
 			users = query.list();
 			
 		}catch(HibernateException e)
@@ -559,6 +563,7 @@ public class UserDAO implements IUserDAO {
 		}
 		return users != null && !users.isEmpty() ? users.get(0) : null;
 	}
+
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -578,5 +583,63 @@ public class UserDAO implements IUserDAO {
 			logger.debug(e.getLocalizedMessage());
 		}
 		return eventsList;
+
+	@Override
+	public Privacy getUserPrivacyType(String string) {
+		// TODO Auto-generated method stub
+		List<Privacy> privacy = null;
+		String hqlQuery = "from Privacy where privacyType =:string";
+		try{
+			Query query = sessionFactory.getCurrentSession().createQuery(hqlQuery);
+			query.setParameter("string", string);
+			privacy = query.list();
+			
+		}catch(HibernateException e)
+		{
+			
+		}
+		return privacy != null && !privacy.isEmpty() ? privacy.get(0) : null;
+	}
+
+	@Override
+	public Profiletype getUserprofileType(String string) {
+		// TODO Auto-generated method stub
+		List<Profiletype> privacy = null;
+		String hqlQuery = "from Profiletype where userType =:string";
+		try{
+			Query query = sessionFactory.getCurrentSession().createQuery(hqlQuery);
+			query.setParameter("string", string);
+			privacy = query.list();
+			
+		}catch(HibernateException e)
+		{
+			
+		}
+		return privacy != null && !privacy.isEmpty() ? privacy.get(0) : null;
+	}
+
+	@Override
+	public void updateUser(User user) {
+		// TODO Auto-generated method stub
+		sessionFactory.getCurrentSession().update(user);
+		
+	}
+
+	@Override
+	public void confirmUser(String confirmationCode) {
+		// TODO Auto-generated method stub
+		String hqlQuery = "update User set isActive=:isActive where confirmationId =:confirmationCode";
+		try
+		{
+			Query query = sessionFactory.getCurrentSession().createQuery(hqlQuery);
+			query.setParameter("isActive",true);
+			query.setParameter("confirmationCode", confirmationCode);
+			int result = query.executeUpdate();
+			
+		}
+		catch(HibernateException e)
+		{
+			e.printStackTrace();
+		}
 	}
 }

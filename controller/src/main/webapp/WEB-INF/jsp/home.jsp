@@ -35,6 +35,8 @@
    				<li><a href="filterEventsForStubhub" title="Filter Events for Stubhub">Filter Events for Stubhub</a></li>
    				<li>|</li>
    				<li><a href="eventsSuggestion" title="Events Suggestion">Events Suggestion</a></li>
+   				<li>|</li>
+   				<li><a href="testing" title="Testing">Testing</a></li>
 			</ul>
 		</div>
 	</body>
