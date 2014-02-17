@@ -583,6 +583,7 @@ public class UserDAO implements IUserDAO {
 			logger.debug(e.getLocalizedMessage());
 		}
 		return eventsList;
+	}
 
 	@Override
 	public Privacy getUserPrivacyType(String string) {

@@ -19,12 +19,9 @@ import com.jeeyoh.model.search.DealModel;
 import com.jeeyoh.model.search.EventModel;
 import com.jeeyoh.model.search.MainModel;
 import com.jeeyoh.model.search.PageModel;
-<<<<<<< HEAD
 import com.jeeyoh.model.search.SearchRequest;
 import com.jeeyoh.model.search.SearchResult;
-=======
 import com.jeeyoh.notification.service.IMessagingEventPublisher;
->>>>>>> a5a86cd718d0da26f0d14b1959bf77d9ed4a2097
 import com.jeeyoh.persistence.domain.Business;
 import com.jeeyoh.persistence.domain.Deals;
 import com.jeeyoh.persistence.domain.Events;
@@ -102,9 +99,6 @@ public class AccountController {
 
 	@Autowired
     IMessagingEventPublisher eventPublisher;
-	
-	@Autowired
-	IManualUpload manualUpload;
 	
 	@Autowired
 	private IManualUpload manualUpload;
@@ -443,20 +437,7 @@ public class AccountController {
 	}
 	
 	
-	 @RequestMapping(value = "/manualUpload", method = RequestMethod.GET)
-	 public ModelAndView manualUpload(HttpServletRequest request,
-	   HttpServletResponse response) {
-	  ModelAndView modelAndView = new ModelAndView("manualUpload");
-	  return modelAndView;
-	 }
-	 
-	 @RequestMapping(value = "/uploadFile", method = RequestMethod.GET)
-	 public ModelAndView uploadFile(HttpServletRequest request, HttpServletResponse response) {
-	  ModelAndView modelAndView = new ModelAndView("manualUpload");
-	  String filename = request.getParameter("file");     
-	  manualUpload.uploadExcel(filename);
-	  return modelAndView;
-	 }
+	
 	
 	
 }
