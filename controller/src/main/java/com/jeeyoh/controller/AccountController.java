@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.jeeyoh.model.response.SearchResponse;
 import com.jeeyoh.model.search.BusinessModel;
 import com.jeeyoh.model.search.DealModel;
 import com.jeeyoh.model.search.EventModel;
@@ -22,10 +23,6 @@ import com.jeeyoh.model.search.PageModel;
 import com.jeeyoh.model.search.SearchRequest;
 import com.jeeyoh.model.search.SearchResult;
 import com.jeeyoh.notification.service.IMessagingEventPublisher;
-import com.jeeyoh.persistence.domain.Business;
-import com.jeeyoh.persistence.domain.Deals;
-import com.jeeyoh.persistence.domain.Events;
-import com.jeeyoh.persistence.domain.Page;
 import com.jeeyoh.service.fandango.IFandangoService;
 import com.jeeyoh.service.groupon.IGrouponFilterEngineService;
 import com.jeeyoh.service.groupon.IGrouponService;
@@ -427,17 +424,17 @@ public class AccountController {
 		ModelAndView modelAndView = new ModelAndView("spotSearch");
 		
 		String searchText = request.getParameter("searchText");
+		String category = request.getParameter("searchCategory");
+		String location = request.getParameter("location");
 		SearchRequest searchRequest = new SearchRequest();
 		searchRequest.setSearchText(searchText.trim());
-		List<SearchResult> searchResult = spotSearchService.search(searchRequest);
+		searchRequest.setCategory(category.trim());
+		searchRequest.setLocation(location);
+		SearchResponse searchResponse = spotSearchService.search(searchRequest);
 		MainModel model = new MainModel();
-		model.setSearchResult(searchResult);
+		model.setSearchResult(searchResponse.getSearchResult());
 		modelAndView.addObject("mainModel", model);
 		return modelAndView;
 	}
-	
-	
-	
-	
 	
 }

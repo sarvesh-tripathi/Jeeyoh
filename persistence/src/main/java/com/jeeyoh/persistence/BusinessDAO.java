@@ -290,7 +290,7 @@ public class BusinessDAO implements IBusinessDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Business> getBusinessBySearchKeyword(String searchText) {
+	public List<Business> getBusinessBySearchKeyword(String searchText,String category, String location) {
 		logger.debug("getBusinessBySearchKeyword ==> "+searchText);
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Business.class, "business").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		
@@ -303,6 +303,18 @@ public class BusinessDAO implements IBusinessDAO {
 					.add(Restrictions.eq("business.city", searchText))
 					.add(Restrictions.eq("business.displayAddress", searchText))
 					.add(Restrictions.eq("business.name", searchText)));
+		}
+		
+		if(category != null && !category.trim().equals(""))
+		{
+			criteria.add(Restrictions.eq("businessTypes.businessType", category));
+		}
+		if(location != null && !location.trim().equals(""))
+		{
+			criteria.add(Restrictions.disjunction().add(Restrictions.like("business.displayAddress", "%" + location + "%"))
+					.add(Restrictions.like("business.businessId", "%" + location + "%"))
+					.add(Restrictions.eq("business.postalCode", location))
+					.add(Restrictions.like("business.city", "%" + location + "%")));
 		}
 		/*if(rating != null && !rating.trim().equals(""))
 		{
@@ -317,7 +329,7 @@ public class BusinessDAO implements IBusinessDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Business> getBusinessByLikeSearchKeyword(String searchText) {
+	public List<Business> getBusinessByLikeSearchKeyword(String searchText,String category, String location) {
 		logger.debug("getBusinessByLikeSearchKeyword ==> "+searchText);
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Business.class, "business").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		
@@ -334,6 +346,18 @@ public class BusinessDAO implements IBusinessDAO {
 							.add(Restrictions.ne("business.city", searchText))
 							.add(Restrictions.ne("business.displayAddress", searchText))
 							.add(Restrictions.ne("business.name", searchText)));
+		}
+		
+		if(category != null && !category.trim().equals(""))
+		{
+			criteria.add(Restrictions.eq("businessTypes.businessType", category));
+		}
+		if(location != null && !location.trim().equals(""))
+		{
+			criteria.add(Restrictions.disjunction().add(Restrictions.like("business.displayAddress", "%" + location + "%"))
+					.add(Restrictions.like("business.businessId", "%" + location + "%"))
+					.add(Restrictions.eq("business.postalCode", location))
+					.add(Restrictions.like("business.city", "%" + location + "%")));
 		}
 		/*if(rating != null && !rating.trim().equals(""))
 		{

@@ -28,6 +28,6 @@ public interface IDealsDAO {
 	public List<Userdealssuggestion>userDealsSuggestedByJeeyoh(String keyword, String category,
 			String location, int id);
 	public int userCategoryLikeCount(Integer userCategoryId);
-	public List<Deals> getDealsByLikeSearchKeyword(String searchText);
-	public List<Deals> getDealsBySearchKeyword(String searchText);
+	public List<Deals> getDealsByLikeSearchKeyword(String searchText,String category, String location);
+	public List<Deals> getDealsBySearchKeyword(String searchText,String category, String location);
 }

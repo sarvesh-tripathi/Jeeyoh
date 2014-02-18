@@ -386,12 +386,26 @@ public class DealsDAO implements IDealsDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Deals> getDealsByLikeSearchKeyword(String searchText) {
+	public List<Deals> getDealsByLikeSearchKeyword(String searchText,String category, String location) {
 		logger.error("getDealsByLikeSearchKeyword ==== > "+searchText);
 
 
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Deals.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-
+		criteria.createAlias("business", "business");
+		criteria.createAlias("business.businesstype", "businesstype");
+		
+		if(category != null && category.isEmpty() == false)
+		{
+			criteria.add(Restrictions.eq("businesstype.businessType", category));
+		}
+		if(location != null && location.isEmpty()== false)
+		{
+			criteria.add(Restrictions.disjunction().add(Restrictions.like("business.displayAddress", "%" + location + "%"))
+					.add(Restrictions.like("business.businessId", "%" + location + "%"))
+					.add(Restrictions.eq("business.postalCode", location))
+					.add(Restrictions.like("business.city", "%" + location + "%")));
+		}
+		
 		if(searchText != null && searchText.isEmpty() == false)
 		{
 			logger.debug("IN KEYWORD CHECKING ::: ");
@@ -407,12 +421,27 @@ public class DealsDAO implements IDealsDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Deals> getDealsBySearchKeyword(String searchText) {
+	public List<Deals> getDealsBySearchKeyword(String searchText,String category, String location) {
 		logger.error("getDealsByLikeSearchKeyword ==== > "+searchText);
 
 
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Deals.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
+		criteria.createAlias("business", "business");
+		criteria.createAlias("business.businesstype", "businesstype");
+		
+		if(category != null && category.isEmpty() == false)
+		{
+			criteria.add(Restrictions.eq("businesstype.businessType", category));
+		}
+		if(location != null && location.isEmpty()== false)
+		{
+			criteria.add(Restrictions.disjunction().add(Restrictions.like("business.displayAddress", "%" + location + "%"))
+					.add(Restrictions.like("business.businessId", "%" + location + "%"))
+					.add(Restrictions.eq("business.postalCode", location))
+					.add(Restrictions.like("business.city", "%" + location + "%")));
+		}
+		
 		if(searchText != null && searchText.isEmpty() == false)
 		{
 			logger.debug("IN KEYWORD CHECKING ::: ");

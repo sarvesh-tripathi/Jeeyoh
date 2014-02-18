@@ -20,6 +20,22 @@
 		<td>Search Text:</td>
 		<td><input type='text' id='searchText' name='searchText'></td>
 	</tr>
+
+	<tr>
+		<td>Category:</td>
+		<td>
+		<div align="center"><select name="searchCategory">
+
+			<option value=""></option>
+			<option value="MOVIE">MOVIE</option>
+			<option value="RESTAURANT">RESTAURANT</option>
+			<option value="NIGHT LIFE">NIGHT LIFE</option>
+			<option value="EVENT">SPA</option>
+			<option value="GETAWAYS">GETAWAYS</option>
+			<option value="SPORT">SPORT</option>
+		</select></div>
+		</td>
+	</tr>
 	<tr>
 		<td colspan='2'><input name="submit" type="submit"
 			onClick="validateUser()"></td>

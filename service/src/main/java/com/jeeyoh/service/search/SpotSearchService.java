@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jeeyoh.model.response.SearchResponse;
 import com.jeeyoh.model.search.SearchRequest;
 import com.jeeyoh.model.search.SearchResult;
 import com.jeeyoh.persistence.IBusinessDAO;
@@ -35,30 +36,33 @@ public class SpotSearchService implements ISpotSearchService{
 
 	@Override
 	@Transactional
-	public List<SearchResult> search(SearchRequest searchRequest) {
+	public SearchResponse search(SearchRequest searchRequest) {
 		List<SearchResult> exactMatchingSearchResults = new ArrayList<SearchResult>();
 		List<SearchResult> likeSearchResults = new ArrayList<SearchResult>();
-		List<Business> businessList = businessDAO.getBusinessBySearchKeyword(searchRequest.getSearchText());
-		List<Deals> dealsList = dealsDAO.getDealsBySearchKeyword(searchRequest.getSearchText());
-		List<Page> pageList = eventsDAO.getCommunityBySearchKeyword(searchRequest.getSearchText());
-		List<Events> eventsList = eventsDAO.getEventsBySearchKeyword(searchRequest.getSearchText());
+		List<Business> businessList = businessDAO.getBusinessBySearchKeyword(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation());
+		List<Deals> dealsList = dealsDAO.getDealsBySearchKeyword(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation());
+		List<Page> pageList = eventsDAO.getCommunityBySearchKeyword(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation());
+		List<Events> eventsList = eventsDAO.getEventsBySearchKeyword(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation());
 		logger.debug("pageList::  "+pageList.size());
 		logger.debug("eventsList::  "+eventsList.size());
 		
 		// Get Exact matched results
 		exactMatchingSearchResults = getSearchResults(businessList, dealsList, pageList, eventsList, exactMatchingSearchResults);
 
-		businessList = businessDAO.getBusinessByLikeSearchKeyword(searchRequest.getSearchText());
-		dealsList = dealsDAO.getDealsByLikeSearchKeyword(searchRequest.getSearchText());
-		pageList = eventsDAO.getCommunityByLikeSearchKeyword(searchRequest.getSearchText());
-		eventsList = eventsDAO.getEventsByLikeSearchKeyword(searchRequest.getSearchText());
+		businessList = businessDAO.getBusinessByLikeSearchKeyword(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation());
+		dealsList = dealsDAO.getDealsByLikeSearchKeyword(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation());
+		pageList = eventsDAO.getCommunityByLikeSearchKeyword(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation());
+		eventsList = eventsDAO.getEventsByLikeSearchKeyword(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation());
 		logger.debug("pageList1111::  "+pageList.size());
 		logger.debug("eventsList::  "+eventsList.size());
 		
 		// Get Like matched results
 		likeSearchResults = getSearchResults(businessList, dealsList, pageList, eventsList,likeSearchResults);
 		exactMatchingSearchResults.addAll(likeSearchResults);
-		return exactMatchingSearchResults;
+		
+		SearchResponse searchResponse = new SearchResponse();
+		searchResponse.setSearchResult(exactMatchingSearchResults);
+		return searchResponse;
 	}
 	
 	
