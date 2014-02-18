@@ -1,6 +1,7 @@
 package com.jeeyoh.service.userservice;
 
 import java.util.Date;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,10 +10,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jeeyoh.model.response.BaseResponse;
+import com.jeeyoh.model.response.CategoryResponse;
 import com.jeeyoh.model.response.LoginResponse;
 import com.jeeyoh.model.response.UserRegistrationResponse;
+import com.jeeyoh.model.response.UserResponse;
 import com.jeeyoh.model.user.UserModel;
+import com.jeeyoh.persistence.IEventsDAO;
 import com.jeeyoh.persistence.IUserDAO;
+import com.jeeyoh.persistence.domain.Page;
 import com.jeeyoh.persistence.domain.Privacy;
 import com.jeeyoh.persistence.domain.Profiletype;
 import com.jeeyoh.persistence.domain.User;
@@ -26,6 +31,9 @@ public class UserService implements IUserService{
 	
 	@Autowired
 	private IUserDAO userDAO;
+	
+	@Autowired
+	private IEventsDAO eventsDAO;
 
 	@Transactional
 	@Override
@@ -122,6 +130,39 @@ public class UserService implements IUserService{
 		userDAO.confirmUser(confirmationCode);
 		baseResponse.setStatus("OK");
 		return baseResponse;
+	}
+
+	@Override
+	public BaseResponse isEmailExist(UserModel user) {
+		// TODO Auto-generated method stub
+		
+		User user1 = userDAO.getUsersById(user.getEmailId());
+		BaseResponse baseResponse = new BaseResponse();
+		if(user1 == null)
+		{
+			baseResponse.setStatus("OK");
+			
+		}
+		else
+		{
+			baseResponse.setStatus("FAIL");
+			baseResponse.setError("Already Registered");
+		}
+		return baseResponse;
+	}
+
+	@Override
+	public UserResponse getUserProfile(UserModel user) {
+		// TODO Auto-generated method stub
+		
+		return null;
+	}
+
+	@Override
+	public CategoryResponse addFavourite(String category) {
+		// TODO Auto-generated method stub
+		List<Page> page = eventsDAO.getCommunityPageByCategoryType(category);
+		return null;
 	}
 
 }

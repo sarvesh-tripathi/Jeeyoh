@@ -17,5 +17,7 @@ public interface IEventsDAO {
 	public List<Events> getEventsBySearchKeyword(String searchText,String category, String location);
 	public List<Page> getCommunityByLikeSearchKeyword(String searchText,String category, String location);
 	public List<Page> getCommunityBySearchKeyword(String searchText,String category, String location);
+	public List<Page> getCommunityPageByCategoryType(String category);
+
 
 }

@@ -14,8 +14,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.jeeyoh.model.response.BaseResponse;
+import com.jeeyoh.model.response.CategoryResponse;
 import com.jeeyoh.model.response.LoginResponse;
 import com.jeeyoh.model.response.UserRegistrationResponse;
+import com.jeeyoh.model.response.UserResponse;
 import com.jeeyoh.model.user.UserModel;
 import com.jeeyoh.notification.service.IMessagingEventPublisher;
 import com.jeeyoh.service.userservice.IUserService;
@@ -54,6 +56,7 @@ public class UserAccountService {
 		LoginResponse loginResponce = userService.loginUser(user);
 		return loginResponce;
 	}
+	@SuppressWarnings("null")
 	@Path("/regiteration")
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -62,15 +65,27 @@ public class UserAccountService {
 		logger.debug("Enter in mobile app "+user.getFirstName());
 		UserRegistrationResponse userRegistrationResponse = null;
 		String confirmationCode = null;
+		
 		if(user != null)
 		{
+			
+			
 			logger.debug("Enter in mobile app 2222");
-			userRegistrationResponse = userService.registerUser(user);
-			if(userRegistrationResponse != null)
+			BaseResponse  baseResponse  = userService.isEmailExist(user);
+			if(baseResponse.getClass().equals("OK"))
 			{
-				confirmationCode = userRegistrationResponse.getConfirmationId();
-				logger.debug("confirmation code "+confirmationCode);
-			    eventPublisher.sendConfirmationEmail(user,confirmationCode);
+				userRegistrationResponse    = userService.registerUser(user);
+				if(userRegistrationResponse != null)
+				{
+					confirmationCode = userRegistrationResponse.getConfirmationId();
+					logger.debug("confirmation code "+confirmationCode);
+				    eventPublisher.sendConfirmationEmail(user,confirmationCode);
+				}
+			}
+			else
+			{
+				userRegistrationResponse.setStatus("FAIL");
+				userRegistrationResponse.setError("Email Exist");
 			}
 		}
 		return userRegistrationResponse;
@@ -108,6 +123,27 @@ public class UserAccountService {
 		return baseResponse;
 		
     }
+	
+	@GET
+	@Path("/getProfile")
+	@Produces(MediaType.APPLICATION_JSON)
+	public UserResponse getProfile(UserModel user)
+	{
+		UserResponse userResponse = userService.getUserProfile(user);
+		return userResponse;
+		
+	}
+	
+	@GET
+	@Path("/addFavourites")
+	@Produces(MediaType.APPLICATION_JSON)
+	public CategoryResponse addFavourites(@QueryParam("category") String category)
+	{
+		CategoryResponse categoryResponse = userService.addFavourite(category);
+		return categoryResponse;
+		
+	}
+	
 	
 
 }

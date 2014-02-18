@@ -277,4 +277,23 @@ public class EventsDAO implements IEventsDAO{
 		return eventsList;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Page> getCommunityPageByCategoryType(String category) {
+		// TODO Auto-generated method stub
+		List<Page> pages = null;
+		String hqlQuery = "select * from Page a , Pagetype b where a.pageTypeId = b.pageTypeId and b.pageType =:category";
+		try{
+			
+			Query query = sessionFactory.getCurrentSession().createQuery(hqlQuery);
+			query.setParameter("category", category);
+			pages  = (List<Page>)query.list();
+		}catch(HibernateException e)
+		{
+			e.printStackTrace();
+		}
+		
+		return pages;
+	}
+
 }

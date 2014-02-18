@@ -17,7 +17,7 @@ import org.springframework.stereotype.Repository;
 
 import com.jeeyoh.persistence.domain.Deals;
 import com.jeeyoh.persistence.domain.Userdealssuggestion;
-import com.jeeyoh.persistence.domain.Usernondealsuggestion;
+
 
 @Repository("dealsDAO")
 public class DealsDAO implements IDealsDAO {
