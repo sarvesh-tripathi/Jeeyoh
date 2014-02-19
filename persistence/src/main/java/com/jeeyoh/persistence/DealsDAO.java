@@ -330,17 +330,16 @@ public class DealsDAO implements IDealsDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Userdealssuggestion> userDealsSuggestedByJeeyoh(String keyword, String category,
-			String location, int id) {
+			String location, String emailId) {
 		logger.error("getDealsByKeywords ==== > "+location);
-		logger.error("getDealsByKeywords ==== > "+location.isEmpty());
-		// TODO Auto-generated method stub
 
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Userdealssuggestion.class);
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Userdealssuggestion.class,"userdealssuggestion");
 		criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		criteria.createAlias("deals", "deals");			
 		criteria.createAlias("deals.business", "business");
 		criteria.createAlias("business.businesstype", "businesstype");
-		criteria.add(Restrictions.eq("user.userId", id));
+		criteria.createAlias("userdealssuggestion.user", "user");
+		criteria.add(Restrictions.eq("user.emailId", emailId));
 		//criteria.createAlias("tags", "tags");
 		if(category != null && category.isEmpty() == false)
 		{

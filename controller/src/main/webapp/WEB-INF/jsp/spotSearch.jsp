@@ -46,12 +46,14 @@
 		<td><b>Description</b></td>
 		<td><b>City</b></td>
 		<td><b>Type</b></td>
+		<td><b>id</b></td>
 	</tr>
 	<c:forEach items="${mainModel.searchResult}" var="mainModelObj">
 		<tr>
 			<td>${mainModelObj.name}</td>
 			<td>${mainModelObj.city}</td>
 			<td>${mainModelObj.type}</td>
+			<td>${mainModelObj.id}</td>
 		</tr>
 
 	</c:forEach>

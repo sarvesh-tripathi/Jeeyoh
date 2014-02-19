@@ -36,7 +36,9 @@
    				<li>|</li>
    				<li><a href="eventsSuggestion" title="Events Suggestion">Events Suggestion</a></li>
    				<li>|</li>
-   				<li><a href="testing" title="Testing">Testing</a></li>
+   				<li><a href="testingSuggestion" title="Testing Suggestion Details">Testing Suggestion Details</a></li>
+   				<li>|</li>
+   				<li><a href="testing?pageId=25" title="Testing">Testing</a></li>
 			</ul>
 		</div>
 	</body>

@@ -233,6 +233,7 @@ public class EventsDAO implements IEventsDAO{
 					.add(Restrictions.eq("events.venue_name", searchText)));
 		}
 
+		logger.debug("Date: "+Utils.getNearestWeekend(null) +" : "+Utils.getCurrentDate());
 		criteria.add(Restrictions.conjunction().add(Restrictions.ge("events.event_date", Utils.getCurrentDate()))
 				.add(Restrictions.le("events.event_date", Utils.getNearestWeekend(null))));
 
@@ -284,7 +285,7 @@ public class EventsDAO implements IEventsDAO{
 		List<Page> pages = null;
 		String hqlQuery = "select * from Page a , Pagetype b where a.pageTypeId = b.pageTypeId and b.pageType =:category";
 		try{
-			
+
 			Query query = sessionFactory.getCurrentSession().createQuery(hqlQuery);
 			query.setParameter("category", category);
 			pages  = (List<Page>)query.list();
@@ -292,8 +293,54 @@ public class EventsDAO implements IEventsDAO{
 		{
 			e.printStackTrace();
 		}
-		
+
 		return pages;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Page getPageDetailsByID(int pageId)
+	{
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Page.class, "page").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		criteria.add(Restrictions.eq("page.pageId", pageId));
+		List<Page> pageList = criteria.list();
+		logger.debug("page list => "+pageList);
+		return pageList != null && !pageList.isEmpty() ? pageList.get(0) : null; 
+	}
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Events> getCurrentEvents(int pageId) {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Events.class, "events").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		criteria.add(Restrictions.conjunction().add(Restrictions.eq("events.page.pageId", pageId))
+				.add(Restrictions.ge("events.event_date", Utils.getCurrentDate()))
+				.add(Restrictions.le("events.event_date", Utils.getNearestWeekend(null))));
+
+		List<Events> eventsList = criteria.list();
+		logger.debug("current event list => "+eventsList.size());
+		return eventsList;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Events> getUpcomingEvents(int pageId) {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Events.class, "events").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		criteria.add(Restrictions.conjunction().add(Restrictions.eq("events.page.pageId", pageId))
+				.add(Restrictions.gt("events.event_date", Utils.getNearestWeekend(null))));
+
+		List<Events> eventsList = criteria.list();
+		logger.debug("upcoming event list => "+eventsList.size());
+		return eventsList;
+	}
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Events> getPastEvents(int pageId) {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Events.class, "events").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		criteria.add(Restrictions.conjunction().add(Restrictions.eq("events.page.pageId", pageId))
+				.add(Restrictions.lt("events.event_date", Utils.getCurrentDate())));
+
+		List<Events> eventsList = criteria.list();
+		logger.debug("past event list => "+eventsList.size());
+		return eventsList;
 	}
 
 }

@@ -80,7 +80,7 @@ public class StubhubFilterEngineService implements IStubhubFilterEngineService{
 										events.setEvent_date(stubhubEvent.getEvent_date());
 										events.setEvent_date_local(stubhubEvent.getEvent_date_local());
 										events.setEvent_time_local(stubhubEvent.getEvent_time_local());
-										events.setGenreUrlPath(stubhubEvent.getGenreUrlPath());
+										events.setGenreUrlPath("http://www.stubhub.com/"+stubhubEvent.getGenreUrlPath());
 										events.setGeography_parent(stubhubEvent.getGeography_parent());
 										events.setKeywords_en_US(stubhubEvent.getKeywords_en_US());
 										events.setLatitude(stubhubEvent.getLatitude());
@@ -96,7 +96,7 @@ public class StubhubFilterEngineService implements IStubhubFilterEngineService{
 										events.setTimezone_id(Long.parseLong(stubhubEvent.getTimezone_id()));
 										events.setTitle(stubhubEvent.getTitle());
 										events.setTotalTickets(stubhubEvent.getTotalTickets());
-										events.setUrlpath(stubhubEvent.getUrlpath());
+										events.setUrlpath("http://www.stubhub.com/"+stubhubEvent.getUrlpath());
 										events.setVenue_config_name(stubhubEvent.getVenue_config_name());
 										events.setVenue_name(stubhubEvent.getVenue_name());
 										events.setAncestorGenreDescriptions(stubhubEvent.getAncestorGenreDescriptions());

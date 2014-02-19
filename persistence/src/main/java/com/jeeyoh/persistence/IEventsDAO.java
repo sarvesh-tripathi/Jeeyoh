@@ -18,6 +18,10 @@ public interface IEventsDAO {
 	public List<Page> getCommunityByLikeSearchKeyword(String searchText,String category, String location);
 	public List<Page> getCommunityBySearchKeyword(String searchText,String category, String location);
 	public List<Page> getCommunityPageByCategoryType(String category);
+	public Page getPageDetailsByID(int pageId);
+	public List<Events> getCurrentEvents(int pageId);
+	public List<Events> getUpcomingEvents(int pageId);
+	public List<Events> getPastEvents(int pageId);
 
 
 }
