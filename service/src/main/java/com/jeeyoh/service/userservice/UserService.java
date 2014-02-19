@@ -17,20 +17,19 @@ import com.jeeyoh.model.response.CategoryResponse;
 import com.jeeyoh.model.response.LoginResponse;
 import com.jeeyoh.model.response.SuggestionResponse;
 import com.jeeyoh.model.response.UserRegistrationResponse;
-import com.jeeyoh.model.search.PageModel;
-import com.jeeyoh.model.response.UserResponse;
 import com.jeeyoh.model.search.BusinessModel;
 import com.jeeyoh.model.search.DealModel;
 import com.jeeyoh.model.search.EventModel;
+import com.jeeyoh.model.search.PageModel;
 import com.jeeyoh.model.user.UserModel;
 import com.jeeyoh.persistence.IBusinessDAO;
 import com.jeeyoh.persistence.IDealsDAO;
 import com.jeeyoh.persistence.IEventsDAO;
 import com.jeeyoh.persistence.IUserDAO;
-import com.jeeyoh.persistence.domain.Notificationpermission;
 import com.jeeyoh.persistence.domain.Business;
 import com.jeeyoh.persistence.domain.Deals;
 import com.jeeyoh.persistence.domain.Events;
+import com.jeeyoh.persistence.domain.Notificationpermission;
 import com.jeeyoh.persistence.domain.Page;
 import com.jeeyoh.persistence.domain.Pageuserlikes;
 import com.jeeyoh.persistence.domain.Privacy;
@@ -149,7 +148,6 @@ public class UserService implements IUserService{
 	@Transactional
 	@Override
 	public BaseResponse confirmUser(String confirmationCode) {
-		// TODO Auto-generated method stub
 		BaseResponse baseResponse = new BaseResponse();
 		userDAO.confirmUser(confirmationCode);
 		baseResponse.setStatus("OK");
@@ -159,8 +157,7 @@ public class UserService implements IUserService{
 	@Override
 	@Transactional
 	public BaseResponse isEmailExist(UserModel user) {
-		// TODO Auto-generated method stub
-
+		
 		User user1 = userDAO.getUsersById(user.getEmailId());
 		BaseResponse baseResponse = new BaseResponse();
 		if(user1 == null)
@@ -214,11 +211,10 @@ public class UserService implements IUserService{
 		return categoryResponse;
 	}
 
-	@SuppressWarnings( "null")
+
 	@Override
 	@Transactional
 	public CategoryResponse addFavourite(String category) {
-		// TODO Auto-generated method stub
 		logger.debug("ADD FAV :: ");
 		CategoryResponse categoryResponse = new CategoryResponse();
 		List<Page> pages = eventsDAO.getCommunityPageByCategoryType(category);
@@ -256,7 +252,6 @@ public class UserService implements IUserService{
 
 	@Override
 	public BaseResponse saveUserFavourite(PageModel page) {
-		// TODO Auto-generated method stub
 		Pageuserlikes  pageuserlikes = userDAO.isPageExistInUserProfile(page.getUserId(),page.getPageId());
 		BaseResponse baseResponse = new BaseResponse();
 		if(pageuserlikes != null)
@@ -289,7 +284,6 @@ public class UserService implements IUserService{
 
 	@Override
 	public BaseResponse deleteFavourite(int id, int userId) {
-		// TODO Auto-generated method stub
 		userDAO.deleteUserFavourity(id,userId);
 		BaseResponse baseResponse = new BaseResponse();
 		baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
