@@ -3,8 +3,6 @@ package com.jeeyoh.utils;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.security.MessageDigest;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -160,11 +158,18 @@ public class Utils {
 	{
 		try {
 			Calendar c = Calendar.getInstance();
+			Calendar cal1 = Calendar.getInstance();
 			if(date != null)
 				c.setTime(date);
-			c.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
-			//SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-			//Date weekendDate = sdf.parse(sdf.format(c.getTime()));
+			c.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+			cal1.setTime(getCurrentDate());
+			if(c.get(Calendar.DAY_OF_MONTH) < cal1.get(Calendar.DAY_OF_MONTH))
+				c.add(Calendar.DATE,7);
+			
+			// Set time fields to end  
+			c.set(Calendar.HOUR_OF_DAY, 23);
+			c.set(Calendar.MINUTE, 59);
+			c.set(Calendar.SECOND, 59);
 			return c.getTime();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -183,9 +188,9 @@ public class Utils {
 	{
 		Date eventDate = null;
 		try {
-			//SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(date);
+			
 			switch(cal.get(Calendar.DAY_OF_WEEK)){
 			case Calendar.FRIDAY: 
 				eventDate = cal.getTime();
@@ -196,10 +201,8 @@ public class Utils {
 			case Calendar.SUNDAY: 
 				eventDate =  cal.getTime();
 				break;	
-
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return eventDate;
@@ -213,9 +216,9 @@ public class Utils {
 	public static Date getCurrentDate()
 	{
 		Date currentDate = null;
-		//SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar cal = Calendar.getInstance();
 		try {
-			currentDate = Calendar.getInstance().getTime();
+			currentDate = cal.getTime();
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}

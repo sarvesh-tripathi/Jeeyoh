@@ -272,7 +272,7 @@ public class UserDAO implements IUserDAO {
 			//session.close();
 		}
 		logger.debug("EEEEEEEEEEE :: "+userList.get(0));
-		return userList.get(0);
+		return userList != null && !userList.isEmpty() ? userList.get(0) : null;
 	}
 
 
@@ -542,6 +542,7 @@ public class UserDAO implements IUserDAO {
 		return dealUsage ;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public User loginUser(UserModel user) {
 		// TODO Auto-generated method stub
@@ -586,9 +587,10 @@ public class UserDAO implements IUserDAO {
 		return eventsList;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Privacy getUserPrivacyType(String string) {
-		// TODO Auto-generated method stub
+		
 		List<Privacy> privacy = null;
 		String hqlQuery = "from Privacy where privacyType =:string";
 		try{
@@ -603,9 +605,10 @@ public class UserDAO implements IUserDAO {
 		return privacy != null && !privacy.isEmpty() ? privacy.get(0) : null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Profiletype getUserprofileType(String string) {
-		// TODO Auto-generated method stub
+		
 		List<Profiletype> privacy = null;
 		String hqlQuery = "from Profiletype where userType =:string";
 		try{
@@ -629,7 +632,6 @@ public class UserDAO implements IUserDAO {
 
 	@Override
 	public void confirmUser(String confirmationCode) {
-		// TODO Auto-generated method stub
 		String hqlQuery = "update User set isActive=:isActive where confirmationId =:confirmationCode";
 		try
 		{

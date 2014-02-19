@@ -330,17 +330,16 @@ public class DealsDAO implements IDealsDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Userdealssuggestion> userDealsSuggestedByJeeyoh(String keyword, String category,
-			String location, int id) {
+			String location, String emailId) {
 		logger.error("getDealsByKeywords ==== > "+location);
-		logger.error("getDealsByKeywords ==== > "+location.isEmpty());
-		// TODO Auto-generated method stub
 
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Userdealssuggestion.class);
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Userdealssuggestion.class,"userdealssuggestion");
 		criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		criteria.createAlias("deals", "deals");			
 		criteria.createAlias("deals.business", "business");
 		criteria.createAlias("business.businesstype", "businesstype");
-		criteria.add(Restrictions.eq("user.userId", id));
+		criteria.createAlias("userdealssuggestion.user", "user");
+		criteria.add(Restrictions.eq("user.emailId", emailId));
 		//criteria.createAlias("tags", "tags");
 		if(category != null && category.isEmpty() == false)
 		{
@@ -386,12 +385,26 @@ public class DealsDAO implements IDealsDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Deals> getDealsByLikeSearchKeyword(String searchText) {
+	public List<Deals> getDealsByLikeSearchKeyword(String searchText,String category, String location) {
 		logger.error("getDealsByLikeSearchKeyword ==== > "+searchText);
 
 
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Deals.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-
+		criteria.createAlias("business", "business");
+		criteria.createAlias("business.businesstype", "businesstype");
+		
+		if(category != null && category.isEmpty() == false)
+		{
+			criteria.add(Restrictions.eq("businesstype.businessType", category));
+		}
+		if(location != null && location.isEmpty()== false)
+		{
+			criteria.add(Restrictions.disjunction().add(Restrictions.like("business.displayAddress", "%" + location + "%"))
+					.add(Restrictions.like("business.businessId", "%" + location + "%"))
+					.add(Restrictions.eq("business.postalCode", location))
+					.add(Restrictions.like("business.city", "%" + location + "%")));
+		}
+		
 		if(searchText != null && searchText.isEmpty() == false)
 		{
 			logger.debug("IN KEYWORD CHECKING ::: ");
@@ -407,12 +420,27 @@ public class DealsDAO implements IDealsDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Deals> getDealsBySearchKeyword(String searchText) {
+	public List<Deals> getDealsBySearchKeyword(String searchText,String category, String location) {
 		logger.error("getDealsByLikeSearchKeyword ==== > "+searchText);
 
 
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Deals.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
+		criteria.createAlias("business", "business");
+		criteria.createAlias("business.businesstype", "businesstype");
+		
+		if(category != null && category.isEmpty() == false)
+		{
+			criteria.add(Restrictions.eq("businesstype.businessType", category));
+		}
+		if(location != null && location.isEmpty()== false)
+		{
+			criteria.add(Restrictions.disjunction().add(Restrictions.like("business.displayAddress", "%" + location + "%"))
+					.add(Restrictions.like("business.businessId", "%" + location + "%"))
+					.add(Restrictions.eq("business.postalCode", location))
+					.add(Restrictions.like("business.city", "%" + location + "%")));
+		}
+		
 		if(searchText != null && searchText.isEmpty() == false)
 		{
 			logger.debug("IN KEYWORD CHECKING ::: ");

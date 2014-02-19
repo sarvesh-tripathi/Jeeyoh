@@ -3,8 +3,6 @@
  */
 package com.jeeyoh.notification.service;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.HashMap;
 
 import org.slf4j.Logger;
@@ -13,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-//import com.jeeyoh.common.logging.Loggable;
 import com.jeeyoh.model.user.UserModel;
 import com.jeeyoh.notification.JeeyohMessageType;
 

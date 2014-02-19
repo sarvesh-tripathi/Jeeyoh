@@ -121,7 +121,7 @@ public class NonDealSearch implements INonDealSearch {
 
 					try {
 						logger.debug("userLikeWeekend: "+userLikeWeekend +" weekendDate: "+weekendDate);
-						if(userLikeWeekend.compareTo(weekendDate) <= 0)
+						if(userLikeWeekend.compareTo(weekendDate) == 0)
 						{
 							if(isContactsAccessed)
 								categoryLikesCount = userDAO.userCategoryLikeCount(userCategory.getUserCategoryId());

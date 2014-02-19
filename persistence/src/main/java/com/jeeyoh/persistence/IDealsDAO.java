@@ -26,8 +26,8 @@ public interface IDealsDAO {
 			String itemType, String providerName);
 	public List<Deals> getDealsByUserEmail(String userEmail);
 	public List<Userdealssuggestion>userDealsSuggestedByJeeyoh(String keyword, String category,
-			String location, int id);
+			String location, String emailId);
 	public int userCategoryLikeCount(Integer userCategoryId);
-	public List<Deals> getDealsByLikeSearchKeyword(String searchText);
-	public List<Deals> getDealsBySearchKeyword(String searchText);
+	public List<Deals> getDealsByLikeSearchKeyword(String searchText,String category, String location);
+	public List<Deals> getDealsBySearchKeyword(String searchText,String category, String location);
 }

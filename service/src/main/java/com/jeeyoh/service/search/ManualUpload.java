@@ -69,10 +69,8 @@ public class ManualUpload implements IManualUpload {
 					row = sheet.getRow(r1);
 					if (row != null) {
 						excelUpload = new ExcelUpload();
-						System.out.println("inside if condition");
 						for (int c = 0; c < cols; c++) {
 							cell = row.getCell(c);
-							System.out.println("inside for loop");
 							if (cell != null) {
 								switch (c) {
 								case 0:
@@ -143,9 +141,7 @@ public class ManualUpload implements IManualUpload {
 									excelUpload.setChangeUserUpdate(cell.toString());
 									break;
 								}
-
 							}
-							
 						}
 						excelUploadList.add(excelUpload);
 					}

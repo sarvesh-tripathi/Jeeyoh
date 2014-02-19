@@ -218,7 +218,7 @@ public class EventsSearch implements IEventSearch{
 			logger.debug("EventSearch ==> usereventsuggestions ==> " + usereventsuggestions);
 			if(usereventsuggestions == null || usereventsuggestions.size() == 0)
 			{
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				//SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 				boolean includePage = true;
 				//if(event.getEvent_date().compareTo(currentDate) >= 0)
 				//{

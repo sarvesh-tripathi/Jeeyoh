@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import com.jeeyoh.model.response.BaseResponse;
 import com.jeeyoh.model.response.CategoryResponse;
 import com.jeeyoh.model.response.LoginResponse;
+import com.jeeyoh.model.response.SuggestionResponse;
 import com.jeeyoh.model.response.UserRegistrationResponse;
 import com.jeeyoh.model.search.PageModel;
 import com.jeeyoh.model.user.UserModel;
@@ -35,6 +36,7 @@ public class UserAccountService {
 	
 	@InjectParam
     IMessagingEventPublisher eventPublisher;
+	
 	
 	@Path("/test/{name}")
 	@GET
@@ -170,6 +172,18 @@ public class UserAccountService {
 	}
 	
 	
+	
+	
+	@POST
+    @Path("/getuserSuggestions")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public SuggestionResponse getUserSuggestions(UserModel user)
+    {
+        SuggestionResponse response = userService.getUserSuggestions(user);
+        return response;
+    }
+
 	
 	
 

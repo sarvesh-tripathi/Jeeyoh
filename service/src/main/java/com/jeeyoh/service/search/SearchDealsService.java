@@ -42,10 +42,10 @@ public class SearchDealsService implements ISearchDealsService {
 		List<Userdealssuggestion> dealSuggestionList = null;
 		if(emailId != null && emailId.length()  != 0)
 		{			
-			User user = userDAO.getUsersById(emailId);
-			logger.debug("user Id :::: "+ user.getUserId());
+			//User user = userDAO.getUsersById(emailId);
+			//logger.debug("user Id :::: "+ user.getUserId());
 			dealSuggestionList = dealsDAO.userDealsSuggestedByJeeyoh(keyword, category,
-					location, user.getUserId());//getDealsSuggestion(user.getUserId());
+					location, emailId.trim());//getDealsSuggestion(user.getUserId());
 		}
 		else
 		{

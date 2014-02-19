@@ -16,7 +16,7 @@ import com.jeeyoh.persistence.domain.Business;
 import com.jeeyoh.persistence.domain.Usernondealsuggestion;
 
 @Component("nonDealSuggestionSearch")
-public class NonDealSuggestionSearch implements INonDealSuggestionSearch{
+public class NonDealSuggestionSearchService implements INonDealSuggestionSearchService{
 
 	static final Logger logger = LoggerFactory.getLogger("debugLogger");
 
