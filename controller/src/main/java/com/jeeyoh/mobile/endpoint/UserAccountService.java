@@ -17,7 +17,7 @@ import com.jeeyoh.model.response.BaseResponse;
 import com.jeeyoh.model.response.CategoryResponse;
 import com.jeeyoh.model.response.LoginResponse;
 import com.jeeyoh.model.response.UserRegistrationResponse;
-import com.jeeyoh.model.response.UserResponse;
+import com.jeeyoh.model.search.PageModel;
 import com.jeeyoh.model.user.UserModel;
 import com.jeeyoh.notification.service.IMessagingEventPublisher;
 import com.jeeyoh.service.userservice.IUserService;
@@ -124,13 +124,14 @@ public class UserAccountService {
 		
     }
 	
-	@GET
+	@POST
 	@Path("/getProfile")
 	@Produces(MediaType.APPLICATION_JSON)
-	public UserResponse getProfile(UserModel user)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public CategoryResponse getProfile(UserModel user)
 	{
-		UserResponse userResponse = userService.getUserProfile(user);
-		return userResponse;
+		CategoryResponse categoryResponse = userService.getUserProfile(user);
+		return categoryResponse;
 		
 	}
 	
@@ -139,10 +140,36 @@ public class UserAccountService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public CategoryResponse addFavourites(@QueryParam("category") String category)
 	{
+		logger.debug("Category Respose ::: "+category);
 		CategoryResponse categoryResponse = userService.addFavourite(category);
+		logger.debug("Responce ::::: "+categoryResponse.getStatus());
 		return categoryResponse;
 		
 	}
+	
+	@POST
+	@Path("/saveFavourite")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public BaseResponse saveFavourite(PageModel page)
+	{
+		BaseResponse baseResponse = userService.saveUserFavourite(page);
+		return baseResponse;
+		
+	}
+	
+	@GET
+	@Path("/deleteFavourite")
+	@Produces(MediaType.APPLICATION_JSON)
+	public BaseResponse deleteFavourite(@QueryParam("pageId") int pageId,@QueryParam("userId") int userId)
+	{
+		logger.debug("Category Respose ::: "+pageId);
+		BaseResponse baseResponse = userService.deleteFavourite(pageId, userId);
+		logger.debug("Responce ::::: "+baseResponse.getStatus());
+		return baseResponse;
+		
+	}
+	
+	
 	
 	
 

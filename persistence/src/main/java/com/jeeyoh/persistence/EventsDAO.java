@@ -17,6 +17,7 @@ import org.springframework.stereotype.Repository;
 
 import com.jeeyoh.persistence.domain.Events;
 import com.jeeyoh.persistence.domain.Page;
+import com.jeeyoh.persistence.domain.User;
 import com.jeeyoh.utils.Utils;
 
 @Repository("eventsDAO")
@@ -244,7 +245,7 @@ public class EventsDAO implements IEventsDAO{
 	public List<Page> getCommunityPageByCategoryType(String category) {
 		// TODO Auto-generated method stub
 		List<Page> pages = null;
-		String hqlQuery = "select * from Page a , Pagetype b where a.pageTypeId = b.pageTypeId and b.pageType =:category";
+		String hqlQuery = "select a from Page a , Pagetype b where a.pagetype.pageTypeId = b.pageTypeId and b.pageType =:category";
 		try{
 			
 			Query query = sessionFactory.getCurrentSession().createQuery(hqlQuery);
@@ -256,6 +257,36 @@ public class EventsDAO implements IEventsDAO{
 		}
 		
 		return pages;
+	}
+
+	@Override
+	public List<Page> getUserFavourites(Integer userId) {
+		// TODO Auto-generated method stub
+		List<Page> pages = null;
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Page.class);
+		criteria.createAlias("pageuserlikeses", "pageuserlikeses");
+		criteria.add(Restrictions.eq("pageuserlikeses.user.userId", userId));
+		pages = criteria.list();
+		return pages;
+	}
+
+	@Override
+	public Page getCommunityById(int pageId) {
+		// TODO Auto-generated method stub
+		List<Page> pages = null; 
+		
+		String hqlQuery = "from page a where a.pageId = :pageId";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);	
+			query.setParameter("pageId", pageId);
+			pages = (List<Page>) query.list();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return pages != null && pages.isEmpty() ? pages.get(0) : null;
+		
 	}
 
 }

@@ -8,6 +8,7 @@ import com.jeeyoh.persistence.domain.Dealsusage;
 import com.jeeyoh.persistence.domain.Events;
 import com.jeeyoh.persistence.domain.Eventuserlikes;
 import com.jeeyoh.persistence.domain.Jeeyohgroup;
+import com.jeeyoh.persistence.domain.Notificationpermission;
 import com.jeeyoh.persistence.domain.Page;
 import com.jeeyoh.persistence.domain.Pagetype;
 import com.jeeyoh.persistence.domain.Pageuserlikes;
@@ -69,5 +70,15 @@ public interface IUserDAO {
 	public void updateUser(User user);
 
 	public void confirmUser(String confirmationCode);
+
+	public Pageuserlikes isPageExistInUserProfile(int userId, int pageId);
+
+	public void saveUserCommunity(Pageuserlikes pageUserLike);
+
+	public void updateUserCommunity(Pageuserlikes pageuserlikes);
+
+	public Notificationpermission getDafaultNotification();
+
+	public void deleteUserFavourity(int id, int userId);
 
 }

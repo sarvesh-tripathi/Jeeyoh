@@ -14,6 +14,13 @@ public class PageModel implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	@JsonProperty
+	private int pageUserLikeId;
+	@JsonProperty
+	private int userId;
+	@JsonProperty
+	private int pageId;
 	@JsonProperty
 	private String pageType;
 	@JsonProperty
@@ -97,6 +104,42 @@ public class PageModel implements Serializable{
 	 */
 	public String getCreatedDate() {
 		return createdDate;
+	}
+	/**
+	 * @param pageId the pageId to set
+	 */
+	public void setPageId(int pageId) {
+		this.pageId = pageId;
+	}
+	/**
+	 * @return the pageId
+	 */
+	public int getPageId() {
+		return pageId;
+	}
+	/**
+	 * @param userId the userId to set
+	 */
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
+	/**
+	 * @return the userId
+	 */
+	public int getUserId() {
+		return userId;
+	}
+	/**
+	 * @param pageUserLikeId the pageUserLikeId to set
+	 */
+	public void setPageUserLikeId(int pageUserLikeId) {
+		this.pageUserLikeId = pageUserLikeId;
+	}
+	/**
+	 * @return the pageUserLikeId
+	 */
+	public int getPageUserLikeId() {
+		return pageUserLikeId;
 	}
 	
 	

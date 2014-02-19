@@ -21,6 +21,7 @@ import com.jeeyoh.persistence.domain.Dealsusage;
 import com.jeeyoh.persistence.domain.Events;
 import com.jeeyoh.persistence.domain.Eventuserlikes;
 import com.jeeyoh.persistence.domain.Jeeyohgroup;
+import com.jeeyoh.persistence.domain.Notificationpermission;
 import com.jeeyoh.persistence.domain.Page;
 import com.jeeyoh.persistence.domain.Pagetype;
 import com.jeeyoh.persistence.domain.Pageuserlikes;
@@ -642,5 +643,76 @@ public class UserDAO implements IUserDAO {
 		{
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public Pageuserlikes isPageExistInUserProfile(int userId,  int pageId) {
+		// TODO Auto-generated method stub
+		List<Pageuserlikes> list = null;
+		String queryString = "from Pageuserlikes where user.userId =: userId and page.pageId =: pageId";
+		try
+		{
+			Query query = sessionFactory.getCurrentSession().createQuery(queryString);
+			query.setParameter("userId", userId);
+			query.setParameter("pageId", pageId);
+			list = query.list();
+			
+		}
+		catch(HibernateException e)
+		{
+			e.printStackTrace();
+		}
+		return list != null && list.isEmpty() ? list.get(0) : null;
+	}
+
+	@Override
+	public void saveUserCommunity(Pageuserlikes pageUserLike) {
+		// TODO Auto-generated method stub
+		sessionFactory.getCurrentSession().save(pageUserLike);
+		
+	}
+
+	@Override
+	public void updateUserCommunity(Pageuserlikes pageuserlikes) {
+		// TODO Auto-generated method stub
+		sessionFactory.getCurrentSession().update(pageuserlikes);
+		
+	}
+
+	@Override
+	public Notificationpermission getDafaultNotification() {
+		// TODO Auto-generated method stub
+		List<Notificationpermission> list = null;
+		String queryString = "from Notificationpermission";
+		try
+		{
+			Query query = sessionFactory.getCurrentSession().createQuery(queryString);
+			list = query.list();
+			
+		}
+		catch(HibernateException e)
+		{
+			e.printStackTrace();
+		}
+		return list != null && list.isEmpty() ? list.get(0) : null;
+	}
+
+	@Override
+	public void deleteUserFavourity(int id, int userId) {
+		// TODO Auto-generated method stub
+		String queryString = "delete from Pageuserlikes where page.pageId =:id and user.userId =:userId";
+		try
+		{
+			Query query = sessionFactory.getCurrentSession().createQuery(queryString);
+			query.setParameter("id", id);
+			query.setParameter("userId", userId);
+		    query.executeUpdate();
+			
+		}
+		catch(HibernateException e)
+		{
+			e.printStackTrace();
+		}
+		
 	}
 }
