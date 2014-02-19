@@ -1,11 +1,15 @@
 package com.jeeyoh.controller;
 
+import java.io.File;
 import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +26,6 @@ import com.jeeyoh.model.search.EventModel;
 import com.jeeyoh.model.search.MainModel;
 import com.jeeyoh.model.search.PageModel;
 import com.jeeyoh.model.search.SearchRequest;
-import com.jeeyoh.model.search.SearchResult;
 import com.jeeyoh.model.user.UserModel;
 import com.jeeyoh.notification.service.IMessagingEventPublisher;
 import com.jeeyoh.service.fandango.IFandangoService;
@@ -105,6 +108,8 @@ public class AccountController {
 
 	@Autowired
 	private IUserService userService;
+	
+	private final String UPLOAD_DIRECTORY = "C:/uploads";
 
 	@RequestMapping(value = "/home", method = RequestMethod.GET)
 	public ModelAndView home(HttpServletRequest request,
@@ -436,7 +441,7 @@ public class AccountController {
 		return modelAndView;
 
 	}
-	
+
 	@RequestMapping(value = "/testingSuggestion", method = RequestMethod.GET)
 	public ModelAndView testingSuggestion(HttpServletRequest request, HttpServletResponse httpresponse){
 
@@ -456,11 +461,33 @@ public class AccountController {
 		return modelAndView;
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/uploadFile", method = RequestMethod.GET)
 	public ModelAndView uploadFile(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView modelAndView = new ModelAndView("manualUpload");
-		String filename = request.getParameter("file");     
-		manualUpload.uploadExcel(filename);
+
+		if(ServletFileUpload.isMultipartContent(request))
+		{
+			try{
+				List<FileItem> multiparts = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
+				for(FileItem item : multiparts)
+				{
+					if(!item.isFormField())
+					{
+						String name = new File(item.getName()).getName();
+						item.write( new File(UPLOAD_DIRECTORY + File.separator + name));
+						String fullFilePath = UPLOAD_DIRECTORY + File.separator + name;
+						manualUpload.uploadExcel(fullFilePath);
+					}
+				}
+			}
+			catch (Exception ex) {
+				ex.printStackTrace();
+			}       
+		}
+		else{
+			request.setAttribute("message","Sorry this Servlet only handles file upload request");
+		}
 		return modelAndView;
 	}
 
