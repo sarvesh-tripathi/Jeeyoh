@@ -3,6 +3,7 @@ package com.jeeyoh.utils;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -369,6 +370,32 @@ public class Utils {
 			md5Text = "0" + md5Text;
 		}
 		return md5Text;
+	}
+	
+	/**
+	 * This method encode the provided string
+	 * @param text
+	 * @return
+	 */
+	public static String MD5ToString(String password)
+	{
+		 MessageDigest md = null;
+		try {
+			md = MessageDigest.getInstance("MD5");
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		    md.update(password.getBytes());
+
+		    byte byteData[] = md.digest();
+
+		    StringBuffer sb = new StringBuffer();
+		    for (int i = 0; i < byteData.length; i++)
+		        sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
+		    
+		    return sb.toString();
+		    
 	}
 
 

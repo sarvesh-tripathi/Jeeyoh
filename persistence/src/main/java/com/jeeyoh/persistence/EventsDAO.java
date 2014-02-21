@@ -309,12 +309,13 @@ public class EventsDAO implements IEventsDAO{
 		return pages;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Page getCommunityById(int pageId) {
 		// TODO Auto-generated method stub
 		List<Page> pages = null; 
 		
-		String hqlQuery = "from page a where a.pageId = :pageId";
+		String hqlQuery = "from Page where pageId = :pageId";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);	
@@ -324,7 +325,9 @@ public class EventsDAO implements IEventsDAO{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return pages != null && pages.isEmpty() ? pages.get(0) : null;
+		
+		logger.debug("IN DAO PAGE "+pages.get(0));
+		return pages != null && !pages.isEmpty() ? pages.get(0) : null;
 		}
 		
 

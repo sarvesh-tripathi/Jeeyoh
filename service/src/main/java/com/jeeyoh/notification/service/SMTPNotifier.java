@@ -26,7 +26,7 @@ import com.jeeyoh.notification.service.email.IMessagingService;
 public class SMTPNotifier extends JeeyohMessageSubscriber implements IJeeyohMessageSubscriber
 {
 
-    final static Logger logger = LoggerFactory.getLogger(SMTPNotifier.class);
+    final static Logger logger = LoggerFactory.getLogger("debugLogger");
 
     @Autowired
     MessageClassifierHelper messageClassifierHelper;
@@ -68,9 +68,11 @@ public class SMTPNotifier extends JeeyohMessageSubscriber implements IJeeyohMess
     private boolean confirmParamMap(JeeyohMessage message)
     {
         boolean flag = true;
+        logger.debug("Message Type :: "+message.getMessageType());
         ArrayList<String> forcedParams = messageClassifierHelper.getParamMap(message.getMessageType());
         for (String key : forcedParams)
         {
+        	logger.debug("Key ::: "+key);
             if (!message.getArgumentNames().contains(key))
             {
                 flag = false;

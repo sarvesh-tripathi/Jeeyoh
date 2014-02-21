@@ -22,6 +22,7 @@ import com.jeeyoh.model.search.DealModel;
 import com.jeeyoh.model.search.EventModel;
 import com.jeeyoh.model.search.PageModel;
 import com.jeeyoh.model.user.UserModel;
+import com.jeeyoh.notification.service.IMessagingEventPublisher;
 import com.jeeyoh.persistence.IBusinessDAO;
 import com.jeeyoh.persistence.IDealsDAO;
 import com.jeeyoh.persistence.IEventsDAO;
@@ -41,6 +42,7 @@ import com.jeeyoh.persistence.domain.Usernondealsuggestion;
 import com.jeeyoh.utils.RandomGUID;
 import com.jeeyoh.utils.Utils;
 
+
 @Component("userService")
 public class UserService implements IUserService{
 
@@ -57,6 +59,10 @@ public class UserService implements IUserService{
 
 	@Autowired
 	private IDealsDAO dealsDAO;
+	
+	@Autowired
+    IMessagingEventPublisher eventPublisher;
+	
 
 	@Transactional
 	@Override
@@ -110,16 +116,29 @@ public class UserService implements IUserService{
 			user1.setSessionId(sessionId);
 			userDAO.updateUser(user1);
 			user.setSessionId(sessionId);
+			user.setUserId(user1.getUserId());
 			loginRespoce.setUser(user);
-			loginRespoce.setStatus("OK");
+			loginRespoce.setStatus(ServiceAPIStatus.OK.getStatus());
 			loginRespoce.setError("");
 
 		}
 		else
 		{
-			loginRespoce.setUser(null);
-			loginRespoce.setStatus("NO");
-			loginRespoce.setError("Invalid credentials");
+			loginRespoce.setUser(user);			
+			User user_1 = userDAO.getUsersById(user.getEmailId());
+			 loginRespoce.setStatus(ServiceAPIStatus.FAILED.getStatus());
+			 if(user_1 != null)
+			 {
+				    loginRespoce.setErrorType(ServiceAPIStatus.PASSWORD.getStatus());
+					loginRespoce.setError("Invalid password");
+			 }
+			 else
+			 {
+				    loginRespoce.setErrorType(ServiceAPIStatus.EMAIL.getStatus());
+					loginRespoce.setError("Invalid email");
+			 }
+			
+			
 		}
 		return loginRespoce;
 
@@ -141,7 +160,7 @@ public class UserService implements IUserService{
 		User user = userDAO.getUsersById(userModel.getEmailId());
 		user.setPassword(Utils.MD5(userModel.getPassword()));
 		userDAO.updateUser(user);
-		baseResponse.setStatus("OK");
+		baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
 		return baseResponse;
 	}
 
@@ -150,7 +169,7 @@ public class UserService implements IUserService{
 	public BaseResponse confirmUser(String confirmationCode) {
 		BaseResponse baseResponse = new BaseResponse();
 		userDAO.confirmUser(confirmationCode);
-		baseResponse.setStatus("OK");
+		baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
 		return baseResponse;
 	}
 
@@ -160,15 +179,16 @@ public class UserService implements IUserService{
 		
 		User user1 = userDAO.getUsersById(user.getEmailId());
 		BaseResponse baseResponse = new BaseResponse();
-		if(user1 == null)
+		logger.debug("User OBJECT :: "+user1);
+		if(user1 != null)
 		{
-			baseResponse.setStatus("OK");
-
+			
+			baseResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
+			baseResponse.setError("Already Registered");
 		}
 		else
 		{
-			baseResponse.setStatus("FAIL");
-			baseResponse.setError("Already Registered");
+			baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
 		}
 		return baseResponse;
 	}
@@ -200,12 +220,12 @@ public class UserService implements IUserService{
 		if(pageModels != null)
 		{
 			categoryResponse.setPageMode(pageModels);
-			categoryResponse.setStatus("OK");
-			categoryResponse.setError("SUCESS");
+			categoryResponse.setStatus(ServiceAPIStatus.OK.getStatus());
+			categoryResponse.setError("");
 		}
 		else
 		{
-			categoryResponse.setStatus("Fail");
+			categoryResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
 			categoryResponse.setError("No community for these type");
 		}
 		return categoryResponse;
@@ -239,32 +259,36 @@ public class UserService implements IUserService{
 		if(pageModels != null)
 		{
 			categoryResponse.setPageMode(pageModels);
-			categoryResponse.setStatus("OK");
-			categoryResponse.setError("SUCESS");
+			categoryResponse.setStatus(ServiceAPIStatus.OK.getStatus());
+			categoryResponse.setError("");
 		}
 		else
 		{
-			categoryResponse.setStatus("Fail");
+			categoryResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
 			categoryResponse.setError("No community for these type");
 		}
 		return categoryResponse;
 	}
 
 	@Override
+	@Transactional
 	public BaseResponse saveUserFavourite(PageModel page) {
+		logger.debug("Page Id :: "+page.getPageId());
 		Pageuserlikes  pageuserlikes = userDAO.isPageExistInUserProfile(page.getUserId(),page.getPageId());
 		BaseResponse baseResponse = new BaseResponse();
 		if(pageuserlikes != null)
 		{
 			pageuserlikes.setIsFavorite(true);
 			userDAO.updateUserCommunity(pageuserlikes);			
-			baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
+			//baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
 		}
 		else
 		{
 			Pageuserlikes pageUserLike = new Pageuserlikes();
 			List<User> user = userDAO.getUserById(page.getUserId());
-			Page page1 = eventsDAO.getCommunityById(page.getPageId());
+			logger.debug("User OBJ :: "+user.get(0));
+			Page page1 = eventsDAO.getPageDetailsByID(page.getPageId());
+			logger.debug("Page OBJ :: "+page1);
 			pageUserLike.setUser(user.get(0));
 			pageUserLike.setPage(page1);
 			pageUserLike.setCreatedtime(new Date());
@@ -275,13 +299,16 @@ public class UserService implements IUserService{
 			pageUserLike.setIsVisited(false);
 			pageUserLike.setUpdatedtime(new Date());
 			Notificationpermission notificationpermission = userDAO.getDafaultNotification();
+			logger.debug("Notification  :: "+notificationpermission);
 			pageUserLike.setNotificationpermission(notificationpermission);			
 			userDAO.saveUserCommunity(pageUserLike);
 			baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
+			
 		}
 		return baseResponse;
 	}
 
+	@Transactional
 	@Override
 	public BaseResponse deleteFavourite(int id, int userId) {
 		userDAO.deleteUserFavourity(id,userId);
@@ -397,6 +424,37 @@ public class UserService implements IUserService{
 		suggestionResponse.setNonDealSuggestions(businessModelList);
 		suggestionResponse.setEventSuggestions(eventsModelList);
 		return suggestionResponse;
+	}
+
+	@Override
+	@Transactional
+	public BaseResponse forgetPassword(String emailId) {
+		// TODO Auto-generated method stub
+		User user = userDAO.getUsersById(emailId);
+		BaseResponse  baseResponse = new BaseResponse();
+		if(user != null)
+		{
+			UserModel user1 = new UserModel();
+			user1.setFirstName(user.getFirstName());
+			user1.setEmailId(user.getEmailId());
+			String password = Utils.MD5ToString(user.getPassword());
+			user1.setPassword(password);
+			eventPublisher.forgetPassword(user1);
+			baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
+		}
+		else
+		{
+			baseResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
+		}
+		return baseResponse;
+	}
+
+	@Override
+	@Transactional
+	public boolean isUserActive(UserModel user) {
+		// TODO Auto-generated method stub
+		boolean isActive = userDAO.isUserActive(user.getEmailId());
+		return isActive;
 	}
 
 }

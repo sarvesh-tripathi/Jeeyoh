@@ -72,7 +72,7 @@ public class JeeyohMessagePublisher implements ApplicationContextAware, IJeeyohM
     @Override
     public void publish(JeeyohMessage message)
     {
-        logger.debug("StoristicMessagePublisher ==> publish ==>");
+        logger.debug("Jeeyoh Messsage Publisher ==> publish ==>");
         ApplicationEventMulticaster appEvtMulticaster = (ApplicationEventMulticaster) context
                 .getBean("applicationEventMulticaster");
         if (appEvtMulticaster != null)

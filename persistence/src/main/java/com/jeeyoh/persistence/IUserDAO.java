@@ -81,4 +81,6 @@ public interface IUserDAO {
 
 	public void deleteUserFavourity(int id, int userId);
 
+	public boolean isUserActive(String emailId);	
+
 }

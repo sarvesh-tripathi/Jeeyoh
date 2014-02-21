@@ -5,7 +5,11 @@ public enum ServiceAPIStatus {
 	OK("OK"),
     FAILED("FAILED"),
     Failed("Failed"),
-    FAILURE("Failure");
+    FAILURE("Failure"),
+	PASSWORD("PASSWORD"),
+	EMAIL("EMAIL"),
+	INACTIVE("INACTIVE"),
+	EMAILEXIST("EMAILEXIST");
 	
 	private String status;
 	

@@ -271,7 +271,7 @@ public class UserDAO implements IUserDAO {
 		{
 			//session.close();
 		}
-		logger.debug("EEEEEEEEEEE :: "+userList.get(0));
+		logger.debug("user:: "+userList);
 		return userList != null && !userList.isEmpty() ? userList.get(0) : null;
 	}
 
@@ -670,7 +670,13 @@ public class UserDAO implements IUserDAO {
 	@Override
 	public void saveUserCommunity(Pageuserlikes pageUserLike) {
 		// TODO Auto-generated method stub
-		sessionFactory.getCurrentSession().save(pageUserLike);
+		try{
+		sessionFactory.getCurrentSession().saveOrUpdate(pageUserLike);
+		}
+		catch(Exception e)
+		{
+			logger.error(e.toString());
+		}
 		
 	}
 
@@ -681,6 +687,7 @@ public class UserDAO implements IUserDAO {
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Notificationpermission getDafaultNotification() {
 		// TODO Auto-generated method stub
@@ -694,9 +701,10 @@ public class UserDAO implements IUserDAO {
 		}
 		catch(HibernateException e)
 		{
-			e.printStackTrace();
+			logger.debug("In ERROR "+e.toString());
 		}
-		return list != null && list.isEmpty() ? list.get(0) : null;
+		logger.debug("Notification DAO:::: "+ list);
+		return list != null && !list.isEmpty() ? list.get(0) : null;
 	}
 
 	@Override
@@ -717,4 +725,27 @@ public class UserDAO implements IUserDAO {
 		}
 		
 	}
+
+	@Override
+	public boolean isUserActive(String emailId) {
+		// TODO Auto-generated method stub
+		List<Boolean> user = null;
+		String queryString = "select isActive from User where emailId = :emailId";
+		try
+		{
+			Query query = sessionFactory.getCurrentSession().createQuery(queryString);
+			query.setParameter("emailId", emailId);
+			user = query.list();
+			
+		}
+		catch(HibernateException e)
+		{
+			e.printStackTrace();
+		}
+		logger.debug("match boolean here :: "+user.get(0));
+		boolean  isActive = user.get(0);
+		return isActive;
+	}
+
+	
 }

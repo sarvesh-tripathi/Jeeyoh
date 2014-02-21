@@ -24,13 +24,13 @@ public class EventPublisher implements IMessagingEventPublisher
     final static Logger logger = LoggerFactory.getLogger(EventPublisher.class);
 
     @Autowired
-    IJeeyohMessagePublisher storisticMessagePublisher;
+    IJeeyohMessagePublisher jeeyohMessagePublisher;
 
     @Value("${mail.sender.email}")
     private String fromEmailId;
 
     //@Value("${app.storistic.server.url}")
-    private String serverURL = "http://localhost:9090/jeeyoh/mobile/userService";
+    private String serverURL = "http://192.168.1.191:9090/jeeyoh/mobile/userService";
     
     
     
@@ -119,8 +119,27 @@ public class EventPublisher implements IMessagingEventPublisher
         messageArgumentsMap.put("to", user.getEmailId());
         messageArgumentsMap.put("from", fromEmailId);
         messageArgumentsMap.put("subject", confirmationSubject);
-        storisticMessagePublisher.publish(this.getClass().getSimpleName(), JeeyohMessageType.REGISTRATION_CONFIRMATION,
+        jeeyohMessagePublisher.publish(this.getClass().getSimpleName(), JeeyohMessageType.REGISTRATION_CONFIRMATION,
                 IJeeyohMessagePublisher.INSTANCE_NO_REF, messageArgumentsMap);
     }
+
+
+
+	@Override
+	public void forgetPassword(UserModel user) {
+		// TODO Auto-generated method stub
+		 HashMap<String, Object> messageArgumentsMap = new HashMap<String, Object>();
+	        messageArgumentsMap.put("userFirstName", user.getFirstName());
+	        messageArgumentsMap.put("password", user.getPassword());
+	        messageArgumentsMap.put("to", user.getEmailId());
+	        messageArgumentsMap.put("from", fromEmailId);
+	        //messageArgumentsMap.put("serverURL", serverURL);
+	        messageArgumentsMap.put("subject", "Forget Password");
+	        jeeyohMessagePublisher.publish(this.getClass().getSimpleName(), JeeyohMessageType.FORGET_PASSWORD,
+	                IJeeyohMessagePublisher.INSTANCE_NO_REF, messageArgumentsMap);
+	        
+	      /*  jeeyohMessagePublisher.publish(this.getClass().getSimpleName(), user, JeeyohMessageType.RESET_PASSWORD,
+	                IJeeyohMessagePublisher.INSTANCE_NO_REF, messageArgumentsMap);*/
+	}
 
 }
