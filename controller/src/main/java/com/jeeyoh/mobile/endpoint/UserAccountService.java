@@ -197,8 +197,6 @@ public class UserAccountService {
 	}
 	
 	
-	
-	
 	@POST
     @Path("/getuserSuggestions")
     @Consumes(MediaType.APPLICATION_JSON)

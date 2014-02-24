@@ -86,13 +86,8 @@ public class DealSearch implements IDealSearch {
 						}
 					}
 				}
-
 			}
-
 		}
-
-
-
 	}
 
 
@@ -176,11 +171,8 @@ public class DealSearch implements IDealSearch {
 								saveDealsSuggestionInDataBase(deal,userFor,isGroupMember, contactFlag, false);
 							}
 						}
-
-
 					}
 				}
-
 			}
 		}
 		//	For Community							
@@ -389,6 +381,54 @@ public class DealSearch implements IDealSearch {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
+		}
+	}
+
+	@Transactional
+	@Override
+	public void caculateTopSuggestions() {
+		List<User> userList = userDAO.getUsers();
+		// Iterate user list for suggestion
+
+		for (User user : userList)
+		{
+			if(user != null)
+			{
+				//for user Contacts affinity level
+				List<Usercontacts> userContactsList = userDAO.getAllUserContacts(user.getUserId());
+				
+				saveDealSuggestion(user,user,false,false,false,null);
+				if(userContactsList != null)
+				{
+					for(Usercontacts usercontacts:userContactsList)
+					{
+						Boolean isStar = usercontacts.getIsStar();
+						User contact = usercontacts.getUserByContactId();
+						logger.debug("Friend Name ::"+contact.getFirstName());
+						logger.debug("IS STAR ::"+isStar);
+						saveDealSuggestion(contact,user,true,isStar,false,null);
+
+					}
+				}
+
+				List<Jeeyohgroup> jeeyohGroup = userDAO.getUserGroups(user.getUserId());
+				if(jeeyohGroup != null)
+				{
+					for(Jeeyohgroup jeeyohGroup1 : jeeyohGroup) {
+
+						String groupType = jeeyohGroup1.getGroupType();
+						Set<Groupusermap> groups   = jeeyohGroup1.getGroupusermaps();
+						for (Groupusermap groups1 : groups)
+						{
+							User groupMember = groups1.getUser();
+							if(groupMember.getUserId() != user.getUserId())
+							{
+								saveDealSuggestion(groupMember,user,false,false,true,groupType);
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 }

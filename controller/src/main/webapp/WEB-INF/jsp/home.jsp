@@ -39,6 +39,8 @@
    				<li><a href="testingSuggestion" title="Testing Suggestion Details">Testing Suggestion Details</a></li>
    				<li>|</li>
    				<li><a href="testing?pageId=25" title="Testing">Testing</a></li>
+   				<li>|</li>
+   				<li><a href="calculateTop10Suggestions" title="Calculate Top10 Suggestions">Calculate Top10 Suggestions</a></li>
 			</ul>
 		</div>
 	</body>

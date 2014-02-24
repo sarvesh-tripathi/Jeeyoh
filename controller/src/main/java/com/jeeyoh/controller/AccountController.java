@@ -31,6 +31,7 @@ import com.jeeyoh.notification.service.IMessagingEventPublisher;
 import com.jeeyoh.service.fandango.IFandangoService;
 import com.jeeyoh.service.groupon.IGrouponFilterEngineService;
 import com.jeeyoh.service.groupon.IGrouponService;
+import com.jeeyoh.service.jobs.ICalculateTopSuggestionsService;
 import com.jeeyoh.service.jobs.IDealSearch;
 import com.jeeyoh.service.jobs.IEventSearch;
 import com.jeeyoh.service.jobs.INonDealSearch;
@@ -108,6 +109,9 @@ public class AccountController {
 
 	@Autowired
 	private IUserService userService;
+	
+	@Autowired
+	private ICalculateTopSuggestionsService calculateTopSuggestionsService;
 	
 	private final String UPLOAD_DIRECTORY = "C:/uploads";
 
@@ -450,6 +454,7 @@ public class AccountController {
 		UserModel user = new UserModel();
 		user.setEmailId("gaurav.shandilya@gmail.com");
 		userService.getUserSuggestions(user);
+		//nonDealSearch.caculateTopSuggestions();
 		return modelAndView;
 
 	}
@@ -506,6 +511,13 @@ public class AccountController {
 		MainModel model = new MainModel();
 		model.setSearchResult(searchResponse.getSearchResult());
 		modelAndView.addObject("mainModel", model);
+		return modelAndView;
+	}
+	
+	@RequestMapping(value = "/calculateTop10Suggestions", method = RequestMethod.GET)
+	public ModelAndView calculateTop10Suggestions(HttpServletRequest request, HttpServletResponse httpresponse){
+		ModelAndView modelAndView = new ModelAndView("home");
+		calculateTopSuggestionsService.caculateTopFriendsSuggestions();
 		return modelAndView;
 	}
 

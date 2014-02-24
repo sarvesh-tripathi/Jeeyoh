@@ -12,7 +12,7 @@ public class Events implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private int eventId;
+	private Integer eventId;
 	private String description;	
 	private Date event_date;
 	private Date event_date_local;
@@ -42,15 +42,17 @@ public class Events implements Serializable{
 	private double	minSeatsTogether;
 	private String	title;
 	private String ancestorGenreDescriptions;
+	private String eventSource;
 	private Page page;
 	private Set eventuserlikes = new HashSet(0);
 	private Set usereventsuggestions = new HashSet(0);
+	 private Set topeventsuggestions = new HashSet(0);
 
-	public int getEventId() {
+	public Integer getEventId() {
 		return eventId;
 	}
 
-	public void setEventId(int eventId) {
+	public void setEventId(Integer eventId) {
 		this.eventId = eventId;
 	}
 
@@ -309,6 +311,20 @@ public class Events implements Serializable{
 	}
 
 	/**
+	 * @param eventSource the eventSource to set
+	 */
+	public void setEventSource(String eventSource) {
+		this.eventSource = eventSource;
+	}
+
+	/**
+	 * @return the eventSource
+	 */
+	public String getEventSource() {
+		return eventSource;
+	}
+
+	/**
 	 * @param usereventsuggestions the usereventsuggestions to set
 	 */
 	public void setUsereventsuggestions(Set usereventsuggestions) {
@@ -320,6 +336,20 @@ public class Events implements Serializable{
 	 */
 	public Set getUsereventsuggestions() {
 		return usereventsuggestions;
+	}
+
+	/**
+	 * @param topeventsuggestions the topeventsuggestions to set
+	 */
+	public void setTopeventsuggestions(Set topeventsuggestions) {
+		this.topeventsuggestions = topeventsuggestions;
+	}
+
+	/**
+	 * @return the topeventsuggestions
+	 */
+	public Set getTopeventsuggestions() {
+		return topeventsuggestions;
 	}
 
 	

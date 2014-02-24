@@ -30,4 +30,5 @@ public interface IDealsDAO {
 	public int userCategoryLikeCount(Integer userCategoryId);
 	public List<Deals> getDealsByLikeSearchKeyword(String searchText,String category, String location);
 	public List<Deals> getDealsBySearchKeyword(String searchText,String category, String location);
+	
 }
