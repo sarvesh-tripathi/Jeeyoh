@@ -71,7 +71,8 @@ public class UserService implements IUserService{
 		logger.debug("registerUser.......");
 		User user = new User();
 		user.setFirstName(userModel.getFirstName());
-		user.setPassword(Utils.MD5(userModel.getPassword()));
+		//user.setPassword(Utils.MD5(userModel.getPassword()));
+		user.setPassword(userModel.getPassword());
 		user.setLastName(userModel.getLastName());
 		user.setBirthDate(userModel.getBirthDate());
 		user.setBirthMonth(userModel.getBirthMonth());

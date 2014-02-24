@@ -53,8 +53,8 @@ public class UserAccountService {
     public LoginResponse login(UserModel user)
 	{
 		logger.debug("Enter in mobile app "+user);
-		String password = user.getPassword();
-		user.setPassword(Utils.MD5(password));		
+		//String password = user.getPassword();
+		//user.setPassword(Utils.MD5(password));		
 		LoginResponse loginResponce = userService.loginUser(user);
 		return loginResponce;
 	}
@@ -80,6 +80,7 @@ public class UserAccountService {
 				if(userRegistrationResponse != null)
 				{
 					confirmationCode = userRegistrationResponse.getConfirmationId();
+					userRegistrationResponse.setStatus(ServiceAPIStatus.OK.getStatus());
 					logger.debug("confirmation code "+confirmationCode);
 				    eventPublisher.sendConfirmationEmail(user,confirmationCode);
 				}
