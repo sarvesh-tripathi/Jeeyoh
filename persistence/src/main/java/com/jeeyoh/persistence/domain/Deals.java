@@ -46,6 +46,7 @@ public class Deals  implements java.io.Serializable {
      private Set userdealmaps = new HashSet(0);
      private Set tags = new HashSet(0);
      private Set userdealssuggestions = new HashSet(0);
+     private Set topdealssuggestions = new HashSet(0);
  
 
 	public Set getTags() {
@@ -335,6 +336,22 @@ public class Deals  implements java.io.Serializable {
 
 	public Set getUserdealssuggestions() {
 		return userdealssuggestions;
+	}
+
+
+	/**
+	 * @param topdealssuggestions the topdealssuggestions to set
+	 */
+	public void setTopdealssuggestions(Set topdealssuggestions) {
+		this.topdealssuggestions = topdealssuggestions;
+	}
+
+
+	/**
+	 * @return the topdealssuggestions
+	 */
+	public Set getTopdealssuggestions() {
+		return topdealssuggestions;
 	}
 
    

@@ -14,6 +14,9 @@ import com.jeeyoh.persistence.domain.Pagetype;
 import com.jeeyoh.persistence.domain.Pageuserlikes;
 import com.jeeyoh.persistence.domain.Privacy;
 import com.jeeyoh.persistence.domain.Profiletype;
+import com.jeeyoh.persistence.domain.Topdealssuggestion;
+import com.jeeyoh.persistence.domain.Topeventsuggestion;
+import com.jeeyoh.persistence.domain.Topnondealsuggestion;
 import com.jeeyoh.persistence.domain.User;
 import com.jeeyoh.persistence.domain.UserCategory;
 import com.jeeyoh.persistence.domain.Usercontacts;
@@ -80,5 +83,19 @@ public interface IUserDAO {
 	public Notificationpermission getDafaultNotification();
 
 	public void deleteUserFavourity(int id, int userId);
-
+	public List<Usernondealsuggestion> getUserNonDealsSuggestionByUserIdForCommunity(int userId);
+	public List<Usernondealsuggestion> getUserNonDealsSuggestionByUserIdForJeeyoh(int userId);
+	public List<Usernondealsuggestion> getUserNonDealsSuggestionByUserIdForFriends(int userId, int contactId);
+	public List<Usereventsuggestion> getUserEventsSuggestionByUserIdForFriends(int userId, int contactId);
+	public List<Usereventsuggestion> getUserEventsSuggestionByUserIdForJeeyoh(int userId);
+	public List<Userdealssuggestion> getUserDealSuggestionByUserIdForFriends(int userId, int contactId);
+	public List<Userdealssuggestion> getUserDealSuggestionByUserIdForJeeyoh(int userId);
+	public List<Usereventsuggestion> getUserEventsSuggestionByUserIdForCommunity(int userId);
+	public List<Userdealssuggestion> getUserDealSuggestionByUserIdForCommunity(int userId);
+	public List<Object[]> userNonDealSuggestionCount(String pageIdsStr);
+	public List<Object[]> userDealSuggestionCount(String dealIdsStr);
+	public List<Object[]> userEventSuggestionCount(String eventIdsStr);
+	public void saveTopNonDealSuggestions(Topnondealsuggestion topnondealsuggestion);
+	public void saveTopDealSuggestions(Topdealssuggestion topdealssuggestion);
+	public void saveTopEventSuggestions(Topeventsuggestion topeventsuggestion);
 }

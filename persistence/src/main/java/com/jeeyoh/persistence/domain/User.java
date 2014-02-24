@@ -51,6 +51,9 @@ public class User  implements java.io.Serializable {
      private Set usernondealsuggestions = new HashSet(0);
      private Set usereventsuggestions = new HashSet(0);
      private Set userdealssuggestions = new HashSet(0);
+     private Set topdealssuggestions = new HashSet(0);
+     private Set topnondealsuggestions = new HashSet(0);
+     private Set topeventsuggestions = new HashSet(0);
 
     public User() {
     }
@@ -408,6 +411,54 @@ public class User  implements java.io.Serializable {
 
 	public String getSessionId() {
 		return sessionId;
+	}
+
+
+	/**
+	 * @return the topdealssuggestions
+	 */
+	public Set getTopdealssuggestions() {
+		return topdealssuggestions;
+	}
+
+
+	/**
+	 * @param topdealssuggestions the topdealssuggestions to set
+	 */
+	public void setTopdealssuggestions(Set topdealssuggestions) {
+		this.topdealssuggestions = topdealssuggestions;
+	}
+
+
+	/**
+	 * @return the topnondealsuggestions
+	 */
+	public Set getTopnondealsuggestions() {
+		return topnondealsuggestions;
+	}
+
+
+	/**
+	 * @param topnondealsuggestions the topnondealsuggestions to set
+	 */
+	public void setTopnondealsuggestions(Set topnondealsuggestions) {
+		this.topnondealsuggestions = topnondealsuggestions;
+	}
+
+
+	/**
+	 * @return the topeventsuggestions
+	 */
+	public Set getTopeventsuggestions() {
+		return topeventsuggestions;
+	}
+
+
+	/**
+	 * @param topeventsuggestions the topeventsuggestions to set
+	 */
+	public void setTopeventsuggestions(Set topeventsuggestions) {
+		this.topeventsuggestions = topeventsuggestions;
 	}
 
 

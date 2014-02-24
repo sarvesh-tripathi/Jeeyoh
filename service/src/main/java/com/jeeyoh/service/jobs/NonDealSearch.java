@@ -427,6 +427,12 @@ public class NonDealSearch implements INonDealSearch {
 				}
 			}
 		}
+	}
 
+
+	@Transactional
+	@Override
+	public void caculateTopSuggestions() {
+		
 	}
 }

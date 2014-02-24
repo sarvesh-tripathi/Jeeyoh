@@ -57,6 +57,7 @@ public class Business  implements java.io.Serializable {
      private Set dealses = new HashSet(0);
      private Set pages = new HashSet(0);
      private Set usernondealsuggestions = new HashSet(0);
+     private Set topnondealsuggestions = new HashSet(0);
 
     public Business() {
     }
@@ -444,6 +445,22 @@ public class Business  implements java.io.Serializable {
 	 */
 	public String getSource() {
 		return source;
+	}
+
+
+	/**
+	 * @param topnondealsuggestions the topnondealsuggestions to set
+	 */
+	public void setTopnondealsuggestions(Set topnondealsuggestions) {
+		this.topnondealsuggestions = topnondealsuggestions;
+	}
+
+
+	/**
+	 * @return the topnondealsuggestions
+	 */
+	public Set getTopnondealsuggestions() {
+		return topnondealsuggestions;
 	}
 
 
