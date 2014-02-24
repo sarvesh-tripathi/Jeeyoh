@@ -21,10 +21,26 @@
 	<!--  .............. -->
 	<!-- Msg ID : 02 Done By : Sarvesh -->
 
-	<message id="CHANGE_PASSWORD" smtp="sendChangePassword.vm" priority="0" messageGroup="0"
+	<!--<message id="CHANGE_PASSWORD" smtp="sendChangePassword.vm" priority="0" messageGroup="0"
 		 messageID="02" messageVersion="0">
 		<param name="userFullName">forced</param>
 		<param name="newPassword">forced</param>			
+		<param name="to">forced</param>
+		<param name="from">forced</param>
+		<param name="subject">forced</param>		
+		<param name="messageID">optional</param>
+		<param name="messageVersion">optional</param>
+	</message>	
+	
+	--><!--  .............. -->
+	<!--  Change Password Email -->
+	<!--  .............. -->
+	<!-- Msg ID : 02 Done By : Sachin -->
+
+	<message id="FORGET_PASSWORD" smtp="forgetPassword.vm" priority="0" messageGroup="0"
+		 messageID="02" messageVersion="0">
+		<param name="userFirstName">forced</param>
+		<param name="password">forced</param>			
 		<param name="to">forced</param>
 		<param name="from">forced</param>
 		<param name="subject">forced</param>		

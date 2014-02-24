@@ -22,6 +22,8 @@ public interface IUserService {
 	public CategoryResponse addFavourite(String category);
 	public BaseResponse deleteFavourite(int id, int userId);
 	public SuggestionResponse getUserSuggestions(UserModel user);
+	public BaseResponse forgetPassword(String emailId);
+	public boolean isUserActive(UserModel user);
 
 
 }

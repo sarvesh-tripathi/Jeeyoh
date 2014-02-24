@@ -17,7 +17,9 @@ public class BaseResponse implements Serializable{
 	@JsonProperty
 	private String status ;
 	@JsonProperty
-	private String error ;
+	private String error ;	
+	
+	private String errorType;
 	
 	public String getStatus() {
 		return status;
@@ -30,6 +32,18 @@ public class BaseResponse implements Serializable{
 	}
 	public void setError(String error) {
 		this.error = error;
+	}
+	/**
+	 * @param errorType the errorType to set
+	 */
+	public void setErrorType(String errorType) {
+		this.errorType = errorType;
+	}
+	/**
+	 * @return the errorType
+	 */
+	public String getErrorType() {
+		return errorType;
 	}
 
 }

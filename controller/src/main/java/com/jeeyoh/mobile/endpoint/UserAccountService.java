@@ -13,6 +13,7 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.jeeyoh.model.enums.ServiceAPIStatus;
 import com.jeeyoh.model.response.BaseResponse;
 import com.jeeyoh.model.response.CategoryResponse;
 import com.jeeyoh.model.response.LoginResponse;
@@ -49,8 +50,7 @@ public class UserAccountService {
 	@Path("/login")
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-	public LoginResponse login(UserModel user)
+    public LoginResponse login(UserModel user)
 	{
 		logger.debug("Enter in mobile app "+user);
 		String password = user.getPassword();
@@ -74,7 +74,7 @@ public class UserAccountService {
 			
 			logger.debug("Enter in mobile app 2222");
 			BaseResponse  baseResponse  = userService.isEmailExist(user);
-			if(baseResponse.getClass().equals("OK"))
+			if(baseResponse.getStatus().equals("OK"))
 			{
 				userRegistrationResponse    = userService.registerUser(user);
 				if(userRegistrationResponse != null)
@@ -86,8 +86,21 @@ public class UserAccountService {
 			}
 			else
 			{
-				userRegistrationResponse.setStatus("FAIL");
-				userRegistrationResponse.setError("Email Exist");
+				userRegistrationResponse = new UserRegistrationResponse();
+				boolean isActive = userService.isUserActive(user);
+				userRegistrationResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
+				if(isActive)
+				{
+					userRegistrationResponse.setError("Email Exist");
+					userRegistrationResponse.setErrorType(ServiceAPIStatus.EMAILEXIST.getStatus());
+				}
+				else
+				{
+					userRegistrationResponse.setError("Please first confirm");
+					userRegistrationResponse.setErrorType(ServiceAPIStatus.INACTIVE.getStatus());
+				}
+				
+				
 			}
 		}
 		return userRegistrationResponse;
@@ -121,10 +134,21 @@ public class UserAccountService {
     @Consumes(MediaType.APPLICATION_JSON)
     public BaseResponse confirmEmail(@QueryParam("confirmationCode") String confirmationCode)
     {
+		logger.debug("IN CONFIRMATION MAIL API");
 		BaseResponse baseResponse = userService.confirmUser(confirmationCode);		
 		return baseResponse;
 		
     }
+	@GET
+	@Path("/forgetPassword")
+	@Produces(MediaType.APPLICATION_JSON)
+	public BaseResponse forgetPassword(@QueryParam("emailId") String emailId)
+	{
+		logger.debug("forgetPassword Respose ::: "+emailId);
+		BaseResponse baseResponse = userService.forgetPassword(emailId);
+		return baseResponse;
+		
+	}
 	
 	@POST
 	@Path("/getProfile")

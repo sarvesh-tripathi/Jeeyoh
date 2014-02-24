@@ -98,4 +98,6 @@ public interface IUserDAO {
 	public void saveTopNonDealSuggestions(Topnondealsuggestion topnondealsuggestion);
 	public void saveTopDealSuggestions(Topdealssuggestion topdealssuggestion);
 	public void saveTopEventSuggestions(Topeventsuggestion topeventsuggestion);
+	public boolean isUserActive(String emailId);	
+
 }

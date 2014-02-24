@@ -16,5 +16,6 @@ public interface IMessagingEventPublisher
     //public void sendResetPasswordEmail();    
     //public void sendInvitationEmail();
    // public void sendConfirmationEmail();
+	public void forgetPassword(UserModel user);
 	public void sendConfirmationEmail(UserModel user, String confirmationCode);    
 }
