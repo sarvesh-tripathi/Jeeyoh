@@ -15,10 +15,12 @@ import org.slf4j.LoggerFactory;
 
 import com.jeeyoh.model.enums.ServiceAPIStatus;
 import com.jeeyoh.model.response.BaseResponse;
+import com.jeeyoh.model.response.CategoryLikesResponse;
 import com.jeeyoh.model.response.CategoryResponse;
 import com.jeeyoh.model.response.LoginResponse;
 import com.jeeyoh.model.response.SuggestionResponse;
 import com.jeeyoh.model.response.UserRegistrationResponse;
+import com.jeeyoh.model.search.CategoryModel;
 import com.jeeyoh.model.search.PageModel;
 import com.jeeyoh.model.user.UserModel;
 import com.jeeyoh.notification.service.IMessagingEventPublisher;
@@ -82,7 +84,7 @@ public class UserAccountService {
 					confirmationCode = userRegistrationResponse.getConfirmationId();
 					userRegistrationResponse.setStatus(ServiceAPIStatus.OK.getStatus());
 					logger.debug("confirmation code "+confirmationCode);
-				    eventPublisher.sendConfirmationEmail(user,confirmationCode);
+				   // eventPublisher.sendConfirmationEmail(user,confirmationCode);//gaurav told not email confirmation
 				}
 			}
 			else
@@ -121,11 +123,12 @@ public class UserAccountService {
 	 * 
 	 */
 	
-	@Path("/chnagePassword")
+	@Path("/changePassword")
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	public BaseResponse chnagePassword(UserModel user)
 	{
+		logger.debug("change passwor ::");
 		BaseResponse baseResponse = userService.changePassword(user);
 		return baseResponse;
 	}
@@ -165,10 +168,21 @@ public class UserAccountService {
 	@GET
 	@Path("/addFavourites")
 	@Produces(MediaType.APPLICATION_JSON)
-	public CategoryResponse addFavourites(@QueryParam("category") String category)
+	public CategoryResponse addFavourites(@QueryParam("category") String category,@QueryParam("userId") String userId)
 	{
-		logger.debug("Category Respose ::: "+category);
-		CategoryResponse categoryResponse = userService.addFavourite(category);
+		logger.debug("Category Respose category ::: "+category);
+		logger.debug("Category Respose userId   ::: "+userId);
+		CategoryResponse categoryResponse = null;
+		if(category != null && userId != null )
+		{
+			categoryResponse = userService.addFavourite(category, Integer.parseInt(userId));
+		}
+		else
+		{
+			categoryResponse = new CategoryResponse();
+			categoryResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
+		}
+		
 		logger.debug("Responce ::::: "+categoryResponse.getStatus());
 		return categoryResponse;
 		
@@ -179,7 +193,18 @@ public class UserAccountService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public BaseResponse saveFavourite(PageModel page)
 	{
-		BaseResponse baseResponse = userService.saveUserFavourite(page);
+		BaseResponse baseResponse = new BaseResponse();
+		long count  = userService.userFavouriteCount(page);
+		logger.debug("Total count ::: "+count);
+		if(count < 10)
+		{
+			baseResponse = userService.saveUserFavourite(page);
+		}
+		else
+		{
+			baseResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
+			baseResponse.setError("Already added ten favourite in this category");
+		}
 		return baseResponse;
 		
 	}
@@ -197,6 +222,28 @@ public class UserAccountService {
 	}
 	
 	
+	@GET
+	@Path("/getCategoriesForLike")
+	@Produces(MediaType.APPLICATION_JSON)
+	public CategoryLikesResponse getCategoriesForLike(@QueryParam("userId") int userId)
+	{
+		logger.debug("Enter in categoey mobile api :: "+userId);
+		CategoryLikesResponse categoryLikesResponse = userService.getCategoryForCaptureLikes(userId);		
+		return categoryLikesResponse;
+		
+	}
+	@POST
+	@Path("/saveUserCategoriesLike")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public BaseResponse saveUserLike(CategoryModel categoryModel)
+	{
+	    logger.debug("save category like"+categoryModel);
+	    BaseResponse baseResponse = userService.saveUserCategoryLikes(categoryModel);
+		return baseResponse;
+		
+	}
+	
+	
 	@POST
     @Path("/getuserSuggestions")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -208,6 +255,4 @@ public class UserAccountService {
     }
 
 	
-	
-
 }

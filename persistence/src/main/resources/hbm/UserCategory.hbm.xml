@@ -32,6 +32,9 @@
         <property name="providerLattitude" type="string">
             <column name="providerLattitude" length="250" />
         </property>
+        <property name="categoryUrl" type="string">
+            <column name="categoryUrl" length="255" />
+        </property>
         <property name="createdTime" type="timestamp">
             <column name="createdTime" length="19" not-null="true" />
         </property>

@@ -13,11 +13,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jeeyoh.model.enums.ServiceAPIStatus;
 import com.jeeyoh.model.response.BaseResponse;
+import com.jeeyoh.model.response.CategoryLikesResponse;
 import com.jeeyoh.model.response.CategoryResponse;
 import com.jeeyoh.model.response.LoginResponse;
 import com.jeeyoh.model.response.SuggestionResponse;
 import com.jeeyoh.model.response.UserRegistrationResponse;
 import com.jeeyoh.model.search.BusinessModel;
+import com.jeeyoh.model.search.CategoryModel;
 import com.jeeyoh.model.search.DealModel;
 import com.jeeyoh.model.search.EventModel;
 import com.jeeyoh.model.search.PageModel;
@@ -36,6 +38,8 @@ import com.jeeyoh.persistence.domain.Pageuserlikes;
 import com.jeeyoh.persistence.domain.Privacy;
 import com.jeeyoh.persistence.domain.Profiletype;
 import com.jeeyoh.persistence.domain.User;
+import com.jeeyoh.persistence.domain.UserCategory;
+import com.jeeyoh.persistence.domain.UserCategoryLikes;
 import com.jeeyoh.persistence.domain.Userdealssuggestion;
 import com.jeeyoh.persistence.domain.Usereventsuggestion;
 import com.jeeyoh.persistence.domain.Usernondealsuggestion;
@@ -85,8 +89,12 @@ public class UserService implements IUserService{
 		user.setAddressline1(userModel.getAddressline1());
 		user.setEmailId(userModel.getEmailId());
 		user.setZipcode(userModel.getZipcode());
+		double latLongArray[] = Utils.getLatLong(userModel.getZipcode());
+		user.setLattitude(latLongArray[0]+"");
+		user.setLongitude(latLongArray[1]+"");
 		user.setMiddleName(userModel.getMiddleName());
-		user.setIsActive(false);
+		//user.setIsActive(false);//defualt active after gaurav suggestion
+		user.setIsActive(true);
 		user.setIsDeleted(false);
 		Privacy privacy = userDAO.getUserPrivacyType("OPEN");
 		user.setPrivacy(privacy);		
@@ -107,6 +115,7 @@ public class UserService implements IUserService{
 		// TODO Auto-generated method stub
 		logger.debug("In LOGIN SERVICE");
 		User user1 = userDAO.loginUser(user);
+		logger.debug("User in Login Response :: "+user1);
 		LoginResponse loginRespoce = new LoginResponse();
 		if(user1 != null)
 		{
@@ -159,7 +168,8 @@ public class UserService implements IUserService{
 		// TODO Auto-generated method stub
 		BaseResponse baseResponse = new BaseResponse();
 		User user = userDAO.getUsersById(userModel.getEmailId());
-		user.setPassword(Utils.MD5(userModel.getPassword()));
+		//user.setPassword(Utils.MD5(userModel.getPassword()));
+		user.setPassword(userModel.getPassword());
 		userDAO.updateUser(user);
 		baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
 		return baseResponse;
@@ -200,12 +210,15 @@ public class UserService implements IUserService{
 		CategoryResponse categoryResponse = new CategoryResponse();
 		List<Page> pages = eventsDAO.getUserFavourites(user.getUserId());
 		logger.debug("First Page ::::: "+pages);
-		List<PageModel> pageModels = new ArrayList<PageModel>();
+		List<PageModel> sports = new ArrayList<PageModel>();
+		List<PageModel> movies = new ArrayList<PageModel>();
+		List<PageModel> foods = new ArrayList<PageModel>();
 		if(pages != null)
 		{
 			for(Page page: pages)
 			{
 				logger.debug("here we get pages ::::: "+page.getAbout());
+				
 				PageModel pageModel = new PageModel();
 				pageModel.setUserId(user.getUserId());
 				pageModel.setPageId(page.getPageId());
@@ -214,13 +227,29 @@ public class UserService implements IUserService{
 				pageModel.setOwner(page.getUserByOwnerId().getFirstName());
 				pageModel.setPageType(page.getPagetype().getPageType());
 				pageModel.setCreatedDate(page.getCreatedtime().toString());
-				pageModels.add(pageModel);
+				pageModel.setProfilePicture(page.getProfilePicture());
+				//pageModel.setProfilePicture("image.jpg");
+				if(page.getPagetype().getPageType().equalsIgnoreCase("SPORT"))
+				{
+					sports.add(pageModel);
+				}
+				if(page.getPagetype().getPageType().equalsIgnoreCase("RESTAURANT"))
+				{
+					foods.add(pageModel);
+				}
+				if(page.getPagetype().getPageType().equalsIgnoreCase("THEATER"))
+				{
+					movies.add(pageModel);
+				}
+				
 			}
 			
 		}
-		if(pageModels != null)
+		if(sports != null || movies != null ||foods != null )
 		{
-			categoryResponse.setPageMode(pageModels);
+			categoryResponse.setSport(sports);
+			categoryResponse.setFood(foods);
+			categoryResponse.setMovie(movies);
 			categoryResponse.setStatus(ServiceAPIStatus.OK.getStatus());
 			categoryResponse.setError("");
 		}
@@ -235,12 +264,14 @@ public class UserService implements IUserService{
 
 	@Override
 	@Transactional
-	public CategoryResponse addFavourite(String category) {
+	public CategoryResponse addFavourite(String category,int userId) {
 		logger.debug("ADD FAV :: ");
 		CategoryResponse categoryResponse = new CategoryResponse();
-		List<Page> pages = eventsDAO.getCommunityPageByCategoryType(category);
+		List<Page> pages = eventsDAO.getCommunityPageByCategoryType(category, userId);
 		logger.debug("First Page ::::: "+pages);
-		List<PageModel> pageModels = new ArrayList<PageModel>();
+		List<PageModel> sports = new ArrayList<PageModel>();
+		List<PageModel> movies = new ArrayList<PageModel>();
+		List<PageModel> foods = new ArrayList<PageModel>();
 		if(pages != null)
 		{
 			for(Page page: pages)
@@ -253,13 +284,28 @@ public class UserService implements IUserService{
 				pageModel.setOwner(page.getUserByOwnerId().getFirstName());
 				pageModel.setPageType(page.getPagetype().getPageType());
 				pageModel.setCreatedDate(page.getCreatedtime().toString());
-				pageModels.add(pageModel);
+				pageModel.setProfilePicture(page.getProfilePicture());
+				//pageModel.setProfilePicture("image.jpg");
+				if(page.getPagetype().getPageType().equalsIgnoreCase("SPORT"))
+				{
+					sports.add(pageModel);
+				}
+				if(page.getPagetype().getPageType().equalsIgnoreCase("RESTAURANT"))
+				{
+					foods.add(pageModel);
+				}
+				if(page.getPagetype().getPageType().equalsIgnoreCase("THEATER"))
+				{
+					movies.add(pageModel);
+				}
 			}
 			
 		}
-		if(pageModels != null)
+		if(sports != null || movies != null ||foods != null )
 		{
-			categoryResponse.setPageMode(pageModels);
+			categoryResponse.setSport(sports);
+			categoryResponse.setFood(foods);
+			categoryResponse.setMovie(movies);
 			categoryResponse.setStatus(ServiceAPIStatus.OK.getStatus());
 			categoryResponse.setError("");
 		}
@@ -276,12 +322,14 @@ public class UserService implements IUserService{
 	public BaseResponse saveUserFavourite(PageModel page) {
 		logger.debug("Page Id :: "+page.getPageId());
 		Pageuserlikes  pageuserlikes = userDAO.isPageExistInUserProfile(page.getUserId(),page.getPageId());
+		logger.debug("page user like :: "+pageuserlikes);
 		BaseResponse baseResponse = new BaseResponse();
 		if(pageuserlikes != null)
 		{
+			logger.debug("Update if already");
 			pageuserlikes.setIsFavorite(true);
 			userDAO.updateUserCommunity(pageuserlikes);			
-			//baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
+			baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
 		}
 		else
 		{
@@ -438,8 +486,8 @@ public class UserService implements IUserService{
 			UserModel user1 = new UserModel();
 			user1.setFirstName(user.getFirstName());
 			user1.setEmailId(user.getEmailId());
-			String password = Utils.MD5ToString(user.getPassword());
-			user1.setPassword(password);
+			//String password = Utils.MD5ToString(user.getPassword());
+			user1.setPassword(user.getPassword());
 			eventPublisher.forgetPassword(user1);
 			baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
 		}
@@ -456,6 +504,72 @@ public class UserService implements IUserService{
 		// TODO Auto-generated method stub
 		boolean isActive = userDAO.isUserActive(user.getEmailId());
 		return isActive;
+	}
+
+	@Transactional
+	@Override
+	public long userFavouriteCount(PageModel page) {
+		// TODO Auto-generated method stub
+		
+		long count = userDAO.getUserPageFavouriteCount(page.getPageType(),page.getUserId());
+		return count;
+	}
+
+	@Transactional
+	@Override
+	public CategoryLikesResponse getCategoryForCaptureLikes(int userId) {
+		// TODO Auto-generated method stub
+		List<UserCategory> categoryList = userDAO.getUserNonLikeCategories(userId);
+		CategoryLikesResponse categoryLikesResponse = new CategoryLikesResponse();
+		if(categoryList != null)
+		{
+			logger.debug("Category list " +categoryList.get(0).getCategoryUrl());
+			List<CategoryModel> categoryModels = new ArrayList<CategoryModel>();
+			for(UserCategory category:categoryList)
+			{
+				CategoryModel categoryModel = new CategoryModel();
+				categoryModel.setCategoryUrl(category.getCategoryUrl());
+				categoryModel.setItemCategory(category.getItemCategory());
+				categoryModel.setItemSubCategory(category.getItemSubCategory());
+				categoryModel.setUserCategoryId(category.getUserCategoryId());
+				categoryModel.setUserId(userId);
+				categoryModels.add(categoryModel);
+			}
+			categoryLikesResponse.setCategoryModel(categoryModels);
+			categoryLikesResponse.setStatus(ServiceAPIStatus.OK.getStatus());
+		}
+		else
+		{
+			categoryLikesResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
+			categoryLikesResponse.setError("No Category Availble");
+		}
+		return categoryLikesResponse;
+	}
+
+	@Transactional
+	@Override
+	public BaseResponse saveUserCategoryLikes(CategoryModel categoryModel) {
+		// TODO Auto-generated method stub
+		BaseResponse baseResponse = new BaseResponse();
+		if(categoryModel.getUserCategoryId() != 0 && categoryModel.getUserId() != 0)
+		{
+			logger.debug("record save");
+			UserCategoryLikes categoryLikes =  new UserCategoryLikes();
+			List<User> user  = userDAO.getUserById(categoryModel.getUserId());
+			categoryLikes.setUser(user.get(0));
+			categoryLikes.setCreatedTime(new Date());
+			UserCategory category = userDAO.getCategory(categoryModel.getUserCategoryId());			
+			categoryLikes.setUserCategory(category);
+			userDAO.saveUserCategoryLike(categoryLikes);			
+			baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
+		}
+		else
+		{
+			baseResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
+			baseResponse.setError("Invalid Parameter");
+		}
+		
+		return baseResponse;
 	}
 
 }
