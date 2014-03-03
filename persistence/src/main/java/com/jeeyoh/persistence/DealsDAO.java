@@ -169,7 +169,7 @@ public class DealsDAO implements IDealsDAO {
 	public int getDealsLikeCounts(Integer id) {
 		// TODO Auto-generated method stub
 		int rowCount = 0;
-		String hqlQuery = "from count(*) from Dealsusage a where a.deals.id = :id";
+		String hqlQuery = "select count(*) from Dealsusage a where a.deals.id = :id";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);

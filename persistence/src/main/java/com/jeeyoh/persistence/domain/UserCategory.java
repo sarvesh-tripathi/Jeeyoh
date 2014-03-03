@@ -22,6 +22,7 @@ public class UserCategory implements Serializable{
     private String providerLattitude;
     private Date createdTime;
     private Date updatedTime;
+    private String categoryUrl;
     private Set userCategoryLikes = new HashSet(0);
     
     
@@ -171,6 +172,20 @@ public class UserCategory implements Serializable{
 	 */
 	public Set getUserCategoryLikes() {
 		return userCategoryLikes;
+	}
+
+	/**
+	 * @param categoryUrl the categoryUrl to set
+	 */
+	public void setCategoryUrl(String categoryUrl) {
+		this.categoryUrl = categoryUrl;
+	}
+
+	/**
+	 * @return the categoryUrl
+	 */
+	public String getCategoryUrl() {
+		return categoryUrl;
 	}
 
 }

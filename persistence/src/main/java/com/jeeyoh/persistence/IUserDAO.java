@@ -3,6 +3,7 @@ package com.jeeyoh.persistence;
 import java.util.List;
 import java.util.Set;
 
+import com.jeeyoh.model.search.CategoryModel;
 import com.jeeyoh.model.user.UserModel;
 import com.jeeyoh.persistence.domain.Dealsusage;
 import com.jeeyoh.persistence.domain.Events;
@@ -20,6 +21,7 @@ import com.jeeyoh.persistence.domain.Topeventsuggestion;
 import com.jeeyoh.persistence.domain.Topnondealsuggestion;
 import com.jeeyoh.persistence.domain.User;
 import com.jeeyoh.persistence.domain.UserCategory;
+import com.jeeyoh.persistence.domain.UserCategoryLikes;
 import com.jeeyoh.persistence.domain.Usercontacts;
 import com.jeeyoh.persistence.domain.Userdealssuggestion;
 import com.jeeyoh.persistence.domain.Usereventsuggestion;
@@ -99,6 +101,7 @@ public interface IUserDAO {
 	public void saveTopNonDealSuggestions(Topnondealsuggestion topnondealsuggestion);
 	public void saveTopDealSuggestions(Topdealssuggestion topdealssuggestion);
 	public void saveTopEventSuggestions(Topeventsuggestion topeventsuggestion);
+
 	public boolean isUserActive(String emailId);	
 	public List<Topnondealsuggestion> isTopNonDealSuggestionExists(int userId, int businessId);
 	public List<Topdealssuggestion> isTopDealSuggestionExists(int userId, int dealId);
@@ -108,6 +111,11 @@ public interface IUserDAO {
 	public List<Usereventsuggestion> getUserEventsSuggestionByUserIdForFriendsCommunity(int userId, int contactid, String category);
 	public List<Userdealssuggestion> getUserDealSuggestionByUserIdForFriendsCommunity(int userId, int contactid, String category);
 	public List<User> getStarFriends(int userId, Double lattitude,Double longitude);
-	 
-	
+	public long getUserPageFavouriteCount(String pageType, int userId);
+
+	public List<UserCategory> getUserNonLikeCategories(int userId);
+
+	public UserCategory getCategory(Integer userCategoryId);
+
+	public void saveUserCategoryLike(UserCategoryLikes categoryLikes);	
 }

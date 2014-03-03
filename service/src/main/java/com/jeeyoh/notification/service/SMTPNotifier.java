@@ -68,11 +68,10 @@ public class SMTPNotifier extends JeeyohMessageSubscriber implements IJeeyohMess
     private boolean confirmParamMap(JeeyohMessage message)
     {
         boolean flag = true;
-        logger.debug("Message Type :: "+message.getMessageType());
         ArrayList<String> forcedParams = messageClassifierHelper.getParamMap(message.getMessageType());
         for (String key : forcedParams)
         {
-        	logger.debug("Key ::: "+key);
+        	
             if (!message.getArgumentNames().contains(key))
             {
                 flag = false;

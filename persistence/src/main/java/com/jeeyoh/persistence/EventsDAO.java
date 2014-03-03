@@ -8,6 +8,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -281,14 +282,16 @@ public class EventsDAO implements IEventsDAO{
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Page> getCommunityPageByCategoryType(String category) {
+	public List<Page> getCommunityPageByCategoryType(String category, int userId) {
 		// TODO Auto-generated method stub
 		List<Page> pages = null;
-		String hqlQuery = "select a from Page a , Pagetype b where a.pagetype.pageTypeId = b.pageTypeId and b.pageType =:category";
+			
+		String hqlQuery = "select a from Page a , Pagetype b where a.pagetype.pageTypeId = b.pageTypeId and b.pageType =:category and a.pageId not in (select page.pageId from Pageuserlikes where userId =:userId and isFavorite is true) ";
 		try{
 
 			Query query = sessionFactory.getCurrentSession().createQuery(hqlQuery);
 			query.setParameter("category", category);
+			query.setParameter("userId", userId);
 			pages  = (List<Page>)query.list();
 		}catch(HibernateException e)
 		{
@@ -298,6 +301,7 @@ public class EventsDAO implements IEventsDAO{
 		return pages;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Page> getUserFavourites(Integer userId) {
 		// TODO Auto-generated method stub
@@ -305,6 +309,7 @@ public class EventsDAO implements IEventsDAO{
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Page.class);
 		criteria.createAlias("pageuserlikeses", "pageuserlikeses");
 		criteria.add(Restrictions.eq("pageuserlikeses.user.userId", userId));
+		criteria.add(Restrictions.eq("pageuserlikeses.isFavorite", true));
 		pages = criteria.list();
 		return pages;
 	}

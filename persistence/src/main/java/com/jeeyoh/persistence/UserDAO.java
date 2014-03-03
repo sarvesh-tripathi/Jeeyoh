@@ -11,12 +11,15 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.jeeyoh.model.search.CategoryModel;
 import com.jeeyoh.model.user.UserModel;
 import com.jeeyoh.persistence.domain.Dealsusage;
 import com.jeeyoh.persistence.domain.Events;
@@ -34,6 +37,7 @@ import com.jeeyoh.persistence.domain.Topeventsuggestion;
 import com.jeeyoh.persistence.domain.Topnondealsuggestion;
 import com.jeeyoh.persistence.domain.User;
 import com.jeeyoh.persistence.domain.UserCategory;
+import com.jeeyoh.persistence.domain.UserCategoryLikes;
 import com.jeeyoh.persistence.domain.Usercontacts;
 import com.jeeyoh.persistence.domain.Userdealssuggestion;
 import com.jeeyoh.persistence.domain.Usereventsuggestion;
@@ -254,11 +258,11 @@ public class UserDAO implements IUserDAO {
 	public User getUsersById(String id) {
 		List<User> userList = null;
 		logger.debug("Email id ::: = "+id);
-		Session session = sessionFactory.openSession();
-		Transaction tx = null;
+		Session session = sessionFactory.getCurrentSession();
+		//Transaction tx = null;
 		String hqlQuery = "from User a where a.emailId = :emailId";
 		try{
-			tx = session.beginTransaction();
+			//tx = session.beginTransaction();
 			Query query = session.createQuery(
 					hqlQuery);
 			query.setParameter("emailId", id);
@@ -266,7 +270,7 @@ public class UserDAO implements IUserDAO {
 			//tx.commit();
 		}
 		catch (HibernateException e) {
-			if (tx!=null) tx.rollback();
+			//if (tx!=null) tx.rollback();
 			e.printStackTrace();
 		}
 		catch (Exception e) {
@@ -573,21 +577,24 @@ public class UserDAO implements IUserDAO {
 		// TODO Auto-generated method stub
 		String emailId  = user.getEmailId();
 		String password = user.getPassword();
-		
+		logger.debug("user email :: --> "+emailId);
+		logger.debug("user password :: --> "+password);
 		List<User> users = null;
 		String hqlQuery = "from User where emailId=:emailId and password=:password and isActive=:isActive ";
+		//String hqlQuery = "from User a where a.emailId=:emailId and a.password=:password";
 		try{
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
-			query.setParameter("emailId", emailId);
-			query.setParameter("password", password);
+			query.setParameter("emailId", emailId.trim());
+			query.setParameter("password", password.trim());
 			query.setParameter("isActive",true);
 			users = query.list();
 			
 		}catch(HibernateException e)
 		{
-			
+		  logger.error(e.toString());
 		}
+		logger.debug("User in login "+users);
 		return users != null && !users.isEmpty() ? users.get(0) : null;
 	}
 
@@ -678,7 +685,8 @@ public class UserDAO implements IUserDAO {
 	@Override
 	public Pageuserlikes isPageExistInUserProfile(int userId,  int pageId) {
 		List<Pageuserlikes> list = null;
-		String queryString = "from Pageuserlikes where user.userId =: userId and page.pageId =: pageId";
+		logger.debug("PAGE Id ::: "+pageId + " userId "+userId);
+		String queryString = "from Pageuserlikes where user.userId =:userId and page.pageId =:pageId";
 		try
 		{
 			Query query = sessionFactory.getCurrentSession().createQuery(queryString);
@@ -690,8 +698,11 @@ public class UserDAO implements IUserDAO {
 		catch(HibernateException e)
 		{
 			e.printStackTrace();
+			logger.debug(e.toString());
 		}
-		return list != null && list.isEmpty() ? list.get(0) : null;
+		
+		logger.debug("PageUser Like " + list);
+		return list != null && !list.isEmpty() ? list.get(0) : null;
 	}
 
 	@Override
@@ -703,8 +714,6 @@ public class UserDAO implements IUserDAO {
 		{
 			logger.error(e.toString());
 		}
-
-		
 	}
 
 	@Override
@@ -1236,4 +1245,106 @@ public class UserDAO implements IUserDAO {
 	  logger.debug("userList =>"+starFriendWithinFiftyMilesList);
 	  return starFriendWithinFiftyMilesList;
 	 }
+
+	@Override
+	public long getUserPageFavouriteCount(String pageType, int userId) {
+		// TODO Auto-generated method stub
+		/*int rowCount = 0;
+		String hqlquery = "select count(*) from Pageuserlikes a, Page b where  a.page.pageId = b.pageId and b.pagetype.pageType =:pageType and a.user.userId =:userId and a.isFavorite:isFavorite";
+		try{
+			Query query = sessionFactory.getCurrentSession().createSQLQuery(hqlquery);
+			
+			query.setParameter("pageType", pageType);
+			query.setParameter("userId",userId);
+			query.setParameter("isFavorite",true);
+			rowCount = ((Number)query.uniqueResult()).intValue();
+			
+		}
+		catch(Exception e)
+		{
+			
+			logger.error(e.toString());
+		}
+		*/
+		Criteria criteria=sessionFactory.getCurrentSession().createCriteria(Pageuserlikes.class);
+        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        criteria.createAlias("page", "page");
+        criteria.createAlias("page.pagetype", "pagetype");
+        criteria.add(Restrictions.eq("pagetype.pageType", pageType));
+        criteria.createAlias("user", "user");        
+        criteria.add(Restrictions.eq("user.userId", userId));
+        criteria.add(Restrictions.eq("isFavorite", true));
+        criteria.setProjection(Projections.rowCount());
+        Long resultCount = (Long)criteria.uniqueResult();
+		logger.debug("count :: ==> "+resultCount);
+		return resultCount;
+	}
+
+	@Override
+	public List<UserCategory> getUserNonLikeCategories(int userId) {
+		// TODO Auto-generated method stub
+		
+		    List<UserCategory>  userCategories = null;
+		    String hqlQuery = "from UserCategory  a where a.userCategoryId not in (select b.userCategory.userCategoryId from UserCategoryLikes b where b.user.userId =:userId)";
+		    
+		    try{
+		    	Query query = sessionFactory.getCurrentSession().createQuery(hqlQuery);
+		    	query.setParameter("userId",userId);
+		    	userCategories = query.list();
+		    }
+		    catch(HibernateException e)
+		    {
+		    	logger.error(e.toString());
+		    }
+		return userCategories;
+	}
+	// if we need to capture based on category
+	/*public List<UserCategory> getUserNonLikeCategories(int userId, String category) {
+		// TODO Auto-generated method stub
+		
+		    List<UserCategory>  userCategories = null;
+		    String hqlQuery = "from UserCategory  a where a.itemCategory =:category and a.userCategoryId not in (select b.userCategory.userCategoryId from UserCategoryLikes b where b.user.userId =:userId)";
+		    
+		    try{
+		    	Query query = sessionFactory.getCurrentSession().createQuery(hqlQuery);
+		    	query.setParameter("userId",userId);
+		    	userCategories = query.list();
+		    }
+		    catch(HibernateException e)
+		    {
+		    	logger.error(e.toString());
+		    }
+		return userCategories;
+	}*/
+
+	@Override
+	public UserCategory getCategory(Integer userCategoryId) {
+		// TODO Auto-gene 
+		List<UserCategory>  userCategories = null;
+	    String hqlQuery = "from UserCategory  a where a.userCategoryId =:userCategoryId";
+	    
+	    try{
+	    	Query query = sessionFactory.getCurrentSession().createQuery(hqlQuery);
+	    	query.setParameter("userCategoryId",userCategoryId);
+	    	userCategories = query.list();
+	    }
+	    catch(HibernateException e)
+	    {
+	    	logger.error(e.toString());
+	    }
+	    return userCategories != null && !userCategories.isEmpty() ? userCategories.get(0) : null;
+	}
+
+	@Override
+	public void saveUserCategoryLike(UserCategoryLikes categoryLikes) {
+		// TODO Auto-generated method stub
+		try{
+			sessionFactory.getCurrentSession().saveOrUpdate(categoryLikes);
+		}
+		catch(HibernateException e)
+		{
+			logger.error(e.toString());
+		}
+		
+	}
 }
