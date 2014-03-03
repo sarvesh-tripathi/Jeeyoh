@@ -3,8 +3,8 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 	<!-- Generated Nov 30, 2013 12:54:38 PM by Hibernate Tools 3.2.1.GA -->
 <hibernate-mapping>
-	<class name="com.jeeyoh.persistence.domain.Topeventsuggestion"
-		table="topeventsuggestion" catalog="jeeyoh">
+	<class name="com.jeeyoh.persistence.domain.Topcommunitysuggestion"
+		table="Topcommunitysuggestion" catalog="jeeyoh">
 		<id name="suggestionId" type="java.lang.Integer">
 			<column name="suggestionId" />
 			<generator class="identity" />
@@ -13,9 +13,9 @@
 			fetch="select" lazy="false">
 			<column name="userId" not-null="true" />
 		</many-to-one>
-		<many-to-one name="events" class="com.jeeyoh.persistence.domain.Events"
+		<many-to-one name="page" class="com.jeeyoh.persistence.domain.Page"
 			fetch="select" lazy="false">
-			<column name="eventId" not-null="true" />
+			<column name="pageId" not-null="true" />
 		</many-to-one>
 		<property name="rank" type="java.lang.Long">
 			<column name="rank" precision="10" scale="0" />
@@ -28,9 +28,6 @@
 		</property>
 		<property name="updatedTime" type="timestamp">
 			<column name="updatedTime" length="19" not-null="true" />
-		</property>
-		<property name="suggestionType" type="string">
-			<column name="suggestionType" length="250" />
 		</property>
 		<property name="categoryType" type="string">
 			<column name="categoryType" length="250" />

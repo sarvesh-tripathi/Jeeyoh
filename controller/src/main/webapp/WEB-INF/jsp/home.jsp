@@ -41,6 +41,8 @@
    				<li><a href="testing?pageId=25" title="Testing">Testing</a></li>
    				<li>|</li>
    				<li><a href="calculateTop10Suggestions" title="Calculate Top10 Suggestions">Calculate Top10 Suggestions</a></li>
+				<li>|</li>
+       			<li><a href="matchingEvents?userId=1" title="Matching Events">Matching Events</a></li>
 			</ul>
 		</div>
 	</body>

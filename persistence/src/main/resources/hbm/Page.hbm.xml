@@ -50,5 +50,11 @@
             </key>
             <one-to-many class="com.jeeyoh.persistence.domain.Pageuserlikes" />
         </set>
+        <set name="topcommunitysuggestions" inverse="true" lazy="false">
+            <key>
+                <column name="pageId" not-null="true" />
+            </key>
+            <one-to-many class="com.jeeyoh.persistence.domain.Topcommunitysuggestion" />
+        </set>
     </class>
 </hibernate-mapping>

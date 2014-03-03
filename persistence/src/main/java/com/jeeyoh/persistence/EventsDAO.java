@@ -314,22 +314,22 @@ public class EventsDAO implements IEventsDAO{
 	public Page getCommunityById(int pageId) {
 		// TODO Auto-generated method stub
 		List<Page> pages = null; 
-		
+
 		String hqlQuery = "from Page where pageId = :pageId";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);	
 			query.setParameter("pageId", pageId);
 			pages = (List<Page>) query.list();
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		logger.debug("IN DAO PAGE "+pages.get(0));
 		return pages != null && !pages.isEmpty() ? pages.get(0) : null;
-		}
-		
+	}
+
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -374,6 +374,29 @@ public class EventsDAO implements IEventsDAO{
 
 		List<Events> eventsList = criteria.list();
 		logger.debug("past event list => "+eventsList.size());
+		return eventsList;
+	}
+
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Events> getBookedEvents(int userId) {
+		logger.debug("getBookedEvents => ");
+		List<Events> eventsList = null;
+		logger.debug("get next weekend =>"+Utils.getNearestWeekend(null));
+		String hqlQuery = "select a from Events a where a.eventId in (select b.event.eventId from Eventuserlikes b where b.user.userId=:userId and b.isBooked=1) and event_date>=:currentDate and event_date<=:nearestFriday";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("userId", userId);
+			query.setParameter("currentDate", Utils.getCurrentDate());
+			query.setParameter("nearestFriday", Utils.getNearestFriday());
+			eventsList = (List<Events>) query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.debug(e.toString());
+			logger.debug(e.getLocalizedMessage());
+		}
 		return eventsList;
 	}
 

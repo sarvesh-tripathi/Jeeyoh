@@ -32,5 +32,8 @@
 		<property name="suggestionType" type="string">
 			<column name="suggestionType" length="250" />
 		</property>
+		<property name="categoryType" type="string">
+			<column name="categoryType" length="250" />
+		</property>
 	</class>
 </hibernate-mapping>

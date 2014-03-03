@@ -3,15 +3,17 @@ package com.jeeyoh.persistence.domain;
 import java.io.Serializable;
 import java.util.Date;
 
-public class Topeventsuggestion implements Serializable{
-
+public class Topcommunitysuggestion implements Serializable{
+	
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = 1L;
 	private Integer suggestionId;
 	private User user;
-	private Events events;
+	private Page page;
 	private Long rank;
 	private int totalLikes;
-	private String suggestionType;
 	private String categoryType;
 	private Date createdTime;
 	private Date updatedTime;
@@ -40,16 +42,16 @@ public class Topeventsuggestion implements Serializable{
 		this.user = user;
 	}
 	/**
-	 * @return the events
+	 * @return the page
 	 */
-	public Events getEvents() {
-		return events;
+	public Page getPage() {
+		return page;
 	}
 	/**
-	 * @param events the events to set
+	 * @param page the page to set
 	 */
-	public void setEvents(Events events) {
-		this.events = events;
+	public void setPage(Page page) {
+		this.page = page;
 	}
 	/**
 	 * @return the rank
@@ -64,28 +66,16 @@ public class Topeventsuggestion implements Serializable{
 		this.rank = rank;
 	}
 	/**
-	 * @param totalLikes the totalLikes to set
-	 */
-	public void setTotalLikes(int totalLikes) {
-		this.totalLikes = totalLikes;
-	}
-	/**
 	 * @return the totalLikes
 	 */
 	public int getTotalLikes() {
 		return totalLikes;
 	}
 	/**
-	 * @return the suggestionType
+	 * @param totalLikes the totalLikes to set
 	 */
-	public String getSuggestionType() {
-		return suggestionType;
-	}
-	/**
-	 * @param suggestionType the suggestionType to set
-	 */
-	public void setSuggestionType(String suggestionType) {
-		this.suggestionType = suggestionType;
+	public void setTotalLikes(int totalLikes) {
+		this.totalLikes = totalLikes;
 	}
 	/**
 	 * @param categoryType the categoryType to set

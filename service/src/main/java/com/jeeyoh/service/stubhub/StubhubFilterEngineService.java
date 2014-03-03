@@ -37,7 +37,7 @@ public class StubhubFilterEngineService implements IStubhubFilterEngineService{
 		logger.debug("communities::  "+communities.size());
 		logger.debug("stubhubEventsList::  "+stubhubEventsList.size());
 		//Get current date
-		Date currentDate = Utils.getCurrentDate();
+		//Date currentDate = Utils.getCurrentDate();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		
 		//Get weekends including Friday of the current year
@@ -57,7 +57,9 @@ public class StubhubFilterEngineService implements IStubhubFilterEngineService{
 						//logger.debug("currentDate:: "+currentDate);
 						for(int j = 0; j < weekendList.size(); j++){
 
-							if((eventDate.compareTo(currentDate) >= 0) && (eventDate.compareTo(sdf.parse(sdf.format((Date)weekendList.get(j)))) == 0))
+							/*if((eventDate.compareTo(currentDate) >= 0) && (eventDate.compareTo(sdf.parse(sdf.format((Date)weekendList.get(j)))) == 0))
+							{*/
+							if((eventDate.compareTo(sdf.parse(sdf.format((Date)weekendList.get(j)))) == 0))
 							{
 								//logger.debug("eventDate:: "+eventDate +"currentDate:: "+ sdf.parse(sdf.format((Date)weekendList.get(j))));
 								/*if((eventDate.compareTo(currentDate) == 0 || eventDate.after(currentDate)))
@@ -67,7 +69,7 @@ public class StubhubFilterEngineService implements IStubhubFilterEngineService{
 								{
 									String ancestorGenreDescriptions = stubhubEvent.getAncestorGenreDescriptions().toLowerCase();
 									String about = community.getAbout().toLowerCase();
-									if(stubhubEvent.getChannel().toLowerCase().contains("concert") && ancestorGenreDescriptions.contains(about))
+									if(stubhubEvent.getChannel().toLowerCase().contains(community.getPagetype().getPageType().toLowerCase()) && ancestorGenreDescriptions.contains(about))
 									{
 										batch_size++;
 										Events events = new Events();

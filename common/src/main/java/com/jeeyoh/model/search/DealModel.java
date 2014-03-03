@@ -24,6 +24,8 @@ public class DealModel implements Serializable{
 	@JsonProperty
 	private String startAt;
 	@JsonProperty
+	private String imageUrl;
+	@JsonProperty
 	private String suggestionType;
 	public String getTitle() {
 		return title;
@@ -66,6 +68,18 @@ public class DealModel implements Serializable{
 	 */
 	public String getSuggestionType() {
 		return suggestionType;
+	}
+	/**
+	 * @param imageUrl the imageUrl to set
+	 */
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+	/**
+	 * @return the imageUrl
+	 */
+	public String getImageUrl() {
+		return imageUrl;
 	}
 	private String endAt;
 

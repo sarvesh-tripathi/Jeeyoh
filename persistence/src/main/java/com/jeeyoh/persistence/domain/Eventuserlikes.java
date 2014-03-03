@@ -22,6 +22,7 @@ public class Eventuserlikes implements Serializable{
 	private String displayName;
 	private Date createdtime;
 	private Date updatedtime;
+	private Boolean isBooked;
 
 	public Eventuserlikes() {
 	}
@@ -133,6 +134,20 @@ public class Eventuserlikes implements Serializable{
 
 	public Events getEvent() {
 		return event;
+	}
+
+	/**
+	 * @param isBooked the isBooked to set
+	 */
+	public void setIsBooked(Boolean isBooked) {
+		this.isBooked = isBooked;
+	}
+
+	/**
+	 * @return the isBooked
+	 */
+	public Boolean getIsBooked() {
+		return isBooked;
 	}
 
 

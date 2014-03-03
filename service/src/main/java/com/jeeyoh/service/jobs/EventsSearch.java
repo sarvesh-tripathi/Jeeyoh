@@ -44,13 +44,13 @@ public class EventsSearch implements IEventSearch{
 				boolean isContactsAccessed = false;
 				double[] array = null;
 				logger.debug("Lat/Long for user :  " + user.getLattitude() +" , "+user.getLongitude());
-				if(user.getLattitude() == null && user.getLongitude() == null || (user.getLattitude().trim().equals("") && user.getLongitude().trim().equals(""))|| (user.getLattitude().trim().equals("0.0") && user.getLongitude().trim().equals("0.0")))
+				/*if(user.getLattitude() == null && user.getLongitude() == null || (user.getLattitude().trim().equals("") && user.getLongitude().trim().equals(""))|| (user.getLattitude().trim().equals("0.0") && user.getLongitude().trim().equals("0.0")))
 				{
 					array = Utils.getLatLong(user.getZipcode());
 					logger.debug("Lat/long length ==> " + Double.toString(array[0]).length()+" : "+Double.toString(array[1]).length());
 					user.setLattitude(Double.toString(array[0]));
 					user.setLongitude(Double.toString(array[1]));
-				}
+				}*/
 				saveEventsSuggestion(userId, user, true, isContactsAccessed, null,  false,null,false);
 			}
 		}
@@ -77,6 +77,27 @@ public class EventsSearch implements IEventSearch{
 			//Get current date
 			Date currentDate = Utils.getCurrentDate();
 
+			
+			List<Events> eventsList = null;
+			if(isGroupMember)
+			{
+				eventsList = userDAO.getUserLikesEventsByType(userId, groupType,Double.parseDouble(user.getLattitude()),Double.parseDouble(user.getLongitude()));
+			}
+			else
+			{
+				eventsList = userDAO.getUserLikesEvents(userId,Double.parseDouble(user.getLattitude()),Double.parseDouble(user.getLongitude()));
+			}
+			logger.debug("EventSearch => UserLikeEvents List => "+eventsList.size());
+			if(eventsList != null)
+			{
+				int batch_size = 0;
+				for(Events event : eventsList) {
+
+					saveEventSuggesstion(event, userId, user, batch_size, currentDate, isGroupMember, isContactsAccessed, forUser, false,false,false,false,false);
+				}
+			}
+
+			
 			List<Page> userCommunities = null;
 			if(isGroupMember)
 			{
@@ -122,7 +143,7 @@ public class EventsSearch implements IEventSearch{
 					}
 					if(communityLiked)
 					{
-						List<Events> events = userDAO.getCommunityAllEvents(community.getPageId());
+						List<Events> events = userDAO.getCommunityAllEvents(community.getPageId(),Double.parseDouble(user.getLattitude()),Double.parseDouble(user.getLongitude()));
 
 						if(events != null)
 						{
@@ -135,26 +156,6 @@ public class EventsSearch implements IEventSearch{
 					}
 				}
 			}
-
-			List<Events> eventsList = null;
-			if(isGroupMember)
-			{
-				eventsList = userDAO.getUserLikesEventsByType(userId, groupType);
-			}
-			else
-			{
-				eventsList = userDAO.getUserLikesEvents(userId);
-			}
-			logger.debug("EventSearch => UserLikeEvents List => "+eventsList.size());
-			if(eventsList != null)
-			{
-				int batch_size = 0;
-				for(Events event : eventsList) {
-
-					saveEventSuggesstion(event, userId, user, batch_size, currentDate, isGroupMember, isContactsAccessed, forUser, false,false,false,false,false);
-				}
-			}
-
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -221,10 +222,10 @@ public class EventsSearch implements IEventSearch{
 				boolean includePage = true;
 				//if(event.getEvent_date().compareTo(currentDate) >= 0)
 				//{
-					double distance = Utils.distance(Double.parseDouble(user.getLattitude()), Double.parseDouble(user.getLongitude()), Double.parseDouble(event.getLatitude()), Double.parseDouble(event.getLongitude()), "M");
-					logger.debug("Distance::  "+distance +" lat::  "+user.getLattitude()+" lon::  "+user.getLongitude());
-					if(distance <=50)
-					{
+					//double distance = Utils.distance(Double.parseDouble(user.getLattitude()), Double.parseDouble(user.getLongitude()), Double.parseDouble(event.getLatitude()), Double.parseDouble(event.getLongitude()), "M");
+					//logger.debug("Distance::  "+distance +" lat::  "+user.getLattitude()+" lon::  "+user.getLongitude());
+					//if(distance <=50)
+					//{
 						if(!isCommunityLike)
 						{
 							List<Eventuserlikes> eventproperties = userDAO.getUserEventProperties(userId, event.getEventId());
@@ -285,7 +286,7 @@ public class EventsSearch implements IEventSearch{
 						}
 					}
 				//}
-			}
+			//}
 		}
 		catch (Exception e) {
 			e.printStackTrace();

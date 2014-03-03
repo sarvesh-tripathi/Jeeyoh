@@ -26,6 +26,7 @@ public class Page  implements java.io.Serializable {
      private Date createdtime;
      private Date updatedtime;
      private Set pageuserlikeses = new HashSet(0);
+     private Set topcommunitysuggestions = new HashSet(0);
 
     public Page() {
     }
@@ -152,6 +153,22 @@ public class Page  implements java.io.Serializable {
     public void setPageuserlikeses(Set pageuserlikeses) {
         this.pageuserlikeses = pageuserlikeses;
     }
+
+
+	/**
+	 * @param topcommunitysuggestions the topcommunitysuggestions to set
+	 */
+	public void setTopcommunitysuggestions(Set topcommunitysuggestions) {
+		this.topcommunitysuggestions = topcommunitysuggestions;
+	}
+
+
+	/**
+	 * @return the topcommunitysuggestions
+	 */
+	public Set getTopcommunitysuggestions() {
+		return topcommunitysuggestions;
+	}
 
 
 

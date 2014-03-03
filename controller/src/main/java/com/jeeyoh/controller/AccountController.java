@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.jeeyoh.model.response.CommunityResponse;
+import com.jeeyoh.model.response.MatchingEventsResponse;
 import com.jeeyoh.model.response.SearchResponse;
 import com.jeeyoh.model.search.BusinessModel;
 import com.jeeyoh.model.search.DealModel;
@@ -38,6 +39,7 @@ import com.jeeyoh.service.jobs.INonDealSearch;
 import com.jeeyoh.service.search.ICommunitySearchService;
 import com.jeeyoh.service.search.IEventsSuggestionSearchService;
 import com.jeeyoh.service.search.IManualUpload;
+import com.jeeyoh.service.search.IMatchingEventsService;
 import com.jeeyoh.service.search.INonDealSuggestionSearchService;
 import com.jeeyoh.service.search.ISearchDealsService;
 import com.jeeyoh.service.search.ISpotSearchService;
@@ -109,10 +111,13 @@ public class AccountController {
 
 	@Autowired
 	private IUserService userService;
-	
+
 	@Autowired
 	private ICalculateTopSuggestionsService calculateTopSuggestionsService;
-	
+
+	@Autowired
+	private IMatchingEventsService matchingEventsService;
+
 	private final String UPLOAD_DIRECTORY = "C:/uploads";
 
 	@RequestMapping(value = "/home", method = RequestMethod.GET)
@@ -513,11 +518,32 @@ public class AccountController {
 		modelAndView.addObject("mainModel", model);
 		return modelAndView;
 	}
-	
+
 	@RequestMapping(value = "/calculateTop10Suggestions", method = RequestMethod.GET)
 	public ModelAndView calculateTop10Suggestions(HttpServletRequest request, HttpServletResponse httpresponse){
 		ModelAndView modelAndView = new ModelAndView("home");
 		calculateTopSuggestionsService.caculateTopFriendsSuggestions();
+		//calculateTopSuggestionsService.calculateTopCommunitySuggestions();
+		calculateTopSuggestionsService.calculateTopJeyoohSuggestions();
+		return modelAndView;
+	}
+
+
+	@RequestMapping(value = "/matchingEvents", method = RequestMethod.GET)
+	public ModelAndView matchingEvents(HttpServletRequest request, HttpServletResponse response)
+	{
+		ModelAndView modelAndView = new ModelAndView("home");
+		int userId = Integer.parseInt(request.getParameter("userId"));
+		if(userId!=0)
+		{
+			MatchingEventsResponse matchingEventsResponse = matchingEventsService.searchMatchingEvents(userId);
+
+			List<EventModel> bookedEventsList = matchingEventsResponse.getMatchingevents();
+			for(EventModel eventModel:bookedEventsList)
+			{
+				logger.debug("getCurrentEvents => description: "+eventModel.getDescription()+"; event date: "+eventModel.getEvent_date()+"\n");
+			}
+		}
 		return modelAndView;
 	}
 

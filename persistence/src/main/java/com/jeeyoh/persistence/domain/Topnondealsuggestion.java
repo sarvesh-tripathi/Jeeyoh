@@ -12,6 +12,7 @@ public class Topnondealsuggestion implements Serializable{
 	private Long rank;
 	private int totalLikes;
 	private String suggestionType;
+	private String categoryType;
 	private Date createdTime;
 	private Date updatedTime;
 	/**
@@ -85,6 +86,18 @@ public class Topnondealsuggestion implements Serializable{
 	 */
 	public void setSuggestionType(String suggestionType) {
 		this.suggestionType = suggestionType;
+	}
+	/**
+	 * @param categoryType the categoryType to set
+	 */
+	public void setCategoryType(String categoryType) {
+		this.categoryType = categoryType;
+	}
+	/**
+	 * @return the categoryType
+	 */
+	public String getCategoryType() {
+		return categoryType;
 	}
 	/**
 	 * @return the createdTime

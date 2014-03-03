@@ -339,6 +339,7 @@ public class UserService implements IUserService{
 			businessModel.setWebsiteUrl(business.getWebsiteUrl());
 			businessModel.setDisplayAddress(business.getDisplayAddress());
 			businessModel.setCity(business.getCity());
+			businessModel.setImageUrl(business.getImageUrl());
 			businessModel.setBusinessType(business.getBusinesstype().getBusinessType());
 			Set<Usernondealsuggestion> Usernondealsuggestions = business.getUsernondealsuggestions();
 
@@ -388,6 +389,10 @@ public class UserService implements IUserService{
 						{
 							dealModel.setSuggestionType(dealsuggestion.getSuggestionType());
 						}
+						if(deal1.getLargeImageUrl() != null)
+						{
+							dealModel.setImageUrl(deal1.getLargeImageUrl());
+						}
 
 						dealsModeList.add(dealModel);
 					}
@@ -423,6 +428,8 @@ public class UserService implements IUserService{
 		suggestionResponse.setDealSuggestions(dealsModeList);
 		suggestionResponse.setNonDealSuggestions(businessModelList);
 		suggestionResponse.setEventSuggestions(eventsModelList);
+		suggestionResponse.setStatus(ServiceAPIStatus.OK.getStatus());
+		suggestionResponse.setError("");
 		return suggestionResponse;
 	}
 

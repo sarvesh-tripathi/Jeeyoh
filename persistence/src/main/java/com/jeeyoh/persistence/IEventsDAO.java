@@ -24,5 +24,6 @@ public interface IEventsDAO {
 	public List<Events> getCurrentEvents(int pageId);
 	public List<Events> getUpcomingEvents(int pageId);
 	public List<Events> getPastEvents(int pageId);
+	public List<Events> getBookedEvents(int userId);
 
 }

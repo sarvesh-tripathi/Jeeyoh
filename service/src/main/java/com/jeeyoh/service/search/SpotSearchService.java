@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jeeyoh.model.enums.ServiceAPIStatus;
 import com.jeeyoh.model.response.SearchResponse;
 import com.jeeyoh.model.search.SearchRequest;
 import com.jeeyoh.model.search.SearchResult;
@@ -62,6 +63,9 @@ public class SpotSearchService implements ISpotSearchService{
 		
 		SearchResponse searchResponse = new SearchResponse();
 		searchResponse.setSearchResult(exactMatchingSearchResults);
+		searchResponse.setStatus(ServiceAPIStatus.OK.getStatus());
+		searchResponse.setError("");
+
 		return searchResponse;
 	}
 	

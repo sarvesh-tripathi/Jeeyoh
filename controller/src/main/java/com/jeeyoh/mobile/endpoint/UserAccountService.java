@@ -58,7 +58,7 @@ public class UserAccountService {
 		LoginResponse loginResponce = userService.loginUser(user);
 		return loginResponce;
 	}
-	@SuppressWarnings("null")
+	
 	@Path("/regiteration")
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -70,7 +70,6 @@ public class UserAccountService {
 		
 		if(user != null)
 		{
-			
 			
 			logger.debug("Enter in mobile app 2222");
 			BaseResponse  baseResponse  = userService.isEmailExist(user);
@@ -205,8 +204,5 @@ public class UserAccountService {
         SuggestionResponse response = userService.getUserSuggestions(user);
         return response;
     }
-
-	
-	
 
 }

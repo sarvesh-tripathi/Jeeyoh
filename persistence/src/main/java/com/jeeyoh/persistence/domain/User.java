@@ -54,6 +54,7 @@ public class User  implements java.io.Serializable {
      private Set topdealssuggestions = new HashSet(0);
      private Set topnondealsuggestions = new HashSet(0);
      private Set topeventsuggestions = new HashSet(0);
+     private Set topcommunitysuggestions = new HashSet(0);
 
     public User() {
     }
@@ -459,6 +460,21 @@ public class User  implements java.io.Serializable {
 	 */
 	public void setTopeventsuggestions(Set topeventsuggestions) {
 		this.topeventsuggestions = topeventsuggestions;
+	}
+
+	/**
+	 * @return the topcommunitysuggestions
+	 */
+	public Set getTopcommunitysuggestions() {
+		return topcommunitysuggestions;
+	}
+
+
+	/**
+	 * @param topeventsuggestions the topcommunitysuggestions to set
+	 */
+	public void setTopcommunitysuggestions(Set topcommunitysuggestions) {
+		this.topcommunitysuggestions = topcommunitysuggestions;
 	}
 
 

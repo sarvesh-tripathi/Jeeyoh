@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.jeeyoh.persistence.domain.StubhubEvent;
+import com.jeeyoh.utils.Utils;
 
 @Repository("stubhubDAO")
 public class StubhubDAO implements IStubhubDAO {
@@ -52,10 +53,11 @@ public class StubhubDAO implements IStubhubDAO {
 	@Override
 	public List<StubhubEvent> getStubhubEvents() {
 		List<StubhubEvent> eventsList = null;
-		String hqlQuery = "from StubhubEvent";
+		String hqlQuery = "from StubhubEvent where event_date >= :currentDate";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
+			query.setParameter("currentDate", Utils.getCurrentDate());
 			eventsList = (List<StubhubEvent>) query.list();
 		} catch (Exception e) {
 			e.printStackTrace();

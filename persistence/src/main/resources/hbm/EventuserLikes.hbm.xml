@@ -3,43 +3,49 @@
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-    <class name="com.jeeyoh.persistence.domain.Eventuserlikes" table="eventuserlikes" catalog="jeeyoh">
-        <id name="eventUserLikesId" type="java.lang.Integer">
-            <column name="eventUserLikesId" />
-            <generator class="identity" />
-        </id>
-        <many-to-one name="user" class="com.jeeyoh.persistence.domain.User" fetch="select" lazy="false">
-            <column name="userId" not-null="true" />
-        </many-to-one>
-        <many-to-one name="event" class="com.jeeyoh.persistence.domain.Events" fetch="select" lazy="false">
-            <column name="eventId" not-null="true" />
-        </many-to-one>
-        <property name="isFavorite" type="java.lang.Boolean">
-            <column name="isFavorite" />
-        </property>
-        <property name="isFollowing" type="java.lang.Boolean">
-            <column name="isFollowing" />
-        </property>
-        <property name="isLike" type="java.lang.Boolean">
-            <column name="isLike" />
-        </property>
-        <property name="isVisited" type="java.lang.Boolean">
-            <column name="isVisited" />
-        </property>
-        <property name="isProfileHidden" type="java.lang.Boolean">
-            <column name="isProfileHidden" />
-        </property>
-        <property name="isProfileDetailsHidden" type="java.lang.Boolean">
-            <column name="isProfileDetailsHidden" />
-        </property>
-        <property name="displayName" type="string">
-            <column name="displayName" length="200" />
-        </property>
-        <property name="createdtime" type="timestamp">
-            <column name="createdtime" length="19" not-null="true" />
-        </property>
-        <property name="updatedtime" type="timestamp">
-            <column name="updatedtime" length="19" not-null="true" />
-        </property>
-    </class>
+	<class name="com.jeeyoh.persistence.domain.Eventuserlikes" table="eventuserlikes"
+		catalog="jeeyoh">
+		<id name="eventUserLikesId" type="java.lang.Integer">
+			<column name="eventUserLikesId" />
+			<generator class="identity" />
+		</id>
+		<many-to-one name="user" class="com.jeeyoh.persistence.domain.User"
+			fetch="select" lazy="false">
+			<column name="userId" not-null="true" />
+		</many-to-one>
+		<many-to-one name="event" class="com.jeeyoh.persistence.domain.Events"
+			fetch="select" lazy="false">
+			<column name="eventId" not-null="true" />
+		</many-to-one>
+		<property name="isFavorite" type="java.lang.Boolean">
+			<column name="isFavorite" />
+		</property>
+		<property name="isFollowing" type="java.lang.Boolean">
+			<column name="isFollowing" />
+		</property>
+		<property name="isLike" type="java.lang.Boolean">
+			<column name="isLike" />
+		</property>
+		<property name="isVisited" type="java.lang.Boolean">
+			<column name="isVisited" />
+		</property>
+		<property name="isProfileHidden" type="java.lang.Boolean">
+			<column name="isProfileHidden" />
+		</property>
+		<property name="isProfileDetailsHidden" type="java.lang.Boolean">
+			<column name="isProfileDetailsHidden" />
+		</property>
+		<property name="displayName" type="string">
+			<column name="displayName" length="200" />
+		</property>
+		<property name="createdtime" type="timestamp">
+			<column name="createdtime" length="19" not-null="true" />
+		</property>
+		<property name="updatedtime" type="timestamp">
+			<column name="updatedtime" length="19" not-null="true" />
+		</property>
+		<property name="isBooked" type="java.lang.Boolean">
+			<column name="isBooked" />
+		</property>
+	</class>
 </hibernate-mapping>
