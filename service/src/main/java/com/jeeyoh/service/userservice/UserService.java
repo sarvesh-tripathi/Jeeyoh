@@ -524,9 +524,9 @@ public class UserService implements IUserService{
 
 	@Transactional
 	@Override
-	public CategoryLikesResponse getCategoryForCaptureLikes(int userId) {
+	public CategoryLikesResponse getCategoryForCaptureLikes(int userId, String categoryType) {
 		// TODO Auto-generated method stub
-		List<UserCategory> categoryList = userDAO.getUserNonLikeCategories(userId);
+		List<UserCategory> categoryList = userDAO.getUserNonLikeCategories(userId,categoryType);		
 		CategoryLikesResponse categoryLikesResponse = new CategoryLikesResponse();
 		if(categoryList != null)
 		{

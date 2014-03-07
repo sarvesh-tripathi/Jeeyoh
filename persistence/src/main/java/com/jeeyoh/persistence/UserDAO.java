@@ -1280,7 +1280,7 @@ public class UserDAO implements IUserDAO {
 		return resultCount;
 	}
 
-	@Override
+	/*@Override
 	public List<UserCategory> getUserNonLikeCategories(int userId) {
 		// TODO Auto-generated method stub
 		
@@ -1297,9 +1297,9 @@ public class UserDAO implements IUserDAO {
 		    	logger.error(e.toString());
 		    }
 		return userCategories;
-	}
+	}*/
 	// if we need to capture based on category
-	/*public List<UserCategory> getUserNonLikeCategories(int userId, String category) {
+	public List<UserCategory> getUserNonLikeCategories(int userId, String categoryType) {
 		// TODO Auto-generated method stub
 		
 		    List<UserCategory>  userCategories = null;
@@ -1308,6 +1308,7 @@ public class UserDAO implements IUserDAO {
 		    try{
 		    	Query query = sessionFactory.getCurrentSession().createQuery(hqlQuery);
 		    	query.setParameter("userId",userId);
+		    	query.setParameter("category",categoryType);
 		    	userCategories = query.list();
 		    }
 		    catch(HibernateException e)
@@ -1315,7 +1316,7 @@ public class UserDAO implements IUserDAO {
 		    	logger.error(e.toString());
 		    }
 		return userCategories;
-	}*/
+	}
 
 	@Override
 	public UserCategory getCategory(Integer userCategoryId) {
@@ -1346,5 +1347,97 @@ public class UserDAO implements IUserDAO {
 			logger.error(e.toString());
 		}
 		
+	}
+
+	@Override
+	public int getBusinessWightCount(int userId, int itemId) {
+		// TODO Auto-generated method stub
+		int rowCount = 0;
+		String hqlquery = "select count(*) from Pageuserlikes where page.pageId =(select pageId from Page where business.id =:itemId) and userId in (select userByContactId.userId from Usercontacts where userByUserId.userId =:userId)";
+		try{
+			//Query query = sessionFactory.getCurrentSession().createSQLQuery(hqlquery);
+			Query query = sessionFactory.getCurrentSession().createQuery(hqlquery);
+			query.setParameter("itemId", itemId);
+			query.setParameter("userId",userId);
+			
+			rowCount = ((Number)query.uniqueResult()).intValue();
+			
+		}
+		catch(Exception e)
+		{
+			
+			logger.error(e.toString());
+		}
+		logger.debug("getBusinessWightCount Count"+rowCount);
+		return rowCount;
+		
+	}
+
+	@Override
+	public int getDealWightCount(int userId, int itemId) {
+		
+		int rowCount = 0;
+		String hqlquery = "select count(*) from Dealsusage where deals.id =:itemId and user.userId in (select userByContactId.userId from Usercontacts where userByUserId.userId =:userId)";
+		try{
+			//Query query = sessionFactory.getCurrentSession().createSQLQuery(hqlquery);
+			Query query = sessionFactory.getCurrentSession().createQuery(hqlquery);
+			query.setParameter("itemId", itemId);
+			query.setParameter("userId",userId);
+			
+			rowCount = ((Number)query.uniqueResult()).intValue();
+			
+		}
+		catch(Exception e)
+		{
+			
+			logger.error(e.toString());
+		}
+		logger.debug("Total Count"+rowCount);
+		return rowCount;
+		
+	}
+
+	@Override
+	public int getEventWightCount(int userId, int itemId) {
+		int rowCount = 0;
+		String hqlquery = "select count(*) from Eventuserlikes where event.eventId =:itemId and user.userId in (select userByContactId.userId from Usercontacts where userByUserId.userId =:userId)";
+		try{
+			//Query query = sessionFactory.getCurrentSession().createSQLQuery(hqlquery);
+			Query query = sessionFactory.getCurrentSession().createQuery(hqlquery);
+			query.setParameter("itemId", itemId);
+			query.setParameter("userId",userId);
+			
+			rowCount = ((Number)query.uniqueResult()).intValue();
+			
+		}
+		catch(Exception e)
+		{
+			
+			logger.error(e.toString());
+		}
+		logger.debug("Total Count"+rowCount);
+		return rowCount;
+	}
+
+	@Override
+	public int getPageWightCount(int userId, int itemId) {
+		int rowCount = 0;
+		String hqlquery = "select count(*) from Pageuserlikes where page.pageId =:itemId and userId in (select userByContactId.userId from Usercontacts where userByUserId.userId =:userId)";
+		try{
+			//Query query = sessionFactory.getCurrentSession().createSQLQuery(hqlquery);
+			Query query = sessionFactory.getCurrentSession().createQuery(hqlquery);
+			query.setParameter("itemId", itemId);
+			query.setParameter("userId",userId);
+			
+			rowCount = ((Number)query.uniqueResult()).intValue();
+			
+		}
+		catch(Exception e)
+		{
+			
+			logger.error(e.toString());
+		}
+		logger.debug("getPageWightCount Count"+rowCount);
+		return rowCount;
 	}
 }

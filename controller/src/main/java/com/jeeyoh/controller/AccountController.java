@@ -36,6 +36,7 @@ import com.jeeyoh.service.jobs.ICalculateTopSuggestionsService;
 import com.jeeyoh.service.jobs.IDealSearch;
 import com.jeeyoh.service.jobs.IEventSearch;
 import com.jeeyoh.service.jobs.INonDealSearch;
+import com.jeeyoh.service.jobs.IWallService;
 import com.jeeyoh.service.search.ICommunitySearchService;
 import com.jeeyoh.service.search.IEventsSuggestionSearchService;
 import com.jeeyoh.service.search.IManualUpload;
@@ -117,6 +118,9 @@ public class AccountController {
 
 	@Autowired
 	private IMatchingEventsService matchingEventsService;
+	
+	@Autowired
+	IWallService wallService;
 
 	private final String UPLOAD_DIRECTORY = "C:/uploads";
 
@@ -456,10 +460,11 @@ public class AccountController {
 
 		ModelAndView modelAndView = new ModelAndView("home");
 		//eventPublisher.sendConfirmationEmail();
-		UserModel user = new UserModel();
-		user.setEmailId("gaurav.shandilya@gmail.com");
-		userService.getUserSuggestions(user);
+		//UserModel user = new UserModel();
+		//user.setEmailId("gaurav.shandilya@gmail.com");
+		//userService.getUserSuggestions(user);
 		//nonDealSearch.caculateTopSuggestions();
+		wallService.addWeightContentOnItem();
 		return modelAndView;
 
 	}
@@ -472,7 +477,7 @@ public class AccountController {
 	}
 
 	@SuppressWarnings("unchecked")
-	@RequestMapping(value = "/uploadFile", method = RequestMethod.GET)
+	@RequestMapping(value = "/uploadFile", method = RequestMethod.GET) 
 	public ModelAndView uploadFile(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView modelAndView = new ModelAndView("manualUpload");
 
