@@ -106,6 +106,14 @@ public class UserService implements IUserService{
 		UserRegistrationResponse userRegistrationResponse = new UserRegistrationResponse();
 		userRegistrationResponse.setConfirmationId(confirmationId);
 		userDAO.registerUser(user);
+		User user1 = userDAO.loginUser(userModel);
+		logger.debug("User in Login Response :: "+user1);
+		if(user1 != null)
+		{
+			
+			userModel.setUserId(user1.getUserId());
+			userRegistrationResponse.setUser(userModel);
+		}
 		return userRegistrationResponse;
 	}
 
@@ -530,12 +538,12 @@ public class UserService implements IUserService{
 		CategoryLikesResponse categoryLikesResponse = new CategoryLikesResponse();
 		if(categoryList != null)
 		{
-			logger.debug("Category list " +categoryList.get(0).getCategoryUrl());
+			logger.debug("Category list " +categoryList.get(0).getImageUrl());
 			List<CategoryModel> categoryModels = new ArrayList<CategoryModel>();
 			for(UserCategory category:categoryList)
 			{
 				CategoryModel categoryModel = new CategoryModel();
-				categoryModel.setCategoryUrl(category.getCategoryUrl());
+				categoryModel.setCategoryUrl(category.getImageUrl());
 				categoryModel.setItemCategory(category.getItemCategory());
 				categoryModel.setItemSubCategory(category.getItemSubCategory());
 				categoryModel.setUserCategoryId(category.getUserCategoryId());

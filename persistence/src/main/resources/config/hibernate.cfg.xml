@@ -70,5 +70,6 @@
 		<mapping resource="hbm/Topeventsuggestion.hbm.xml" />
 		<mapping resource="hbm/Topnondealsuggestion.hbm.xml" />
 		<mapping resource="hbm/Topcommunitysuggestion.hbm.xml"/>
+		
 	</session-factory>
 </hibernate-configuration>

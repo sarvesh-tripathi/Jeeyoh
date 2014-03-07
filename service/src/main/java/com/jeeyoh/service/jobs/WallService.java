@@ -74,5 +74,10 @@ public class WallService implements IWallService {
 		wallFeed.setUpdatedTime(new Date());
 		userDAO.saveWallFeed(wallFeed);
 	}*/
+	
+	private void purgeItemBasedOnWeightCount()	
+	{
+		
+	}
 
 }
