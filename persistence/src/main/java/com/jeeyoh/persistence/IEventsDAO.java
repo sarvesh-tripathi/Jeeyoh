@@ -13,10 +13,10 @@ public interface IEventsDAO {
 	public List<Page> getCommunities();
 	public List<Events> getEventsByCommunityId(int pageId);
 	public List<Events> getEventsByCommunityType(int pageId, int pageType);
-	public List<Events> getEventsByLikeSearchKeyword(String searchText,String category, String location);
-	public List<Events> getEventsBySearchKeyword(String searchText,String category, String location);
-	public List<Page> getCommunityByLikeSearchKeyword(String searchText,String category, String location);
-	public List<Page> getCommunityBySearchKeyword(String searchText,String category, String location);
+	public List<Events> getEventsByLikeSearchKeyword(String searchText,String category, String location, int offset, int limit);
+	public List<Events> getEventsBySearchKeyword(String searchText,String category, String location, int offset, int limit);
+	public List<Page> getCommunityByLikeSearchKeyword(String searchText,String category, String location, int offset, int limit);
+	public List<Page> getCommunityBySearchKeyword(String searchText,String category, String location, int offset, int limit);
 	public List<Page> getCommunityPageByCategoryType(String category, int userId);
 	public List<Page> getUserFavourites(Integer userId);
 	public Page getCommunityById(int pageId);
@@ -25,5 +25,11 @@ public interface IEventsDAO {
 	public List<Events> getUpcomingEvents(int pageId);
 	public List<Events> getPastEvents(int pageId);
 	public List<Events> getBookedEvents(int userId);
+	public List<Events> getUserEventsSuggestions(String userEmail,
+			int offset, int limit);
+	public List<Object[]> getEventLikeCountByPage(String idsStr);
+	public List<Events> getEventsByuserLikes(String likekeyword,
+			   String itemCategory, String providerName);
+	public Events getEventById(int eventId);
 
 }

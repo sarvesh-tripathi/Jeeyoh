@@ -14,7 +14,7 @@ public interface IBusinessDAO {
 	public List<Business> getBusinessByName(String name);
 	public List<Business> getBusinessById(String businessId);
 	public List<Business> getBusinessByIdForGroupon(String businessId);
-	public List<Business> getBusinessById(int id);
+	public Business getBusinessById(int id);
 	public void saveBusiness(Business business, int count);
 	public List<Businesstype> getBusinesstypeByTypeArray(String[] type);
 	public Businesstype getBusinesstypeByType(String type);
@@ -22,7 +22,10 @@ public interface IBusinessDAO {
 	public List<Business> getBusinessByCriteria(String userEmail, String searchText, String category, String location, String rating);
 	public List<Business> getBusinessByuserLikes(String likekeyword, String itemCategory, String providerName);
 	public Gcategory getBusinessCategory(String name);
-	public List<Business> getBusinessBySearchKeyword(String searchText,String category, String location);
-	public List<Business> getBusinessByLikeSearchKeyword(String searchText,String category, String location);
+	public List<Business> getBusinessBySearchKeyword(String searchText,String category, String location,int offset, int limit);
+	public List<Business> getBusinessByLikeSearchKeyword(String searchText,String category, String location,int offset, int limit);
 	public List<Business> getBusinessByCriteriaWithoutRating(String userEmail, String searchText, String category, String location, String rating);
+	public List<Business> getUserNonDealSuggestions(String userEmail, int offset, int limit);
+	public List<Object[]> getTopBusinessByRating(String idsArray);
+	public List<Object[]> getNonDealLikeCountByPage(String idsStr);
 }

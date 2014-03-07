@@ -5,21 +5,22 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jeeyoh.persistence.IBusinessDAO;
+import com.jeeyoh.persistence.IDealsDAO;
 import com.jeeyoh.persistence.IEventsDAO;
 import com.jeeyoh.persistence.IUserDAO;
 import com.jeeyoh.persistence.domain.Business;
 import com.jeeyoh.persistence.domain.Deals;
 import com.jeeyoh.persistence.domain.Events;
-import com.jeeyoh.persistence.domain.Gdealoption;
 import com.jeeyoh.persistence.domain.Page;
 import com.jeeyoh.persistence.domain.Pageuserlikes;
 import com.jeeyoh.persistence.domain.Topcommunitysuggestion;
@@ -44,6 +45,12 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 
 	@Autowired
 	private IEventsDAO eventsDAO;
+
+	@Autowired
+	private IBusinessDAO businessDAO;
+
+	@Autowired
+	private IDealsDAO dealsDAO;
 
 	@Override
 	@Transactional
@@ -77,24 +84,22 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 							usernondealsuggestions = getFriendsNonDealSuggestionList(userId, contactId, category, usernondealsuggestions, true,false);
 							// Get Deal Suggestions
 							userdealsuggestions = getFriendsDealSuggestionList(userId, contactId, category, userdealsuggestions, true,false,false,false);
-							userdealsuggestions = getFriendsDealSuggestionList(userId, contactId, category, userdealsuggestions, false,true,false,false);
+							//userdealsuggestions = getFriendsDealSuggestionList(userId, contactId, category, userdealsuggestions, false,true,false,false);
 							// Get Event Suggestions
 							usereventsuggestions = getFriendsEventSuggestionList(userId, contactId, category, usereventsuggestions, true,false,false,false);
-							usereventsuggestions = getFriendsEventSuggestionList(userId, contactId, category, usereventsuggestions, false,true,false,false);
+							//usereventsuggestions = getFriendsEventSuggestionList(userId, contactId, category, usereventsuggestions, false,true,false,false);
 						}
 
 						// Save Top 10 Non Deal Suggestions
-						//saveTopNonDealSuggestions(userId, category, usernondealsuggestions, true, false, false);
+						saveTopNonDealSuggestions(userId, category, usernondealsuggestions, true, false, false);
 
 						// Save Top 10 Deal Suggestions
-						//saveTopDealSuggestions(userId, category, userdealsuggestions, true, false, false);
+						saveTopDealSuggestions(userId, category, userdealsuggestions, true, false, false);
 
 						// Save Top 10 Event Suggestions
 						saveTopEventSuggestions(userId, category, usereventsuggestions, true, false, false);
 					}
 				}
-
-
 			}
 		}
 	}
@@ -105,8 +110,6 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 	@Override
 	public void calculateTopCommunitySuggestions() {
 		List<User> userList = userDAO.getUsers();
-		logger.debug("caculateTopSuggestions ==> search ==> ");
-		//Date weekendDate = Utils.getNearestWeekend(null);
 		if(userList != null) {
 			for(User user : userList) {
 				logger.debug("caculateTopSuggestions ==> search ==> userID ==> " + user.getEmailId());
@@ -141,22 +144,6 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 						}
 					}
 				}
-
-				/*// Get Non Deal Suggestions
-				List<Usernondealsuggestion> usernondealsuggestions = userDAO.getUserNonDealsSuggestionByUserIdForCommunity(userId);
-				// Get Deal Suggestions
-				List<Userdealssuggestion> userdealsuggestions = userDAO.getUserDealSuggestionByUserIdForCommunity(userId);
-				// Get Event Suggestions
-				List<Usereventsuggestion> usereventsuggestions = userDAO.getUserEventsSuggestionByUserIdForCommunity(userId);
-
-				// Save Top 10 Non Deal Suggestions
-				saveTopNonDealSuggestions(userId, usernondealsuggestions, true, false, false);
-
-				// Save Top 10 Deal Suggestions
-				saveTopDealSuggestions(userId, userdealsuggestions, true, false, false);
-
-				// Save Top 10 Event Suggestions
-				saveTopEventSuggestions(userId, usereventsuggestions, true, false, false);*/
 			}
 		}
 	}
@@ -184,20 +171,20 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 					List<Usernondealsuggestion> usernondealsuggestions = userDAO.getUserNonDealsSuggestionByUserIdForCommunity(userId, category);
 					// Get Deal Suggestions
 					userdealsuggestions = getFriendsDealSuggestionList(userId, 0, category, userdealsuggestions, false,false,true,false);
-					userdealsuggestions = getFriendsDealSuggestionList(userId, 0, category, userdealsuggestions, false,false,false,true);
+					//userdealsuggestions = getFriendsDealSuggestionList(userId, 0, category, userdealsuggestions, false,false,false,true);
 					// Get Event Suggestions
 					usereventsuggestions = getFriendsEventSuggestionList(userId, 0, category, usereventsuggestions, false,false,true,false);
-					usereventsuggestions = getFriendsEventSuggestionList(userId, 0, category, usereventsuggestions, false,false,false,true);
+					//usereventsuggestions = getFriendsEventSuggestionList(userId, 0, category, usereventsuggestions, false,false,false,true);
 					/*// Get Deal Suggestions
 					List<Userdealssuggestion> userdealsuggestions = userDAO.getUserDealSuggestionByUserIdForJeeyoh(userId);
 					// Get Event Suggestions
 					List<Usereventsuggestion> usereventsuggestions = userDAO.getUserEventsSuggestionByUserIdForJeeyoh(userId);
 					 */
 					// Save Top 10 Non Deal Suggestions
-					//saveTopNonDealSuggestions(userId, category, usernondealsuggestions, false, false, true);
+					saveTopNonDealSuggestions(userId, category, usernondealsuggestions, false, false, true);
 
 					// Save Top 10 Deal Suggestions
-					//saveTopDealSuggestions(userId, category, userdealsuggestions, false, false, true);
+					saveTopDealSuggestions(userId, category, userdealsuggestions, false, false, true);
 
 					// Save Top 10 Event Suggestions
 					saveTopEventSuggestions(userId, category, usereventsuggestions, false, false, true);
@@ -289,7 +276,7 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 	 */
 	private void saveTopNonDealSuggestions(int userId, String category, List<Usernondealsuggestion> usernondealsuggestions, boolean forFriendsSuggestion, boolean forComunitySuggestion, boolean forJeeyohSuggestion)
 	{
-		String pageIdsStr = "";
+		String idsStr = "";
 
 		logger.debug("usernondealsuggestions:  "+usernondealsuggestions);
 
@@ -297,56 +284,129 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 		{
 			for(int i = 0; i < usernondealsuggestions.size(); i++)
 			{
-				Page page = (Page)usernondealsuggestions.get(i).getBusiness().getPages().iterator().next();
-				pageIdsStr +="'"+page.getPageId()+"'";
+				//Page page = (Page)usernondealsuggestions.get(i).getBusiness().getPages().iterator().next();
+				idsStr +="'"+usernondealsuggestions.get(i).getBusiness().getId()+"'";
 
 
 				if(i < usernondealsuggestions.size() - 1)
 				{
-					pageIdsStr+=",";
+					idsStr+=",";
 				}
 			}
 
 			// Getting Likes count for non deal suggestion in descending order
-			List<Object[]> rows = userDAO.userNonDealSuggestionCount(pageIdsStr);
+			//List<Object[]> rows = userDAO.userNonDealSuggestionCount(idsStr,10);
+			List<Object[]> rows = businessDAO.getNonDealLikeCountByPage(idsStr);
 
+
+			ArrayList<String> idsArray = new ArrayList<String>();
+
+			ArrayList<ArrayList<String>> main = new ArrayList<ArrayList<String>>();
+			int likecount = 0;
 			int count = 1;
 			if(rows != null)
 			{
-				logger.debug("rows: "+rows.size());
-				for(Object[] object : rows)
+
+				logger.debug("rows size: "+rows.size());
+				for(int i = 0; i < rows.size(); i++)
 				{
-					if(count <= 10)
+					if(count <= 3)
 					{
-						for(Usernondealsuggestion usernondealsuggestion : usernondealsuggestions)
+						logger.debug("Row items: "+rows.get(i)[0] +" : "+rows.get(i)[1]);
+						idsArray.clear();
+						//idsArray.setLength(0);
+						likecount = Integer.parseInt(rows.get(i)[0].toString());
+						//idsArray.append("'"+rows.get(i)[1]+"',");
+						idsArray.add(rows.get(i)[1].toString());
+						for(int j = i+1; j < rows.size(); j++)
 						{
-							Page page = (Page)usernondealsuggestion.getBusiness().getPages().iterator().next();
-							if(page.getPageId() == Integer.parseInt(object[1].toString()))
+							logger.debug("Same Item:  "+rows.get(j)[0].toString());
+							if(Integer.parseInt(rows.get(i)[0].toString()) == Integer.parseInt(rows.get(j)[0].toString()))
 							{
-								Business business = usernondealsuggestion.getBusiness();
-								//Checking if the suggestions is already exists or not
-								List<Topnondealsuggestion> topnondealsuggestions = userDAO.isTopNonDealSuggestionExists(userId, business.getId());
-								if(topnondealsuggestions == null || topnondealsuggestions.size() == 0)
+								idsArray.add(rows.get(j)[1].toString());
+								//idsArray.append("'"+rows.get(j)[1]+"',");
+								rows.remove(j);
+								j--;
+							}
+
+						}
+
+						if(idsArray.size() > 1)
+						{
+							List<Object[]> rows1 = businessDAO.getTopBusinessByRating(StringUtils.join(idsArray.toArray(new String[idsArray.size()]), ","));
+							for(int k = 0; k < rows1.size(); k++)
+							{
+								if(count <= 3)
 								{
-									Topnondealsuggestion topnondealsuggestion = new Topnondealsuggestion();
-									topnondealsuggestion.setBusiness(business);
-									topnondealsuggestion.setUser(usernondealsuggestion.getUser());
-									if(forFriendsSuggestion)
-										topnondealsuggestion.setSuggestionType("Friend's Suggestion");
-									else if(forJeeyohSuggestion)
-										topnondealsuggestion.setSuggestionType("Jeeyoh Suggestion");
-									topnondealsuggestion.setRank((long)count);
-									topnondealsuggestion.setTotalLikes(Integer.parseInt(object[0].toString()));
-									topnondealsuggestion.setCreatedTime(new Date());
-									topnondealsuggestion.setUpdatedTime(new Date());
-									topnondealsuggestion.setCategoryType(category);
-									userDAO.saveTopNonDealSuggestions(topnondealsuggestion);
-									count++;
+									/*for(Usernondealsuggestion usernondealsuggestion : usernondealsuggestions)
+									{
+										//Page page = (Page)usernondealsuggestion.getBusiness().getPages().iterator().next();
+										if(usernondealsuggestion.getBusiness().getId() == Integer.parseInt(rows1.get(k)[0].toString()))
+										{
+											Business business = usernondealsuggestion.getBusiness();
+											//Checking if the suggestions is already exists or not
+											List<Topnondealsuggestion> topnondealsuggestions = userDAO.isTopNonDealSuggestionExists(userId, business.getId());
+											if(topnondealsuggestions == null || topnondealsuggestions.size() == 0)
+											{
+												Topnondealsuggestion topnondealsuggestion = new Topnondealsuggestion();
+												topnondealsuggestion.setBusiness(business);
+												topnondealsuggestion.setUser(usernondealsuggestion.getUser());
+												if(forFriendsSuggestion)
+													topnondealsuggestion.setSuggestionType("Friend's Suggestion");
+												else if(forJeeyohSuggestion)
+													topnondealsuggestion.setSuggestionType("Jeeyoh Suggestion");
+												topnondealsuggestion.setRank((long)count);
+												topnondealsuggestion.setTotalLikes(likecount);
+												topnondealsuggestion.setCreatedTime(new Date());
+												topnondealsuggestion.setUpdatedTime(new Date());
+												topnondealsuggestion.setCategoryType(category);
+												userDAO.saveTopNonDealSuggestions(topnondealsuggestion);
+												count++;
+											}
+											break;
+										}
+									}*/
+									boolean isSaved = saveTopNonDealSuggestion(usernondealsuggestions, userId, Integer.parseInt(rows1.get(k)[0].toString()), likecount, category, forJeeyohSuggestion, forFriendsSuggestion, count);
+									if(isSaved)
+										count++;
 								}
-								break;
 							}
 						}
-						logger.debug("userNonDealSuggestions: "+object[0] +" : "+ object[1]);
+						else
+						{
+							/*for(Usernondealsuggestion usernondealsuggestion : usernondealsuggestions)
+							{
+								//Page page = (Page)usernondealsuggestion.getBusiness().getPages().iterator().next();
+								if(usernondealsuggestion.getBusiness().getId() == Integer.parseInt(idsArray.get(0).toString()))
+								{
+									Business business = usernondealsuggestion.getBusiness();
+									//Checking if the suggestions is already exists or not
+									List<Topnondealsuggestion> topnondealsuggestions = userDAO.isTopNonDealSuggestionExists(userId, business.getId());
+									if(topnondealsuggestions == null || topnondealsuggestions.size() == 0)
+									{
+										Topnondealsuggestion topnondealsuggestion = new Topnondealsuggestion();
+										topnondealsuggestion.setBusiness(business);
+										topnondealsuggestion.setUser(usernondealsuggestion.getUser());
+										if(forFriendsSuggestion)
+											topnondealsuggestion.setSuggestionType("Friend's Suggestion");
+										else if(forJeeyohSuggestion)
+											topnondealsuggestion.setSuggestionType("Jeeyoh Suggestion");
+										topnondealsuggestion.setRank((long)count);
+										topnondealsuggestion.setTotalLikes(likecount);
+										topnondealsuggestion.setCreatedTime(new Date());
+										topnondealsuggestion.setUpdatedTime(new Date());
+										topnondealsuggestion.setCategoryType(category);
+										userDAO.saveTopNonDealSuggestions(topnondealsuggestion);
+										count++;
+									}
+									break;
+								}
+								//saveTopEventSuggestion(usereventsuggestions, userId, Integer.parseInt(idsArray.get(0)), Integer.parseInt(rows.get(i)[0].toString()), category, forJeeyohSuggestion, forFriendsSuggestion, count);
+							}*/
+							boolean isSaved = saveTopNonDealSuggestion(usernondealsuggestions, userId, Integer.parseInt(idsArray.get(0).toString()), likecount, category, forJeeyohSuggestion, forFriendsSuggestion, count);
+							if(isSaved)
+								count++;
+						}
 					}
 				}
 			}
@@ -361,8 +421,9 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 	 */
 	private void saveTopDealSuggestions(int userId, String category, List<Userdealssuggestion> userdealsuggestions, boolean forFriendsSuggestion, boolean forComunitySuggestion, boolean forJeeyohSuggestion)
 	{
-		String dealIdsStr = "";
-		String pageIdsStr = "";
+		StringBuilder pageIdsStr = new StringBuilder();
+		StringBuilder dealIdsStr = new StringBuilder();
+
 		logger.debug("userdealsuggestions size: "+userdealsuggestions);
 		if(userdealsuggestions != null && !userdealsuggestions.isEmpty())
 		{
@@ -370,23 +431,25 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 			for(int i = 0; i < userdealsuggestions.size(); i++)
 			{
 				Userdealssuggestion userdealssuggestion = userdealsuggestions.get(i);
-				if(userdealssuggestion.getSuggestionType().contains("Community"))
+				/*if(userdealssuggestion.getSuggestionType().contains("Community"))
 				{
 					Page page = (Page)userdealssuggestion.getDeals().getBusiness().getPages().iterator().next();
-					pageIdsStr +="'"+page.getPageId()+"'";
+					//pageIdsStr +="'"+page.getPageId()+"'";
+					pageIdsStr.append("'"+page.getPageId()+"',");
 					if(i < userdealsuggestions.size() - 1)
 					{
 						pageIdsStr+=",";
 					}
 				}
 				else
-				{
-					dealIdsStr +="'"+userdealssuggestion.getDeals().getId()+"'";
-					if(i < userdealsuggestions.size() - 1)
+				{*/
+				dealIdsStr.append("'"+userdealssuggestion.getDeals().getId()+"',");
+				//dealIdsStr +="'"+userdealssuggestion.getDeals().getId()+"'";
+				/*if(i < userdealsuggestions.size() - 1)
 					{
 						dealIdsStr+=",";
-					}
-				}
+					}*/
+				//}
 				/*else if(forComunitySuggestion)
 				{
 					pageIdsStr = "";
@@ -401,98 +464,267 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 
 
 			List<Object[]> rows = new ArrayList<Object[]>();
-			List<Object[]> rows1 = null;
+			//List<Object[]> rows1 = null;
 			List<Object[]> rows2 = null;
 
 			logger.debug("dealIdsStr: "+dealIdsStr +" : "+dealIdsStr.equals("")+"  pageIdsStr: "+pageIdsStr);
 			// Getting Likes count for deal suggestion in descending order
 			if(!dealIdsStr.equals(""))
 			{
-				if(dealIdsStr.lastIndexOf(",") == dealIdsStr.length()-1)
+				/*if(dealIdsStr.lastIndexOf(",") == dealIdsStr.length()-1)
 				{
 					dealIdsStr = dealIdsStr.substring(0,dealIdsStr.length()-1);
-				}
-				rows1 = userDAO.userDealSuggestionCount(dealIdsStr);
-				if(rows1 != null)
+				}*/
+				dealIdsStr.deleteCharAt(dealIdsStr.length() - 1);
+				rows = userDAO.userDealSuggestionCount(dealIdsStr.toString(),5);
+				/*if(rows1 != null)
 				{
 					rows.addAll(rows1);
-				}
+				}*/
 			}
-			if(!pageIdsStr.equals(""))
+			/*if(!pageIdsStr.equals(""))
 			{
 				if(pageIdsStr.lastIndexOf(",") == pageIdsStr.length()-1)
 				{
 					pageIdsStr = pageIdsStr.substring(0,pageIdsStr.length()-1);
 				}
-				rows2 = userDAO.userNonDealSuggestionCount(pageIdsStr);
+				pageIdsStr.deleteCharAt(pageIdsStr.length() - 1);
+				rows2 = userDAO.userNonDealSuggestionCount(pageIdsStr.toString(),5);
 				logger.debug("rows2: "+rows2);
 				if(rows2 != null)
 				{
 					rows.addAll(rows2);
 				}
-
 			}
-
+			 */
 
 			logger.debug("dealIdsStr: "+dealIdsStr +" : "+rows);
-			Collections.sort(rows, new SuggestionComparator());
+			//Collections.sort(rows, new SuggestionComparator());
 			logger.debug("rows after sorting: "+rows);
+			ArrayList<String> idsArray = new ArrayList<String>();
 
+			int likecount = 0;
 			if(rows != null)
 			{
 				int count = 1;
-				logger.debug("rows: "+rows.size());
-				boolean isAccessed = false;
-				for(Object[] object : rows)
+				for(int i = 0; i < rows.size(); i++)
 				{
-					isAccessed = false;
-					if(count <= 10)
+					if(count <= 3)
 					{
-						for(Userdealssuggestion userdealsuggestion : userdealsuggestions)
+						logger.debug("Row items: "+rows.get(i)[0] +" : "+rows.get(i)[1]);
+						idsArray.clear();
+						likecount = Integer.parseInt(rows.get(i)[0].toString());
+						idsArray.add(rows.get(i)[1].toString());
+						for(int j = i+1; j < rows.size(); j++)
 						{
-							Deals deal = userdealsuggestion.getDeals();
-							if(userdealsuggestion.getSuggestionType().contains("Community"))
+							logger.debug("Same Item:  "+rows.get(j)[0].toString());
+							if(Integer.parseInt(rows.get(i)[0].toString()) == Integer.parseInt(rows.get(j)[0].toString()))
 							{
-								Page page = (Page)userdealsuggestion.getDeals().getBusiness().getPages().iterator().next();
-								if(page.getPageId() == object[1])
+								idsArray.add(rows.get(j)[1].toString());
+								rows.remove(j);
+								j--;
+							}
+						}
+
+						if(idsArray.size() > 1)
+						{
+							ArrayList<String> dealsIds = new ArrayList<String>();
+							List<Object[]> rows1 = dealsDAO.getTopDealsByRating(StringUtils.join(idsArray.toArray(new String[idsArray.size()]), ","));
+							if(rows1 != null)
+							{
+								for(int k = 0; k < rows1.size(); k++)
 								{
-									//Checking if the suggestions is already exists or not
-									List<Topdealssuggestion> topdealsuggestions = userDAO.isTopDealSuggestionExists(userId, deal.getId());
-									if(topdealsuggestions == null || topdealsuggestions.size() == 0)
+									dealsIds.clear();
+									dealsIds.add(rows1.get(k)[0].toString());
+									for(int j = k+1; j < rows1.size(); j++)
 									{
-										//if(count <= 10)
-										//{
-										Topdealssuggestion topdealsuggestion = new Topdealssuggestion();
-										topdealsuggestion.setDeals(deal);
-										topdealsuggestion.setUser(userdealsuggestion.getUser());
-										if(forJeeyohSuggestion)
-											topdealsuggestion.setSuggestionType("Jeeyoh Suggestion");
-										else if(forFriendsSuggestion)
-											topdealsuggestion.setSuggestionType("Friend's Suggestion");
-										topdealsuggestion.setRank((long)count);
-										topdealsuggestion.setTotalLikes(Integer.parseInt(object[0].toString()));
-										topdealsuggestion.setCategoryType(category);
-										topdealsuggestion.setCreatedTime(new Date());
-										topdealsuggestion.setUpdatedTime(new Date());
-										userDAO.saveTopDealSuggestions(topdealsuggestion);
-										//isAccessed = true;
-										count++;
-										//}
+										logger.debug("Same Item:  "+rows1.get(j)[0].toString());
+										if((rows1.get(k)[1] == null && rows1.get(j)[1] == null) || (Integer.parseInt(rows1.get(k)[1].toString()) == Integer.parseInt(rows1.get(j)[1].toString())))
+										{
+											dealsIds.add(rows1.get(j)[0].toString());
+											rows1.remove(j);
+											j--;
+										}
 									}
-									break;
+
+									if(dealsIds.size() > 1)
+									{
+										List<Object[]> array = dealsDAO.getDealLikeCountByPage(StringUtils.join(idsArray.toArray(new String[dealsIds.size()]), ",")) ;
+										for(int j = 0; j < array.size(); j++)
+										{
+											logger.debug("count11: "+count);
+											if(count <= 4)
+											{
+											/*	for(Userdealssuggestion userdealsuggestion : userdealsuggestions)
+												{
+													Deals deal = userdealsuggestion.getDeals();
+													if(deal.getId() == Integer.parseInt(array.get(j)[0].toString()))
+													{
+														//Checking if the suggestions is already exists or not
+														List<Topdealssuggestion> topdealsuggestions = userDAO.isTopDealSuggestionExists(userId, deal.getId());
+														if(topdealsuggestions == null || topdealsuggestions.size() == 0)
+														{
+															Topdealssuggestion topdealsuggestion = new Topdealssuggestion();
+															topdealsuggestion.setDeals(deal);
+															topdealsuggestion.setUser(userdealsuggestion.getUser());
+															if(forJeeyohSuggestion)
+																topdealsuggestion.setSuggestionType("Jeeyoh Suggestion");
+															else if(forFriendsSuggestion)
+																topdealsuggestion.setSuggestionType("Friend's Suggestion");
+															topdealsuggestion.setRank((long)count);
+															topdealsuggestion.setTotalLikes(likecount);
+															topdealsuggestion.setCategoryType(category);
+															topdealsuggestion.setCreatedTime(new Date());
+															topdealsuggestion.setUpdatedTime(new Date());
+															userDAO.saveTopDealSuggestions(topdealsuggestion);
+															count++;
+														}
+														break;
+													}
+												}*/
+												boolean isSaved = saveTopDealSuggestion(userdealsuggestions, userId, Integer.parseInt(array.get(j)[0].toString()), likecount, category, forJeeyohSuggestion, forFriendsSuggestion, count);
+												if(isSaved)
+													count++;
+											}
+										}
+
+										if(dealsIds.size() > array.size())
+										{
+											if(count <= 4)
+											{
+												boolean found = false;
+												for(int m = 0; m < dealsIds.size(); m++)
+												{
+													for(int j = 0; j < array.size(); j++)
+													{
+														if(Integer.parseInt(dealsIds.get(m)) == Integer.parseInt(array.get(j)[1].toString()))
+														{
+															found = true;
+														}
+													}
+													if(!found)
+													{
+														/*for(Userdealssuggestion userdealsuggestion : userdealsuggestions)
+														{
+															Deals deal = userdealsuggestion.getDeals();
+															if(deal.getId() == Integer.parseInt(dealsIds.get(m).toString()))
+															{
+																//Checking if the suggestions is already exists or not
+																List<Topdealssuggestion> topdealsuggestions = userDAO.isTopDealSuggestionExists(userId, deal.getId());
+																if(topdealsuggestions == null || topdealsuggestions.size() == 0)
+																{
+																	Topdealssuggestion topdealsuggestion = new Topdealssuggestion();
+																	topdealsuggestion.setDeals(deal);
+																	topdealsuggestion.setUser(userdealsuggestion.getUser());
+																	if(forJeeyohSuggestion)
+																		topdealsuggestion.setSuggestionType("Jeeyoh Suggestion");
+																	else if(forFriendsSuggestion)
+																		topdealsuggestion.setSuggestionType("Friend's Suggestion");
+																	topdealsuggestion.setRank((long)count);
+																	topdealsuggestion.setTotalLikes(likecount);
+																	topdealsuggestion.setCategoryType(category);
+																	topdealsuggestion.setCreatedTime(new Date());
+																	topdealsuggestion.setUpdatedTime(new Date());
+																	userDAO.saveTopDealSuggestions(topdealsuggestion);
+																	count++;
+																}
+																break;
+															}
+														}*/
+														boolean isSaved = saveTopDealSuggestion(userdealsuggestions, userId, Integer.parseInt(dealsIds.get(m).toString()), likecount, category, forJeeyohSuggestion, forFriendsSuggestion, count);
+														if(isSaved)
+															count++;
+													}
+
+													//Set found bool back to false
+													found = false;
+												}
+											}
+										}
+									}
+									else
+									{
+										/*for(Userdealssuggestion userdealsuggestion : userdealsuggestions)
+										{
+											Deals deal = userdealsuggestion.getDeals();
+											if(deal.getId() == Integer.parseInt(dealsIds.get(0)))
+											{
+												//Checking if the suggestions is already exists or not
+												List<Topdealssuggestion> topdealsuggestions = userDAO.isTopDealSuggestionExists(userId, deal.getId());
+												if(topdealsuggestions == null || topdealsuggestions.size() == 0)
+												{
+													Topdealssuggestion topdealsuggestion = new Topdealssuggestion();
+													topdealsuggestion.setDeals(deal);
+													topdealsuggestion.setUser(userdealsuggestion.getUser());
+													if(forJeeyohSuggestion)
+														topdealsuggestion.setSuggestionType("Jeeyoh Suggestion");
+													else if(forFriendsSuggestion)
+														topdealsuggestion.setSuggestionType("Friend's Suggestion");
+													topdealsuggestion.setRank((long)count);
+													topdealsuggestion.setTotalLikes(likecount);
+													topdealsuggestion.setCategoryType(category);
+													topdealsuggestion.setCreatedTime(new Date());
+													topdealsuggestion.setUpdatedTime(new Date());
+													userDAO.saveTopDealSuggestions(topdealsuggestion);
+													count++;
+												}
+												break;
+											}
+										}*/
+										boolean isSaved = saveTopDealSuggestion(userdealsuggestions, userId, Integer.parseInt(dealsIds.get(0)), likecount, category, forJeeyohSuggestion, forFriendsSuggestion, count);
+										if(isSaved)
+											count++;
+									}
 								}
-								/*else
-								{
-									if(isAccessed)
-									{
-										break;
-									}
-								}*/
 							}
 
-							else
+							for(int k = 0; k < rows1.size(); k++)
 							{
-								if(deal.getId() == Integer.parseInt(object[1].toString()))
+								if(count <= 3)
+								{
+									/*for(Userdealssuggestion userdealsuggestion : userdealsuggestions)
+									{
+										Deals deal = userdealsuggestion.getDeals();
+
+
+										if(deal.getId() == Integer.parseInt(rows1.get(k)[0].toString()))
+										{
+											//Checking if the suggestions is already exists or not
+											List<Topdealssuggestion> topdealsuggestions = userDAO.isTopDealSuggestionExists(userId, deal.getId());
+											if(topdealsuggestions == null || topdealsuggestions.size() == 0)
+											{
+												Topdealssuggestion topdealsuggestion = new Topdealssuggestion();
+												topdealsuggestion.setDeals(deal);
+												topdealsuggestion.setUser(userdealsuggestion.getUser());
+												if(forJeeyohSuggestion)
+													topdealsuggestion.setSuggestionType("Jeeyoh Suggestion");
+												else if(forFriendsSuggestion)
+													topdealsuggestion.setSuggestionType("Friend's Suggestion");
+												topdealsuggestion.setRank((long)count);
+												topdealsuggestion.setTotalLikes(Integer.parseInt(rows1.get(k)[0].toString()));
+												topdealsuggestion.setCategoryType(category);
+												topdealsuggestion.setCreatedTime(new Date());
+												topdealsuggestion.setUpdatedTime(new Date());
+												userDAO.saveTopDealSuggestions(topdealsuggestion);
+												count++;
+											}
+											break;
+										}
+									}*/
+									boolean isSaved = saveTopDealSuggestion(userdealsuggestions, userId, Integer.parseInt(rows1.get(k)[0].toString()), Integer.parseInt(rows1.get(k)[0].toString()), category, forJeeyohSuggestion, forFriendsSuggestion, count);
+									if(isSaved)
+										count++;
+								}
+							}
+						}
+						else
+						{
+							/*for(Userdealssuggestion userdealsuggestion : userdealsuggestions)
+							{
+								Deals deal = userdealsuggestion.getDeals();
+
+
+								if(deal.getId() == Integer.parseInt(idsArray.get(0)))
 								{
 									//Checking if the suggestions is already exists or not
 									List<Topdealssuggestion> topdealsuggestions = userDAO.isTopDealSuggestionExists(userId, deal.getId());
@@ -506,40 +738,21 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 										else if(forFriendsSuggestion)
 											topdealsuggestion.setSuggestionType("Friend's Suggestion");
 										topdealsuggestion.setRank((long)count);
-										topdealsuggestion.setTotalLikes(Integer.parseInt(object[0].toString()));
+										topdealsuggestion.setTotalLikes(likecount);
 										topdealsuggestion.setCategoryType(category);
 										topdealsuggestion.setCreatedTime(new Date());
 										topdealsuggestion.setUpdatedTime(new Date());
 										userDAO.saveTopDealSuggestions(topdealsuggestion);
 										count++;
-									}
-									break;
-								}
-							}
-							/*else if(forJeeyohSuggestion)
-							{
-								Page page = (Page)userdealsuggestion.getDeals().getBusiness().getPages().iterator().next();
-								if(page.getPageId() == object[1])
-								{
-									//Checking if the suggestions is already exists or not
-									List<Topdealssuggestion> topdealsuggestions = userDAO.isTopDealSuggestionExists(userId, deal.getId());
-									if(topdealsuggestions == null || topdealsuggestions.size() == 0)
-									{
-										Topdealssuggestion topdealsuggestion = new Topdealssuggestion();
-										topdealsuggestion.setDeals(deal);
-										topdealsuggestion.setUser(userdealsuggestion.getUser());
-										topdealsuggestion.setSuggestionType("Jeeyoh Suggestion");
-										topdealsuggestion.setRank((long)count);
-										topdealsuggestion.setTotalLikes(Integer.parseInt(object[0].toString()));
-										topdealsuggestion.setCreatedTime(new Date());
-										topdealsuggestion.setUpdatedTime(new Date());
-										userDAO.saveTopDealSuggestions(topdealsuggestion);
 									}
 									break;
 								}
 							}*/
+							boolean isSaved = saveTopDealSuggestion(userdealsuggestions, userId, Integer.parseInt(idsArray.get(0)), likecount, category, forJeeyohSuggestion, forFriendsSuggestion, count);
+							if(isSaved)
+								count++;
+
 						}
-						logger.debug("userDealSuggestions: "+object[0] +" : "+ object[1]);
 					}
 				}
 			}
@@ -564,25 +777,25 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 			for(int i = 0; i < usereventsuggestions.size(); i++)
 			{
 				Usereventsuggestion usereventsuggestion = usereventsuggestions.get(i);
-				if(usereventsuggestion.getSuggestionType().contains("Community"))
+				/*if(usereventsuggestion.getSuggestionType().contains("Community"))
 				{
 					//pageIdsStr +="'"+usereventsuggestions.get(i).getEvents().getPage().getPageId()+"',";
 					pageIdsStr.append("'"+usereventsuggestions.get(i).getEvents().getPage().getPageId()+"',");
-					/*if(i < usereventsuggestions.size() - 1)
+					if(i < usereventsuggestions.size() - 1)
 					{
 						pageIdsStr+=",";
-					}*/
+					}
 				}
 				else
-				{
-					logger.debug("eventIdsStr::::  "+usereventsuggestions.get(i).getEvents().getEventId());
-					eventIdsStr.append("'"+usereventsuggestions.get(i).getEvents().getEventId()+"',");
-					//eventIdsStr +="'"+usereventsuggestions.get(i).getEvents().getEventId()+"',";
-					/*if(i < usereventsuggestions.size() - 1)
+				{*/
+				logger.debug("eventIdsStr::::  "+usereventsuggestions.get(i).getEvents().getEventId());
+				eventIdsStr.append("'"+usereventsuggestions.get(i).getEvents().getEventId()+"',");
+				//eventIdsStr +="'"+usereventsuggestions.get(i).getEvents().getEventId()+"',";
+				/*if(i < usereventsuggestions.size() - 1)
 					{
 						eventIdsStr+=",";
 					}*/
-				}
+				//}
 			}
 
 			List<Object[]> rows = new ArrayList<Object[]>();
@@ -599,91 +812,81 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 				}*/
 
 				eventIdsStr.deleteCharAt(eventIdsStr.length() - 1);
-				rows1 = userDAO.userEventSuggestionCount(eventIdsStr.toString());
-				if(rows1 != null)
+				rows = userDAO.userEventSuggestionCount(eventIdsStr.toString(),5);
+				/*if(rows1 != null)
 				{
 					rows.addAll(rows1);
-				}
+				}*/
 			}
-			if(!pageIdsStr.equals("") && pageIdsStr.length() > 0)
+			/*if(!pageIdsStr.equals("") && pageIdsStr.length() > 0)
 			{
-				/*if(pageIdsStr.lastIndexOf(",") == pageIdsStr.length()-1)
+				if(pageIdsStr.lastIndexOf(",") == pageIdsStr.length()-1)
 				{
 					pageIdsStr = pageIdsStr.substring(0,pageIdsStr.length()-1);
-				}*/
+				}
 				pageIdsStr.deleteCharAt(pageIdsStr.length() - 1);
-				rows2 = userDAO.userNonDealSuggestionCount(pageIdsStr.toString());
+				rows2 = userDAO.userNonDealSuggestionCount(pageIdsStr.toString(),5);
 				logger.debug("rows2: "+rows2);
 				if(rows2 != null)
 				{
 					rows.addAll(rows2);
 				}
 			}
-
+			 */
 
 			logger.debug("EventStr: "+eventIdsStr +" : "+rows);
-			Collections.sort(rows, new SuggestionComparator());
+			//Collections.sort(rows, new SuggestionComparator());
 			int likecount = 0,id = 0;
-			StringBuilder idsArray = new StringBuilder();
-			HashMap<Integer, String> rowMap = new HashMap<Integer, String>();
+			//StringBuilder idsArray = new StringBuilder();
+			ArrayList<String> idsArray = new ArrayList<String>();
+			HashMap<Integer, ArrayList<String>> rowMap = new HashMap<Integer, ArrayList<String>>();
+
+			ArrayList<ArrayList<String>> main = new ArrayList<ArrayList<String>>();
 			for(int i = 0; i < rows.size(); i++)
 			{
-
-				Object[] object = rows.get(i);
-				logger.debug("Row items: "+object[0] +" : "+object[1]);
-				int eventId = Integer.parseInt(object[1].toString());
-				if (i == 0) {
-
-					likecount = Integer.parseInt(object[0].toString());
-					//idsArray += "'" +object[0]+"'" ;
-					idsArray.append("'" +object[1]+"',");
-
-				} else {  
-					int pregEventId = Integer.parseInt(rows.get(i - 1)[1].toString());  
-					if (eventId != pregEventId) {
-						idsArray.deleteCharAt(idsArray.length() - 1);
-						rowMap.put(likecount, idsArray.toString());
-						likecount = Integer.parseInt(object[0].toString());
-
-						idsArray.setLength(0);
-						logger.debug("object[1]1111: "+object[1]);
-						idsArray.append("'" +object[1]+"',");
-					}
-					else
-					{
-						logger.debug("object[1]: "+object[1]);
-						idsArray.append("'" +object[1]+"',");
-					}
-
-
-				}
+				logger.debug("Row items11: "+rows.get(i)[0] +" : "+rows.get(i)[1]);
 			}
-
-			logger.debug("HashMap:  "+rowMap);
-			/*if(rows != null)
+			int count = 1;
+			for(int i = 0; i < rows.size(); i++)
 			{
-				logger.debug("rows: "+rows.size());
-				int count = 1;
-				boolean isAccessed = false;
-				for(Object[] object : rows)
+				logger.debug("count: "+count);
+				if(count <= 4)
 				{
-					isAccessed = false;
-					if(count <= 10)
+					logger.debug("Row items: "+rows.get(i)[0] +" : "+rows.get(i)[1]);
+					idsArray.clear();
+					likecount = Integer.parseInt(rows.get(i)[0].toString());
+					idsArray.add(rows.get(i)[1].toString());
+					for(int j = i+1; j < rows.size(); j++)
 					{
-						for(Usereventsuggestion usereventsuggestion : usereventsuggestions)
+						logger.debug("Same Item:  "+rows.get(j)[0].toString());
+						if(Integer.parseInt(rows.get(i)[0].toString()) == Integer.parseInt(rows.get(j)[0].toString()))
 						{
-							Events events = usereventsuggestion.getEvents();
+							idsArray.add(rows.get(j)[1].toString());
+							rows.remove(j);
+							j--;
+						}
 
-							if(usereventsuggestion.getSuggestionType().contains("Community"))
+					}
+
+					if(idsArray.size() > 1)
+					{
+						List<Object[]> array = eventsDAO.getEventLikeCountByPage(StringUtils.join(idsArray.toArray(new String[idsArray.size()]), ",")) ;
+						for(int k = 0; k < array.size(); k++)
+						{
+							logger.debug("count11: "+count);
+							if(count <= 4)
 							{
-								if(usereventsuggestion.getEvents().getPage().getPageId() == Integer.parseInt(object[1].toString()))
+								/*for(Usereventsuggestion usereventsuggestion : usereventsuggestions)
 								{
-									//Checking if the suggestions is already exists or not
-									List<Topeventsuggestion> topeventsuggestions = userDAO.isTopEventSuggestionExists(userId, events.getEventId());
-									if(topeventsuggestions == null || topeventsuggestions.size() == 0)
+									Events events = usereventsuggestion.getEvents();
+									if(events.getEventId() == Integer.parseInt(array.get(k)[0].toString()))
 									{
-										//if(count <= 10)
-										//{
+										//Checking if the suggestions is already exists or not
+										List<Topeventsuggestion> topeventsuggestions = userDAO.isTopEventSuggestionExists(userId, events.getEventId());
+										if(topeventsuggestions == null || topeventsuggestions.size() == 0)
+										{
+											//Checking if the suggestions is already exists or not
+
 											Topeventsuggestion topeventsuggestion = new Topeventsuggestion();
 											topeventsuggestion.setEvents(events);
 											topeventsuggestion.setUser(usereventsuggestion.getUser());
@@ -694,60 +897,128 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 												topeventsuggestion.setSuggestionType("Friend's Suggestion");
 
 											topeventsuggestion.setRank((long)count);
-											topeventsuggestion.setTotalLikes(Integer.parseInt(object[0].toString()));
+											topeventsuggestion.setTotalLikes(Integer.parseInt(array.get(k)[1].toString()));
 											topeventsuggestion.setCategoryType(category);
 											topeventsuggestion.setCreatedTime(new Date());
 											topeventsuggestion.setUpdatedTime(new Date());
 											userDAO.saveTopEventSuggestions(topeventsuggestion);
-											//isAccessed = true;
 											count++;
-										//}
-									}
-									break;
-								}
-								else
-								{
-									if(isAccessed)
-									{
+										}
 										break;
 									}
-								}
+								}*/
 
+								boolean isSaved = saveTopEventSuggestion(usereventsuggestions, userId, Integer.parseInt(array.get(k)[0].toString()), Integer.parseInt(array.get(k)[1].toString()), category, forJeeyohSuggestion, forFriendsSuggestion, count);
+								if(isSaved)
+									count++;
+								//saveTopEventSuggestion(usereventsuggestions, userId, Integer.parseInt(array.get(k)[0].toString()), Integer.parseInt(array.get(k)[1].toString()), category, forJeeyohSuggestion, forFriendsSuggestion, count);
 							}
-							else
+						}
+
+						if(idsArray.size() > array.size())
+						{
+							if(count <= 4)
 							{
-								if(events.getEventId() == Integer.parseInt(object[1].toString()))
+								boolean found = false;
+								for(int k = 0; k < idsArray.size(); k++)
 								{
-									//Checking if the suggestions is already exists or not
-									List<Topeventsuggestion> topeventsuggestions = userDAO.isTopEventSuggestionExists(userId, events.getEventId());
-									if(topeventsuggestions == null || topeventsuggestions.size() == 0)
+									for(int j = 0; j < array.size(); j++)
 									{
-										//Checking if the suggestions is already exists or not
-
-										Topeventsuggestion topeventsuggestion = new Topeventsuggestion();
-										topeventsuggestion.setEvents(events);
-										topeventsuggestion.setUser(usereventsuggestion.getUser());
-
-										if(forJeeyohSuggestion)
-											topeventsuggestion.setSuggestionType("Jeeyoh Suggestion");
-										else if(forFriendsSuggestion)
-											topeventsuggestion.setSuggestionType("Friend's Suggestion");
-
-										topeventsuggestion.setRank((long)count);
-										topeventsuggestion.setTotalLikes(Integer.parseInt(object[0].toString()));
-										topeventsuggestion.setCategoryType(category);
-										topeventsuggestion.setCreatedTime(new Date());
-										topeventsuggestion.setUpdatedTime(new Date());
-										userDAO.saveTopEventSuggestions(topeventsuggestion);
-										count++;
+										if(Integer.parseInt(idsArray.get(k)) == Integer.parseInt(array.get(j)[1].toString()))
+										{
+											found = true;
+											break;
+										}
 									}
-									break;
+									if(!found)
+									{
+										boolean isSaved = saveTopEventSuggestion(usereventsuggestions, userId, Integer.parseInt(idsArray.get(k)), likecount, category, forJeeyohSuggestion, forFriendsSuggestion, count);
+										if(isSaved)
+											count++;
+										/*for(Usereventsuggestion usereventsuggestion : usereventsuggestions)
+										{
+											Events events = usereventsuggestion.getEvents();
+
+											if(events.getEventId() == Integer.parseInt(idsArray.get(k)))
+											{
+												//Checking if the suggestions is already exists or not
+												List<Topeventsuggestion> topeventsuggestions = userDAO.isTopEventSuggestionExists(userId, events.getEventId());
+												if(topeventsuggestions == null || topeventsuggestions.size() == 0)
+												{
+													//Checking if the suggestions is already exists or not
+
+													Topeventsuggestion topeventsuggestion = new Topeventsuggestion();
+													topeventsuggestion.setEvents(events);
+													topeventsuggestion.setUser(usereventsuggestion.getUser());
+
+													if(forJeeyohSuggestion)
+														topeventsuggestion.setSuggestionType("Jeeyoh Suggestion");
+													else if(forFriendsSuggestion)
+														topeventsuggestion.setSuggestionType("Friend's Suggestion");
+
+													topeventsuggestion.setRank((long)count);
+													topeventsuggestion.setTotalLikes(likecount);
+													topeventsuggestion.setCategoryType(category);
+													topeventsuggestion.setCreatedTime(new Date());
+													topeventsuggestion.setUpdatedTime(new Date());
+													userDAO.saveTopEventSuggestions(topeventsuggestion);
+													count++;
+												}
+												break;
+											}
+										}*/
+									}
+
+									//Set found bool back to false
+									found = false;
 								}
 							}
 						}
 					}
+					else
+					{
+						logger.debug("count22: "+count);
+						/*for(Usereventsuggestion usereventsuggestion : usereventsuggestions)
+						{
+							Events events = usereventsuggestion.getEvents();
+
+
+							if(events.getEventId() == Integer.parseInt(idsArray.get(0)))
+							{
+								//Checking if the suggestions is already exists or not
+								List<Topeventsuggestion> topeventsuggestions = userDAO.isTopEventSuggestionExists(userId, events.getEventId());
+								if(topeventsuggestions == null || topeventsuggestions.size() == 0)
+								{
+									//Checking if the suggestions is already exists or not
+
+									Topeventsuggestion topeventsuggestion = new Topeventsuggestion();
+									topeventsuggestion.setEvents(events);
+									topeventsuggestion.setUser(usereventsuggestion.getUser());
+
+									if(forJeeyohSuggestion)
+										topeventsuggestion.setSuggestionType("Jeeyoh Suggestion");
+									else if(forFriendsSuggestion)
+										topeventsuggestion.setSuggestionType("Friend's Suggestion");
+
+									topeventsuggestion.setRank((long)count);
+									topeventsuggestion.setTotalLikes(likecount);
+									topeventsuggestion.setCategoryType(category);
+									topeventsuggestion.setCreatedTime(new Date());
+									topeventsuggestion.setUpdatedTime(new Date());
+									userDAO.saveTopEventSuggestions(topeventsuggestion);
+									count++;
+								}
+								break;
+							}
+						}*/
+						boolean isSaved = saveTopEventSuggestion(usereventsuggestions, userId, Integer.parseInt(idsArray.get(0)), likecount, category, forJeeyohSuggestion, forFriendsSuggestion, count);
+						if(isSaved)
+							count++;
+
+
+					}
 				}
-			}*/
+			}
 		}
 	}
 
@@ -762,4 +1033,155 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 			return (int)(Integer.parseInt(o2[0].toString())-Integer.parseInt(o1[0].toString()));
 		}
 	}
+
+	private boolean saveTopEventSuggestion(List<Usereventsuggestion> usereventsuggestions, int userId, int eventId, int totalLikes, String category, boolean forJeeyohSuggestion, boolean forFriendsSuggestion,int count)
+	{
+		boolean isSaved = false;
+		for(Usereventsuggestion usereventsuggestion : usereventsuggestions)
+		{
+			Events events = usereventsuggestion.getEvents();
+
+			/*if(usereventsuggestion.getSuggestionType().contains("Community"))
+			{
+				if(usereventsuggestion.getEvents().getPage().getPageId() == eventId)
+				{
+					//Checking if the suggestions is already exists or not
+					List<Topeventsuggestion> topeventsuggestions = userDAO.isTopEventSuggestionExists(userId, events.getEventId());
+					if(topeventsuggestions == null || topeventsuggestions.size() == 0)
+					{
+						if(count <= 4)
+						{
+						Topeventsuggestion topeventsuggestion = new Topeventsuggestion();
+						topeventsuggestion.setEvents(events);
+						topeventsuggestion.setUser(usereventsuggestion.getUser());
+
+						if(forJeeyohSuggestion)
+							topeventsuggestion.setSuggestionType("Jeeyoh Suggestion");
+						else if(forFriendsSuggestion)
+							topeventsuggestion.setSuggestionType("Friend's Suggestion");
+
+						topeventsuggestion.setRank((long)count);
+						topeventsuggestion.setTotalLikes(totalLikes);
+						topeventsuggestion.setCategoryType(category);
+						topeventsuggestion.setCreatedTime(new Date());
+						topeventsuggestion.setUpdatedTime(new Date());
+						userDAO.saveTopEventSuggestions(topeventsuggestion);
+						//isAccessed = true;
+						count++;
+						}
+					}
+					break;
+				}
+			}
+			else
+			{*/
+			if(events.getEventId() == eventId)
+			{
+				//Checking if the suggestions is already exists or not
+				List<Topeventsuggestion> topeventsuggestions = userDAO.isTopEventSuggestionExists(userId, events.getEventId());
+				if(topeventsuggestions == null || topeventsuggestions.size() == 0)
+				{
+					//Checking if the suggestions is already exists or not
+
+					Topeventsuggestion topeventsuggestion = new Topeventsuggestion();
+					topeventsuggestion.setEvents(events);
+					topeventsuggestion.setUser(usereventsuggestion.getUser());
+
+					if(forJeeyohSuggestion)
+						topeventsuggestion.setSuggestionType("Jeeyoh Suggestion");
+					else if(forFriendsSuggestion)
+						topeventsuggestion.setSuggestionType("Friend's Suggestion");
+
+					topeventsuggestion.setRank((long)count);
+					topeventsuggestion.setTotalLikes(totalLikes);
+					topeventsuggestion.setCategoryType(category);
+					topeventsuggestion.setCreatedTime(new Date());
+					topeventsuggestion.setUpdatedTime(new Date());
+					userDAO.saveTopEventSuggestions(topeventsuggestion);
+					isSaved = true;
+					count++;
+				}
+				break;
+			}
+			//}
+		}
+		return isSaved;
+	}
+
+
+	
+	private boolean saveTopNonDealSuggestion(List<Usernondealsuggestion> usernondealsuggestions, int userId, int businessId, int totalLikes, String category, boolean forJeeyohSuggestion, boolean forFriendsSuggestion,int count)
+	{
+		boolean isSaved = false;
+		for(Usernondealsuggestion usernondealsuggestion : usernondealsuggestions)
+		{
+			//Page page = (Page)usernondealsuggestion.getBusiness().getPages().iterator().next();
+			if(usernondealsuggestion.getBusiness().getId() == businessId)
+			{
+				Business business = usernondealsuggestion.getBusiness();
+				//Checking if the suggestions is already exists or not
+				List<Topnondealsuggestion> topnondealsuggestions = userDAO.isTopNonDealSuggestionExists(userId, business.getId());
+				if(topnondealsuggestions == null || topnondealsuggestions.size() == 0)
+				{
+					Topnondealsuggestion topnondealsuggestion = new Topnondealsuggestion();
+					topnondealsuggestion.setBusiness(business);
+					topnondealsuggestion.setUser(usernondealsuggestion.getUser());
+					if(forFriendsSuggestion)
+						topnondealsuggestion.setSuggestionType("Friend's Suggestion");
+					else if(forJeeyohSuggestion)
+						topnondealsuggestion.setSuggestionType("Jeeyoh Suggestion");
+					topnondealsuggestion.setRank((long)count);
+					topnondealsuggestion.setTotalLikes(totalLikes);
+					topnondealsuggestion.setCreatedTime(new Date());
+					topnondealsuggestion.setUpdatedTime(new Date());
+					topnondealsuggestion.setCategoryType(category);
+					userDAO.saveTopNonDealSuggestions(topnondealsuggestion);
+					isSaved = true;
+				}
+				break;
+			}
+		}
+		return isSaved;
+	}
+	
+	
+	
+	private boolean saveTopDealSuggestion(List<Userdealssuggestion> userdealsuggestions, int userId, int dealId, int totalLikes, String category, boolean forJeeyohSuggestion, boolean forFriendsSuggestion,int count)
+	{
+		boolean isSaved = false;
+		for(Userdealssuggestion userdealsuggestion : userdealsuggestions)
+		{
+			Deals deal = userdealsuggestion.getDeals();
+
+
+			if(deal.getId() == dealId)
+			{
+				//Checking if the suggestions is already exists or not
+				List<Topdealssuggestion> topdealsuggestions = userDAO.isTopDealSuggestionExists(userId, deal.getId());
+				if(topdealsuggestions == null || topdealsuggestions.size() == 0)
+				{
+					Topdealssuggestion topdealsuggestion = new Topdealssuggestion();
+					topdealsuggestion.setDeals(deal);
+					topdealsuggestion.setUser(userdealsuggestion.getUser());
+					if(forJeeyohSuggestion)
+						topdealsuggestion.setSuggestionType("Jeeyoh Suggestion");
+					else if(forFriendsSuggestion)
+						topdealsuggestion.setSuggestionType("Friend's Suggestion");
+					topdealsuggestion.setRank((long)count);
+					topdealsuggestion.setTotalLikes(totalLikes);
+					topdealsuggestion.setCategoryType(category);
+					topdealsuggestion.setCreatedTime(new Date());
+					topdealsuggestion.setUpdatedTime(new Date());
+					userDAO.saveTopDealSuggestions(topdealsuggestion);
+					isSaved = true;
+				}
+				break;
+			}
+		}
+
+		return isSaved;
+	}
+	
+	
+
 }

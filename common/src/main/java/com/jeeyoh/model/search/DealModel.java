@@ -27,6 +27,8 @@ public class DealModel implements Serializable{
 	private String imageUrl;
 	@JsonProperty
 	private String suggestionType;
+	@JsonProperty
+	private String websiteUrl;
 	public String getTitle() {
 		return title;
 	}
@@ -80,6 +82,18 @@ public class DealModel implements Serializable{
 	 */
 	public String getImageUrl() {
 		return imageUrl;
+	}
+	/**
+	 * @param websiteUrl the websiteUrl to set
+	 */
+	public void setWebsiteUrl(String websiteUrl) {
+		this.websiteUrl = websiteUrl;
+	}
+	/**
+	 * @return the websiteUrl
+	 */
+	public String getWebsiteUrl() {
+		return websiteUrl;
 	}
 	private String endAt;
 

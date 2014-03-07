@@ -28,7 +28,11 @@ public interface IDealsDAO {
 	public List<Userdealssuggestion>userDealsSuggestedByJeeyoh(String keyword, String category,
 			String location, String emailId);
 	public int userCategoryLikeCount(Integer userCategoryId);
-	public List<Deals> getDealsByLikeSearchKeyword(String searchText,String category, String location);
-	public List<Deals> getDealsBySearchKeyword(String searchText,String category, String location);
+	public List<Deals> getDealsByLikeSearchKeyword(String searchText,String category, String location, int offset, int limit);
+	public List<Deals> getDealsBySearchKeyword(String searchText,String category, String location, int offset, int limit);
+	public List<Userdealssuggestion> getUserDealSuggestions(String userEmail, int offset, int limit);
+	public List<Object[]> getTopDealsByRating(String idsStr);
+	public List<Object[]> getDealLikeCountByPage(String idsStr);
+	public Deals getDealById(int dealId);
 	
 }

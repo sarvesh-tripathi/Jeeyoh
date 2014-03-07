@@ -85,7 +85,7 @@ public class BusinessDAO implements IBusinessDAO {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Business> getBusinessById(int id) {
+	public Business getBusinessById(int id) {
 		List<Business> businessList = null;
 		String hqlQuery = "from Business a where a.id = :id";
 		try {
@@ -96,7 +96,7 @@ public class BusinessDAO implements IBusinessDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return businessList;
+		return businessList != null && !businessList.isEmpty() ? businessList.get(0) : null;
 	}
 
 	@Override
@@ -261,6 +261,8 @@ public class BusinessDAO implements IBusinessDAO {
 					.add(Restrictions.eq("businessTypes.businessType", itemCategory))
 					.add(Restrictions.like("business.name", "%" + itemCategory + "%")));
 		}
+		
+		
 		List<Business> businessList = criteria.list();
 	
 		return businessList;
@@ -290,7 +292,7 @@ public class BusinessDAO implements IBusinessDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Business> getBusinessBySearchKeyword(String searchText,String category, String location) {
+	public List<Business> getBusinessBySearchKeyword(String searchText,String category, String location,int offset, int limit) {
 		logger.debug("getBusinessBySearchKeyword ==> "+searchText);
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Business.class, "business").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		
@@ -321,6 +323,9 @@ public class BusinessDAO implements IBusinessDAO {
 			criteria.add(Restrictions.eq("business.rating", Long.parseLong(rating)));
 		}*/
 		
+		criteria.setFirstResult(offset)
+		.setMaxResults(limit);
+		
 		List<Business> businessList = criteria.list();
 	
 		return businessList;
@@ -329,7 +334,7 @@ public class BusinessDAO implements IBusinessDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Business> getBusinessByLikeSearchKeyword(String searchText,String category, String location) {
+	public List<Business> getBusinessByLikeSearchKeyword(String searchText,String category, String location,int offset, int limit) {
 		logger.debug("getBusinessByLikeSearchKeyword ==> "+searchText);
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Business.class, "business").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		
@@ -359,6 +364,9 @@ public class BusinessDAO implements IBusinessDAO {
 					.add(Restrictions.eq("business.postalCode", location))
 					.add(Restrictions.like("business.city", "%" + location + "%")));
 		}
+		
+		criteria.setFirstResult(offset)
+		.setMaxResults(limit);
 		/*if(rating != null && !rating.trim().equals(""))
 		{
 			criteria.add(Restrictions.eq("business.rating", Long.parseLong(rating)));
@@ -413,4 +421,69 @@ public class BusinessDAO implements IBusinessDAO {
 	
 		return businessList;
 	}
+
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Business> getUserNonDealSuggestions(String userEmail,
+			int offset, int limit) {
+		logger.debug("getUserNonDealSuggestions ==> "+userEmail +" ==> "+offset+" ==> "+limit);
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Business.class, "business").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		
+		if(userEmail != null && !userEmail.trim().equals(""))
+		{
+			criteria.createAlias("business.usernondealsuggestions", "usernondealsuggestion");
+			criteria.createAlias("usernondealsuggestion.user", "user");
+			criteria.add(Restrictions.eq("user.emailId", userEmail));
+		}
+		
+		criteria.setFirstResult(offset)
+		.setMaxResults(limit);
+		
+		List<Business> businessList = criteria.list();
+	
+		return businessList;
+	}
+
+	
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Object[]> getTopBusinessByRating(String idsArray) {
+		logger.debug("getTopBusinessByRating: "+idsArray);
+		List<Object[]> rows = null;
+		//String hqlQuery = "select distinct a.id,a.rating from Business a, Page b where b.pageId in ("+idsArray+") and a.id = b.business.id order by a.rating desc limit 3";
+		String hqlQuery = "select distinct a.id,a.rating from Business a where a.id in ("+idsArray+") order by a.rating desc limit 3";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			
+			rows = (List<Object[]>) query.list();
+		} catch (Exception e) {
+			logger.debug("Error: "+e.getMessage());
+			e.printStackTrace();
+		}
+		return rows;
+	}
+
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Object[]> getNonDealLikeCountByPage(String idsStr) {
+		logger.debug("getNonDealLikeCountByPage: "+idsStr);
+		List<Object[]> rows = null;
+		String hqlQuery = "select distinct count(b.id) as num, b.id from Page a, Business b, Pageuserlikes c where a.pageId = c.page.pageId and b.id = a.business.id and b.id in ("+idsStr+") group by  a.about, b.id, b.name order by num desc limit 10";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			
+			rows = (List<Object[]>) query.list();
+		} catch (Exception e) {
+			logger.debug("Error: "+e.getMessage());
+			e.printStackTrace();
+		}
+		return rows;
+	}
+	
+	
 }

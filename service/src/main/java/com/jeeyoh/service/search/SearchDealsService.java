@@ -191,7 +191,7 @@ public class SearchDealsService implements ISearchDealsService {
 		Set<DealModel> dealModels = new HashSet<DealModel>();
 		if(emailId != null && emailId  != "")
 		{			
-			User user = userDAO.getUsersById(emailId);
+			User user = userDAO.getUserByEmailId(emailId);
 			logger.debug("user Id :::: "+ user.getUserId());
 			deals = dealsDAO.getUserDeals(user.getUserId());	
 			logger.debug("deals  ::::"+deals.size());
@@ -246,7 +246,7 @@ public class SearchDealsService implements ISearchDealsService {
 		//Set<DealModel> dealModels = new HashSet<DealModel>();
 		if(emailId != null && emailId  != "")
 		{			
-			User user = userDAO.getUsersById(emailId);
+			User user = userDAO.getUserByEmailId(emailId);
 			logger.debug("user Id :::: "+ user.getUserId());
 			
 			// get user contects				
