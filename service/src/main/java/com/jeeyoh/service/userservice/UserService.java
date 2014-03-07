@@ -536,18 +536,18 @@ public class UserService implements IUserService{
 
 	@Transactional
 	@Override
-	public CategoryLikesResponse getCategoryForCaptureLikes(int userId) {
-
-		List<UserCategory> categoryList = userDAO.getUserNonLikeCategories(userId);
+	public CategoryLikesResponse getCategoryForCaptureLikes(int userId, String categoryType) {
+		// TODO Auto-generated method stub
+		List<UserCategory> categoryList = userDAO.getUserNonLikeCategories(userId,categoryType);		
 		CategoryLikesResponse categoryLikesResponse = new CategoryLikesResponse();
 		if(categoryList != null)
 		{
-			logger.debug("Category list " +categoryList.get(0).getCategoryUrl());
+			logger.debug("Category list " +categoryList.get(0).getImageUrl());
 			List<CategoryModel> categoryModels = new ArrayList<CategoryModel>();
 			for(UserCategory category:categoryList)
 			{
 				CategoryModel categoryModel = new CategoryModel();
-				categoryModel.setCategoryUrl(category.getCategoryUrl());
+				categoryModel.setCategoryUrl(category.getImageUrl());
 				categoryModel.setItemCategory(category.getItemCategory());
 				categoryModel.setItemSubCategory(category.getItemSubCategory());
 				categoryModel.setUserCategoryId(category.getUserCategoryId());

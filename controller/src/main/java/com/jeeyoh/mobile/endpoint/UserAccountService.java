@@ -122,7 +122,7 @@ public class UserAccountService {
 	{
 		BaseResponse  baseResponce = userService.logoutUser(user);
 		return baseResponce;
-		
+		 
 	}
 	
 	/*
@@ -231,10 +231,10 @@ public class UserAccountService {
 	@GET
 	@Path("/getCategoriesForLike")
 	@Produces(MediaType.APPLICATION_JSON)
-	public CategoryLikesResponse getCategoriesForLike(@QueryParam("userId") int userId)
+	public CategoryLikesResponse getCategoriesForLike(@QueryParam("userId") int userId,@QueryParam("category") String category)
 	{
-		logger.debug("Enter in categoey mobile api :: "+userId);
-		CategoryLikesResponse categoryLikesResponse = userService.getCategoryForCaptureLikes(userId);		
+		logger.debug("Enter in categoey mobile api :: "+userId + "category type ::: "+category);
+		CategoryLikesResponse categoryLikesResponse = userService.getCategoryForCaptureLikes(userId,category);		
 		return categoryLikesResponse;
 		
 	}

@@ -114,14 +114,20 @@ public interface IUserDAO {
 	public List<User> getStarFriends(int userId, Double lattitude,Double longitude);
 	public long getUserPageFavouriteCount(String pageType, int userId);
 
-	public List<UserCategory> getUserNonLikeCategories(int userId);
+	public List<UserCategory> getUserNonLikeCategories(int userId, String categoryType);
 
 	public UserCategory getCategory(Integer userCategoryId);
 
 	public void saveUserCategoryLike(UserCategoryLikes categoryLikes);
+
 	public List<Topnondealsuggestion> getTopNonDealSuggestions(String userEmail, String suggestionType);
 	public List<Topdealssuggestion> getTopDealSuggestions(String userEmail, String suggestionType);
 	public List<Topeventsuggestion> getTopEventSuggestions(String userEmail, String suggestionType);
 	public List<Topcommunitysuggestion> getTopCommunitySuggestions(String userEmail);
+	public int getDealWightCount(int userId,int itemId);
+	public int getEventWightCount(int userId,int itemId);
+	public int getBusinessWightCount(int userId,int itemId);
+	public int getPageWightCount(int userId,int itemId);
+
 	
 }
