@@ -70,5 +70,11 @@
 		<mapping resource="hbm/Topeventsuggestion.hbm.xml" />
 		<mapping resource="hbm/Topnondealsuggestion.hbm.xml" />
 		<mapping resource="hbm/Topcommunitysuggestion.hbm.xml"/>
+		<mapping resource="hbm/Funboard.hbm.xml" />
+		<mapping resource="hbm/BusinessFunboard.hbm.xml" />
+		<mapping resource="hbm/DealFunboard.hbm.xml" />
+		<mapping resource="hbm/PageFunboard.hbm.xml" />
+		<mapping resource="hbm/EventFunboard.hbm.xml" />
+		<mapping resource="hbm/WallFeed.hbm.xml"/>
 	</session-factory>
 </hibernate-configuration>

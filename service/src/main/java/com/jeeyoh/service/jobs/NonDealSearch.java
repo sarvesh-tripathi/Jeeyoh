@@ -242,11 +242,11 @@ public class NonDealSearch implements INonDealSearch {
 			List<Page> userCommunities = null;
 			if(isGroupMember)
 			{
-				userCommunities = userDAO.getUserCommunitiesByPageType(userId, groupType);
+				userCommunities = userDAO.getUserCommunitiesByPageType(userId, groupType,Double.parseDouble(user.getLattitude()), Double.parseDouble(user.getLongitude()));
 			}
 			else
 			{
-				userCommunities = userDAO.getUserCommunities(userId);
+				userCommunities = userDAO.getUserCommunities(userId,Double.parseDouble(user.getLattitude()), Double.parseDouble(user.getLongitude()));
 			}
 			logger.debug("NonDealSearch ==> userCommunities ==> size ==> " + userCommunities.size());
 

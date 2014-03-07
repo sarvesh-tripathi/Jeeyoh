@@ -115,11 +115,11 @@ public class DealSearch implements IDealSearch {
 		List<Page> userCommunities = null;
 		if(!isGroupMember)
 		{
-			userCommunities = userDAO.getUserCommunities(user.getUserId());
+			userCommunities = userDAO.getUserCommunities(user.getUserId(),Double.parseDouble(user.getLattitude()), Double.parseDouble(user.getLongitude()));
 		}
 		else
 		{
-			userCommunities = userDAO.getUserCommunitiesByPageType(user.getUserId(), groupType);
+			userCommunities = userDAO.getUserCommunitiesByPageType(user.getUserId(), groupType,Double.parseDouble(user.getLattitude()), Double.parseDouble(user.getLongitude()));
 		}
 
 

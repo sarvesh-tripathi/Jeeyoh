@@ -253,7 +253,7 @@ public class SearchDealsService implements ISearchDealsService {
 			List<User> userContacts = userDAO.getUserContacts(user.getUserId());
 			
 			// user commuinty 
-			List<Page> userCommunities = userDAO.getUserCommunities(user.getUserId());
+			List<Page> userCommunities = userDAO.getUserCommunities(user.getUserId(),Double.parseDouble(user.getLattitude()), Double.parseDouble(user.getLongitude()));
 			
 			// user group member 
 			List<Jeeyohgroup> jeeyohGroup = userDAO.getUserGroups(user.getUserId());
