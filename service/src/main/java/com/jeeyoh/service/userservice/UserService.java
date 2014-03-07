@@ -116,6 +116,14 @@ public class UserService implements IUserService{
 		UserRegistrationResponse userRegistrationResponse = new UserRegistrationResponse();
 		userRegistrationResponse.setConfirmationId(confirmationId);
 		userDAO.registerUser(user);
+		User user1 = userDAO.loginUser(userModel);
+		logger.debug("User in Login Response :: "+user1);
+		if(user1 != null)
+		{
+			
+			userModel.setUserId(user1.getUserId());
+			userRegistrationResponse.setUser(userModel);
+		}
 		return userRegistrationResponse;
 	}
 
