@@ -79,6 +79,9 @@ public class SuggestionModel implements Serializable{
     private String totalTickets;
 	@JsonProperty
     private String ancestorGenreDescriptions;
+	@JsonProperty
+    private int likeCount;
+	
 	/**
 	 * @return the categoryType
 	 */
@@ -486,6 +489,18 @@ public class SuggestionModel implements Serializable{
 	 */
 	public String getAncestorGenreDescriptions() {
 		return ancestorGenreDescriptions;
+	}
+	/**
+	 * @param likeCount the likeCount to set
+	 */
+	public void setLikeCount(int likeCount) {
+		this.likeCount = likeCount;
+	}
+	/**
+	 * @return the likeCount
+	 */
+	public int getLikeCount() {
+		return likeCount;
 	}
 
 }

@@ -1,6 +1,7 @@
 package com.jeeyoh.service.search;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -13,14 +14,18 @@ import com.jeeyoh.model.response.MatchingEventsResponse;
 import com.jeeyoh.model.search.EventModel;
 import com.jeeyoh.persistence.IEventsDAO;
 import com.jeeyoh.persistence.IUserDAO;
+import com.jeeyoh.persistence.domain.Business;
 import com.jeeyoh.persistence.domain.Events;
 import com.jeeyoh.persistence.domain.User;
+import com.jeeyoh.persistence.domain.UserCategory;
+import com.jeeyoh.persistence.domain.UserCategoryLikes;
 import com.jeeyoh.utils.Utils;
 
 @Component("matchingEventsService")
 public class MatchingEventsService implements IMatchingEventsService{
 
 	static final Logger logger = LoggerFactory.getLogger("debugLogger");
+	
 	@Autowired
 	private IEventsDAO eventsDAO;
 	
@@ -32,6 +37,8 @@ public class MatchingEventsService implements IMatchingEventsService{
 	public MatchingEventsResponse searchMatchingEvents(int userId) {
 		MatchingEventsResponse matchingEventsResponse = new MatchingEventsResponse();
 		List<User> userList = userDAO.getUserById(userId);
+		List<UserCategory> userCategoryList = null;
+		
 		double[] array = null;
 		if(userList!=null)
 		{
@@ -40,15 +47,19 @@ public class MatchingEventsService implements IMatchingEventsService{
 				array = Utils.getLatLong(user.getZipcode());
 				user.setLattitude(Double.toString(array[0]));
 				user.setLongitude(Double.toString(array[1]));
+				user.setCreatedtime(userList.get(0).getCreatedtime());
+				
 			}
+		userCategoryList = userDAO.getUserCategoryLikesById(userId);
+		logger.debug("userCategoryList=>"+userCategoryList);
 		List<Events> userFriendsCommonLikeEvents = new ArrayList<Events>();
-		List<Events> getUserFavLikeEventsList = userDAO.getUserLikesEvents(userId,Double.parseDouble(user.getLattitude()),Double.parseDouble(user.getLongitude()));
+		//List<Events> getUserFavLikeEventsList = userDAO.getUserLikesEvents(userId,Double.parseDouble(user.getLattitude()),Double.parseDouble(user.getLongitude()));
 		List<User> getStarFiftyMilesUserList = userDAO.getStarFriends(userId, Double.parseDouble(user.getLattitude()), Double.parseDouble(user.getLongitude()));
 		logger.debug("getStarFiftyMilesUserList=>"+getStarFiftyMilesUserList);
 		for(User starFiftyMilesUser: getStarFiftyMilesUserList)
 		{
-			logger.debug("starFiftyMilesUserList.getUserId()"+starFiftyMilesUser.getUserId());
-			List<Events> getStarFriendFavLikeEventsList = userDAO.getUserLikesEvents(starFiftyMilesUser.getUserId(),Double.parseDouble(starFiftyMilesUser.getLattitude()),Double.parseDouble(starFiftyMilesUser.getLongitude()));
+			logger.debug("starFiftyMilesUserList.getUserId(): "+starFiftyMilesUser.getUserId()+";starFiftyMilesUserList.getFirstName(): "+starFiftyMilesUser.getFirstName());
+			/*List<Events> getStarFriendFavLikeEventsList = userDAO.getUserLikesEvents(starFiftyMilesUser.getUserId(),Double.parseDouble(starFiftyMilesUser.getLattitude()),Double.parseDouble(starFiftyMilesUser.getLongitude()));
 			logger.debug("getStarFriendFavLikeEventsList=>"+getStarFriendFavLikeEventsList);
 			for(Events userLikeEvent:getUserFavLikeEventsList)
 			{
@@ -59,8 +70,57 @@ public class MatchingEventsService implements IMatchingEventsService{
 						userFriendsCommonLikeEvents.add(userLikeEvent);
 					}
 				}
-			}
+			}*/
 		}
+		if(userCategoryList != null)
+		{
+			for(UserCategory userCategory : userCategoryList) {
+
+					UserCategoryLikes userCategoryLikes = (UserCategoryLikes)userCategory.getUserCategoryLikes().iterator().next();
+					//Get nearest weekend date for UserLike
+					Date userLikeWeekend =  userCategoryLikes.getCreatedTime();
+					try{
+						if(userLikeWeekend.compareTo(Utils.getNearestFriday()) <= 0)
+						{
+							List<Events> eventList = eventsDAO.getEventsByuserLikes(userCategory.getItemType().trim(),userCategory.getItemCategory().trim(),userCategory.getProviderName());
+							
+							for(User starFiftyMilesUser: getStarFiftyMilesUserList)
+							{
+								List<UserCategory> friendCategoryList = userDAO.getUserCategoryLikesById(starFiftyMilesUser.getUserId());
+								if(friendCategoryList!=null)
+								{
+									for(UserCategory friendCategory : friendCategoryList){
+										UserCategoryLikes friendCategoryLikes = (UserCategoryLikes)userCategory.getUserCategoryLikes().iterator().next();
+										Date friendLikeWeekend =  friendCategoryLikes.getCreatedTime();
+										if(friendLikeWeekend.compareTo(Utils.getNearestFriday()) <= 0)
+										{
+											List<Events> friendEventList = eventsDAO.getEventsByuserLikes(friendCategory.getItemType().trim(),friendCategory.getItemCategory().trim(),friendCategory.getProviderName());
+											if(eventList!=null)
+											{
+												for(Events event:eventList)
+												{
+													for(Events friendEvent: friendEventList)
+													{
+														if(event.getEventId()==friendEvent.getEventId())
+														{
+															userFriendsCommonLikeEvents.add(event);
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+						
+					}
+					catch(NumberFormatException e){
+						
+						e.printStackTrace();
+					}
+				}
+			}
 		
 		List<Events> getBookedEventsList = eventsDAO.getBookedEvents(userId);
 		List<Events> finalMatchingEventList = new ArrayList<Events>(userFriendsCommonLikeEvents);

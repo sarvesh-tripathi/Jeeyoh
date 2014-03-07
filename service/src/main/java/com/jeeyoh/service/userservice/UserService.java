@@ -1,6 +1,8 @@
 package com.jeeyoh.service.userservice;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -17,12 +19,17 @@ import com.jeeyoh.model.response.CategoryLikesResponse;
 import com.jeeyoh.model.response.CategoryResponse;
 import com.jeeyoh.model.response.LoginResponse;
 import com.jeeyoh.model.response.SuggestionResponse;
+import com.jeeyoh.model.response.TopSuggestionResponse;
 import com.jeeyoh.model.response.UserRegistrationResponse;
 import com.jeeyoh.model.search.BusinessModel;
 import com.jeeyoh.model.search.CategoryModel;
 import com.jeeyoh.model.search.DealModel;
 import com.jeeyoh.model.search.EventModel;
 import com.jeeyoh.model.search.PageModel;
+import com.jeeyoh.model.search.SuggestionModel;
+import com.jeeyoh.model.search.TopCommunitySuggestionModel;
+import com.jeeyoh.model.search.TopFriendsSuggestionModel;
+import com.jeeyoh.model.search.TopJeeyohSuggestionModel;
 import com.jeeyoh.model.user.UserModel;
 import com.jeeyoh.notification.service.IMessagingEventPublisher;
 import com.jeeyoh.persistence.IBusinessDAO;
@@ -37,6 +44,10 @@ import com.jeeyoh.persistence.domain.Page;
 import com.jeeyoh.persistence.domain.Pageuserlikes;
 import com.jeeyoh.persistence.domain.Privacy;
 import com.jeeyoh.persistence.domain.Profiletype;
+import com.jeeyoh.persistence.domain.Topcommunitysuggestion;
+import com.jeeyoh.persistence.domain.Topdealssuggestion;
+import com.jeeyoh.persistence.domain.Topeventsuggestion;
+import com.jeeyoh.persistence.domain.Topnondealsuggestion;
 import com.jeeyoh.persistence.domain.User;
 import com.jeeyoh.persistence.domain.UserCategory;
 import com.jeeyoh.persistence.domain.UserCategoryLikes;
@@ -63,15 +74,14 @@ public class UserService implements IUserService{
 
 	@Autowired
 	private IDealsDAO dealsDAO;
-	
+
 	@Autowired
-    IMessagingEventPublisher eventPublisher;
-	
+	IMessagingEventPublisher eventPublisher;
+
 
 	@Transactional
 	@Override
 	public UserRegistrationResponse registerUser(UserModel userModel) {
-
 		logger.debug("registerUser.......");
 		User user = new User();
 		user.setFirstName(userModel.getFirstName());
@@ -143,20 +153,20 @@ public class UserService implements IUserService{
 		else
 		{
 			loginRespoce.setUser(user);			
-			User user_1 = userDAO.getUsersById(user.getEmailId());
-			 loginRespoce.setStatus(ServiceAPIStatus.FAILED.getStatus());
-			 if(user_1 != null)
-			 {
-				    loginRespoce.setErrorType(ServiceAPIStatus.PASSWORD.getStatus());
-					loginRespoce.setError("Invalid password");
-			 }
-			 else
-			 {
-				    loginRespoce.setErrorType(ServiceAPIStatus.EMAIL.getStatus());
-					loginRespoce.setError("Invalid email");
-			 }
-			
-			
+			User user_1 = userDAO.getUserByEmailId(user.getEmailId());
+			loginRespoce.setStatus(ServiceAPIStatus.FAILED.getStatus());
+			if(user_1 != null)
+			{
+				loginRespoce.setErrorType(ServiceAPIStatus.PASSWORD.getStatus());
+				loginRespoce.setError("Invalid password");
+			}
+			else
+			{
+				loginRespoce.setErrorType(ServiceAPIStatus.EMAIL.getStatus());
+				loginRespoce.setError("Invalid email");
+			}
+
+
 		}
 		return loginRespoce;
 
@@ -175,7 +185,7 @@ public class UserService implements IUserService{
 
 		// TODO Auto-generated method stub
 		BaseResponse baseResponse = new BaseResponse();
-		User user = userDAO.getUsersById(userModel.getEmailId());
+		User user = userDAO.getUserByEmailId(userModel.getEmailId());
 		//user.setPassword(Utils.MD5(userModel.getPassword()));
 		user.setPassword(userModel.getPassword());
 		userDAO.updateUser(user);
@@ -195,13 +205,13 @@ public class UserService implements IUserService{
 	@Override
 	@Transactional
 	public BaseResponse isEmailExist(UserModel user) {
-		
-		User user1 = userDAO.getUsersById(user.getEmailId());
+
+		User user1 = userDAO.getUserByEmailId(user.getEmailId());
 		BaseResponse baseResponse = new BaseResponse();
 		logger.debug("User OBJECT :: "+user1);
 		if(user1 != null)
 		{
-			
+
 			baseResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
 			baseResponse.setError("Already Registered");
 		}
@@ -226,7 +236,7 @@ public class UserService implements IUserService{
 			for(Page page: pages)
 			{
 				logger.debug("here we get pages ::::: "+page.getAbout());
-				
+
 				PageModel pageModel = new PageModel();
 				pageModel.setUserId(user.getUserId());
 				pageModel.setPageId(page.getPageId());
@@ -249,9 +259,9 @@ public class UserService implements IUserService{
 				{
 					movies.add(pageModel);
 				}
-				
+
 			}
-			
+
 		}
 		if(sports != null || movies != null ||foods != null )
 		{
@@ -307,7 +317,7 @@ public class UserService implements IUserService{
 					movies.add(pageModel);
 				}
 			}
-			
+
 		}
 		if(sports != null || movies != null ||foods != null )
 		{
@@ -360,7 +370,7 @@ public class UserService implements IUserService{
 			pageUserLike.setNotificationpermission(notificationpermission);			
 			userDAO.saveUserCommunity(pageUserLike);
 			baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
-			
+
 		}
 		return baseResponse;
 	}
@@ -379,13 +389,16 @@ public class UserService implements IUserService{
 	@Override
 	public SuggestionResponse getUserSuggestions(UserModel user) {
 		//Get user's non deal suggestions
-		List<Business> userNonDealSuggestions = businessDAO.getBusinessByCriteria(user.getEmailId(), null, null, null, null);
+		List<Business> userNonDealSuggestions = businessDAO.getUserNonDealSuggestions(user.getEmailId(), user.getOffset(), user.getLimit());
 		logger.debug("userNonDealSuggestions ==> "+userNonDealSuggestions.size());
 		//Get user's deal suggestions
-		List<Userdealssuggestion> dealSuggestionList = dealsDAO.userDealsSuggestedByJeeyoh(null, null,null, user.getEmailId());
+		List<Userdealssuggestion> dealSuggestionList = dealsDAO.getUserDealSuggestions(user.getEmailId(), user.getOffset(), user.getLimit());
 		logger.debug("dealSuggestionList ==> "+dealSuggestionList.size());
+
+		int limit = 30 - (userNonDealSuggestions.size() + dealSuggestionList.size());
+
 		//Get user's event suggestions
-		List<Events> eventsList = eventsDAO.getEventsByCriteria(user.getEmailId(), null, null, null);
+		List<Events> eventsList = eventsDAO.getUserEventsSuggestions(user.getEmailId(), user.getOffset(), limit);
 		logger.debug("EventsList ==> "+eventsList.size());
 
 		List<BusinessModel> businessModelList = new ArrayList<BusinessModel>();
@@ -418,41 +431,42 @@ public class UserService implements IUserService{
 			{
 				if(dealsuggestion.getDeals() != null)
 				{
-					if(dealsuggestion.getDeals() != null)
+					DealModel dealModel = new DealModel();
+					Deals deal1 = dealsuggestion.getDeals();
+					if(deal1.getTitle() != null)
 					{
-						DealModel dealModel = new DealModel();
-						Deals deal1 = dealsuggestion.getDeals();
-						if(deal1.getTitle() != null)
-						{
-							dealModel.setTitle(deal1.getTitle());
-						}
-						if(deal1.getDealUrl() != null)
-						{
-							dealModel.setDealUrl(deal1.getDealUrl());
-						}
-						if(deal1.getStartAt() != null)
-						{
-							dealModel.setStartAt(deal1.getStartAt().toString());
-						}
-						if(deal1.getEndAt() != null)
-						{
-							dealModel.setEndAt(deal1.getEndAt().toString());
-						}
-						if(deal1.getStatus() != null)
-						{
-							dealModel.setStatus(deal1.getStatus());
-						}
-						if(dealsuggestion.getSuggestionType() != null)
-						{
-							dealModel.setSuggestionType(dealsuggestion.getSuggestionType());
-						}
-						if(deal1.getLargeImageUrl() != null)
-						{
-							dealModel.setImageUrl(deal1.getLargeImageUrl());
-						}
-
-						dealsModeList.add(dealModel);
+						dealModel.setTitle(deal1.getTitle());
 					}
+					if(deal1.getDealUrl() != null)
+					{
+						dealModel.setDealUrl(deal1.getDealUrl());
+					}
+					if(deal1.getStartAt() != null)
+					{
+						dealModel.setStartAt(deal1.getStartAt().toString());
+					}
+					if(deal1.getEndAt() != null)
+					{
+						dealModel.setEndAt(deal1.getEndAt().toString());
+					}
+					if(deal1.getStatus() != null)
+					{
+						dealModel.setStatus(deal1.getStatus());
+					}
+					if(dealsuggestion.getSuggestionType() != null)
+					{
+						dealModel.setSuggestionType(dealsuggestion.getSuggestionType());
+					}
+					if(deal1.getLargeImageUrl() != null)
+					{
+						dealModel.setImageUrl(deal1.getLargeImageUrl());
+					}
+					if(deal1.getDealUrl() != null)
+					{
+						dealModel.setWebsiteUrl(deal1.getDealUrl());
+					}
+
+					dealsModeList.add(dealModel);
 				}
 			}
 		}
@@ -467,6 +481,7 @@ public class UserService implements IUserService{
 			eventModel.setCity(events.getCity());
 			eventModel.setTitle(events.getTitle());
 			eventModel.setTotalTickets(events.getTotalTickets());
+			eventModel.setUrlpath(events.getUrlpath());
 			eventModel.setAncestorGenreDescriptions(events.getAncestorGenreDescriptions());
 			Set<Usereventsuggestion> usereventsuggestions = events.getUsereventsuggestions();
 
@@ -480,7 +495,7 @@ public class UserService implements IUserService{
 			}
 			eventsModelList.add(eventModel);
 		}
-		
+
 		SuggestionResponse suggestionResponse = new SuggestionResponse();
 		suggestionResponse.setDealSuggestions(dealsModeList);
 		suggestionResponse.setNonDealSuggestions(businessModelList);
@@ -493,8 +508,7 @@ public class UserService implements IUserService{
 	@Override
 	@Transactional
 	public BaseResponse forgetPassword(String emailId) {
-		// TODO Auto-generated method stub
-		User user = userDAO.getUsersById(emailId);
+		User user = userDAO.getUserByEmailId(emailId);
 		BaseResponse  baseResponse = new BaseResponse();
 		if(user != null)
 		{
@@ -516,7 +530,6 @@ public class UserService implements IUserService{
 	@Override
 	@Transactional
 	public boolean isUserActive(UserModel user) {
-		// TODO Auto-generated method stub
 		boolean isActive = userDAO.isUserActive(user.getEmailId());
 		return isActive;
 	}
@@ -524,8 +537,7 @@ public class UserService implements IUserService{
 	@Transactional
 	@Override
 	public long userFavouriteCount(PageModel page) {
-		// TODO Auto-generated method stub
-		
+
 		long count = userDAO.getUserPageFavouriteCount(page.getPageType(),page.getUserId());
 		return count;
 	}
@@ -564,7 +576,7 @@ public class UserService implements IUserService{
 	@Transactional
 	@Override
 	public BaseResponse saveUserCategoryLikes(CategoryModel categoryModel) {
-		// TODO Auto-generated method stub
+
 		BaseResponse baseResponse = new BaseResponse();
 		if(categoryModel.getUserCategoryId() != 0 && categoryModel.getUserId() != 0)
 		{
@@ -583,8 +595,210 @@ public class UserService implements IUserService{
 			baseResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
 			baseResponse.setError("Invalid Parameter");
 		}
-		
+
 		return baseResponse;
+	}
+
+	@Transactional
+	@Override
+	public TopSuggestionResponse getUserTopSuggestions(UserModel user) {
+
+		TopSuggestionResponse topSuggestionResponse = new TopSuggestionResponse();
+
+		// Top 10 Friends Suggestions
+		TopSuggestionResponse topFriendsSuggestionResponse = getTopSuggestions(user.getEmailId(), "Friend's Suggestion");
+		topSuggestionResponse.setTopFriendsSuggestions(topFriendsSuggestionResponse.getTopFriendsSuggestions());
+
+		// Top 10 Jeeyoh Suggestions
+		TopSuggestionResponse topJeeyohSuggestionResponse = getTopSuggestions(user.getEmailId(), "Jeeyoh Suggestion");;
+		topSuggestionResponse.setTopJeeyohSuggestions(topJeeyohSuggestionResponse.getTopJeeyohSuggestions());
+
+		// Top 10 Community Suggestions
+		List<Topcommunitysuggestion> topCommunitySuggestions = userDAO.getTopCommunitySuggestions(user.getEmailId());
+		List<PageModel> topConcertSuggestions = new ArrayList<PageModel>();
+		List<PageModel> topSportSuggestions = new ArrayList<PageModel>();
+		List<PageModel> topRestaurantSuggestions = new ArrayList<PageModel>();
+		List<PageModel> topTheaterSuggestions = new ArrayList<PageModel>();
+		List<PageModel> topMovieSuggestions = new ArrayList<PageModel>();
+		for(Topcommunitysuggestion topcommunitysuggestion : topCommunitySuggestions)
+		{
+			Page page = topcommunitysuggestion.getPage();
+			PageModel pageModel = new PageModel();
+			pageModel.setAbout(page.getAbout());
+			pageModel.setPageUrl(page.getPageUrl());
+			pageModel.setImageUrl(page.getProfilePicture());
+			pageModel.setPageType(topcommunitysuggestion.getCategoryType());
+			if(topcommunitysuggestion.getCategoryType().equalsIgnoreCase("Sport"))
+				topSportSuggestions.add(pageModel);
+			else if(topcommunitysuggestion.getCategoryType().equalsIgnoreCase("Restaurant"))
+				topRestaurantSuggestions.add(pageModel);
+			else if(topcommunitysuggestion.getCategoryType().equalsIgnoreCase("Theater"))
+				topTheaterSuggestions.add(pageModel);
+			else if(topcommunitysuggestion.getCategoryType().equalsIgnoreCase("Concert"))
+				topConcertSuggestions.add(pageModel);
+			else if(topcommunitysuggestion.getCategoryType().equalsIgnoreCase("Movie"))
+				topMovieSuggestions.add(pageModel);
+		}
+		
+		TopCommunitySuggestionModel topCommunitySuggestionModel = new TopCommunitySuggestionModel();
+		topCommunitySuggestionModel.setTopMovieSuggestions(topMovieSuggestions);
+		topCommunitySuggestionModel.setTopRestaurantSuggestions(topRestaurantSuggestions);
+		topCommunitySuggestionModel.setTopSportsSuggestions(topSportSuggestions);
+		topCommunitySuggestionModel.setTopTheaterSuggestions(topTheaterSuggestions);
+		topCommunitySuggestionModel.setTopConcertSuggestions(topConcertSuggestions);
+		
+		
+
+		topSuggestionResponse.setTopCommunitySuggestions(topCommunitySuggestionModel);
+		topSuggestionResponse.setStatus(ServiceAPIStatus.OK.getStatus());
+		topSuggestionResponse.setError("");
+		return topSuggestionResponse;
+	}
+
+	/**
+	 * Get Top Friends Suggestions
+	 * @param userEmail
+	 * @param Type
+	 * @return
+	 */
+	private TopSuggestionResponse getTopSuggestions(String userEmail, String type)
+	{
+
+		List<SuggestionModel> topConcertSuggestions = new ArrayList<SuggestionModel>();
+		List<SuggestionModel> topSportsSuggestions = new ArrayList<SuggestionModel>();
+		List<SuggestionModel> topRestaurantSuggestions = new ArrayList<SuggestionModel>();
+		List<SuggestionModel> topTheaterSuggestions = new ArrayList<SuggestionModel>();
+		List<SuggestionModel> topMovieSuggestions = new ArrayList<SuggestionModel>();
+
+		List<Topnondealsuggestion> topNonDealSuggestions = userDAO.getTopNonDealSuggestions(userEmail,type);
+		logger.debug("topNonDealSuggestions: "+topNonDealSuggestions);
+		for(Topnondealsuggestion topnondealsuggestion : topNonDealSuggestions)
+		{
+			Business business = topnondealsuggestion.getBusiness();
+			SuggestionModel suggestionModel = new SuggestionModel();
+			suggestionModel.setTitle(business.getName());
+			suggestionModel.setUrl(business.getWebsiteUrl());
+			suggestionModel.setDisplayAddress(business.getDisplayAddress());
+			suggestionModel.setCity(business.getCity());
+			suggestionModel.setImageUrl(business.getImageUrl());
+			suggestionModel.setSuggestionType("Business");
+			suggestionModel.setCategoryType(topnondealsuggestion.getCategoryType());
+			suggestionModel.setLikeCount(topnondealsuggestion.getTotalLikes());
+			if(topnondealsuggestion.getCategoryType().equalsIgnoreCase("Sport"))
+				topSportsSuggestions.add(suggestionModel);
+			else if(topnondealsuggestion.getCategoryType().equalsIgnoreCase("Restaurant"))
+				topRestaurantSuggestions.add(suggestionModel);
+			else if(topnondealsuggestion.getCategoryType().equalsIgnoreCase("Theater"))
+				topTheaterSuggestions.add(suggestionModel);
+			else if(topnondealsuggestion.getCategoryType().equalsIgnoreCase("Concert"))
+				topConcertSuggestions.add(suggestionModel);
+			else if(topnondealsuggestion.getCategoryType().equalsIgnoreCase("Movie"))
+				topConcertSuggestions.add(suggestionModel);
+
+		}
+
+
+		List<Topdealssuggestion> topDealSuggestions = userDAO.getTopDealSuggestions(userEmail,type);
+		logger.debug("topDealSuggestions: "+topDealSuggestions);
+		for(Topdealssuggestion topdealsuggestion : topDealSuggestions)
+		{
+			SuggestionModel suggestionModel = new SuggestionModel();
+			Deals deals = topdealsuggestion.getDeals();
+			if(deals.getTitle() != null)
+			{
+				suggestionModel.setTitle(deals.getTitle());
+			}
+			if(deals.getDealUrl() != null)
+			{
+				suggestionModel.setUrl(deals.getDealUrl());
+			}
+			if(deals.getLargeImageUrl() != null)
+			{
+				suggestionModel.setImageUrl(deals.getLargeImageUrl());
+			}
+			suggestionModel.setCategoryType(topdealsuggestion.getCategoryType());
+			suggestionModel.setSuggestionType("Deal");
+			suggestionModel.setLikeCount(topdealsuggestion.getTotalLikes());
+			if(topdealsuggestion.getCategoryType().equalsIgnoreCase("Sport"))
+				topSportsSuggestions.add(suggestionModel);
+			else if(topdealsuggestion.getCategoryType().equalsIgnoreCase("Restaurant"))
+				topRestaurantSuggestions.add(suggestionModel);
+			else if(topdealsuggestion.getCategoryType().equalsIgnoreCase("Theater"))
+				topTheaterSuggestions.add(suggestionModel);
+			else if(topdealsuggestion.getCategoryType().equalsIgnoreCase("Concert"))
+				topConcertSuggestions.add(suggestionModel);
+			else if(topdealsuggestion.getCategoryType().equalsIgnoreCase("Movie"))
+				topConcertSuggestions.add(suggestionModel);
+		}
+
+		List<Topeventsuggestion> topEventSuggestions = userDAO.getTopEventSuggestions(userEmail,type);
+		logger.debug("topEventSuggestions: "+topEventSuggestions);
+		for(Topeventsuggestion topEventSuggestion : topEventSuggestions)
+		{
+			SuggestionModel suggestionModel = new SuggestionModel();
+			Events events = topEventSuggestion.getEvents();
+
+			suggestionModel.setTitle(events.getDescription());
+			suggestionModel.setDescription(events.getDescription());
+			suggestionModel.setUrl(events.getUrlpath());
+			suggestionModel.setSuggestionType("Event");
+			suggestionModel.setCategoryType(topEventSuggestion.getCategoryType());
+			suggestionModel.setLikeCount(topEventSuggestion.getTotalLikes());
+			if(topEventSuggestion.getCategoryType().equalsIgnoreCase("Sport"))
+				topSportsSuggestions.add(suggestionModel);
+			else if(topEventSuggestion.getCategoryType().equalsIgnoreCase("Restaurant"))
+				topRestaurantSuggestions.add(suggestionModel);
+			else if(topEventSuggestion.getCategoryType().equalsIgnoreCase("Theater"))
+				topTheaterSuggestions.add(suggestionModel);
+			else if(topEventSuggestion.getCategoryType().equalsIgnoreCase("Concert"))
+				topConcertSuggestions.add(suggestionModel);
+			else if(topEventSuggestion.getCategoryType().equalsIgnoreCase("Movie"))
+				topConcertSuggestions.add(suggestionModel);
+		}
+
+		Collections.sort(topConcertSuggestions, new SuggestionComparator());
+		Collections.sort(topRestaurantSuggestions, new SuggestionComparator());
+		Collections.sort(topTheaterSuggestions, new SuggestionComparator());
+		Collections.sort(topSportsSuggestions, new SuggestionComparator());
+		Collections.sort(topMovieSuggestions, new SuggestionComparator());
+		
+		TopSuggestionResponse topSuggestionResponse = new TopSuggestionResponse();
+		if(type.equalsIgnoreCase("Friend's Suggestion"))
+		{
+			TopFriendsSuggestionModel topFriendsSuggestionModel = new TopFriendsSuggestionModel();
+			topFriendsSuggestionModel.setTopMovieSuggestions(topMovieSuggestions);
+			topFriendsSuggestionModel.setTopConcertSuggestions(topConcertSuggestions);
+			topFriendsSuggestionModel.setTopRestaurantSuggestions(topRestaurantSuggestions);
+			topFriendsSuggestionModel.setTopSportsSuggestions(topSportsSuggestions);
+			topFriendsSuggestionModel.setTopTheaterSuggestions(topTheaterSuggestions);
+			topSuggestionResponse.setTopFriendsSuggestions(topFriendsSuggestionModel);
+			
+		}
+		else
+		{
+			logger.debug("topSportsSuggestions in jeeyoh : "+topSportsSuggestions.size());
+			TopJeeyohSuggestionModel topJeeyohSuggestionModel = new TopJeeyohSuggestionModel();
+			topJeeyohSuggestionModel.setTopMovieSuggestions(topMovieSuggestions);
+			topJeeyohSuggestionModel.setTopConcertSuggestions(topConcertSuggestions);
+			topJeeyohSuggestionModel.setTopRestaurantSuggestions(topRestaurantSuggestions);
+			topJeeyohSuggestionModel.setTopSportsSuggestions(topSportsSuggestions);
+			topJeeyohSuggestionModel.setTopTheaterSuggestions(topTheaterSuggestions);
+			topSuggestionResponse.setTopJeeyohSuggestions(topJeeyohSuggestionModel);
+		}
+
+		return topSuggestionResponse;
+	}
+
+
+	/**
+	 * Comparator class to compare suggestions by like count
+	 */
+	public class SuggestionComparator implements Comparator<SuggestionModel> {
+		@Override
+		public int compare(SuggestionModel o1, SuggestionModel o2) 
+		{
+			return (int)(o2.getLikeCount()-o1.getLikeCount());
+		}
 	}
 
 }

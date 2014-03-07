@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.jeeyoh.model.search.CategoryModel;
 import com.jeeyoh.model.user.UserModel;
+import com.jeeyoh.persistence.domain.Business;
 import com.jeeyoh.persistence.domain.Dealsusage;
 import com.jeeyoh.persistence.domain.Events;
 import com.jeeyoh.persistence.domain.Eventuserlikes;
@@ -30,11 +31,11 @@ import com.jeeyoh.persistence.domain.Usernondealsuggestion;
 public interface IUserDAO {
 	public List<User> getUsers();
 	
-	public User getUsersById(String id);
+	public User getUserByEmailId(String emailId);
 	
 	public List<User> getUserContacts(int userId);
 	
-	public List<Page> getUserCommunities(int userId);
+	public List<Page> getUserCommunities(int userId, double latitude, double longitude);
 	
 	public List<Page> getUserContactsCommunities(int contactId);
 	
@@ -52,7 +53,7 @@ public interface IUserDAO {
 	public List<Page> getUserCommunitiesByEmailId(String emailId);
 	public List<UserCategory> getUserCategoryLikesById(int userId);
 	public List<UserCategory> getUserCategoryLikesByType(int userId, String category);
-	public List<Page> getUserCommunitiesByPageType(int userId, String pageType);
+	public List<Page> getUserCommunitiesByPageType(int userId, String pageType, double latitude, double longitude);
 	public int userCategoryLikeCount(Integer userCategoryId);
 	public List<Usercontacts> getAllUserContacts(int userId);
 	public void saveEventsSuggestions(Usereventsuggestion suggestion, int batch_size);
@@ -95,9 +96,9 @@ public interface IUserDAO {
 	public List<Userdealssuggestion> getUserDealSuggestionByUserIdForJeeyoh(int userId, String category);
 	public List<Usereventsuggestion> getUserEventsSuggestionByUserIdForCommunity(int userId, String category);
 	public List<Userdealssuggestion> getUserDealSuggestionByUserIdForCommunity(int userId, String category);
-	public List<Object[]> userNonDealSuggestionCount(String pageIdsStr);
-	public List<Object[]> userDealSuggestionCount(String dealIdsStr);
-	public List<Object[]> userEventSuggestionCount(String eventIdsStr);
+	public List<Object[]> userNonDealSuggestionCount(String pageIdsStr, int limit);
+	public List<Object[]> userDealSuggestionCount(String dealIdsStr, int limit);
+	public List<Object[]> userEventSuggestionCount(String eventIdsStr, int limit);
 	public void saveTopNonDealSuggestions(Topnondealsuggestion topnondealsuggestion);
 	public void saveTopDealSuggestions(Topdealssuggestion topdealssuggestion);
 	public void saveTopEventSuggestions(Topeventsuggestion topeventsuggestion);
@@ -118,9 +119,15 @@ public interface IUserDAO {
 	public UserCategory getCategory(Integer userCategoryId);
 
 	public void saveUserCategoryLike(UserCategoryLikes categoryLikes);
+
+	public List<Topnondealsuggestion> getTopNonDealSuggestions(String userEmail, String suggestionType);
+	public List<Topdealssuggestion> getTopDealSuggestions(String userEmail, String suggestionType);
+	public List<Topeventsuggestion> getTopEventSuggestions(String userEmail, String suggestionType);
+	public List<Topcommunitysuggestion> getTopCommunitySuggestions(String userEmail);
 	public int getDealWightCount(int userId,int itemId);
 	public int getEventWightCount(int userId,int itemId);
 	public int getBusinessWightCount(int userId,int itemId);
 	public int getPageWightCount(int userId,int itemId);
+
 	
 }

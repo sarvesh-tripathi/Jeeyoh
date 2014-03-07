@@ -242,11 +242,11 @@ public class NonDealSearch implements INonDealSearch {
 			List<Page> userCommunities = null;
 			if(isGroupMember)
 			{
-				userCommunities = userDAO.getUserCommunitiesByPageType(userId, groupType);
+				userCommunities = userDAO.getUserCommunitiesByPageType(userId, groupType,Double.parseDouble(user.getLattitude()), Double.parseDouble(user.getLongitude()));
 			}
 			else
 			{
-				userCommunities = userDAO.getUserCommunities(userId);
+				userCommunities = userDAO.getUserCommunities(userId,Double.parseDouble(user.getLattitude()), Double.parseDouble(user.getLongitude()));
 			}
 			logger.debug("NonDealSearch ==> userCommunities ==> size ==> " + userCommunities.size());
 
@@ -274,11 +274,8 @@ public class NonDealSearch implements INonDealSearch {
 
 								if(type.equalsIgnoreCase(MOVIE_CATEGORY) || type.equalsIgnoreCase(RESTAURANT_CATEGORY) || type.equalsIgnoreCase(NIGHTLIFE_CATEGORY) || type.equalsIgnoreCase(EVENTS_CATEGORY) || type.equalsIgnoreCase(GETAWAYS_CATEGORY) || type.equalsIgnoreCase(SPORTS_CATEGORY)) {
 									logger.debug("NonDealSearch ==> search ==> type ==> " + type);
-									List<Business> businessList = businessDAO.getBusinessById(community.getBusiness().getId());
-									Business business = null;
-									if(businessList != null) {
-										business = businessList.get(0);
-									}
+									Business business = businessDAO.getBusinessById(community.getBusiness().getId());
+									
 									logger.debug("Lat/Long for business :  " + business.getLattitude() +" , "+business.getLongitude()+" Lat/Long for user:  "+user.getLattitude()+" , "+user.getLongitude());
 									if(business.getLattitude() == null && business.getLongitude() == null || (business.getLattitude().trim().equals("") && business.getLongitude().trim().equals(""))  || (business.getLattitude().trim().equals("0.0") && business.getLongitude().trim().equals("0.0")))
 									{

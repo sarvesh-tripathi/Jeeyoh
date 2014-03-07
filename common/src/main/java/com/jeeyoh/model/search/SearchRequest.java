@@ -23,6 +23,26 @@ public class SearchRequest implements Serializable{
 	private String rating;
 	@JsonProperty
 	private String category;
+	@JsonProperty
+	private int offset;
+	@JsonProperty
+	private int limit;
+	@JsonProperty
+	private int exactMatchBusinessCount;
+	@JsonProperty
+	private int likeMatchBusinessCount;
+	@JsonProperty
+	private int exactMatchDealCount;
+	@JsonProperty
+	private int likeMatchDealCount;
+	@JsonProperty
+	private int exactMatchEventCount;
+	@JsonProperty
+	private int likeMatchEventCount;
+	@JsonProperty
+	private int exactMatchCommunityCount;
+	@JsonProperty
+	private int likeMatchCommunityCount;
 	/**
 	 * @return the userEmail
 	 */
@@ -82,6 +102,126 @@ public class SearchRequest implements Serializable{
 	 */
 	public void setCategory(String category) {
 		this.category = category;
+	}
+	/**
+	 * @param offset the offset to set
+	 */
+	public void setOffset(int offset) {
+		this.offset = offset;
+	}
+	/**
+	 * @return the offset
+	 */
+	public int getOffset() {
+		return offset;
+	}
+	/**
+	 * @param limit the limit to set
+	 */
+	public void setLimit(int limit) {
+		this.limit = limit;
+	}
+	/**
+	 * @return the limit
+	 */
+	public int getLimit() {
+		return limit;
+	}
+	/**
+	 * @return the exactMatchBusinessCount
+	 */
+	public int getExactMatchBusinessCount() {
+		return exactMatchBusinessCount;
+	}
+	/**
+	 * @param exactMatchBusinessCount the exactMatchBusinessCount to set
+	 */
+	public void setExactMatchBusinessCount(int exactMatchBusinessCount) {
+		this.exactMatchBusinessCount = exactMatchBusinessCount;
+	}
+	/**
+	 * @return the likeMatchBusinessCount
+	 */
+	public int getLikeMatchBusinessCount() {
+		return likeMatchBusinessCount;
+	}
+	/**
+	 * @param likeMatchBusinessCount the likeMatchBusinessCount to set
+	 */
+	public void setLikeMatchBusinessCount(int likeMatchBusinessCount) {
+		this.likeMatchBusinessCount = likeMatchBusinessCount;
+	}
+	/**
+	 * @return the exactMatchDealCount
+	 */
+	public int getExactMatchDealCount() {
+		return exactMatchDealCount;
+	}
+	/**
+	 * @param exactMatchDealCount the exactMatchDealCount to set
+	 */
+	public void setExactMatchDealCount(int exactMatchDealCount) {
+		this.exactMatchDealCount = exactMatchDealCount;
+	}
+	/**
+	 * @return the likeMatchDealCount
+	 */
+	public int getLikeMatchDealCount() {
+		return likeMatchDealCount;
+	}
+	/**
+	 * @param likeMatchDealCount the likeMatchDealCount to set
+	 */
+	public void setLikeMatchDealCount(int likeMatchDealCount) {
+		this.likeMatchDealCount = likeMatchDealCount;
+	}
+	/**
+	 * @return the exactMatchEventCount
+	 */
+	public int getExactMatchEventCount() {
+		return exactMatchEventCount;
+	}
+	/**
+	 * @param exactMatchEventCount the exactMatchEventCount to set
+	 */
+	public void setExactMatchEventCount(int exactMatchEventCount) {
+		this.exactMatchEventCount = exactMatchEventCount;
+	}
+	/**
+	 * @return the likeMatchEventCount
+	 */
+	public int getLikeMatchEventCount() {
+		return likeMatchEventCount;
+	}
+	/**
+	 * @param likeMatchEventCount the likeMatchEventCount to set
+	 */
+	public void setLikeMatchEventCount(int likeMatchEventCount) {
+		this.likeMatchEventCount = likeMatchEventCount;
+	}
+	/**
+	 * @return the exactMatchCommunityCount
+	 */
+	public int getExactMatchCommunityCount() {
+		return exactMatchCommunityCount;
+	}
+	/**
+	 * @param exactMatchCommunityCount the exactMatchCommunityCount to set
+	 */
+	public void setExactMatchCommunityCount(int exactMatchCommunityCount) {
+		this.exactMatchCommunityCount = exactMatchCommunityCount;
+	}
+	/**
+	 * @return the likeMatchCommunityCount
+	 */
+	public int getLikeMatchCommunityCount() {
+		return likeMatchCommunityCount;
+	}
+	/**
+	 * @param likeMatchCommunityCount the likeMatchCommunityCount to set
+	 */
+	public void setLikeMatchCommunityCount(int likeMatchCommunityCount) {
+		this.likeMatchCommunityCount = likeMatchCommunityCount;
 	}
 	
 

@@ -14,16 +14,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.jeeyoh.model.enums.ServiceAPIStatus;
+import com.jeeyoh.model.funboard.FunBoardRequest;
 import com.jeeyoh.model.response.BaseResponse;
 import com.jeeyoh.model.response.CategoryLikesResponse;
 import com.jeeyoh.model.response.CategoryResponse;
+import com.jeeyoh.model.response.FunBoardResponse;
 import com.jeeyoh.model.response.LoginResponse;
 import com.jeeyoh.model.response.SuggestionResponse;
+import com.jeeyoh.model.response.TopSuggestionResponse;
 import com.jeeyoh.model.response.UserRegistrationResponse;
 import com.jeeyoh.model.search.CategoryModel;
 import com.jeeyoh.model.search.PageModel;
 import com.jeeyoh.model.user.UserModel;
 import com.jeeyoh.notification.service.IMessagingEventPublisher;
+import com.jeeyoh.persistence.IFunBoardDAO;
+import com.jeeyoh.service.funboard.IFunBoardService;
 import com.jeeyoh.service.userservice.IUserService;
 import com.jeeyoh.utils.Utils;
 import com.sun.jersey.api.core.InjectParam;
@@ -40,6 +45,8 @@ public class UserAccountService {
 	@InjectParam
     IMessagingEventPublisher eventPublisher;
 	
+	@InjectParam
+	IFunBoardService funBoardService;
 	
 	@Path("/test/{name}")
 	@GET
@@ -250,6 +257,27 @@ public class UserAccountService {
     public SuggestionResponse getUserSuggestions(UserModel user)
     {
         SuggestionResponse response = userService.getUserSuggestions(user);
+        return response;
+    }
+	
+	@POST
+    @Path("/getuserTopSuggestions")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public TopSuggestionResponse getUserTopSuggestions(UserModel user)
+    {
+		TopSuggestionResponse response = userService.getUserTopSuggestions(user);
+        return response;
+    }
+	
+	
+	@POST
+    @Path("/saveFunBoardItems")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public BaseResponse saveFunBoardItems(FunBoardRequest request)
+    {
+		BaseResponse response = funBoardService.saveFunBoardItem(request);
         return response;
     }
 }

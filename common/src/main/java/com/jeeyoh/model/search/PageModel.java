@@ -33,6 +33,8 @@ public class PageModel implements Serializable{
     private String owner;
 	@JsonProperty
 	private String createdDate;
+	@JsonProperty
+	private String imageUrl;
 	/**
 	 * @return the pagetype
 	 */
@@ -140,6 +142,18 @@ public class PageModel implements Serializable{
 	 */
 	public int getPageUserLikeId() {
 		return pageUserLikeId;
+	}
+	/**
+	 * @param imageUrl the imageUrl to set
+	 */
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+	/**
+	 * @return the imageUrl
+	 */
+	public String getImageUrl() {
+		return imageUrl;
 	}
 	
 	

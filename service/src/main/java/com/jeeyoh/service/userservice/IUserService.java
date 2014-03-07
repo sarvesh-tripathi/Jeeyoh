@@ -5,6 +5,7 @@ import com.jeeyoh.model.response.CategoryLikesResponse;
 import com.jeeyoh.model.response.CategoryResponse;
 import com.jeeyoh.model.response.LoginResponse;
 import com.jeeyoh.model.response.SuggestionResponse;
+import com.jeeyoh.model.response.TopSuggestionResponse;
 import com.jeeyoh.model.response.UserRegistrationResponse;
 import com.jeeyoh.model.search.CategoryModel;
 import com.jeeyoh.model.search.PageModel;
@@ -28,6 +29,7 @@ public interface IUserService {
 	public long userFavouriteCount(PageModel page);
 	public CategoryLikesResponse getCategoryForCaptureLikes(int userId, String categoryType);
 	public BaseResponse saveUserCategoryLikes(CategoryModel categoryModel);
+	public TopSuggestionResponse getUserTopSuggestions(UserModel user);
 
 
 }

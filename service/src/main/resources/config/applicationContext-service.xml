@@ -41,6 +41,9 @@ default-autowire="byName">
 	<context:component-scan base-package="com.jeeyoh.notification.service.email" use-default-filters="true">
 		<context:include-filter type="annotation" expression="org.springframework.stereotype.Service" />
 	</context:component-scan>
+	<context:component-scan base-package="com.jeeyoh.service.funboard" use-default-filters="true">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Service" />
+	</context:component-scan>
 	<bean id="grouponClient" class="com.jeeyoh.service.groupon.GrouponClient">
         <constructor-arg ref="restTemplate"/>        
     </bean>

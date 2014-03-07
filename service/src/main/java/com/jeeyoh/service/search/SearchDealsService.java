@@ -191,7 +191,7 @@ public class SearchDealsService implements ISearchDealsService {
 		Set<DealModel> dealModels = new HashSet<DealModel>();
 		if(emailId != null && emailId  != "")
 		{			
-			User user = userDAO.getUsersById(emailId);
+			User user = userDAO.getUserByEmailId(emailId);
 			logger.debug("user Id :::: "+ user.getUserId());
 			deals = dealsDAO.getUserDeals(user.getUserId());	
 			logger.debug("deals  ::::"+deals.size());
@@ -246,14 +246,14 @@ public class SearchDealsService implements ISearchDealsService {
 		//Set<DealModel> dealModels = new HashSet<DealModel>();
 		if(emailId != null && emailId  != "")
 		{			
-			User user = userDAO.getUsersById(emailId);
+			User user = userDAO.getUserByEmailId(emailId);
 			logger.debug("user Id :::: "+ user.getUserId());
 			
 			// get user contects				
 			List<User> userContacts = userDAO.getUserContacts(user.getUserId());
 			
 			// user commuinty 
-			List<Page> userCommunities = userDAO.getUserCommunities(user.getUserId());
+			List<Page> userCommunities = userDAO.getUserCommunities(user.getUserId(),Double.parseDouble(user.getLattitude()), Double.parseDouble(user.getLongitude()));
 			
 			// user group member 
 			List<Jeeyohgroup> jeeyohGroup = userDAO.getUserGroups(user.getUserId());

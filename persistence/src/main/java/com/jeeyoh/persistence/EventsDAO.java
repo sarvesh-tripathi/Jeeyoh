@@ -8,16 +8,15 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.jeeyoh.persistence.domain.Deals;
 import com.jeeyoh.persistence.domain.Events;
 import com.jeeyoh.persistence.domain.Page;
-import com.jeeyoh.persistence.domain.User;
 import com.jeeyoh.utils.Utils;
 
 @Repository("eventsDAO")
@@ -41,7 +40,6 @@ public class EventsDAO implements IEventsDAO{
 				session.flush();
 				session.clear();
 			}
-
 			tx.commit();
 		}
 		catch (HibernateException e) {
@@ -163,37 +161,55 @@ public class EventsDAO implements IEventsDAO{
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Page> getCommunityBySearchKeyword(String searchText,String category, String location) {
+	public List<Page> getCommunityBySearchKeyword(String searchText,String category, String location, int offset, int limit) {
 		logger.debug("getCommunityBySearchKeyword ==> "+searchText);
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Page.class, "page").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
+		criteria.createAlias("page.business", "business");
+		if(category != null && !category.trim().equals(""))
+		{
+			criteria.createAlias("page.pagetype", "pagetypes");
+			criteria.add(Restrictions.eq("pagetypes.pageType", category));
+		}
 		if(searchText != null && !searchText.trim().equals(""))
 		{
 			criteria.add(Restrictions.disjunction().add(Restrictions.eq("page.about", searchText))
 					.add(Restrictions.eq("page.pageUrl", searchText)));
 		}
+		
+		if(location != null && !location.trim().equals(""))
+		{
+			criteria.add(Restrictions.disjunction().add(Restrictions.like("business.displayAddress", "%" + location + "%"))
+					.add(Restrictions.like("business.businessId", "%" + location + "%"))
+					.add(Restrictions.eq("business.postalCode", location))
+					.add(Restrictions.like("business.city", "%" + location + "%")));
+		}
 
+		criteria.setFirstResult(offset)
+		.setMaxResults(limit);
 		List<Page> pageList = criteria.list();
 		return pageList;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Page> getCommunityByLikeSearchKeyword(String searchText,String category, String location) {
+	public List<Page> getCommunityByLikeSearchKeyword(String searchText,String category, String location, int offset, int limit) {
 		logger.debug("getCommunityByLikeSearchKeyword ==> "+searchText);
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Page.class, "page").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
+		criteria.createAlias("page.business", "business");
 		if(category != null && !category.trim().equals(""))
 		{
 			criteria.createAlias("page.pagetype", "pagetypes");
 			criteria.add(Restrictions.eq("pagetypes.pageType", category));
 		}
-		/*if(location != null && !location.trim().equals(""))
+		if(location != null && !location.trim().equals(""))
 		{
-			criteria.add(Restrictions.disjunction()
-					.add(Restrictions.eq("events.zip", location))
-					.add(Restrictions.like("events.city", "%" + location + "%")));
-		}*/
+			criteria.add(Restrictions.disjunction().add(Restrictions.like("business.displayAddress", "%" + location + "%"))
+					.add(Restrictions.like("business.businessId", "%" + location + "%"))
+					.add(Restrictions.eq("business.postalCode", location))
+					.add(Restrictions.like("business.city", "%" + location + "%")));
+		}
 
 		if(searchText != null && !searchText.trim().equals(""))
 		{
@@ -203,14 +219,16 @@ public class EventsDAO implements IEventsDAO{
 
 		}
 
+		criteria.setFirstResult(offset)
+		.setMaxResults(limit);
 		List<Page> pageList = criteria.list();
 		return pageList;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Events> getEventsBySearchKeyword(String searchText,String category, String location) {
-		logger.debug("getEventsByCriteria ==> "+searchText);
+	public List<Events> getEventsBySearchKeyword(String searchText,String category, String location, int offset, int limit) {
+		logger.debug("getEventsBySearchKeyword ==> "+searchText);
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Events.class, "events").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
 		criteria.createAlias("events.page", "page");
@@ -239,14 +257,16 @@ public class EventsDAO implements IEventsDAO{
 		criteria.add(Restrictions.conjunction().add(Restrictions.ge("events.event_date", Utils.getCurrentDate()))
 				.add(Restrictions.le("events.event_date", Utils.getNearestWeekend(null))));
 
+		criteria.setFirstResult(offset)
+		.setMaxResults(limit);
 		List<Events> eventsList = criteria.list();
 		return eventsList;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Events> getEventsByLikeSearchKeyword(String searchText,String category, String location) {
-		logger.debug("getEventsByCriteria ==> "+searchText);
+	public List<Events> getEventsByLikeSearchKeyword(String searchText,String category, String location, int offset, int limit) {
+		logger.debug("getEventsByLikeSearchKeyword ==> "+searchText);
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Events.class, "events").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
 		criteria.createAlias("events.page", "page");
@@ -276,6 +296,8 @@ public class EventsDAO implements IEventsDAO{
 		criteria.add(Restrictions.conjunction().add(Restrictions.ge("events.event_date", Utils.getCurrentDate()))
 				.add(Restrictions.le("events.event_date", Utils.getNearestWeekend(null))));
 
+		criteria.setFirstResult(offset)
+		.setMaxResults(limit);
 		List<Events> eventsList = criteria.list();
 		return eventsList;
 	}
@@ -340,12 +362,19 @@ public class EventsDAO implements IEventsDAO{
 	@Override
 	public Page getPageDetailsByID(int pageId)
 	{
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Page.class, "page").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-		criteria.add(Restrictions.eq("page.pageId", pageId));
-		List<Page> pageList = criteria.list();
-		logger.debug("page list => "+pageList);
+		List<Page> pageList = null;
+		String hqlQuery = "from Page a where a.pageId = :pageId";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("pageId", pageId);
+			pageList = (List<Page>) query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return pageList != null && !pageList.isEmpty() ? pageList.get(0) : null; 
 	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Events> getCurrentEvents(int pageId) {
@@ -403,6 +432,89 @@ public class EventsDAO implements IEventsDAO{
 			logger.debug(e.getLocalizedMessage());
 		}
 		return eventsList;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Events> getUserEventsSuggestions(String userEmail, int offset,
+			int limit) {
+		logger.debug("getUserNonDealSuggestions ==> "+userEmail +" ==> "+offset+" ==> "+limit);
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Events.class, "events").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+
+		if(userEmail != null && !userEmail.trim().equals(""))
+		{
+			criteria.createAlias("events.usereventsuggestions", "usereventsuggestions");
+			criteria.createAlias("usereventsuggestions.user", "user");
+			criteria.add(Restrictions.eq("user.emailId", userEmail));
+		}
+		criteria.setFirstResult(offset*10)
+		.setMaxResults(limit);
+		
+		List<Events> eventsList = criteria.list();
+		return eventsList;
+	}
+
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Object[]> getEventLikeCountByPage(String idsStr) {
+		logger.debug("getEventLikeCountByPage => ");
+		List<Object[]> rows = null;
+		String hqlQuery = "select distinct b.eventId, count(b.eventId) as num from Page a, Events b, Pageuserlikes c where a.pageId = c.page.pageId and b.page.pageId = a.pageId and b.eventId in ("+idsStr+") group by  a.about, b.eventId, b.title order by num desc";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			rows = query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.debug(e.toString());
+			logger.debug(e.getLocalizedMessage());
+		}
+		return rows;
+	}
+	
+	@SuppressWarnings("unchecked")
+	 @Override
+	 public List<Events> getEventsByuserLikes(String likekeyword,
+	   String itemCategory, String providerName) {
+	  logger.debug("getEventsByuserLikes ==> "+likekeyword +" : "+providerName+ " : "+itemCategory);
+	  Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Events.class, "events").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+	  
+	  if(likekeyword != null && !likekeyword.trim().equals(""))
+	  {
+	   criteria.add(Restrictions.disjunction().add(Restrictions.like("events.description", "%" + likekeyword + "%"))
+	     .add(Restrictions.like("events.title", "%" + likekeyword + "%"))
+	     .add(Restrictions.eq("events.ancestorGenreDescriptions", likekeyword)));
+	  }
+	  if(providerName != null && !providerName.trim().equals(""))
+	  {
+	   criteria.add(Restrictions.eq("events.description", providerName.trim()));
+	  }
+	  if(itemCategory != null && !itemCategory.trim().equals(""))
+	  {
+	   criteria.add(Restrictions.disjunction().add(Restrictions.like("events.description", "%" + itemCategory + "%"))
+	     .add(Restrictions.eq("events.title", itemCategory))
+	     .add(Restrictions.like("events.ancestorGenreDescriptions", "%" + itemCategory + "%")));
+	  }
+	  List<Events> eventList = criteria.list();
+	 
+	  return eventList;
+	 }
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Events getEventById(int eventId) {
+		List<Events> eventList = null;
+		String hqlQuery = "from Events a where a.eventId = :eventId";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("eventId", eventId);
+			eventList = (List<Events>) query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return eventList != null && !eventList.isEmpty() ? eventList.get(0) : null;
 	}
 
 }

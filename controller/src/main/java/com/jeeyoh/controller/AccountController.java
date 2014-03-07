@@ -1,6 +1,7 @@
 package com.jeeyoh.controller;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.jeeyoh.model.funboard.FunBoardModel;
+import com.jeeyoh.model.funboard.FunBoardRequest;
 import com.jeeyoh.model.response.CommunityResponse;
 import com.jeeyoh.model.response.MatchingEventsResponse;
 import com.jeeyoh.model.response.SearchResponse;
@@ -30,6 +33,7 @@ import com.jeeyoh.model.search.SearchRequest;
 import com.jeeyoh.model.user.UserModel;
 import com.jeeyoh.notification.service.IMessagingEventPublisher;
 import com.jeeyoh.service.fandango.IFandangoService;
+import com.jeeyoh.service.funboard.IFunBoardService;
 import com.jeeyoh.service.groupon.IGrouponFilterEngineService;
 import com.jeeyoh.service.groupon.IGrouponService;
 import com.jeeyoh.service.jobs.ICalculateTopSuggestionsService;
@@ -120,7 +124,11 @@ public class AccountController {
 	private IMatchingEventsService matchingEventsService;
 	
 	@Autowired
-	IWallService wallService;
+	private IFunBoardService funBoardService;
+
+	@Autowired
+	private IWallService wallService;
+	
 
 	private final String UPLOAD_DIRECTORY = "C:/uploads";
 
@@ -460,9 +468,13 @@ public class AccountController {
 
 		ModelAndView modelAndView = new ModelAndView("home");
 		//eventPublisher.sendConfirmationEmail();
-		//UserModel user = new UserModel();
-		//user.setEmailId("gaurav.shandilya@gmail.com");
-		//userService.getUserSuggestions(user);
+
+		UserModel user = new UserModel();
+		user.setEmailId("gaurav.shandilya@gmail.com");
+		/*user.setLimit(10);
+		userService.getUserSuggestions(user);*/
+		//userService.getUserTopSuggestions(user);
+
 		//nonDealSearch.caculateTopSuggestions();
 		wallService.addWeightContentOnItem();
 		return modelAndView;
@@ -549,6 +561,47 @@ public class AccountController {
 				logger.debug("getCurrentEvents => description: "+eventModel.getDescription()+"; event date: "+eventModel.getEvent_date()+"\n");
 			}
 		}
+		return modelAndView;
+	}
+	
+	@RequestMapping(value = "/funBaord", method = RequestMethod.GET)
+	public ModelAndView funBaord(HttpServletRequest request, HttpServletResponse response)
+	{
+		ModelAndView modelAndView = new ModelAndView("home");
+		FunBoardRequest funBoardRequest = new FunBoardRequest();
+		funBoardRequest.setUserEmail("gaurav.shandilya@gmail.com");
+		ArrayList<FunBoardModel> list = new ArrayList<FunBoardModel>();
+		FunBoardModel funBoardModel = new FunBoardModel();
+		funBoardModel.setCategory("Restaurant");
+		funBoardModel.setType("Business");
+		funBoardModel.setItemId(442);
+		list.add(funBoardModel);
+		
+		funBoardModel = new FunBoardModel();
+		funBoardModel.setCategory("Restaurant");
+		funBoardModel.setType("Business");
+		funBoardModel.setItemId(456);
+		list.add(funBoardModel);
+		
+		funBoardModel = new FunBoardModel();
+		funBoardModel.setCategory("Restaurant");
+		funBoardModel.setType("Deal");
+		funBoardModel.setItemId(691);
+		list.add(funBoardModel);
+		
+		funBoardModel = new FunBoardModel();
+		funBoardModel.setCategory("Theater");
+		funBoardModel.setType("Events");
+		funBoardModel.setItemId(51);
+		list.add(funBoardModel);
+		
+		funBoardModel = new FunBoardModel();
+		funBoardModel.setCategory("Theater");
+		funBoardModel.setType("Page");
+		funBoardModel.setItemId(26);
+		list.add(funBoardModel);
+		
+		funBoardService.saveFunBoardItem(funBoardRequest);
 		return modelAndView;
 	}
 

@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.jeeyoh.persistence.domain.Business;
 import com.jeeyoh.persistence.domain.Deals;
 import com.jeeyoh.persistence.domain.Userdealssuggestion;
 
@@ -385,7 +386,7 @@ public class DealsDAO implements IDealsDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Deals> getDealsByLikeSearchKeyword(String searchText,String category, String location) {
+	public List<Deals> getDealsByLikeSearchKeyword(String searchText,String category, String location, int offset, int limit) {
 		logger.error("getDealsByLikeSearchKeyword ==== > "+searchText);
 
 
@@ -410,17 +411,20 @@ public class DealsDAO implements IDealsDAO {
 			logger.debug("IN KEYWORD CHECKING ::: ");
 			criteria.add(Restrictions.disjunction().add(Restrictions.like("title", "%" + searchText + "%"))
 					.add(Restrictions.like("dealUrl", "%" + searchText + "%"))
-					.add(Restrictions.like("dealId", "%" + searchText + "%")));
+					.add(Restrictions.like("dealId", "%" + searchText + "%"))).add(Restrictions.conjunction().add(Restrictions.ne("title", searchText))
+							.add(Restrictions.ne("dealUrl", searchText))
+							.add(Restrictions.ne("dealId", searchText)));
 
 		}
-
+		criteria.setFirstResult(offset)
+		.setMaxResults(limit);
 		List<Deals> dealsList = criteria.list();
 		return dealsList;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Deals> getDealsBySearchKeyword(String searchText,String category, String location) {
+	public List<Deals> getDealsBySearchKeyword(String searchText,String category, String location, int offset, int limit) {
 		logger.error("getDealsByLikeSearchKeyword ==== > "+searchText);
 
 
@@ -449,9 +453,79 @@ public class DealsDAO implements IDealsDAO {
 					.add(Restrictions.eq("dealId", searchText)));
 
 		}
-
+		criteria.setFirstResult(offset)
+		.setMaxResults(limit);
 		List<Deals> dealsList = criteria.list();
 		return dealsList;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Userdealssuggestion> getUserDealSuggestions(String userEmail, int offset,
+			int limit) {
+		logger.error("getUserDealSuggestions ==== > "+userEmail +" : "+offset +" : "+limit);
+
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Userdealssuggestion.class,"userdealssuggestion");
+		criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+		criteria.createAlias("userdealssuggestion.user", "user");
+		criteria.add(Restrictions.eq("user.emailId", userEmail));
+		criteria.setFirstResult(offset*10)
+		.setMaxResults(limit);
+
+		List<Userdealssuggestion> dealsList = criteria.list();
+		return dealsList;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Object[]> getTopDealsByRating(String idsStr) {
+		logger.debug("getTopDealsByRating: "+idsStr);
+		List<Object[]> rows = null;
+		String hqlQuery = "select distinct a.id,b.rating from Deals a, Business b where a.id in ("+idsStr+") and a.business.id = b.id order by b.rating desc";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			
+			rows = (List<Object[]>) query.list();
+		} catch (Exception e) {
+			logger.debug("Error: "+e.getMessage());
+			e.printStackTrace();
+		}
+		return rows;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Object[]> getDealLikeCountByPage(String idsStr) {
+		logger.debug("getDealLikeCountByPage => ");
+		List<Object[]> rows = null;
+		String hqlQuery = "select distinct b.id, count(b.id) as num from Page a, Deals b, Pageuserlikes c where a.pageId = c.page.pageId and b.business.id = a.business.id and b.id in ("+idsStr+") group by  a.about, b.id, b.title order by num desc";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			rows = query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.debug(e.toString());
+			logger.debug(e.getLocalizedMessage());
+		}
+		return rows;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Deals getDealById(int dealId) {
+		List<Deals> dealsList = null;
+		String hqlQuery = "from Deals a where a.id = :dealId";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("dealId", dealId);
+			dealsList = (List<Deals>) query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return dealsList != null && !dealsList.isEmpty() ? dealsList.get(0) : null;
 	}
 
 }

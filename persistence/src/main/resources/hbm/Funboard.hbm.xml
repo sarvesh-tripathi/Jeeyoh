@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Oct 10, 2013 9:08:14 AM by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+    <class name="com.jeeyoh.persistence.domain.Funboard" table="funboard" catalog="jeeyoh">
+        <id name="funBoardId" type="java.lang.Integer">
+            <column name="funBoardId" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="user" class="com.jeeyoh.persistence.domain.User" fetch="select">
+            <column name="userId" not-null="true" />
+        </many-to-one>
+       
+        <property name="itemId" type="java.lang.Integer">
+            <column name="itemId" />
+        </property>
+        <property name="type" type="string">
+            <column name="type" length="50" />
+        </property>
+        <property name="category" type="string">
+            <column name="category" length="50" />
+        </property>
+        <property name="isEvent" type="java.lang.Boolean">
+            <column name="isEvent" />
+        </property>
+        <property name="createdTime" type="timestamp">
+			<column name="createdTime" length="19" not-null="true" />
+		</property>
+		<property name="updatedTime" type="timestamp">
+			<column name="updatedTime" length="19" not-null="true" />
+		</property>
+        <joined-subclass name="com.jeeyoh.persistence.domain.BusinessFunboard"
+			table="rel_business_funboard">
+			<key column="funBoardId" />
+			<many-to-one name="business" column="businessId"
+				class="com.jeeyoh.persistence.domain.Business" cascade="all" />
+		</joined-subclass>
+
+		<joined-subclass name="com.jeeyoh.persistence.domain.EventFunboard"
+			table="rel_event_funboard">
+			<key column="funBoardId" />
+			<many-to-one name="events" column="eventId"
+				class="com.jeeyoh.persistence.domain.Events" cascade="all" />
+		</joined-subclass>
+		 <joined-subclass name="com.jeeyoh.persistence.domain.DealFunboard"
+			table="rel_deal_funboard">
+			<key column="funBoardId" />
+			<many-to-one name="deal" column="dealId"
+				class="com.jeeyoh.persistence.domain.Deals" cascade="all" />
+		</joined-subclass>
+
+		<joined-subclass name="com.jeeyoh.persistence.domain.PageFunboard"
+			table="rel_page_funboard">
+			<key column="funBoardId" />
+			<many-to-one name="page" column="pageId"
+				class="com.jeeyoh.persistence.domain.Page" cascade="all" />
+		</joined-subclass>
+    </class>
+</hibernate-mapping>

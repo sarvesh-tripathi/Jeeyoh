@@ -63,6 +63,10 @@ public class UserModel implements Serializable {
     
     @JsonProperty
     private String sessionId;
+    @JsonProperty
+	private int offset;
+	@JsonProperty
+	private int limit;
     
 	public Integer getUserId() {
 		return userId;
@@ -195,6 +199,30 @@ public class UserModel implements Serializable {
 	}
 	public String getSessionId() {
 		return sessionId;
+	}
+	/**
+	 * @param offset the offset to set
+	 */
+	public void setOffset(int offset) {
+		this.offset = offset;
+	}
+	/**
+	 * @return the offset
+	 */
+	public int getOffset() {
+		return offset;
+	}
+	/**
+	 * @param limit the limit to set
+	 */
+	public void setLimit(int limit) {
+		this.limit = limit;
+	}
+	/**
+	 * @return the limit
+	 */
+	public int getLimit() {
+		return limit;
 	}
 
 }
