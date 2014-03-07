@@ -51,6 +51,8 @@ public class CommunitySearchService implements ICommunitySearchService{
 	public CommunityResponse searchCommunityDetails(int userId, int pageId) {
 		CommunityResponse communityResponse = new CommunityResponse();
 
+		logger.debug("searchCommunityDetails:::: ");
+		
 		//community details
 		Page page = eventsDAO.getPageDetailsByID(pageId);
 		PageModel pageModel = new PageModel();

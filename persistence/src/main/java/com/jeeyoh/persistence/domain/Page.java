@@ -4,6 +4,7 @@ package com.jeeyoh.persistence.domain;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -12,7 +13,11 @@ import java.util.Set;
 public class Page  implements java.io.Serializable {
 
 
-     private Integer pageId;
+     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private Integer pageId;
      private Pagetype pagetype;
      private User userByOwnerId;
      private User userByCreatorId;
@@ -27,6 +32,8 @@ public class Page  implements java.io.Serializable {
      private Date updatedtime;
      private Set pageuserlikeses = new HashSet(0);
      private Set topcommunitysuggestions = new HashSet(0);
+     
+     private List<PageFunboard> funboards;
 
     public Page() {
     }
@@ -168,6 +175,22 @@ public class Page  implements java.io.Serializable {
 	 */
 	public Set getTopcommunitysuggestions() {
 		return topcommunitysuggestions;
+	}
+
+
+	/**
+	 * @return the funboards
+	 */
+	public List<PageFunboard> getFunboards() {
+		return funboards;
+	}
+
+
+	/**
+	 * @param funboards the funboards to set
+	 */
+	public void setFunboards(List<PageFunboard> funboards) {
+		this.funboards = funboards;
 	}
 
 

@@ -13,7 +13,7 @@ public class Funboard implements Serializable{
 	private User user;
 	private int itemId;
 	private String category;
-	private String type;
+	private String itemType;
 	private Date createdTime;
 	private Date updatedTime;
 	/**
@@ -67,14 +67,14 @@ public class Funboard implements Serializable{
 	/**
 	 * @return the type
 	 */
-	public String getType() {
-		return type;
+	public String getItemType() {
+		return itemType;
 	}
 	/**
 	 * @param type the type to set
 	 */
-	public void setType(String type) {
-		this.type = type;
+	public void setItemType(String type) {
+		this.itemType = type;
 	}
 	/**
 	 * @return the createdTime
@@ -100,5 +100,13 @@ public class Funboard implements Serializable{
 	public void setUpdatedTime(Date updatedTime) {
 		this.updatedTime = updatedTime;
 	}
+	
+	public Boolean getIsEvent() {
+        return false;
+    }
+	
+	public void setIsEvent(Boolean isEvent) {
+        
+    }
 
 }

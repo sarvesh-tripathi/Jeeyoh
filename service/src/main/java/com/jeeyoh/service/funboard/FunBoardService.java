@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jeeyoh.model.enums.ServiceAPIStatus;
 import com.jeeyoh.model.funboard.FunBoardModel;
@@ -51,6 +52,7 @@ public class FunBoardService implements IFunBoardService{
 	@Autowired
 	private IDealsDAO dealsDAO;
 	
+	@Transactional
 	@Override
 	public BaseResponse saveFunBoardItem(FunBoardRequest request) {
 		

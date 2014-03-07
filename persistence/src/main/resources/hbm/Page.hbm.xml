@@ -56,5 +56,11 @@
             </key>
             <one-to-many class="com.jeeyoh.persistence.domain.Topcommunitysuggestion" />
         </set>
+        <list name="funboards" table="rel_page_funboard" inverse="true"
+		   cascade="all">
+		   <key column="pageId" />
+		   <index></index>
+		   <one-to-many class="com.jeeyoh.persistence.domain.PageFunboard" />
+		  </list>
     </class>
 </hibernate-mapping>

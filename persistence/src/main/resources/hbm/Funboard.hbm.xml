@@ -15,8 +15,8 @@
         <property name="itemId" type="java.lang.Integer">
             <column name="itemId" />
         </property>
-        <property name="type" type="string">
-            <column name="type" length="50" />
+        <property name="itemType" type="string">
+            <column name="itemType" length="50" />
         </property>
         <property name="category" type="string">
             <column name="category" length="50" />
