@@ -206,6 +206,7 @@ public class FunBoardService implements IFunBoardService{
 					funBoardModel.setType(funboard.getItemType());
 					funBoardModel.setStartDate(funboard.getStartDate().toString());
 					funBoardModel.setEndDate(funboard.getEndDate().toString());
+					funBoardModel.setSource(funboard.getSource());
 					if(funboard.getItemType().equalsIgnoreCase("Event"))
 					{
 						int day = Utils.getDayOfWeek(funboard.getStartDate());
@@ -269,6 +270,7 @@ public class FunBoardService implements IFunBoardService{
 				funBoardModel.setType(funboard.getItemType());
 				funBoardModel.setStartDate(funboard.getStartDate().toString());
 				funBoardModel.setEndDate(funboard.getEndDate().toString());
+				funBoardModel.setSource(funboard.getSource());
 				fridayActivefunBoardModels.add(funBoardModel);
 				saturadyActivefunBoardModels.add(funBoardModel);
 				sundayActivefunBoardModels.add(funBoardModel);
