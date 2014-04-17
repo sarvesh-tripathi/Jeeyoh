@@ -479,6 +479,9 @@ public class EventsDAO implements IEventsDAO{
 			criteria.createAlias("usereventsuggestions.user", "user");
 			criteria.add(Restrictions.eq("user.emailId", userEmail));
 		}
+		
+		criteria.add(Restrictions.ge("events.event_date", Utils.getCurrentDate()));
+		
 		criteria.setFirstResult(offset*10)
 		.setMaxResults(limit);
 

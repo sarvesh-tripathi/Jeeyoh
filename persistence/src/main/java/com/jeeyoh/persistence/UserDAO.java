@@ -1422,7 +1422,9 @@ public class UserDAO implements IUserDAO {
 		criteria.add(Restrictions.eq("topdealssuggestion.suggestionType", suggestionType));
 		criteria.createAlias("topdealssuggestion.user", "user");
 		criteria.add(Restrictions.eq("user.emailId", userEmail));
-
+		criteria.createAlias("topdealssuggestion.deals", "deals");
+		criteria.add(Restrictions.conjunction().add(Restrictions.ge("deals.endAt", Utils.getCurrentDate()))
+				.add(Restrictions.gt("deals.endAt", Utils.getNearestThursday())));
 		List<Topdealssuggestion> dealsList = criteria.list();
 		return dealsList;
 	}
@@ -1436,7 +1438,8 @@ public class UserDAO implements IUserDAO {
 		criteria.add(Restrictions.eq("topeventsuggestion.suggestionType", suggestionType));
 		criteria.createAlias("topeventsuggestion.user", "user");
 		criteria.add(Restrictions.eq("user.emailId", userEmail));
-
+		criteria.createAlias("topeventsuggestion.events", "events");
+		criteria.add(Restrictions.ge("events.event_date", Utils.getCurrentDate()));
 		List<Topeventsuggestion> eventsList = criteria.list();
 		return eventsList;
 	}

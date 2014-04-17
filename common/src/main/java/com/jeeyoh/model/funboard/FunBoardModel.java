@@ -52,6 +52,8 @@ public class FunBoardModel implements Serializable{
 	private String endDate;
 	@JsonProperty
 	private String source;
+	@JsonProperty
+	private String scheduledDate;
 	
 	/**
 	 * @return the funBoardId
@@ -256,6 +258,18 @@ public class FunBoardModel implements Serializable{
 	 */
 	public void setSource(String source) {
 		this.source = source;
+	}
+	/**
+	 * @return the scheduledDate
+	 */
+	public String getScheduledDate() {
+		return scheduledDate;
+	}
+	/**
+	 * @param scheduledDate the scheduledDate to set
+	 */
+	public void setScheduledDate(String scheduledDate) {
+		this.scheduledDate = scheduledDate;
 	}
 
 }

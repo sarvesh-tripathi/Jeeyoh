@@ -256,6 +256,30 @@ public class Utils {
 		}
 
 	}
+	
+	
+	/**
+	 * Get nearest Thursday for a particular date
+	 * @return weekendDate
+	 */
+	public static Date getNearestThursday()
+	{
+		try {
+			Calendar c = Calendar.getInstance();
+			c.set(Calendar.DAY_OF_WEEK, Calendar.THURSDAY);
+
+			// Set time fields to end  
+			c.set(Calendar.HOUR_OF_DAY, 23);
+			c.set(Calendar.MINUTE, 59);
+			c.set(Calendar.SECOND, 59);
+			c.set(Calendar.MILLISECOND, 59);
+			return c.getTime();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+
+	}
 
 
 	/**

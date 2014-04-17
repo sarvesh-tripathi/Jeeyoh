@@ -438,6 +438,8 @@ public class DealsDAO implements IDealsDAO {
 
 		}
 		
+		criteria.add(Restrictions.conjunction().add(Restrictions.ge("endAt", Utils.getCurrentDate()))
+				.add(Restrictions.gt("endAt", Utils.getNearestThursday())));
 		//criteria.add(Restrictions.ge("endAt", Utils.getCurrentDate()));
 		
 		criteria.setFirstResult(offset)
@@ -480,6 +482,8 @@ public class DealsDAO implements IDealsDAO {
 
 		}
 		
+		criteria.add(Restrictions.conjunction().add(Restrictions.ge("endAt", Utils.getCurrentDate()))
+				.add(Restrictions.gt("endAt", Utils.getNearestThursday())));
 		//criteria.add(Restrictions.ge("endAt", Utils.getCurrentDate()));
 		
 		criteria.setFirstResult(offset)
@@ -498,6 +502,9 @@ public class DealsDAO implements IDealsDAO {
 		criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		criteria.createAlias("userdealssuggestion.user", "user");
 		criteria.add(Restrictions.eq("user.emailId", userEmail));
+		criteria.createAlias("userdealssuggestion.deals", "deals");
+		criteria.add(Restrictions.conjunction().add(Restrictions.ge("deals.endAt", Utils.getCurrentDate()))
+				.add(Restrictions.gt("deals.endAt", Utils.getNearestThursday())));
 		criteria.setFirstResult(offset*10)
 		.setMaxResults(limit);
 
@@ -612,6 +619,8 @@ public class DealsDAO implements IDealsDAO {
 
 		}
 		
+		criteria.add(Restrictions.conjunction().add(Restrictions.ge("endAt", Utils.getCurrentDate()))
+				.add(Restrictions.gt("endAt", Utils.getNearestThursday())));
 		//criteria.add(Restrictions.ge("endAt", Utils.getCurrentDate()));
 		
 		int rowCount = criteria.list().size();

@@ -22,6 +22,7 @@ public class Funboard implements Serializable{
 	private Date endDate;
 	private String tag;
 	private String source;
+	private Date scheduledTime;
 	
 	/**
 	 * @return the funBoardId
@@ -186,6 +187,18 @@ public class Funboard implements Serializable{
 	 */
 	public void setSource(String source) {
 		this.source = source;
+	}
+	/**
+	 * @return the scheduledTime
+	 */
+	public Date getScheduledTime() {
+		return scheduledTime;
+	}
+	/**
+	 * @param scheduledTime the scheduledTime to set
+	 */
+	public void setScheduledTime(Date scheduledTime) {
+		this.scheduledTime = scheduledTime;
 	}
 
 }
