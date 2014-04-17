@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Oct 10, 2013 9:08:14 AM by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+	 <class name="com.jeeyoh.persistence.domain.Ldeal" table="ldeal" catalog="jeeyoh">
+	 	<id name="id" type="java.lang.Integer">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <property name="dealId" type="java.lang.Integer">
+            <column name="dealId" />
+        </property>
+        <property name="dealType" type="string">
+            <column name="dealType" length="250"/>
+        </property>
+        <property name="dealUrl" type="string">
+            <column name="dealUrl" length="200"/>
+        </property>
+        <property name="shortTitle" type="string">
+            <column name="shortTitle" length="200"/>
+        </property>
+        <property name="longTitle" type="string">
+            <column name="longTitle" length="200"/>
+        </property>
+        <property name="merchantName" type="string">
+            <column name="merchantName" length="200"/>
+        </property>
+        <property name="startAt" type="timestamp">
+            <column name="startAt" length="19"/>
+        </property>
+        <property name="endAt" type="timestamp">
+            <column name="endAt" length="19"/>
+        </property>
+        <property name="cityName" type="string">
+            <column name="cityName" length="250"/>
+        </property>
+        <property name="smallImageUrl" type="string">
+            <column name="smallImageUrl" length="200"/>
+        </property>
+        <property name="mediumImageUrl" type="string">
+            <column name="mediumImageUrl" length="200"/>
+        </property>
+        <property name="largeImageUrl" type="string">
+            <column name="largeImageUrl" length="200"/>
+        </property>
+        <property name="price" type="java.lang.Long">
+            <column name="price" precision="10" scale="0" />
+        </property>
+        <property name="countryName" type="string">
+            <column name="countryName" length="250"/>
+        </property>
+        <property name="distance" type="java.lang.Long">
+            <column name="distance" precision="10" scale="0"/>
+        </property>
+        <property name="isSoldOut" type="java.lang.Boolean">
+            <column name="isSoldOut" />
+        </property>
+        <property name="orderCount" type="java.lang.Integer">
+            <column name="orderCount" />
+        </property>
+        <set name="dealOptions" inverse="true" cascade="all">
+            <key>
+                <column name="dealId" not-null="true" />
+            </key>
+            <one-to-many class="com.jeeyoh.persistence.domain.LdealOption" />
+        </set>
+        <set name="ldealCategory" inverse="true" cascade="all">
+            <key>
+                <column name="dealId" not-null="true" />
+            </key>
+            <one-to-many class="com.jeeyoh.persistence.domain.LdealCategory" />
+        </set>
+	 </class>
+</hibernate-mapping>

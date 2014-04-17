@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import com.jeeyoh.model.user.UserModel;
+
 public class MainModel {
 	
 	private String name;
@@ -15,6 +17,7 @@ public class MainModel {
 	private List<EventModel> eventsList = new ArrayList<EventModel>();
 	private Set<DealModel> dealModel;
 	private List<SearchResult> searchResult = new ArrayList<SearchResult>();
+	private List<UserModel> usersList = new ArrayList<UserModel>();
 	private boolean isUser;
 	/**
 	 * @param name the name to set
@@ -125,5 +128,17 @@ public class MainModel {
 	 */
 	public List<SearchResult> getSearchResult() {
 		return searchResult;
+	}
+	/**
+	 * @return the usersList
+	 */
+	public List<UserModel> getUsersList() {
+		return usersList;
+	}
+	/**
+	 * @param usersList the usersList to set
+	 */
+	public void setUsersList(List<UserModel> usersList) {
+		this.usersList = usersList;
 	}
 }

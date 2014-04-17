@@ -4,30 +4,27 @@
 <!-- Generated Oct 10, 2013 9:08:14 AM by Hibernate Tools 3.2.1.GA -->
 <hibernate-mapping>
     <class name="com.jeeyoh.persistence.domain.WallFeed" table="wallfeed" catalog="jeeyoh">
-        <id name="wallFeedId" type="java.lang.Integer">
-            <column name="wallFeedId" />
+        <id name="packageId" type="java.lang.Integer">
+            <column name="packageId" />
             <generator class="identity" />
         </id>
         <many-to-one name="user" class="com.jeeyoh.persistence.domain.User" fetch="select">
             <column name="userId" not-null="true" />
-        </many-to-one>
-        <property name="itemId" type="Integer">
-        <column name="itemId" not-null="true"></column>
+        </many-to-one>        
+       <property name="packageName" type="string">
+            <column name="packageName" length="250" />
         </property>
-        <property name="weightCount" type="Integer">
-        <column name="weightCount" not-null="true"></column>
-        </property>
-        <property name="itemType" type="string">
-        <column name="itemType" length="50" ></column>        
-        </property>
-        <property name="category" type="string">
-        <column name="category" length="50"></column>
-        </property>
-        <property name="createdtime" type="timestamp">
-            <column name="createdtime" length="19" not-null="true" />
-        </property>
-        <property name="updatedtime" type="timestamp">
-            <column name="updatedtime" length="19" not-null="true" />
-        </property>
+         <set name="wallFeedItems" inverse="true">
+            <key>
+                <column name="wallFeedId" not-null="true" />
+            </key>
+            <one-to-many class="com.jeeyoh.persistence.domain.WallFeedItems" />
+        </set>
+        <set name="wallFeedUserShareMap" inverse="true">
+            <key>
+                <column name="wallFeedId" not-null="true" />
+            </key>
+            <one-to-many class="com.jeeyoh.persistence.domain.WallFeedUserShareMap" />
+        </set>
     </class>
 </hibernate-mapping>

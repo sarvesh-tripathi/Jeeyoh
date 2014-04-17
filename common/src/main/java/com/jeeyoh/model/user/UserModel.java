@@ -64,9 +64,17 @@ public class UserModel implements Serializable {
     @JsonProperty
     private String sessionId;
     @JsonProperty
+    private String imageUrl;
+    @JsonProperty
 	private int offset;
 	@JsonProperty
 	private int limit;
+	@JsonProperty
+	private Boolean isShareProfileWithFriend;
+	@JsonProperty
+	private Boolean isShareProfileWithGroup;
+	@JsonProperty
+	private Boolean isShareCommunity;
     
 	public Integer getUserId() {
 		return userId;
@@ -223,6 +231,54 @@ public class UserModel implements Serializable {
 	 */
 	public int getLimit() {
 		return limit;
+	}
+	/**
+	 * @return the imageUrl
+	 */
+	public String getImageUrl() {
+		return imageUrl;
+	}
+	/**
+	 * @param imageUrl the imageUrl to set
+	 */
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+	/**
+	 * @return the isShareProfileWithFriend
+	 */
+	public Boolean getIsShareProfileWithFriend() {
+		return isShareProfileWithFriend;
+	}
+	/**
+	 * @param isShareProfileWithFriend the isShareProfileWithFriend to set
+	 */
+	public void setIsShareProfileWithFriend(Boolean isShareProfileWithFriend) {
+		this.isShareProfileWithFriend = isShareProfileWithFriend;
+	}
+	/**
+	 * @return the isShareProfileWithGroup
+	 */
+	public Boolean getIsShareProfileWithGroup() {
+		return isShareProfileWithGroup;
+	}
+	/**
+	 * @param isShareProfileWithGroup the isShareProfileWithGroup to set
+	 */
+	public void setIsShareProfileWithGroup(Boolean isShareProfileWithGroup) {
+		this.isShareProfileWithGroup = isShareProfileWithGroup;
+	}
+	/**
+	 * @return the isShareCommunity
+	 */
+	public Boolean getIsShareCommunity() {
+		return isShareCommunity;
+	}
+	/**
+	 * @param isShareCommunity the isShareCommunity to set
+	 */
+	public void setIsShareCommunity(Boolean isShareCommunity) {
+		this.isShareCommunity = isShareCommunity;
 	}
 
 }

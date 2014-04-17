@@ -52,6 +52,7 @@ public class Business  implements java.io.Serializable {
      private String workingHours;
      private String musicType;
      private String source;
+     private String state;
      private Set reviews = new HashSet(0);
      private Set foodmenuitems = new HashSet(0);
      private Set dealses = new HashSet(0);
@@ -461,6 +462,22 @@ public class Business  implements java.io.Serializable {
 	 */
 	public Set getTopnondealsuggestions() {
 		return topnondealsuggestions;
+	}
+
+
+	/**
+	 * @return the state
+	 */
+	public String getState() {
+		return state;
+	}
+
+
+	/**
+	 * @param state the state to set
+	 */
+	public void setState(String state) {
+		this.state = state;
 	}
 
 

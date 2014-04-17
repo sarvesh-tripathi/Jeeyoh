@@ -29,6 +29,9 @@ public class TopCommunitySuggestionModel implements Serializable{
 	
 	@JsonProperty
 	private List<PageModel> topConcertSuggestions;
+	
+	@JsonProperty
+	private List<PageModel> topNightLifeSuggestions;
 
 	/**
 	 * @return the topSportsSuggestions
@@ -99,6 +102,20 @@ public class TopCommunitySuggestionModel implements Serializable{
 	 */
 	public List<PageModel> getTopConcertSuggestions() {
 		return topConcertSuggestions;
+	}
+
+	/**
+	 * @return the topNightLifeSuggestions
+	 */
+	public List<PageModel> getTopNightLifeSuggestions() {
+		return topNightLifeSuggestions;
+	}
+
+	/**
+	 * @param topNightLifeSuggestions the topNightLifeSuggestions to set
+	 */
+	public void setTopNightLifeSuggestions(List<PageModel> topNightLifeSuggestions) {
+		this.topNightLifeSuggestions = topNightLifeSuggestions;
 	}
 
 }

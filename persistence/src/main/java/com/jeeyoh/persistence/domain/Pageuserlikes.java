@@ -24,6 +24,7 @@ public class Pageuserlikes  implements java.io.Serializable {
      private Boolean isVisited;
      private Boolean isProfileHidden;
      private Boolean isProfileDetailsHidden;
+     private Boolean isSuggested;
      private String displayName;
      private Date createdtime;
      private Date updatedtime;
@@ -145,6 +146,22 @@ public class Pageuserlikes  implements java.io.Serializable {
     public void setUpdatedtime(Date updatedtime) {
         this.updatedtime = updatedtime;
     }
+
+
+	/**
+	 * @return the isSuggested
+	 */
+	public Boolean getIsSuggested() {
+		return isSuggested;
+	}
+
+
+	/**
+	 * @param isSuggested the isSuggested to set
+	 */
+	public void setIsSuggested(Boolean isSuggested) {
+		this.isSuggested = isSuggested;
+	}
 
 
 

@@ -23,7 +23,7 @@ public interface IDealsDAO {
 	public List<Deals> getUserDeals(Integer userId);
 	public List<Deals> getDealsByBusinessId(Integer id);
 	public List<Deals> getDealsByUserCategory(String itemCategory,
-			String itemType, String providerName);
+			String itemType, String providerName, double latitude, double longitude);
 	public List<Deals> getDealsByUserEmail(String userEmail);
 	public List<Userdealssuggestion>userDealsSuggestedByJeeyoh(String keyword, String category,
 			String location, String emailId);
@@ -34,5 +34,9 @@ public interface IDealsDAO {
 	public List<Object[]> getTopDealsByRating(String idsStr);
 	public List<Object[]> getDealLikeCountByPage(String idsStr);
 	public Deals getDealById(int dealId);
+	public Deals isDealExists(String dealId);
+	public int getTotalDealsBySearchKeyWord(String searchText,String category, String location);
+	public List<Deals> getDealsByUserCategory(String itemCategory,
+			String itemType, String providerName);
 	
 }

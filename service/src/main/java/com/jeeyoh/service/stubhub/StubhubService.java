@@ -12,6 +12,7 @@ import com.jeeyoh.model.stubhub.Description;
 import com.jeeyoh.model.stubhub.StubHubEvents;
 import com.jeeyoh.persistence.dao.stubhub.IStubhubDAO;
 import com.jeeyoh.persistence.domain.StubhubEvent;
+import com.jeeyoh.utils.Utils;
 
 @Component("stubhubService")
 public class StubhubService implements IStubhubService {
@@ -80,6 +81,8 @@ public class StubhubService implements IStubhubService {
 					stubhub.setVenue_name(stubhubList.getVenue_name());
 					stubhub.setZip(stubhubList.getZip());
 					stubhub.setAncestorGenreDescriptions(stubhubList.getAncestorGenreDescriptions().toString());
+					stubhub.setImage_url(stubhubList.getImage_url());
+					stubhub.setGenre_parent_name(stubhubList.getGenre_parent_name());
 					stubhubDAO.save(stubhub,count);
 					count++;
 				}

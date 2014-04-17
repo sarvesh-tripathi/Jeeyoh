@@ -4,10 +4,12 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +26,12 @@ public class Utils {
 
 	static final Logger logger = LoggerFactory.getLogger("debugLogger");
 
+	public static final String MESSAGE_DATE_FORMAT = "MM/dd/yyyy";
+	public static final String TIME_FORMAT = "hh:mm a";
+	public static final String MONTH_YEAR_FORMAT = "MMMMMMMMM dd yyyy";
+	public static final String DAY_TIME_FORMAT = "E hh:mm a";
+	public static final String MONTH_DAY_FORMAT = "MMMMMMMMM dd";
+
 	/**
 	 * Get weekends date for the current year for Events
 	 * @return
@@ -32,6 +40,13 @@ public class Utils {
 		List<Date >weekendList = new ArrayList<Date>();
 		Calendar cal = null;
 		cal = Calendar.getInstance();
+
+		// Set time fields to end  
+		cal.set(Calendar.HOUR_OF_DAY, 23);
+		cal.set(Calendar.MINUTE, 59);
+		cal.set(Calendar.SECOND, 59);
+		cal.set(Calendar.MILLISECOND, 59);
+
 		// The while loop ensures that you are only checking dates in the specified year
 		while(cal.get(Calendar.YEAR) == Calendar.getInstance().get(Calendar.YEAR)){
 			// The switch checks the day of the week for Saturdays and Sundays
@@ -57,6 +72,13 @@ public class Utils {
 		List<Date >weekendList = new ArrayList<Date>();
 		Calendar cal = null;
 		cal = Calendar.getInstance();
+
+		// Set time fields to end  
+		cal.set(Calendar.HOUR_OF_DAY, 23);
+		cal.set(Calendar.MINUTE, 59);
+		cal.set(Calendar.SECOND, 59);
+		cal.set(Calendar.MILLISECOND, 59);
+
 		// The while loop ensures that you are only checking dates in the specified year
 		while(cal.get(Calendar.YEAR) == Calendar.getInstance().get(Calendar.YEAR)){
 			// The switch checks the day of the week for Saturdays and Sundays
@@ -166,11 +188,12 @@ public class Utils {
 			cal1.setTime(getCurrentDate());
 			if(c.get(Calendar.DAY_OF_MONTH) < cal1.get(Calendar.DAY_OF_MONTH))
 				c.add(Calendar.DATE,7);
-			
+
 			// Set time fields to end  
 			c.set(Calendar.HOUR_OF_DAY, 23);
 			c.set(Calendar.MINUTE, 59);
 			c.set(Calendar.SECOND, 59);
+			c.set(Calendar.MILLISECOND, 59);
 			return c.getTime();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -178,8 +201,39 @@ public class Utils {
 		}
 
 	}
-	
-	
+
+
+	/**
+	 * Get nearest weekend for a particular date
+	 * @return weekendDate
+	 */
+	public static Date getNearestWeekendForEvent(Date date)
+	{
+		try {
+			Calendar c = Calendar.getInstance();
+			Calendar cal1 = Calendar.getInstance();
+			if(date != null)
+				c.setTime(date);
+			c.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+			cal1.setTime(getCurrentDate());
+			if(c.get(Calendar.DAY_OF_MONTH) < cal1.get(Calendar.DAY_OF_MONTH))
+				c.add(Calendar.DATE,7*4);
+
+			// Set time fields to end  
+			c.set(Calendar.HOUR_OF_DAY, 23);
+			c.set(Calendar.MINUTE, 59);
+			c.set(Calendar.SECOND, 59);
+			c.set(Calendar.MILLISECOND, 59);
+			return c.getTime();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+
+	}
+
+
+
 	/**
 	 * Get nearest Friday for a particular date
 	 * @return weekendDate
@@ -189,11 +243,12 @@ public class Utils {
 		try {
 			Calendar c = Calendar.getInstance();
 			c.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
-			
+
 			// Set time fields to end  
 			c.set(Calendar.HOUR_OF_DAY, 23);
 			c.set(Calendar.MINUTE, 59);
 			c.set(Calendar.SECOND, 59);
+			c.set(Calendar.MILLISECOND, 59);
 			return c.getTime();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -201,7 +256,7 @@ public class Utils {
 		}
 
 	}
-	
+
 
 	/**
 	 * Get Weekend date for the event date
@@ -214,7 +269,13 @@ public class Utils {
 		try {
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(date);
-			
+
+			// Set time fields to end  
+			cal.set(Calendar.HOUR_OF_DAY, 23);
+			cal.set(Calendar.MINUTE, 59);
+			cal.set(Calendar.SECOND, 59);
+			cal.set(Calendar.MILLISECOND, 59);
+
 			switch(cal.get(Calendar.DAY_OF_WEEK)){
 			case Calendar.FRIDAY: 
 				eventDate = cal.getTime();
@@ -248,13 +309,13 @@ public class Utils {
 		}
 		return currentDate;
 	}
-	
+
 
 	/**
 	 * Get address from latitude/longitude
 	 * @param postCode
 	 */
-	public static String[] getCityAndAddress(Double latitude, Double longitude)
+	public static String[] getZipCodeAndAddress(Double latitude, Double longitude)
 	{
 		logger.debug("latitude :  "+latitude+" longitude: "+longitude);
 		String[] addressArray = new String[2];
@@ -269,16 +330,24 @@ public class Utils {
 			//logger.debug("geocoderResponse :  "+geocoderResponse);
 			List<GeocoderResult> results = geocoderResponse.getResults();
 			//logger.debug("results :  "+results);
-			List<GeocoderAddressComponent> geList= results.get(0).getAddressComponents();
-
-			for(int i =0; i < geList.size(); i++)
-			{
-				if(geList.get(i).getTypes().get(0).equalsIgnoreCase("locality"))
+			outerloop:
+				for(int k =0; k < results.size(); k++)
 				{
-					addressArray[0] = geList.get(i).getLongName();
-					break;
+					List<GeocoderAddressComponent> geList= results.get(k).getAddressComponents();
+					for(int i =0; i < geList.size(); i++)
+					{
+						List<String> types = geList.get(i).getTypes();
+						for(int j =0; j < types.size(); j++)
+						{
+							if(types.get(j).equalsIgnoreCase("postal_code"))
+							{
+								addressArray[0] = geList.get(i).getLongName();
+								break outerloop;
+							}
+						}
+					}
 				}
-			}
+
 			addressArray[1] = results.get(0).getFormattedAddress();
 			logger.debug("addressArray :  " + addressArray);
 
@@ -309,15 +378,33 @@ public class Utils {
 			//logger.debug("geocoderResponse :  "+geocoderResponse);
 			List<GeocoderResult> results = geocoderResponse.getResults();
 			//logger.debug("results :  "+results);
-			List<GeocoderAddressComponent> geList= results.get(0).getAddressComponents();
-			if(geList.get(geList.size()-1).getTypes().get(0).trim().equalsIgnoreCase("postal_code"))
+			outerloop:
+				for(int k =0; k < results.size(); k++)
+				{
+					List<GeocoderAddressComponent> geList= results.get(k).getAddressComponents();
+					for(int i =0; i < geList.size(); i++)
+					{
+						List<String> types = geList.get(i).getTypes();
+						for(int j =0; j < types.size(); j++)
+						{
+							if(types.get(j).equalsIgnoreCase("postal_code"))
+							{
+								zipcode = geList.get(i).getLongName();
+								break outerloop;
+							}
+						}
+					}
+				}
+
+
+			/*if(geList.get(geList.size()-1).getTypes().get(0).trim().equalsIgnoreCase("postal_code"))
 			{
 				zipcode = geList.get(geList.size()-1).getLongName();
 			}
 			else if(geList.get(0).getTypes().get(0).trim().equalsIgnoreCase("postal_code"))
 			{
 				zipcode = geList.get(0).getLongName();
-			}
+			}*/
 
 			logger.debug("zipcode :  " + zipcode);
 
@@ -335,7 +422,7 @@ public class Utils {
 	 */
 	public static String[] getGeographicalInfo(Double latitude, Double longitude)
 	{
-		String[] addressArray = new String[2];
+		String[] addressArray = new String[5];
 		try
 		{
 			LatLng latLng = new LatLng();
@@ -357,13 +444,27 @@ public class Utils {
 							if(types.get(j).equalsIgnoreCase("postal_code"))
 							{
 								addressArray[0] = geList.get(i).getLongName();
-								break outerloop;
+								break;
+							}
+							else if(types.get(j).equalsIgnoreCase("administrative_area_level_1"))
+							{
+								addressArray[1] = geList.get(i).getLongName();
+								addressArray[2] = geList.get(i).getShortName();
+								break;
+							}
+							else if(types.get(j).equalsIgnoreCase("locality"))
+							{
+								addressArray[3] = geList.get(i).getLongName();
+								break;
 							}
 						}
+
+						if(addressArray[0] != null && addressArray[1] != null && addressArray[2] != null && addressArray[3] != null)
+							break outerloop;
 					}
 				}
 
-			addressArray[1] = results.get(0).getFormattedAddress();
+			addressArray[4] = results.get(0).getFormattedAddress();
 			logger.debug("zipcode :  " + addressArray);
 
 		}catch (Exception e) {
@@ -373,7 +474,6 @@ public class Utils {
 		return addressArray;
 	}
 
-	
 	/**
 	 * This method encode the provided string
 	 * @param text
@@ -394,7 +494,7 @@ public class Utils {
 		}
 		return md5Text;
 	}
-	
+
 	/**
 	 * This method encode the provided string
 	 * @param text
@@ -402,23 +502,107 @@ public class Utils {
 	 */
 	public static String MD5ToString(String password)
 	{
-		 MessageDigest md = null;
+		MessageDigest md = null;
 		try {
 			md = MessageDigest.getInstance("MD5");
 		} catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		    md.update(password.getBytes());
+		md.update(password.getBytes());
 
-		    byte byteData[] = md.digest();
+		byte byteData[] = md.digest();
 
-		    StringBuffer sb = new StringBuffer();
-		    for (int i = 0; i < byteData.length; i++)
-		        sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
-		    
-		    return sb.toString();
-		    
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < byteData.length; i++)
+			sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
+
+		return sb.toString();
+
+	}
+
+	/**
+	 * 
+	 * @return a random confirmation code.
+	 */
+	public static String getRandomCode()
+	{
+		Long milliSecond = System.currentTimeMillis();
+		return milliSecond.toString();
+	}
+
+	/**
+	 * Get Day of the date
+	 * @param date
+	 * @return
+	 */
+	public static int getDayOfWeek(Date date)
+	{
+		int day = 0;
+		try {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(date);
+
+			switch(cal.get(Calendar.DAY_OF_WEEK)){
+			case Calendar.FRIDAY: 
+				day = Calendar.FRIDAY;
+				break;	
+			case Calendar.SATURDAY: 
+				day = Calendar.SATURDAY;
+				break;	
+			case Calendar.SUNDAY: 
+				day = Calendar.SUNDAY;
+				break;	
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return day;
+	}
+
+
+	/**
+	 * Get time from Date
+	 * @param modifiedDate
+	 * @return
+	 */
+	public static String getTime(Date modifiedDate)
+	{
+
+		SimpleDateFormat simple=new SimpleDateFormat();
+		simple.applyPattern(TIME_FORMAT);
+
+		long modifiedTimeSeconds = modifiedDate.getTime();
+		long currentTime = new Date().getTime();
+		long minutes=(currentTime-modifiedTimeSeconds)/(60*1000);
+
+		String interval = "";
+
+		if(new Date().getYear() > modifiedDate.getYear())
+			interval = new SimpleDateFormat(MONTH_YEAR_FORMAT, Locale.getDefault()).format(modifiedDate);
+		else 
+		{
+			if(minutes <=0)
+				interval="1 min ago";
+			if(minutes <=50)
+				interval=minutes+" min ago";
+			else if(minutes > 50 && minutes<=70)
+				interval= "1 hour ago";
+			else if(minutes>70 && minutes <=(23*60) ) {
+				if(new SimpleDateFormat(MESSAGE_DATE_FORMAT, Locale.getDefault()).format(modifiedDate).equals( new SimpleDateFormat(MESSAGE_DATE_FORMAT, Locale.getDefault()).format(new Date())))
+					interval= "Today "+simple.format(modifiedDate);
+				else
+					interval= "Yesterday "+simple.format(modifiedDate);
+			}
+			else if(minutes >(23*60) && minutes <=(24*60))
+				interval= "Yesterday ";
+			else if(minutes>(24*60) && minutes<=(7*24*60))
+				interval= new SimpleDateFormat(DAY_TIME_FORMAT, Locale.getDefault()).format(modifiedDate);
+			else if(minutes>(7*24*60))
+				interval= new SimpleDateFormat(MONTH_DAY_FORMAT, Locale.getDefault()).format(modifiedDate);
+		}
+		return interval;
+
 	}
 
 

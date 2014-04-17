@@ -55,7 +55,7 @@ public class YelpService implements IYelpService {
 			//for(Countrylocation location : locationList) {
 			for(int i = 0; i < locationList.size(); i++)
 			{
-				if(i == 0) {
+				//if(i == 0) {
 					Countrylocation location = locationList.get(i);				
 					if(location != null)
 					{
@@ -79,7 +79,7 @@ public class YelpService implements IYelpService {
 							}
 						}									
 					}
-				}
+				//}
 			}
 		}
 	}

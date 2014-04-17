@@ -35,6 +35,8 @@ public class PageModel implements Serializable{
 	private String createdDate;
 	@JsonProperty
 	private String imageUrl;
+	@JsonProperty
+	private String itemType;
 	/**
 	 * @return the pagetype
 	 */
@@ -154,6 +156,18 @@ public class PageModel implements Serializable{
 	 */
 	public String getImageUrl() {
 		return imageUrl;
+	}
+	/**
+	 * @return the itemType
+	 */
+	public String getItemType() {
+		return itemType;
+	}
+	/**
+	 * @param itemType the itemType to set
+	 */
+	public void setItemType(String itemType) {
+		this.itemType = itemType;
 	}
 	
 	

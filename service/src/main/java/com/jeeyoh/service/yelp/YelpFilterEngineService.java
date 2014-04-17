@@ -93,6 +93,7 @@ public class YelpFilterEngineService implements IYelpFilterEngineService {
 						long timeStamp = Long.parseLong(ydeal.getDealStartTime());
 						deal.setStartAt(new java.util.Date((long)timeStamp*1000));
 						deal.setImpRestrictions(ydeal.getImpRestrictions());
+						deal.setDealSource("Yelp");
 						Set<Ydealoption> ydealoptions = ydeal.getYdealoptions();
 						Set<Dealoption> dealOptionSet1 = new HashSet<Dealoption>();
 						if(ydealoptions != null)
@@ -190,7 +191,6 @@ public class YelpFilterEngineService implements IYelpFilterEngineService {
 									deal.setBusiness(businessList.get(0));
 								}
 							}
-
 						}
 						logger.debug("Before 1111 ::: "+deal);
 						logger.debug("Before save ::: "+deal.getDealUrl());

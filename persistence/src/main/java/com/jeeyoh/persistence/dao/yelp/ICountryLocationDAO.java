@@ -7,4 +7,5 @@ import com.jeeyoh.persistence.domain.Countrylocation;
 
 public interface ICountryLocationDAO {
 	public List<Countrylocation> getCountryLocations(String country);
+	public Countrylocation getStateNameByStateCode(String stateCode);
 }

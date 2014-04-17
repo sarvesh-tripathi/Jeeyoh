@@ -1,7 +1,8 @@
 package com.jeeyoh.persistence.domain;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 public class WallFeed implements Serializable {
 
@@ -10,44 +11,17 @@ public class WallFeed implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private Integer wallFeedId;
-	private Integer itemId;
-	private Integer weightCount;
-	private String itemType;
-	private String category;
+	private Integer packageId;
 	private User user;
-	private Date createdTime;
-	private Date updatedTime; 
+	private String packageName;
+	 private Set wallFeedItems = new HashSet(0);
+	 private Set wallFeedUserShareMap = new HashSet(0);
 	
-	public Integer getWallFeedId() {
-		return wallFeedId;
+	public Integer getPackageId() {
+		return packageId;
 	}
-	public void setWallFeedId(Integer wallFeedId) {
-		this.wallFeedId = wallFeedId;
-	}
-	public Integer getItemId() {
-		return itemId;
-	}
-	public void setItemId(Integer itemId) {
-		this.itemId = itemId;
-	}
-	public Integer getWeightCount() {
-		return weightCount;
-	}
-	public void setWeightCount(Integer weightCount) {
-		this.weightCount = weightCount;
-	}
-	public String getItemType() {
-		return itemType;
-	}
-	public void setItemType(String itemType) {
-		this.itemType = itemType;
-	}
-	public String getCategory() {
-		return category;
-	}
-	public void setCategory(String category) {
-		this.category = category;
+	public void setPackageId(Integer packageId) {
+		this.packageId = packageId;
 	}
 	public User getUser() {
 		return user;
@@ -55,29 +29,38 @@ public class WallFeed implements Serializable {
 	public void setUser(User user) {
 		this.user = user;
 	}
-	/**
-	 * @param createdTime the createdTime to set
-	 */
-	public void setCreatedTime(Date createdTime) {
-		this.createdTime = createdTime;
+	public String getPackageName() {
+		return packageName;
+	}
+	public void setPackageName(String packageName) {
+		this.packageName = packageName;
 	}
 	/**
-	 * @return the createdTime
+	 * @return the wallFeedItems
 	 */
-	public Date getCreatedTime() {
-		return createdTime;
+	public Set getWallFeedItems() {
+		return wallFeedItems;
 	}
 	/**
-	 * @param updatedTime the updatedTime to set
+	 * @param wallFeedItems the wallFeedItems to set
 	 */
-	public void setUpdatedTime(Date updatedTime) {
-		this.updatedTime = updatedTime;
+	public void setWallFeedItems(Set wallFeedItems) {
+		this.wallFeedItems = wallFeedItems;
 	}
 	/**
-	 * @return the updatedTime
+	 * @return the wallFeedUserShareMap
 	 */
-	public Date getUpdatedTime() {
-		return updatedTime;
+	public Set getWallFeedUserShareMap() {
+		return wallFeedUserShareMap;
 	}
+	/**
+	 * @param wallFeedUserShareMap the wallFeedUserShareMap to set
+	 */
+	public void setWallFeedUserShareMap(Set wallFeedUserShareMap) {
+		this.wallFeedUserShareMap = wallFeedUserShareMap;
+	}
+	
+	
+	
 
 }

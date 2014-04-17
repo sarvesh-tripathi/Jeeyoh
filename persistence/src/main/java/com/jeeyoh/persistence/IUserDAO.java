@@ -3,12 +3,11 @@ package com.jeeyoh.persistence;
 import java.util.List;
 import java.util.Set;
 
-import com.jeeyoh.model.search.CategoryModel;
 import com.jeeyoh.model.user.UserModel;
-import com.jeeyoh.persistence.domain.Business;
 import com.jeeyoh.persistence.domain.Dealsusage;
 import com.jeeyoh.persistence.domain.Events;
 import com.jeeyoh.persistence.domain.Eventuserlikes;
+import com.jeeyoh.persistence.domain.Groupusermap;
 import com.jeeyoh.persistence.domain.Jeeyohgroup;
 import com.jeeyoh.persistence.domain.Notificationpermission;
 import com.jeeyoh.persistence.domain.Page;
@@ -30,22 +29,22 @@ import com.jeeyoh.persistence.domain.Usernondealsuggestion;
 
 public interface IUserDAO {
 	public List<User> getUsers();
-	
+
 	public User getUserByEmailId(String emailId);
-	
+
 	public List<User> getUserContacts(int userId);
-	
+
 	public List<Page> getUserCommunities(int userId, double latitude, double longitude);
-	
+
 	public List<Page> getUserContactsCommunities(int contactId);
-	
+
 	public List<Jeeyohgroup> getUserGroups(int userId);
-	
+
 	public List<Jeeyohgroup> getUserContactGroups(int contactId);
 	public List<Pageuserlikes> getUserPageProperties(int userId, int pageId);
 	public List<Pagetype> getCommunityType(int pageId);
 	public void saveNonDealSuggestions(Usernondealsuggestion suggestion, int batch_size);
-	public List<User> getUserById(int userid);
+	public User getUserById(int userid);
 	public List<Events> getUserCommunityEvents(int userId, int pageId);
 	public List<Eventuserlikes> getUserEventProperties(int userId, int eventId);
 	public List<Usernondealsuggestion> isNonDealSuggestionExists(int userId, int businessId);
@@ -55,7 +54,7 @@ public interface IUserDAO {
 	public List<UserCategory> getUserCategoryLikesByType(int userId, String category);
 	public List<Page> getUserCommunitiesByPageType(int userId, String pageType, double latitude, double longitude);
 	public int userCategoryLikeCount(Integer userCategoryId);
-	public List<Usercontacts> getAllUserContacts(int userId);
+	public List<Object[]> getAllUserContacts(int userId);
 	public void saveEventsSuggestions(Usereventsuggestion suggestion, int batch_size);
 	public List<Events> getUserLikesEvents(int userId, double latitud, double longitude);
 	public List<Events> getUserLikesEventsByType(int userId, String pageType, double latitud, double longitude);
@@ -65,8 +64,8 @@ public interface IUserDAO {
 			Integer id);
 	public void registerUser(User user);
 
-	public Set<Dealsusage> getUserDealUsageByType(Integer userId,
-			String groupType);
+	public List<Dealsusage> getUserDealUsageByType(Integer userId,
+			String groupType, double latitude, double longitude);
 
 	public User loginUser(UserModel user);
 	public List<Events> getCommunityAllEvents(int pageId, double latitud, double longitude);
@@ -128,6 +127,26 @@ public interface IUserDAO {
 	public int getEventWightCount(int userId,int itemId);
 	public int getBusinessWightCount(int userId,int itemId);
 	public int getPageWightCount(int userId,int itemId);
-
-	
+	public List<User> getAttendingUsersForBusiness(int id, int userId);
+	public List<User> getAttendingUsersForDeals(int id, int userId);
+	public List<User> getAttendingUsersForEvents(int id, int userId);
+	public List<User> getAttendingUsersForpage(int id, int userId);
+	public int getTotalUserNonDealSuggestions(Integer userId);
+	public int getTotalUserDealSuggestions(Integer userId);
+	public int getTotalUserEventSuggestions(Integer userId);
+	public void saveJeeyohGroup(Jeeyohgroup jeeyohGroup);
+	public void saveGroupUserMap(Groupusermap groupUserMap);
+	public List<Page> getUserCommunitiesByPageType(int userId, String pageType);
+	public List<Page> getUserCommunities(int userId);
+	public List<Dealsusage> getUseDealUsage(Integer userId, double latitude, double longitude);
+	public UserCategoryLikes getUserCategoryLikes(int userId, int categoryId);
+	public Dealsusage getUserLikeDeal(Integer userId,Integer itemId);
+	public Eventuserlikes getUserLikeEvent(Integer userId,Integer itemId);
+	public Pageuserlikes getUserLikeCommunity(Integer userId,Integer itemId);
+	public List<User> getUserByNameAndLocation(String location, String name, int userId, List<Integer> friendsIds);
+	public void saveUsercontacts(Usercontacts userContacts);
+	public void updateUsercontacts(Usercontacts userContacts);
+	public List<User> findInMutualFriends(String name, String friendsIds, String alreadyExistingIds);
+	public List<User> findOtherThanMutualFriends(String name, List<Integer> alreadyExistingIds);
+	public Usercontacts isUsercontactExists(int userId, int contactId);
 }

@@ -17,6 +17,7 @@ public class Userdealssuggestion  implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 	private Integer userDealMapId;
 	private User user;
+	private User userContact;
 	private Deals deals;
 	private Boolean isFavorite;
 	private Boolean isFollowing;
@@ -25,6 +26,7 @@ public class Userdealssuggestion  implements java.io.Serializable {
 	private Date createdtime;
 	private Date updatedtime;
 	private String suggestionType;
+	
 
 	public Userdealssuggestion() {
 	}
@@ -61,6 +63,22 @@ public class Userdealssuggestion  implements java.io.Serializable {
 	public void setUser(User user) {
 		this.user = user;
 	}
+	/**
+	 * @return the userContact
+	 */
+	public User getUserContact() {
+		return userContact;
+	}
+
+
+	/**
+	 * @param userContact the userContact to set
+	 */
+	public void setUserContact(User userContact) {
+		this.userContact = userContact;
+	}
+
+
 	public Deals getDeals() {
 		return this.deals;
 	}

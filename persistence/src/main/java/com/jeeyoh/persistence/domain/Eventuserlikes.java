@@ -16,6 +16,7 @@ public class Eventuserlikes implements Serializable{
 	private Boolean isFavorite;
 	private Boolean isFollowing;
 	private Boolean isLike;
+	private Boolean isSuggested;
 	private Boolean isVisited;
 	private Boolean isProfileHidden;
 	private Boolean isProfileDetailsHidden;
@@ -148,6 +149,20 @@ public class Eventuserlikes implements Serializable{
 	 */
 	public Boolean getIsBooked() {
 		return isBooked;
+	}
+
+	/**
+	 * @return the isSuggested
+	 */
+	public Boolean getIsSuggested() {
+		return isSuggested;
+	}
+
+	/**
+	 * @param isSuggested the isSuggested to set
+	 */
+	public void setIsSuggested(Boolean isSuggested) {
+		this.isSuggested = isSuggested;
 	}
 
 

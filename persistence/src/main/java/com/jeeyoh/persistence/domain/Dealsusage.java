@@ -18,6 +18,7 @@ public class Dealsusage  implements java.io.Serializable {
      private Boolean isFavorite;
      private Boolean isFollowing;
      private Boolean isSuggested;
+     private Boolean isVisited;
      private Date createdtime;
      private Date updatedtime;
 
@@ -113,6 +114,22 @@ public class Dealsusage  implements java.io.Serializable {
     public void setUpdatedtime(Date updatedtime) {
         this.updatedtime = updatedtime;
     }
+
+
+	/**
+	 * @return the isVisited
+	 */
+	public Boolean getIsVisited() {
+		return isVisited;
+	}
+
+
+	/**
+	 * @param isVisited the isVisited to set
+	 */
+	public void setIsVisited(Boolean isVisited) {
+		this.isVisited = isVisited;
+	}
 
 
 

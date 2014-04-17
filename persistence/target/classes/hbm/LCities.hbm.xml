@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Oct 10, 2013 9:08:14 AM by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+	 <class name="com.jeeyoh.persistence.domain.LCities" table="lcities" catalog="jeeyoh">
+	 	<id name="lcitiesId" type="java.lang.Integer">
+            <column name="lcitiesId" />
+            <generator class="identity" />
+        </id>
+        <property name="cityId" type="java.lang.Integer">
+            <column name="cityId" />
+        </property>
+        <property name="cityName" type="string">
+            <column name="cityName" length="250"/>
+        </property>
+        <property name="countryName" type="string">
+            <column name="countryName" length="250"/>
+        </property>
+        <property name="longitude" type="string">
+            <column name="longitude" length="50"/>
+        </property>
+        <property name="latitude" type="string">
+            <column name="latitude" length="50"/>
+        </property>
+        <property name="stateCode" type="string">
+            <column name="stateCode" length="200"/>
+        </property>
+        <property name="backgroundImageUrl" type="string">
+            <column name="backgroundImageUrl" length="200"/>
+        </property>
+         <property name="address" type="string">
+            <column name="address" length="250"/>
+        </property>
+         <property name="zipcode" type="string">
+            <column name="zipcode" length="12"/>
+        </property>
+         <property name="state" type="string">
+            <column name="state" length="50"/>
+        </property>
+	 </class>
+</hibernate-mapping>

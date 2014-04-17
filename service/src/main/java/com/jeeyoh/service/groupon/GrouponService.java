@@ -85,7 +85,10 @@ public class GrouponService implements IGrouponService {
 					if(addressArray != null)
 					{
 						division.setZipCode(addressArray[0]);
-						division.setAddress(addressArray[1]);
+						division.setState(addressArray[1]);
+						division.setStateCode(addressArray[2]);
+						division.setCity(addressArray[3]);
+						division.setAddress(addressArray[4]);
 					}
 					divisionDAO.addDivision(division);
 				}

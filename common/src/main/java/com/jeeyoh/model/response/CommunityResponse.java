@@ -6,6 +6,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
+import com.jeeyoh.model.funboard.CommentModel;
 import com.jeeyoh.model.search.EventModel;
 import com.jeeyoh.model.search.PageModel;
 
@@ -25,6 +26,8 @@ public class CommunityResponse extends BaseResponse{
 	private List<EventModel> upcomingEvents;
 	@JsonProperty
 	private List<EventModel> pastEvents;
+	@JsonProperty
+	private List<CommentModel> communityComments;
 	/**
 	 * @return the currentEvents
 	 */
@@ -72,6 +75,18 @@ public class CommunityResponse extends BaseResponse{
 	 */
 	public PageModel getCommunityDetails() {
 		return communityDetails;
+	}
+	/**
+	 * @return the communityComments
+	 */
+	public List<CommentModel> getCommunityComments() {
+		return communityComments;
+	}
+	/**
+	 * @param communityComments the communityComments to set
+	 */
+	public void setCommunityComments(List<CommentModel> communityComments) {
+		this.communityComments = communityComments;
 	}
 	
 

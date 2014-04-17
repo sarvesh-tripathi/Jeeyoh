@@ -28,6 +28,9 @@ public class Gdivision  implements java.io.Serializable {
      private Boolean isNowMerchantEnabled;
      private String zipCode;
      private String address;
+     private String state;
+     private String city;
+     private String stateCode;
      private Set gdeals = new HashSet(0);
 
     public Gdivision() {
@@ -199,6 +202,54 @@ public class Gdivision  implements java.io.Serializable {
 	 */
 	public String getAddress() {
 		return address;
+	}
+
+
+	/**
+	 * @return the state
+	 */
+	public String getState() {
+		return state;
+	}
+
+
+	/**
+	 * @param state the state to set
+	 */
+	public void setState(String state) {
+		this.state = state;
+	}
+
+
+	/**
+	 * @return the city
+	 */
+	public String getCity() {
+		return city;
+	}
+
+
+	/**
+	 * @param city the city to set
+	 */
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+
+	/**
+	 * @return the stateCode
+	 */
+	public String getStateCode() {
+		return stateCode;
+	}
+
+
+	/**
+	 * @param stateCode the stateCode to set
+	 */
+	public void setStateCode(String stateCode) {
+		this.stateCode = stateCode;
 	}
 
 

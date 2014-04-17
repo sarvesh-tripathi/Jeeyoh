@@ -16,6 +16,10 @@ public class DealModel implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	@JsonProperty
+	private int userId;
+	@JsonProperty
+	private int itemId;
+	@JsonProperty
 	private String title;
 	@JsonProperty
 	private String dealUrl;
@@ -29,6 +33,26 @@ public class DealModel implements Serializable{
 	private String suggestionType;
 	@JsonProperty
 	private String websiteUrl;
+	@JsonProperty
+	private String itemType;
+	@JsonProperty
+	private String endAt;
+	@JsonProperty
+	private String category;
+	@JsonProperty
+	private String source;
+	/**
+	 * @return the category
+	 */
+	public String getCategory() {
+		return category;
+	}
+	/**
+	 * @param category the category to set
+	 */
+	public void setCategory(String category) {
+		this.category = category;
+	}
 	public String getTitle() {
 		return title;
 	}
@@ -95,6 +119,54 @@ public class DealModel implements Serializable{
 	public String getWebsiteUrl() {
 		return websiteUrl;
 	}
-	private String endAt;
+	
+	/**
+	 * @return the itemType
+	 */
+	public String getItemType() {
+		return itemType;
+	}
+	/**
+	 * @param itemType the itemType to set
+	 */
+	public void setItemType(String itemType) {
+		this.itemType = itemType;
+	}
+	/**
+	 * @return the itemId
+	 */
+	public int getItemId() {
+		return itemId;
+	}
+	/**
+	 * @param itemId the itemId to set
+	 */
+	public void setItemId(int itemId) {
+		this.itemId = itemId;
+	}
+	/**
+	 * @return the userId
+	 */
+	public int getUserId() {
+		return userId;
+	}
+	/**
+	 * @param userId the userId to set
+	 */
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
+	/**
+	 * @return the source
+	 */
+	public String getSource() {
+		return source;
+	}
+	/**
+	 * @param source the source to set
+	 */
+	public void setSource(String source) {
+		this.source = source;
+	}
 
 }

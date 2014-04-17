@@ -26,6 +26,9 @@ public class SuggestionResponse extends BaseResponse{
 	
 	@JsonProperty
 	private List<EventModel> eventSuggestions;
+	
+	@JsonProperty
+	private int totalCount;
 
 	/**
 	 * @return the nonDealSuggestions
@@ -67,6 +70,20 @@ public class SuggestionResponse extends BaseResponse{
 	 */
 	public void setEventSuggestions(List<EventModel> eventSuggestions) {
 		this.eventSuggestions = eventSuggestions;
+	}
+
+	/**
+	 * @return the totalCount
+	 */
+	public int getTotalCount() {
+		return totalCount;
+	}
+
+	/**
+	 * @param totalCount the totalCount to set
+	 */
+	public void setTotalCount(int totalCount) {
+		this.totalCount = totalCount;
 	}
 	
 }

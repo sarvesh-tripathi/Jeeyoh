@@ -7,6 +7,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import com.jeeyoh.model.search.PageModel;
+import com.jeeyoh.model.user.UserModel;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -18,12 +19,26 @@ public class CategoryResponse extends BaseResponse {
 	 */
 	private static final long serialVersionUID = 1L;
 	@JsonProperty
+	private UserModel user;
+	@JsonProperty
 	private List<PageModel> movie;
 	@JsonProperty
 	private List<PageModel> food;
 	@JsonProperty
 	private List<PageModel> sport;
 	
+	/**
+	 * @return the user
+	 */
+	public UserModel getUser() {
+		return user;
+	}
+	/**
+	 * @param user the user to set
+	 */
+	public void setUser(UserModel user) {
+		this.user = user;
+	}
 	public List<PageModel> getMovie() {
 		return movie;
 	}

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>jeeyoh</groupId>
 	<artifactId>jeeyoh</artifactId>
@@ -17,8 +18,8 @@
 		<module>controller</module>
 		<module>service</module>
 		<module>persistence</module>
-    <module>common</module>
-  </modules>
+		<module>common</module>
+	</modules>
 
 	<dependencies>
 
@@ -33,7 +34,7 @@
 					<artifactId>com.springsource.org.apache.commons.logging</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>org.springframework.core</artifactId>
@@ -71,7 +72,7 @@
 			<artifactId>cglib</artifactId>
 			<version>2.2.2</version>
 		</dependency>
-		
+
 
 		<!-- Spring File Upload Dependency -->
 		<!-- Apache Commons Upload -->
@@ -131,24 +132,24 @@
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-xc</artifactId>
 			<version>1.9.11</version>
-		</dependency>		
+		</dependency>
 		<!-- Tuckey URL rewritte filter dependency -->
 		<dependency>
-    		<groupId>org.tuckey</groupId>
-    		<artifactId>urlrewritefilter</artifactId>
-    		<version>4.0.3</version>
+			<groupId>org.tuckey</groupId>
+			<artifactId>urlrewritefilter</artifactId>
+			<version>4.0.3</version>
 		</dependency>
-		
+
 		<dependency>
-	      <groupId>oauth.signpost</groupId>
-	      <artifactId>signpost-core</artifactId>
-	      <version>1.2.1.1</version>
-	    </dependency>	    
-	    <dependency>
-	      <groupId>oauth.signpost</groupId>
-	      <artifactId>signpost-commonshttp4</artifactId>
-	      <version>1.2.1.1</version>
-	    </dependency>
+			<groupId>oauth.signpost</groupId>
+			<artifactId>signpost-core</artifactId>
+			<version>1.2.1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>oauth.signpost</groupId>
+			<artifactId>signpost-commonshttp4</artifactId>
+			<version>1.2.1.1</version>
+		</dependency>
 		<!-- JUNIT Test dependencies -->
 		<dependency>
 			<groupId>junit</groupId>
@@ -205,15 +206,15 @@
 					<showWarnings>true</showWarnings>
 				</configuration>
 			</plugin>
-			
-			  <plugin>
+
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>2.6</version>
 				<configuration>
-				       <encoding>UTF-8</encoding>
-				 </configuration>
-			 </plugin> 
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -269,7 +270,7 @@
 				<db.jdbc.url>jdbc:mysql://localhost:3306/Jeeyoh?zeroDateTimeBehavior=convertToNull</db.jdbc.url>
 				<db.jdbc.username>root</db.jdbc.username>
 				<db.jdbc.password></db.jdbc.password>
-				
+
 				<!-- Groupon configuration -->
 				<groupon.client.id>93e9598d1ac2d5eca3017dee020980eb2ad8e87b</groupon.client.id>
 				<groupon.deals.isdefault.radius>false</groupon.deals.isdefault.radius>
@@ -281,18 +282,32 @@
 				<groupon.deal.post.api.url>http://api.groupon.com/v2/deals/{dealId}/posts?client_id={clientId}</groupon.deal.post.api.url>
 				<groupon.deal.image.api.url>https://api.groupon.com/v2/deals/{dealId}/images?client_id={clientId}</groupon.deal.image.api.url>
 				<groupon.says.api.url>http://api.groupon.com/v2/groupon_says?client_id={clientId}</groupon.says.api.url>
-				
+
 				<!-- smtp email -->
 				<sender.name>Jeeyoh</sender.name>
 				<sender.email>jeeyoh.testing@gmail.com</sender.email>
 				<mail.smtp.loginid>jeeyoh.testing@gmail.com</mail.smtp.loginid>
 				<mail.smtp.password>jeeyoh123</mail.smtp.password>
 				<mail.smtp.host.value>smtp.gmail.com</mail.smtp.host.value>
-				<mail.smtp.port.num>587</mail.smtp.port.num>				
-			
-			
-			
+				<mail.smtp.port.num>587</mail.smtp.port.num>
+
+				<!-- Upload File -->
+				<host.name>http://192.168.1.217</host.name>
+				<port.number>8080</port.number>
+				<host.path>${host.name}:${port.number}/</host.path>
+				<app.media.uploaded.folder>UploadedImages</app.media.uploaded.folder>
+				<app.uploaded.media.server.path>/var/lib/tomcat7/webapps/${app.media.uploaded.folder}/</app.uploaded.media.server.path>
+
+				<!-- Stubhub configuration -->
+				<stubhub.base.url>http://www.stubhub.com/</stubhub.base.url>
+				<stubhub.image.url>http://www.stubhub.com/data/venue_maps/</stubhub.image.url>
+				
+					<!-- Living Social Configuration -->
+				<livingsocial.api.key>646DACA59DAE4C4E92D9D8B6CA3E293D</livingsocial.api.key>
+				<livingsocial.deals.api.url>http://monocle.livingsocial.com/v2/deals?city={cityId}&amp;api-key={apiKey}</livingsocial.deals.api.url>
+				<livingsocial.cities.api.url>https://www.livingsocial.com/services/city/v2/cities</livingsocial.cities.api.url>
+
 			</properties>
-		</profile>		
+		</profile>
 	</profiles>
 </project>

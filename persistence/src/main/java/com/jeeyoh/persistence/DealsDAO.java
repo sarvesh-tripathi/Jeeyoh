@@ -9,6 +9,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +18,9 @@ import org.springframework.stereotype.Repository;
 
 import com.jeeyoh.persistence.domain.Business;
 import com.jeeyoh.persistence.domain.Deals;
+import com.jeeyoh.persistence.domain.User;
 import com.jeeyoh.persistence.domain.Userdealssuggestion;
+import com.jeeyoh.utils.Utils;
 
 
 @Repository("dealsDAO")
@@ -29,7 +32,6 @@ public class DealsDAO implements IDealsDAO {
 
 	@Override
 	public List<Deals> getDeals() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -170,7 +172,7 @@ public class DealsDAO implements IDealsDAO {
 	public int getDealsLikeCounts(Integer id) {
 		// TODO Auto-generated method stub
 		int rowCount = 0;
-		String hqlQuery = "select count(*) from Dealsusage a where a.deals.id = :id";
+		String hqlQuery = "select count(a.dealUsageId) from Dealsusage a where a.deals.id = :id";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
@@ -268,11 +270,12 @@ public class DealsDAO implements IDealsDAO {
 	public List<Deals> getDealsByBusinessId(Integer id) {
 		// TODO Auto-generated method stub
 		List<Deals> dealsList = null;
-		String hqlQuery = "from Deals a where a.business.id = :id";
+		String hqlQuery = "from Deals a where a.business.id = :id and a.endAt >= :currentDate";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
 			query.setParameter("id", id);
+			query.setParameter("currentDate", Utils.getCurrentDate());
 			dealsList = (List<Deals>) query.list();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -284,8 +287,8 @@ public class DealsDAO implements IDealsDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Deals> getDealsByUserCategory(String itemCategory,
-			String itemType,String providerName) {
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Deals.class);
+			String itemType,String providerName, double latitude, double longitude) {
+		/*Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Deals.class);
 		criteria.createAlias("business", "business");
 		criteria.createAlias("business.businesstype", "businesstype");
 		//criteria.createAlias("tags", "tags");
@@ -306,8 +309,24 @@ public class DealsDAO implements IDealsDAO {
 			//criteria.add(Restrictions.like("tags.name", "%" + keyword + "%"));
 
 		}
+		
+		criteria.add(Restrictions.ge("endAt", Utils.getCurrentDate()));
 
-		List<Deals> dealsList = criteria.list();
+		List<Deals> dealsList = criteria.list();*/
+		List<Deals> dealsList = null;
+		String hqlQuery = "select a from Deals a, Business b, Businesstype c where c.businessType = :category and a.endAt >= :currentDate and a.business.id = b.id and b.businesstype.businessTypeId = c.businessTypeId and (a.title like '%"+ itemType + "%' or a.dealUrl like '%" + itemType + "%' or a.dealId like '%" + itemType + "%') and (((acos(sin(((:latitude)*pi()/180)) * sin((b.lattitude*pi()/180))+cos(((:latitude)*pi()/180)) * cos((b.lattitude*pi()/180)) * cos((((:longitude)- b.longitude)*pi()/180))))*180/pi())*60*1.1515) <=50 group by a.dealId";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("category", itemCategory);
+			query.setParameter("currentDate", Utils.getCurrentDate());
+			query.setDouble("latitude", latitude);
+			query.setDouble("longitude", longitude);
+			dealsList = (List<Deals>) query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.debug(e.getMessage());
+		}
 		return dealsList;
 
 	}
@@ -370,7 +389,7 @@ public class DealsDAO implements IDealsDAO {
 	public int userCategoryLikeCount(Integer userCategoryId) {
 		int rowCount = 0;
 		Session session = sessionFactory.getCurrentSession();
-		String hqlQuery = "select count(*) from UserCategoryLikes a where a.userCategory.userCategoryId=:userCategoryId";
+		String hqlQuery = "select count(a.userCategoryLikesId) from UserCategoryLikes a where a.userCategory.userCategoryId=:userCategoryId";
 		try
 		{
 			Query query = session.createQuery(
@@ -403,7 +422,9 @@ public class DealsDAO implements IDealsDAO {
 			criteria.add(Restrictions.disjunction().add(Restrictions.like("business.displayAddress", "%" + location + "%"))
 					.add(Restrictions.like("business.businessId", "%" + location + "%"))
 					.add(Restrictions.eq("business.postalCode", location))
-					.add(Restrictions.like("business.city", "%" + location + "%")));
+					.add(Restrictions.like("business.city", "%" + location + "%"))
+					.add(Restrictions.like("business.state", "%" + location + "%"))
+					.add(Restrictions.like("business.stateCode", "%" + location + "%")));
 		}
 		
 		if(searchText != null && searchText.isEmpty() == false)
@@ -416,6 +437,9 @@ public class DealsDAO implements IDealsDAO {
 							.add(Restrictions.ne("dealId", searchText)));
 
 		}
+		
+		//criteria.add(Restrictions.ge("endAt", Utils.getCurrentDate()));
+		
 		criteria.setFirstResult(offset)
 		.setMaxResults(limit);
 		List<Deals> dealsList = criteria.list();
@@ -442,7 +466,9 @@ public class DealsDAO implements IDealsDAO {
 			criteria.add(Restrictions.disjunction().add(Restrictions.like("business.displayAddress", "%" + location + "%"))
 					.add(Restrictions.like("business.businessId", "%" + location + "%"))
 					.add(Restrictions.eq("business.postalCode", location))
-					.add(Restrictions.like("business.city", "%" + location + "%")));
+					.add(Restrictions.like("business.city", "%" + location + "%"))
+					.add(Restrictions.like("business.state", "%" + location + "%"))
+					.add(Restrictions.like("business.stateCode", "%" + location + "%")));
 		}
 		
 		if(searchText != null && searchText.isEmpty() == false)
@@ -453,6 +479,9 @@ public class DealsDAO implements IDealsDAO {
 					.add(Restrictions.eq("dealId", searchText)));
 
 		}
+		
+		//criteria.add(Restrictions.ge("endAt", Utils.getCurrentDate()));
+		
 		criteria.setFirstResult(offset)
 		.setMaxResults(limit);
 		List<Deals> dealsList = criteria.list();
@@ -481,7 +510,7 @@ public class DealsDAO implements IDealsDAO {
 	public List<Object[]> getTopDealsByRating(String idsStr) {
 		logger.debug("getTopDealsByRating: "+idsStr);
 		List<Object[]> rows = null;
-		String hqlQuery = "select distinct a.id,b.rating from Deals a, Business b where a.id in ("+idsStr+") and a.business.id = b.id order by b.rating desc";
+		String hqlQuery = "select distinct a.id,b.rating from Deals a, Business b where a.id in ("+idsStr+") and a.business.id = b.id and b.rating is not null order by b.rating desc";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
@@ -528,4 +557,96 @@ public class DealsDAO implements IDealsDAO {
 		return dealsList != null && !dealsList.isEmpty() ? dealsList.get(0) : null;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public Deals isDealExists(String dealId) {
+		List<Deals> dealList = null;
+		Session session = sessionFactory.getCurrentSession();
+		String hqlQuery = "from Deals a where a.dealId = :dealId";
+		try{
+			Query query = session.createQuery(
+					hqlQuery);
+			query.setParameter("dealId", dealId);
+			dealList = (List<Deals>)query.list();
+			
+		}
+		catch (HibernateException e) {
+			e.printStackTrace();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return dealList != null && !dealList.isEmpty() ? dealList.get(0) : null;
+	}
+
+	@Override
+	public int getTotalDealsBySearchKeyWord(String searchText, String category,
+			String location) {
+		logger.error("getTotalDealsBySearchKeyWord ==== > "+searchText);
+
+
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Deals.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).setProjection(Projections.property("id"));
+		criteria.createAlias("business", "business");
+		criteria.createAlias("business.businesstype", "businesstype");
+		
+		if(category != null && category.isEmpty() == false)
+		{
+			criteria.add(Restrictions.eq("businesstype.businessType", category));
+		}
+		if(location != null && location.isEmpty()== false)
+		{
+			criteria.add(Restrictions.disjunction().add(Restrictions.like("business.city", "%" + location + "%"))
+					.add(Restrictions.like("business.state", "%" + location + "%"))
+					.add(Restrictions.like("business.stateCode", "%" + location + "%"))
+					.add(Restrictions.like("business.displayAddress", "%" + location + "%"))
+					.add(Restrictions.like("business.businessId", "%" + location + "%"))
+					.add(Restrictions.eq("business.postalCode", location)));
+		}
+		
+		if(searchText != null && searchText.isEmpty() == false)
+		{
+			logger.debug("IN KEYWORD CHECKING ::: ");
+			criteria.add(Restrictions.disjunction().add(Restrictions.like("title", "%" + searchText + "%"))
+					.add(Restrictions.like("dealUrl", "%" + searchText + "%"))
+					.add(Restrictions.like("dealId", "%" + searchText + "%")));
+
+		}
+		
+		//criteria.add(Restrictions.ge("endAt", Utils.getCurrentDate()));
+		
+		int rowCount = criteria.list().size();
+		return rowCount;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Deals> getDealsByUserCategory(String itemCategory,
+			String itemType, String providerName) {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Deals.class);
+		criteria.createAlias("business", "business");
+		criteria.createAlias("business.businesstype", "businesstype");
+		//criteria.createAlias("tags", "tags");
+		if(providerName != null)
+		{
+			criteria.add(Restrictions.eq("business.name", providerName));
+		}
+		if(itemCategory != null)
+		{
+			criteria.add(Restrictions.eq("businesstype.businessType", itemCategory));
+		}
+
+		if(itemType != null)
+		{
+			criteria.add(Restrictions.like("title", "%" + itemType + "%"));
+			criteria.add(Restrictions.like("dealUrl", "%" + itemType + "%"));
+			criteria.add(Restrictions.like("dealId", "%" + itemType + "%"));
+			//criteria.add(Restrictions.like("tags.name", "%" + keyword + "%"));
+
+		}
+		
+		criteria.add(Restrictions.ge("endAt", Utils.getCurrentDate()));
+
+		List<Deals> dealsList = criteria.list();
+		return dealsList;
+	}
 }

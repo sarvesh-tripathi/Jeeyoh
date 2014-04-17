@@ -12,6 +12,8 @@ public class SuggestionModel implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	@JsonProperty
+	private int itemId;
+	@JsonProperty
 	private String categoryType;
 	@JsonProperty
 	private String title;
@@ -82,6 +84,18 @@ public class SuggestionModel implements Serializable{
 	@JsonProperty
     private int likeCount;
 	
+	/**
+	 * @param itemId the itemId to set
+	 */
+	public void setItemId(int itemId) {
+		this.itemId = itemId;
+	}
+	/**
+	 * @return the itemId
+	 */
+	public int getItemId() {
+		return itemId;
+	}
 	/**
 	 * @return the categoryType
 	 */

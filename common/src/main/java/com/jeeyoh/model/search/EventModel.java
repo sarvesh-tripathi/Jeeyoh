@@ -18,9 +18,11 @@ public class EventModel implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	@JsonProperty
+	private int eventId;
+	@JsonProperty
 	private String description;	
 	@JsonProperty
-	private Date event_date;
+	private String event_date;
 	@JsonProperty	
 	private String geography_parent;	
 	@JsonProperty
@@ -61,6 +63,24 @@ public class EventModel implements Serializable{
 	private String ancestorGenreDescriptions;
 	@JsonProperty
 	private String suggestionType;
+	@JsonProperty
+	private String itemType;
+	@JsonProperty
+	private String category;
+	@JsonProperty
+	private String source;
+	/**
+	 * @param eventId the eventId to set
+	 */
+	public void setEventId(int eventId) {
+		this.eventId = eventId;
+	}
+	/**
+	 * @return the eventId
+	 */
+	public int getEventId() {
+		return eventId;
+	}
 	/**
 	 * @return the description
 	 */
@@ -76,13 +96,13 @@ public class EventModel implements Serializable{
 	/**
 	 * @return the event_date
 	 */
-	public Date getEvent_date() {
+	public String getEvent_date() {
 		return event_date;
 	}
 	/**
 	 * @param event_date the event_date to set
 	 */
-	public void setEvent_date(Date event_date) {
+	public void setEvent_date(String event_date) {
 		this.event_date = event_date;
 	}
 	/**
@@ -324,6 +344,42 @@ public class EventModel implements Serializable{
 	 */
 	public String getSuggestionType() {
 		return suggestionType;
+	}
+	/**
+	 * @return the itemType
+	 */
+	public String getItemType() {
+		return itemType;
+	}
+	/**
+	 * @param itemType the itemType to set
+	 */
+	public void setItemType(String itemType) {
+		this.itemType = itemType;
+	}
+	/**
+	 * @return the category
+	 */
+	public String getCategory() {
+		return category;
+	}
+	/**
+	 * @param category the category to set
+	 */
+	public void setCategory(String category) {
+		this.category = category;
+	}
+	/**
+	 * @return the source
+	 */
+	public String getSource() {
+		return source;
+	}
+	/**
+	 * @param source the source to set
+	 */
+	public void setSource(String source) {
+		this.source = source;
 	}
 	
 }

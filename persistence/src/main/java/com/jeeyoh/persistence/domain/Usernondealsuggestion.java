@@ -16,6 +16,7 @@ public class Usernondealsuggestion  implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 	private Integer suggestionId;
      private User user;
+     private User userContact;
      private Business business;
      private Boolean isChecked;
      private Boolean isRelevant;
@@ -56,7 +57,23 @@ public class Usernondealsuggestion  implements java.io.Serializable {
     public void setUser(User user) {
         this.user = user;
     }
-    public Business getBusiness() {
+    /**
+	 * @return the userContact
+	 */
+	public User getUserContact() {
+		return userContact;
+	}
+
+
+	/**
+	 * @param userContact the userContact to set
+	 */
+	public void setUserContact(User userContact) {
+		this.userContact = userContact;
+	}
+
+
+	public Business getBusiness() {
         return this.business;
     }
     

@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Oct 10, 2013 9:08:14 AM by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+    <class name="com.jeeyoh.persistence.domain.WallFeedComments" table="wallFeedcomments" catalog="jeeyoh">
+        <id name="id" type="java.lang.Integer">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="wallFeed" class="com.jeeyoh.persistence.domain.WallFeed" fetch="select" lazy="false">
+            <column name="wallFeedId" not-null="true" />
+        </many-to-one>
+        <many-to-one name="user" class="com.jeeyoh.persistence.domain.User" fetch="select" lazy="false">
+            <column name="userId" not-null="true" />
+        </many-to-one>
+        <property name="comment" type="string">
+            <column name="comment" length="250" />
+        </property>
+        <property name="createdTime" type="timestamp">
+            <column name="createdTime" length="19" not-null="true" />
+        </property>
+        <property name="updatedTime" type="timestamp">
+            <column name="updatedTime" length="19" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

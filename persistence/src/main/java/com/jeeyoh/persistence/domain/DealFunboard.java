@@ -1,6 +1,8 @@
 package com.jeeyoh.persistence.domain;
 
-public class DealFunboard extends Funboard{
+import java.io.Serializable;
+
+public class DealFunboard implements Serializable{
 
 	/**
 	 * 
@@ -8,6 +10,7 @@ public class DealFunboard extends Funboard{
 	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private Deals deal;
+	private String category;
 	/**
 	 * @param id the id to set
 	 */
@@ -31,6 +34,18 @@ public class DealFunboard extends Funboard{
 	 */
 	public Deals getDeal() {
 		return deal;
+	}
+	/**
+	 * @return the category
+	 */
+	public String getCategory() {
+		return category;
+	}
+	/**
+	 * @param category the category to set
+	 */
+	public void setCategory(String category) {
+		this.category = category;
 	}
 
 }

@@ -2,8 +2,11 @@ package com.jeeyoh.persistence;
 
 import java.util.List;
 
+import com.jeeyoh.persistence.domain.CommunityComments;
 import com.jeeyoh.persistence.domain.Events;
+import com.jeeyoh.persistence.domain.Eventuserlikes;
 import com.jeeyoh.persistence.domain.Page;
+import com.jeeyoh.persistence.domain.Pagetype;
 
 public interface IEventsDAO {
 	
@@ -21,15 +24,26 @@ public interface IEventsDAO {
 	public List<Page> getUserFavourites(Integer userId);
 	public Page getCommunityById(int pageId);
 	public Page getPageDetailsByID(int pageId);
-	public List<Events> getCurrentEvents(int pageId);
-	public List<Events> getUpcomingEvents(int pageId);
-	public List<Events> getPastEvents(int pageId);
+	public List<Events> getCurrentEvents(int pageId, int offset, int limit);
+	public List<Events> getUpcomingEvents(int pageId, int offset, int limit);
+	public List<Events> getPastEvents(int pageId, int offset, int limit);
 	public List<Events> getBookedEvents(int userId);
 	public List<Events> getUserEventsSuggestions(String userEmail,
 			int offset, int limit);
 	public List<Object[]> getEventLikeCountByPage(String idsStr);
 	public List<Events> getEventsByuserLikes(String likekeyword,
-			   String itemCategory, String providerName);
+			   String itemCategory, String providerName, double latitude, double longitude);
 	public Events getEventById(int eventId);
+	public int getTotalEventsBySearchKeyWord(String searchText,String category, String location);
+	public int getTotalCommunityBySearchKeyWord(String searchText,String category, String location);
+	public Pagetype getPageTypeByName(String pageType);
+	public Page getPageByAbout(String genre_parent_name);
+	public void savePage(Page page, int batch_size);
+	public List<CommunityComments> getCommunityCommentsByPageId(int pageId);
+	public void saveCommunityComments(CommunityComments communityComments);
+	public Page getPageByBusinessId(Integer itemId);
+	public Eventuserlikes isEventExistInUserProfile(int userId, int eventId);
+	public void updateUserEvents(Eventuserlikes eventuserlikes);
+	public void saveUserEvents(Eventuserlikes eventuserlikes);
 
 }

@@ -67,6 +67,7 @@ public class SearchDealsService implements ISearchDealsService {
 						if(dealsuggestion.getDeals() != null)
 						{
 							DealModel dealModel = new DealModel();
+							//dealModel.setUserId(dealsuggestion.getUser().getUserId());
 							Deals deal1 = dealsuggestion.getDeals();
 							if(deal1.getTitle() != null)
 							{

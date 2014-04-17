@@ -11,6 +11,7 @@ public class Usereventsuggestion implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private Integer userEventMapId;
     private User user;
+    private User userContact;
     private Events events;
     private Boolean isFavorite;
     private Boolean isFollowing;
@@ -37,6 +38,20 @@ public class Usereventsuggestion implements Serializable{
 	public User getUser() {
 		return user;
 	}
+	/**
+	 * @return the userContact
+	 */
+	public User getUserContact() {
+		return userContact;
+	}
+
+	/**
+	 * @param userContact the userContact to set
+	 */
+	public void setUserContact(User userContact) {
+		this.userContact = userContact;
+	}
+
 	public void setEvents(Events events) {
 		this.events = events;
 	}

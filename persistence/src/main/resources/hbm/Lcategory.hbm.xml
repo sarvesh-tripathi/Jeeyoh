@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Nov 29, 2013 2:14:11 PM by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+    <class name="com.jeeyoh.persistence.domain.Lcategory" table="lcategory" catalog="jeeyoh">
+        <id name="id" type="java.lang.Integer">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+         <many-to-one name="lcategory" class="com.jeeyoh.persistence.domain.Lcategory" fetch="select">
+            <column name="parentCategoryId" not-null="true" />
+        </many-to-one>
+        <property name="category" type="string">
+            <column name="category" length="65535" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

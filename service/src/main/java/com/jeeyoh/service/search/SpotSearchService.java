@@ -38,6 +38,40 @@ public class SpotSearchService implements ISpotSearchService{
 	@Override
 	@Transactional
 	public SearchResponse search(SearchRequest searchRequest) {
+
+		int totalCount = 0;
+		int count = 0;
+		//Getting total number of results
+		if(searchRequest.getExactMatchBusinessCount() == 0)
+		{
+			count = businessDAO.getTotalBusinessBySearchKeyWord(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation());
+			logger.debug("businesstotalCount::  "+count);
+			totalCount += count;
+		}
+
+		if(searchRequest.getExactMatchDealCount() == 0)
+		{
+			count = dealsDAO.getTotalDealsBySearchKeyWord(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation());
+			logger.debug("dealtotalCount::  "+count);
+			totalCount += count;
+		}
+
+		if(searchRequest.getExactMatchEventCount() == 0)
+		{
+			count = eventsDAO.getTotalEventsBySearchKeyWord(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation());
+			logger.debug("eventtotalCount::  "+count);
+			totalCount += count;
+		}
+
+		if(searchRequest.getExactMatchCommunityCount() == 0)
+		{
+			count = eventsDAO.getTotalCommunityBySearchKeyWord(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation());
+			logger.debug("pagetotalCount::  "+count);
+			totalCount += count;
+		}
+
+		logger.debug("totalCount::  "+totalCount);
+
 		SearchResponse searchResponse = new SearchResponse();
 		List<SearchResult> exactMatchingSearchResults = new ArrayList<SearchResult>();
 		List<SearchResult> likeSearchResults = new ArrayList<SearchResult>();
@@ -54,59 +88,66 @@ public class SpotSearchService implements ISpotSearchService{
 		searchResponse.setExactMatchCommunityCount(pageList.size());
 		searchResponse.setExactMatchDealCount(dealsList.size());
 		searchResponse.setExactMatchEventCount(eventsList.size());
-		
-		// Get Exact matched results
-		exactMatchingSearchResults = getSearchResults(businessList, dealsList, pageList, eventsList, exactMatchingSearchResults);
 
-		int limit = 0;
-		if(businessList.size() < 8)
+		List<Business> LikeMatchBusinessList = new ArrayList<Business>();
+		List<Deals> likeMatchDealsList = new ArrayList<Deals>();
+		List<Page> likematchPageList = new ArrayList<Page>();
+		List<Events> likeMatchEventsList = new ArrayList<Events>();
+
+		// Get Exact matched results
+		exactMatchingSearchResults = getSearchResults(businessList, dealsList, pageList, eventsList, exactMatchingSearchResults,searchRequest.getCategory());
+
+		if(searchRequest.getSearchText() != null && !searchRequest.getSearchText().trim().equals(""))
 		{
-			limit = 8 - businessList.size();
-			businessList = businessDAO.getBusinessByLikeSearchKeyword(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation(),searchRequest.getLikeMatchBusinessCount(),limit);
-			searchResponse.setLikeMatchBusinessCount(businessList.size());
+			int limit = 0;
+			if(businessList.size() < 8)
+			{
+				limit = 8 - businessList.size();
+				LikeMatchBusinessList = businessDAO.getBusinessByLikeSearchKeyword(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation(),searchRequest.getLikeMatchBusinessCount(),limit);
+				searchResponse.setLikeMatchBusinessCount(LikeMatchBusinessList.size());
+			}
+
+			if(dealsList.size() < 8)
+			{
+				limit = 8 - dealsList.size();
+				likeMatchDealsList = dealsDAO.getDealsByLikeSearchKeyword(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation(),searchRequest.getLikeMatchDealCount(),limit);
+				searchResponse.setLikeMatchDealCount(likeMatchDealsList.size());
+			}
+
+			if(pageList.size() < 8)
+			{
+				limit = 8 - pageList.size();
+				likematchPageList = eventsDAO.getCommunityByLikeSearchKeyword(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation(),searchRequest.getLikeMatchCommunityCount(),limit);
+				searchResponse.setLikeMatchCommunityCount(likematchPageList.size());
+			}
+
+			if(eventsList.size() < 8)
+			{
+				limit = 32 - (exactMatchingSearchResults.size() + LikeMatchBusinessList.size() + likeMatchDealsList.size() +likematchPageList.size());
+				likeMatchEventsList = eventsDAO.getEventsByLikeSearchKeyword(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation(),searchRequest.getLikeMatchEventCount(),limit);
+				searchResponse.setLikeMatchEventCount(likeMatchEventsList.size());
+			}
+
+			// Get Like matched results
+			likeSearchResults = getSearchResults(LikeMatchBusinessList, likeMatchDealsList, likematchPageList, likeMatchEventsList,likeSearchResults,searchRequest.getCategory());
+			exactMatchingSearchResults.addAll(likeSearchResults);
 		}
-			
-		if(dealsList.size() < 8)
-		{
-			limit = 8 - dealsList.size();
-			dealsList = dealsDAO.getDealsByLikeSearchKeyword(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation(),searchRequest.getLikeMatchDealCount(),limit);
-			searchResponse.setLikeMatchDealCount(dealsList.size());
-		}
-			
-		if(pageList.size() < 8)
-		{
-			limit = 8 - pageList.size();
-			pageList = eventsDAO.getCommunityByLikeSearchKeyword(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation(),searchRequest.getLikeMatchCommunityCount(),limit);
-			searchResponse.setLikeMatchCommunityCount(pageList.size());
-		}
-			
-		if(eventsList.size() < 8)
-		{
-			limit = 32 - (exactMatchingSearchResults.size() + businessList.size() + dealsList.size() +pageList.size());
-			eventsList = eventsDAO.getEventsByLikeSearchKeyword(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation(),searchRequest.getLikeMatchEventCount(),limit);
-			searchResponse.setLikeMatchEventCount(eventsList.size());
-		}
-			
-		logger.debug("dealsList11::  "+dealsList.size());
-		logger.debug("businessList11::  "+businessList.size());		
-		logger.debug("pageList11::  "+pageList.size());
-		logger.debug("eventsList11::  "+eventsList.size());
+
+		logger.debug("dealsList11::  "+likeMatchDealsList.size());
+		logger.debug("businessList11::  "+LikeMatchBusinessList.size());		
+		logger.debug("pageList11::  "+likematchPageList.size());
+		logger.debug("eventsList11::  "+likeMatchEventsList.size());
 		logger.debug("getExactMatchBusinessCount::  "+searchResponse.getExactMatchBusinessCount());		
 		logger.debug("getExactMatchCommunityCount::  "+searchResponse.getExactMatchCommunityCount());
 		logger.debug("getExactMatchDealCount::  "+searchResponse.getExactMatchDealCount());
 		logger.debug("getExactMatchEventCount::  "+searchResponse.getExactMatchEventCount());
-		logger.debug("getExactMatchBusinessCount::  "+searchResponse.getLikeMatchBusinessCount());		
-		logger.debug("getExactMatchCommunityCount::  "+searchResponse.getLikeMatchCommunityCount());
-		logger.debug("getExactMatchDealCount::  "+searchResponse.getLikeMatchDealCount());
-		logger.debug("getExactMatchEventCount::  "+searchResponse.getLikeMatchEventCount());
-
-		
-		// Get Like matched results
-		likeSearchResults = getSearchResults(businessList, dealsList, pageList, eventsList,likeSearchResults);
-		exactMatchingSearchResults.addAll(likeSearchResults);
-
+		logger.debug("getLikeBusinessCount::  "+searchResponse.getLikeMatchBusinessCount());		
+		logger.debug("getLikeCommunityCount::  "+searchResponse.getLikeMatchCommunityCount());
+		logger.debug("getLikeDealCount::  "+searchResponse.getLikeMatchDealCount());
+		logger.debug("getLikeEventCount::  "+searchResponse.getLikeMatchEventCount());
 		logger.debug("exactMatchingSearchResults::  "+exactMatchingSearchResults.size());
 		searchResponse.setSearchResult(exactMatchingSearchResults);
+		searchResponse.setTotalCount(totalCount);
 		searchResponse.setStatus(ServiceAPIStatus.OK.getStatus());
 		searchResponse.setError("");
 
@@ -122,20 +163,23 @@ public class SpotSearchService implements ISpotSearchService{
 	 * @param searchResultList
 	 * @return
 	 */
-	private List<SearchResult> getSearchResults(List<Business> businessList, List<Deals> dealsList, List<Page> pageList, List<Events> eventsList, List<SearchResult> searchResultList)
+	private List<SearchResult> getSearchResults(List<Business> businessList, List<Deals> dealsList, List<Page> pageList, List<Events> eventsList, List<SearchResult> searchResultList, String category)
 	{
-		// Add results for business
-		if(businessList != null)
+		// Add results for Events
+		if(eventsList != null)
 		{
-			for(Business business : businessList)
+			for(Events events : eventsList)
 			{
 				SearchResult searchResult = new SearchResult();
-				searchResult.setId(business.getId());
-				searchResult.setCity(business.getCity());
-				searchResult.setName(business.getName());
-				searchResult.setType("Business");
-				searchResult.setImageUrl(business.getImageUrl());
-				searchResult.setWebsiteUrl(business.getWebsiteUrl());
+				searchResult.setId(events.getEventId());
+				searchResult.setCity(events.getCity());
+				searchResult.setName(events.getTitle());
+				searchResult.setType("Event");
+				searchResult.setStartDate(events.getEvent_date().toString());
+				searchResult.setEndDate(events.getEvent_date().toString());
+				searchResult.setImageUrl(events.getImage_url());
+				searchResult.setWebsiteUrl(events.getUrlpath());
+				searchResult.setCategory(category);
 				searchResultList.add(searchResult);
 			}
 		}
@@ -150,8 +194,11 @@ public class SpotSearchService implements ISpotSearchService{
 				searchResult.setCity(deals.getBusiness().getCity());
 				searchResult.setName(deals.getTitle());
 				searchResult.setType("Deal");
+				searchResult.setStartDate(deals.getStartAt().toString());
+				searchResult.setEndDate(deals.getEndAt().toString());
 				searchResult.setImageUrl(deals.getLargeImageUrl());
 				searchResult.setWebsiteUrl(deals.getDealUrl());
+				searchResult.setCategory(category);
 				searchResultList.add(searchResult);
 			}
 		}
@@ -169,24 +216,29 @@ public class SpotSearchService implements ISpotSearchService{
 				searchResult.setType("Community");
 				searchResult.setImageUrl(page.getProfilePicture());
 				searchResult.setWebsiteUrl(page.getPageUrl());
+				searchResult.setCategory(category);
 				searchResultList.add(searchResult);
 			}
 		}
 
-		// Add results for Community
-		if(eventsList != null)
+
+		// Add results for business
+		if(businessList != null)
 		{
-			for(Events events : eventsList)
+			for(Business business : businessList)
 			{
 				SearchResult searchResult = new SearchResult();
-				searchResult.setId(events.getEventId());
-				searchResult.setCity(events.getCity());
-				searchResult.setName(events.getDescription());
-				searchResult.setType("Event");
-				searchResult.setWebsiteUrl(events.getUrlpath());
+				searchResult.setId(business.getId());
+				searchResult.setCity(business.getCity());
+				searchResult.setName(business.getName());
+				searchResult.setType("Business");
+				searchResult.setImageUrl(business.getImageUrl());
+				searchResult.setWebsiteUrl(business.getWebsiteUrl());
+				searchResult.setCategory(category);
 				searchResultList.add(searchResult);
 			}
 		}
+
 		return searchResultList;
 	}
 }

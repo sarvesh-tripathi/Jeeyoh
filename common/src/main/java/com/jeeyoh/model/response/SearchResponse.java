@@ -34,6 +34,8 @@ public class SearchResponse extends BaseResponse{
 	private int exactMatchCommunityCount;
 	@JsonProperty
 	private int likeMatchCommunityCount;
+	@JsonProperty
+	private int totalCount;
 	
 	
 
@@ -157,6 +159,20 @@ public class SearchResponse extends BaseResponse{
 	 */
 	public void setLikeMatchCommunityCount(int likeMatchCommunityCount) {
 		this.likeMatchCommunityCount = likeMatchCommunityCount;
+	}
+
+	/**
+	 * @return the totalCount
+	 */
+	public int getTotalCount() {
+		return totalCount;
+	}
+
+	/**
+	 * @param totalCount the totalCount to set
+	 */
+	public void setTotalCount(int totalCount) {
+		this.totalCount = totalCount;
 	}
 
 }

@@ -24,17 +24,29 @@ public class CountryLocationDAO implements ICountryLocationDAO {
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
-			/*Query query = session.createQuery(
-					hqlQuery);
-			query.setParameter("countryCode", countryCode);*/
+		
+			query.setParameter("countryCode", countryCode);
 			locationList = (List<Countrylocation>) query.list();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		/*finally{
-			session.close();
-		}*/
 		return locationList;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Countrylocation getStateNameByStateCode(String stateCode) {
+		List<Countrylocation> locationList = null;
+		String hqlQuery = "from Countrylocation where stateCode = :stateCode GROUP BY(state)";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("stateCode", stateCode);
+			locationList = query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return locationList != null && !locationList.isEmpty() ? locationList.get(0) : null;
 	}
 
 }

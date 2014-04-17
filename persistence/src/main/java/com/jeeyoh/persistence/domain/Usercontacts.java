@@ -12,12 +12,19 @@ import java.util.Set;
 public class Usercontacts  implements java.io.Serializable {
 
 
-     private Integer userContactId;
+     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private Integer userContactId;
      private User userByContactId;
      private User userByUserId;
      private Boolean isActive;
      private Boolean isDeleted;
      private Boolean isStar;
+     private Boolean isApproved;
+     private Boolean isDeny;
+     private Boolean isBlock;
      private Date createdtime;
      private Date updatedtime;
      private Set usercontactsgroupmaps = new HashSet(0);
@@ -109,6 +116,54 @@ public class Usercontacts  implements java.io.Serializable {
 
 	public Boolean getIsStar() {
 		return isStar;
+	}
+
+
+	/**
+	 * @return the isApproved
+	 */
+	public Boolean getIsApproved() {
+		return isApproved;
+	}
+
+
+	/**
+	 * @param isApproved the isApproved to set
+	 */
+	public void setIsApproved(Boolean isApproved) {
+		this.isApproved = isApproved;
+	}
+
+
+	/**
+	 * @return the isDeny
+	 */
+	public Boolean getIsDeny() {
+		return isDeny;
+	}
+
+
+	/**
+	 * @param isDeny the isDeny to set
+	 */
+	public void setIsDeny(Boolean isDeny) {
+		this.isDeny = isDeny;
+	}
+
+
+	/**
+	 * @return the isBlock
+	 */
+	public Boolean getIsBlock() {
+		return isBlock;
+	}
+
+
+	/**
+	 * @param isBlock the isBlock to set
+	 */
+	public void setIsBlock(Boolean isBlock) {
+		this.isBlock = isBlock;
 	}
 
 

@@ -11,37 +11,68 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_DEFAULT)
 public class FunBoardRequest implements Serializable{
 
+	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	@JsonProperty
-	private String userEmail;
+	private int userId;
 	@JsonProperty
-	private ArrayList<FunBoardModel> funBoardList;
+	private String emailId;
+	@JsonProperty
+	private FunBoardModel funBoard;
+	@JsonProperty
+	private int funBoardId;
+	/*@JsonProperty
+	private ArrayList<FunBoardModel> funBoardList;*/
 	/**
-	 * @param userEmail the userEmail to set
+	 * @return the userId
 	 */
-	public void setUserEmail(String userEmail) {
-		this.userEmail = userEmail;
+	public int getUserId() {
+		return userId;
 	}
 	/**
-	 * @return the userEmail
+	 * @param userId the userId to set
 	 */
-	public String getUserEmail() {
-		return userEmail;
+	public void setUserId(int userId) {
+		this.userId = userId;
 	}
 	/**
-	 * @param funBoardList the funBoardList to set
+	 * @param EmailId the EmailId to set
 	 */
-	public void setFunBoardList(ArrayList<FunBoardModel> funBoardList) {
-		this.funBoardList = funBoardList;
+	public void setEmailId(String emailId) {
+		this.emailId = emailId;
 	}
 	/**
-	 * @return the funBoardList
+	 * @return the EmailId
 	 */
-	public ArrayList<FunBoardModel> getFunBoardList() {
-		return funBoardList;
+	public String getEmailId() {
+		return emailId;
 	}
-
+	/**
+	 * @param funBoard the funBoard to set
+	 */
+	public void setFunBoard(FunBoardModel funBoard) {
+		this.funBoard = funBoard;
+	}
+	/**
+	 * @return the funBoard
+	 */
+	public FunBoardModel getFunBoard() {
+		return funBoard;
+	}
+	/**
+	 * @return the funBoardId
+	 */
+	public int getFunBoardId() {
+		return funBoardId;
+	}
+	/**
+	 * @param funBoardId the funBoardId to set
+	 */
+	public void setFunBoardId(int funBoardId) {
+		this.funBoardId = funBoardId;
+	}
+	
 }

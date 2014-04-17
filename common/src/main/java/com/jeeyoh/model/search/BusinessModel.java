@@ -16,6 +16,8 @@ public class BusinessModel implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	@JsonProperty
+	private int itemId;
+	@JsonProperty
 	private String businessType;
 	@JsonProperty
 	private String businessId;
@@ -67,6 +69,22 @@ public class BusinessModel implements Serializable{
 	private String source;
 	@JsonProperty
 	private String suggestionType;
+	@JsonProperty
+	private String itemType;
+	
+	
+	/**
+	 * @return the itemId
+	 */
+	public int getItemId() {
+		return itemId;
+	}
+	/**
+	 * @param itemId the itemId to set
+	 */
+	public void setItemId(int itemId) {
+		this.itemId = itemId;
+	}
 	/**
 	 * @return the businesstype
 	 */
@@ -378,6 +396,18 @@ public class BusinessModel implements Serializable{
 	 */
 	public void setSuggestionType(String suggestionType) {
 		this.suggestionType = suggestionType;
+	}
+	/**
+	 * @return the itemType
+	 */
+	public String getItemType() {
+		return itemType;
+	}
+	/**
+	 * @param itemType the itemType to set
+	 */
+	public void setItemType(String itemType) {
+		this.itemType = itemType;
 	}
 	
 }

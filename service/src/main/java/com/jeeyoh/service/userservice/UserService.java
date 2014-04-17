@@ -1,6 +1,7 @@
 package com.jeeyoh.service.userservice;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -10,6 +11,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +23,7 @@ import com.jeeyoh.model.response.LoginResponse;
 import com.jeeyoh.model.response.SuggestionResponse;
 import com.jeeyoh.model.response.TopSuggestionResponse;
 import com.jeeyoh.model.response.UserRegistrationResponse;
+import com.jeeyoh.model.response.UserResponse;
 import com.jeeyoh.model.search.BusinessModel;
 import com.jeeyoh.model.search.CategoryModel;
 import com.jeeyoh.model.search.DealModel;
@@ -30,15 +33,18 @@ import com.jeeyoh.model.search.SuggestionModel;
 import com.jeeyoh.model.search.TopCommunitySuggestionModel;
 import com.jeeyoh.model.search.TopFriendsSuggestionModel;
 import com.jeeyoh.model.search.TopJeeyohSuggestionModel;
+import com.jeeyoh.model.search.TopMatchListSuggestionModel;
 import com.jeeyoh.model.user.UserModel;
 import com.jeeyoh.notification.service.IMessagingEventPublisher;
 import com.jeeyoh.persistence.IBusinessDAO;
 import com.jeeyoh.persistence.IDealsDAO;
 import com.jeeyoh.persistence.IEventsDAO;
+import com.jeeyoh.persistence.IFunBoardDAO;
 import com.jeeyoh.persistence.IUserDAO;
 import com.jeeyoh.persistence.domain.Business;
 import com.jeeyoh.persistence.domain.Deals;
 import com.jeeyoh.persistence.domain.Events;
+import com.jeeyoh.persistence.domain.Funboard;
 import com.jeeyoh.persistence.domain.Notificationpermission;
 import com.jeeyoh.persistence.domain.Page;
 import com.jeeyoh.persistence.domain.Pageuserlikes;
@@ -54,6 +60,7 @@ import com.jeeyoh.persistence.domain.UserCategoryLikes;
 import com.jeeyoh.persistence.domain.Userdealssuggestion;
 import com.jeeyoh.persistence.domain.Usereventsuggestion;
 import com.jeeyoh.persistence.domain.Usernondealsuggestion;
+import com.jeeyoh.service.search.IMatchingEventsService;
 import com.jeeyoh.utils.RandomGUID;
 import com.jeeyoh.utils.Utils;
 
@@ -63,6 +70,9 @@ public class UserService implements IUserService{
 
 	private static Logger logger = LoggerFactory.getLogger("debugLogger");
 
+	@Value("${host.path}")
+	private String hostPath;
+	
 	@Autowired
 	private IUserDAO userDAO;
 
@@ -77,6 +87,12 @@ public class UserService implements IUserService{
 
 	@Autowired
 	IMessagingEventPublisher eventPublisher;
+
+	@Autowired
+	private IMatchingEventsService matchingEventsService;
+	
+	@Autowired
+	private IFunBoardDAO funBoardDAO;
 
 
 	@Transactional
@@ -120,7 +136,7 @@ public class UserService implements IUserService{
 		logger.debug("User in Login Response :: "+user1);
 		if(user1 != null)
 		{
-			
+
 			userModel.setUserId(user1.getUserId());
 			userRegistrationResponse.setUser(userModel);
 		}
@@ -226,6 +242,37 @@ public class UserService implements IUserService{
 	@Transactional
 	public CategoryResponse getUserProfile(UserModel user) {
 		CategoryResponse categoryResponse = new CategoryResponse();
+		User userDetails = userDAO.getUserById(user.getUserId());
+		if(userDetails!=null && !userDetails.equals(""))
+		{
+			user.setAddressline1(userDetails.getAddressline1());
+			user.setBirthDate(userDetails.getBirthDate());
+			user.setBirthMonth(userDetails.getBirthMonth());
+			user.setBirthYear(userDetails.getBirthYear());
+			user.setCity(userDetails.getCity());
+			user.setConfirmationId(userDetails.getConfirmationId());
+			user.setCountry(userDetails.getCountry());
+			user.setCreatedtime(userDetails.getCreatedtime());
+			user.setEmailId(userDetails.getEmailId());
+			user.setFirstName(userDetails.getFirstName());
+			user.setGender(userDetails.getGender());
+			user.setImageUrl(userDetails.getImageUrl());
+			user.setIsActive(userDetails.getIsActive());
+			user.setIsDeleted(userDetails.getIsDeleted());
+			user.setIsShareCommunity(userDetails.getIsShareCommunity());
+			user.setIsShareProfileWithFriend(userDetails.getIsShareProfileWithFriend());
+			user.setIsShareProfileWithGroup(userDetails.getIsShareProfileWithGroup());
+			user.setLastName(userDetails.getLastName());
+			user.setMiddleName(userDetails.getMiddleName());
+			user.setPassword(userDetails.getPassword());
+			user.setSessionId(userDetails.getSessionId());
+			user.setState(userDetails.getState());
+			user.setStreet(userDetails.getStreet());
+			user.setUpdatedtime(userDetails.getUpdatedtime());
+			user.setUserId(userDetails.getUserId());
+			user.setZipcode(userDetails.getZipcode());
+			categoryResponse.setUser(user);
+		}
 		List<Page> pages = eventsDAO.getUserFavourites(user.getUserId());
 		logger.debug("First Page ::::: "+pages);
 		List<PageModel> sports = new ArrayList<PageModel>();
@@ -352,11 +399,11 @@ public class UserService implements IUserService{
 		else
 		{
 			Pageuserlikes pageUserLike = new Pageuserlikes();
-			List<User> user = userDAO.getUserById(page.getUserId());
-			logger.debug("User OBJ :: "+user.get(0));
+			User user = userDAO.getUserById(page.getUserId());
+			logger.debug("User OBJ :: "+user);
 			Page page1 = eventsDAO.getPageDetailsByID(page.getPageId());
 			logger.debug("Page OBJ :: "+page1);
-			pageUserLike.setUser(user.get(0));
+			pageUserLike.setUser(user);
 			pageUserLike.setPage(page1);
 			pageUserLike.setCreatedtime(new Date());
 			pageUserLike.setIsFavorite(true);
@@ -388,6 +435,21 @@ public class UserService implements IUserService{
 	@Transactional
 	@Override
 	public SuggestionResponse getUserSuggestions(UserModel user) {
+		
+		logger.debug("getOffset:::   "+user.getOffset());
+		int totalCount = 0;
+		//Getting total number of suggestions
+		if(user.getOffset() == 0)
+		{
+			int totalNonDealSuggestions = userDAO.getTotalUserNonDealSuggestions(user.getUserId());
+			int totalDealSuggestions = userDAO.getTotalUserDealSuggestions(user.getUserId());
+			int totalEventSuggestions = userDAO.getTotalUserEventSuggestions(user.getUserId());
+			totalCount = totalNonDealSuggestions + totalDealSuggestions + totalEventSuggestions;
+		}
+		
+		logger.debug("totalCount::  "+totalCount);
+		
+		
 		//Get user's non deal suggestions
 		List<Business> userNonDealSuggestions = businessDAO.getUserNonDealSuggestions(user.getEmailId(), user.getOffset(), user.getLimit());
 		logger.debug("userNonDealSuggestions ==> "+userNonDealSuggestions.size());
@@ -405,11 +467,14 @@ public class UserService implements IUserService{
 		for(Business business : userNonDealSuggestions)
 		{
 			BusinessModel businessModel = new BusinessModel();
+			businessModel.setItemId(business.getId());
 			businessModel.setName(business.getName());
 			businessModel.setWebsiteUrl(business.getWebsiteUrl());
 			businessModel.setDisplayAddress(business.getDisplayAddress());
 			businessModel.setCity(business.getCity());
 			businessModel.setImageUrl(business.getImageUrl());
+			businessModel.setItemType("Business");
+			businessModel.setSource(business.getSource());
 			businessModel.setBusinessType(business.getBusinesstype().getBusinessType());
 			Set<Usernondealsuggestion> Usernondealsuggestions = business.getUsernondealsuggestions();
 
@@ -433,6 +498,10 @@ public class UserService implements IUserService{
 				{
 					DealModel dealModel = new DealModel();
 					Deals deal1 = dealsuggestion.getDeals();
+					dealModel.setItemId(deal1.getId());
+					dealModel.setCategory(deal1.getBusiness().getBusinesstype().getBusinessType());
+					dealModel.setSource(deal1.getDealSource());
+					logger.debug("dealModel.getCategory:: "+dealModel.getCategory());
 					if(deal1.getTitle() != null)
 					{
 						dealModel.setTitle(deal1.getTitle());
@@ -466,6 +535,7 @@ public class UserService implements IUserService{
 						dealModel.setWebsiteUrl(deal1.getDealUrl());
 					}
 
+					dealModel.setItemType("Deal");
 					dealsModeList.add(dealModel);
 				}
 			}
@@ -475,14 +545,19 @@ public class UserService implements IUserService{
 		for(Events events : eventsList)
 		{
 			EventModel eventModel = new EventModel();
+			eventModel.setEventId(events.getEventId());
 			eventModel.setDescription(events.getDescription());
 			eventModel.setVenue_name(events.getVenue_name());
-			eventModel.setEvent_date(events.getEvent_date());
+			eventModel.setEvent_date(events.getEvent_date().toString());
 			eventModel.setCity(events.getCity());
 			eventModel.setTitle(events.getTitle());
 			eventModel.setTotalTickets(events.getTotalTickets());
 			eventModel.setUrlpath(events.getUrlpath());
 			eventModel.setAncestorGenreDescriptions(events.getAncestorGenreDescriptions());
+			eventModel.setItemType("Event");
+			eventModel.setSource(events.getEventSource());
+			eventModel.setCategory(events.getChannel().split(" ")[0]);
+			logger.debug("eventModel.getCategory:: "+eventModel.getCategory());
 			Set<Usereventsuggestion> usereventsuggestions = events.getUsereventsuggestions();
 
 			for(Usereventsuggestion usernondealsuggestionsObj : usereventsuggestions)
@@ -496,10 +571,12 @@ public class UserService implements IUserService{
 			eventsModelList.add(eventModel);
 		}
 
+		logger.debug("dealsModeList:  "+dealsModeList.size() + " businessModelList: "+ businessModelList.size() + " eventsModelList: "+eventsModelList.size());
 		SuggestionResponse suggestionResponse = new SuggestionResponse();
 		suggestionResponse.setDealSuggestions(dealsModeList);
 		suggestionResponse.setNonDealSuggestions(businessModelList);
 		suggestionResponse.setEventSuggestions(eventsModelList);
+		suggestionResponse.setTotalCount(totalCount);
 		suggestionResponse.setStatus(ServiceAPIStatus.OK.getStatus());
 		suggestionResponse.setError("");
 		return suggestionResponse;
@@ -548,9 +625,9 @@ public class UserService implements IUserService{
 		// TODO Auto-generated method stub
 		List<UserCategory> categoryList = userDAO.getUserNonLikeCategories(userId,categoryType);		
 		CategoryLikesResponse categoryLikesResponse = new CategoryLikesResponse();
-		if(categoryList != null)
+		if(categoryList != null && !categoryList.isEmpty() && categoryList.size() >0)
 		{
-			logger.debug("Category list " +categoryList.get(0).getImageUrl());
+			//logger.debug("Category list " +categoryList.get(0).getImageUrl());
 			List<CategoryModel> categoryModels = new ArrayList<CategoryModel>();
 			for(UserCategory category:categoryList)
 			{
@@ -571,6 +648,7 @@ public class UserService implements IUserService{
 			categoryLikesResponse.setError("No Category Availble");
 		}
 		return categoryLikesResponse;
+
 	}
 
 	@Transactional
@@ -582,8 +660,8 @@ public class UserService implements IUserService{
 		{
 			logger.debug("record save");
 			UserCategoryLikes categoryLikes =  new UserCategoryLikes();
-			List<User> user  = userDAO.getUserById(categoryModel.getUserId());
-			categoryLikes.setUser(user.get(0));
+			User user  = userDAO.getUserById(categoryModel.getUserId());
+			categoryLikes.setUser(user);
 			categoryLikes.setCreatedTime(new Date());
 			UserCategory category = userDAO.getCategory(categoryModel.getUserCategoryId());			
 			categoryLikes.setUserCategory(category);
@@ -603,8 +681,80 @@ public class UserService implements IUserService{
 	@Override
 	public TopSuggestionResponse getUserTopSuggestions(UserModel user) {
 
+		// Calculate FunBoard Activities
+		int totalFridayActivity = 0, totalSaturdayActivity = 0, totalSundayActivity = 0;
+		List<Funboard> funboards = funBoardDAO.getUserFunBoardItems(user.getUserId());
+		for(Funboard funboard : funboards)
+		{
+			if(funboard.getItemType().equalsIgnoreCase("Event") || funboard.getItemType().equalsIgnoreCase("Deal"))
+			{
+				if(funboard.getEndDate().compareTo(Utils.getCurrentDate()) >=0)
+				{
+					if(funboard.getItemType().equalsIgnoreCase("Event"))
+					{
+						int day = Utils.getDayOfWeek(funboard.getStartDate());
+						switch(day){
+						case 6: 
+							totalFridayActivity++;
+							break;	
+						case 7: 
+							totalSaturdayActivity++;
+							break;	
+						case 1: 
+							totalSundayActivity++;
+							break;	
+						}
+					}
+					else
+					{
+						Calendar start = Calendar.getInstance();
+						start.setTime(funboard.getStartDate());
+						Calendar end = Calendar.getInstance();
+						end.setTime(funboard.getEndDate());
+
+						int count = 1;
+						int day = 0;
+						for (Date date = start.getTime(); !start.after(end); start.add(Calendar.DATE, 1), date = start.getTime()) {
+							if(count <= 3)
+							{
+								day = Utils.getDayOfWeek(date);
+								switch(day){
+								case 6: 
+									totalFridayActivity++;
+									count++;
+									break;	
+								case 7: 
+									totalSaturdayActivity++;
+									count++;
+									break;	
+								case 1: 
+									totalSundayActivity++;
+									count++;
+									break;	
+								}
+							}
+							else 
+								break;
+						}
+					}
+				}
+			}
+			else
+			{
+				totalFridayActivity++;
+				totalSaturdayActivity++;
+				totalSundayActivity++;
+			}
+		}
+		
+		
 		TopSuggestionResponse topSuggestionResponse = new TopSuggestionResponse();
 
+		//Set Total Activity
+		topSuggestionResponse.setTotalFridayActivity(totalFridayActivity);
+		topSuggestionResponse.setTotalSaturdayActivity(totalSaturdayActivity);
+		topSuggestionResponse.setTotalSundayActivity(totalSundayActivity);
+		
 		// Top 10 Friends Suggestions
 		TopSuggestionResponse topFriendsSuggestionResponse = getTopSuggestions(user.getEmailId(), "Friend's Suggestion");
 		topSuggestionResponse.setTopFriendsSuggestions(topFriendsSuggestionResponse.getTopFriendsSuggestions());
@@ -620,14 +770,17 @@ public class UserService implements IUserService{
 		List<PageModel> topRestaurantSuggestions = new ArrayList<PageModel>();
 		List<PageModel> topTheaterSuggestions = new ArrayList<PageModel>();
 		List<PageModel> topMovieSuggestions = new ArrayList<PageModel>();
+		List<PageModel> topNightLifeuggestions = new ArrayList<PageModel>();
 		for(Topcommunitysuggestion topcommunitysuggestion : topCommunitySuggestions)
 		{
 			Page page = topcommunitysuggestion.getPage();
 			PageModel pageModel = new PageModel();
+			pageModel.setPageId(page.getPageId());
 			pageModel.setAbout(page.getAbout());
 			pageModel.setPageUrl(page.getPageUrl());
 			pageModel.setImageUrl(page.getProfilePicture());
 			pageModel.setPageType(topcommunitysuggestion.getCategoryType());
+			pageModel.setItemType("Community");
 			if(topcommunitysuggestion.getCategoryType().equalsIgnoreCase("Sport"))
 				topSportSuggestions.add(pageModel);
 			else if(topcommunitysuggestion.getCategoryType().equalsIgnoreCase("Restaurant"))
@@ -638,18 +791,26 @@ public class UserService implements IUserService{
 				topConcertSuggestions.add(pageModel);
 			else if(topcommunitysuggestion.getCategoryType().equalsIgnoreCase("Movie"))
 				topMovieSuggestions.add(pageModel);
+			else if(topcommunitysuggestion.getCategoryType().equalsIgnoreCase("Nightlife"))
+				topNightLifeuggestions.add(pageModel);
 		}
-		
+
 		TopCommunitySuggestionModel topCommunitySuggestionModel = new TopCommunitySuggestionModel();
 		topCommunitySuggestionModel.setTopMovieSuggestions(topMovieSuggestions);
 		topCommunitySuggestionModel.setTopRestaurantSuggestions(topRestaurantSuggestions);
 		topCommunitySuggestionModel.setTopSportsSuggestions(topSportSuggestions);
 		topCommunitySuggestionModel.setTopTheaterSuggestions(topTheaterSuggestions);
 		topCommunitySuggestionModel.setTopConcertSuggestions(topConcertSuggestions);
-		
-		
+
+
 
 		topSuggestionResponse.setTopCommunitySuggestions(topCommunitySuggestionModel);
+
+		// Top Matching events
+		TopSuggestionResponse topMatchListSuggestionResponse = getTopSuggestions(user.getEmailId(), "Match List");
+		topSuggestionResponse.setTopMatchListSuggestions(topMatchListSuggestionResponse.getTopMatchListSuggestions());
+
+
 		topSuggestionResponse.setStatus(ServiceAPIStatus.OK.getStatus());
 		topSuggestionResponse.setError("");
 		return topSuggestionResponse;
@@ -669,6 +830,7 @@ public class UserService implements IUserService{
 		List<SuggestionModel> topRestaurantSuggestions = new ArrayList<SuggestionModel>();
 		List<SuggestionModel> topTheaterSuggestions = new ArrayList<SuggestionModel>();
 		List<SuggestionModel> topMovieSuggestions = new ArrayList<SuggestionModel>();
+		List<SuggestionModel> topNightLifeuggestions = new ArrayList<SuggestionModel>();
 
 		List<Topnondealsuggestion> topNonDealSuggestions = userDAO.getTopNonDealSuggestions(userEmail,type);
 		logger.debug("topNonDealSuggestions: "+topNonDealSuggestions);
@@ -676,12 +838,14 @@ public class UserService implements IUserService{
 		{
 			Business business = topnondealsuggestion.getBusiness();
 			SuggestionModel suggestionModel = new SuggestionModel();
+			suggestionModel.setItemId(business.getId());
 			suggestionModel.setTitle(business.getName());
 			suggestionModel.setUrl(business.getWebsiteUrl());
 			suggestionModel.setDisplayAddress(business.getDisplayAddress());
 			suggestionModel.setCity(business.getCity());
 			suggestionModel.setImageUrl(business.getImageUrl());
 			suggestionModel.setSuggestionType("Business");
+			suggestionModel.setSource(business.getSource());
 			suggestionModel.setCategoryType(topnondealsuggestion.getCategoryType());
 			suggestionModel.setLikeCount(topnondealsuggestion.getTotalLikes());
 			if(topnondealsuggestion.getCategoryType().equalsIgnoreCase("Sport"))
@@ -694,6 +858,8 @@ public class UserService implements IUserService{
 				topConcertSuggestions.add(suggestionModel);
 			else if(topnondealsuggestion.getCategoryType().equalsIgnoreCase("Movie"))
 				topConcertSuggestions.add(suggestionModel);
+			else if(topnondealsuggestion.getCategoryType().equalsIgnoreCase("Nightlife"))
+				topNightLifeuggestions.add(suggestionModel);
 
 		}
 
@@ -704,6 +870,7 @@ public class UserService implements IUserService{
 		{
 			SuggestionModel suggestionModel = new SuggestionModel();
 			Deals deals = topdealsuggestion.getDeals();
+			suggestionModel.setItemId(deals.getId());
 			if(deals.getTitle() != null)
 			{
 				suggestionModel.setTitle(deals.getTitle());
@@ -718,7 +885,10 @@ public class UserService implements IUserService{
 			}
 			suggestionModel.setCategoryType(topdealsuggestion.getCategoryType());
 			suggestionModel.setSuggestionType("Deal");
+			suggestionModel.setSource(deals.getDealSource());
 			suggestionModel.setLikeCount(topdealsuggestion.getTotalLikes());
+			suggestionModel.setStartAt(deals.getStartAt().toString());
+			suggestionModel.setEndAt(deals.getEndAt().toString());
 			if(topdealsuggestion.getCategoryType().equalsIgnoreCase("Sport"))
 				topSportsSuggestions.add(suggestionModel);
 			else if(topdealsuggestion.getCategoryType().equalsIgnoreCase("Restaurant"))
@@ -729,6 +899,8 @@ public class UserService implements IUserService{
 				topConcertSuggestions.add(suggestionModel);
 			else if(topdealsuggestion.getCategoryType().equalsIgnoreCase("Movie"))
 				topConcertSuggestions.add(suggestionModel);
+			else if(topdealsuggestion.getCategoryType().equalsIgnoreCase("Nightlife"))
+				topNightLifeuggestions.add(suggestionModel);
 		}
 
 		List<Topeventsuggestion> topEventSuggestions = userDAO.getTopEventSuggestions(userEmail,type);
@@ -737,11 +909,14 @@ public class UserService implements IUserService{
 		{
 			SuggestionModel suggestionModel = new SuggestionModel();
 			Events events = topEventSuggestion.getEvents();
-
+			suggestionModel.setItemId(events.getEventId());
 			suggestionModel.setTitle(events.getDescription());
 			suggestionModel.setDescription(events.getDescription());
 			suggestionModel.setUrl(events.getUrlpath());
 			suggestionModel.setSuggestionType("Event");
+			suggestionModel.setSource(events.getEventSource());
+			suggestionModel.setStartAt(events.getEvent_date().toString());
+			suggestionModel.setEndAt(events.getEvent_date().toString());
 			suggestionModel.setCategoryType(topEventSuggestion.getCategoryType());
 			suggestionModel.setLikeCount(topEventSuggestion.getTotalLikes());
 			if(topEventSuggestion.getCategoryType().equalsIgnoreCase("Sport"))
@@ -754,6 +929,8 @@ public class UserService implements IUserService{
 				topConcertSuggestions.add(suggestionModel);
 			else if(topEventSuggestion.getCategoryType().equalsIgnoreCase("Movie"))
 				topConcertSuggestions.add(suggestionModel);
+			else if(topEventSuggestion.getCategoryType().equalsIgnoreCase("Nightlife"))
+				topNightLifeuggestions.add(suggestionModel);
 		}
 
 		Collections.sort(topConcertSuggestions, new SuggestionComparator());
@@ -761,7 +938,7 @@ public class UserService implements IUserService{
 		Collections.sort(topTheaterSuggestions, new SuggestionComparator());
 		Collections.sort(topSportsSuggestions, new SuggestionComparator());
 		Collections.sort(topMovieSuggestions, new SuggestionComparator());
-		
+
 		TopSuggestionResponse topSuggestionResponse = new TopSuggestionResponse();
 		if(type.equalsIgnoreCase("Friend's Suggestion"))
 		{
@@ -772,7 +949,17 @@ public class UserService implements IUserService{
 			topFriendsSuggestionModel.setTopSportsSuggestions(topSportsSuggestions);
 			topFriendsSuggestionModel.setTopTheaterSuggestions(topTheaterSuggestions);
 			topSuggestionResponse.setTopFriendsSuggestions(topFriendsSuggestionModel);
-			
+
+		}
+		else if(type.equalsIgnoreCase("Match List"))
+		{
+			TopMatchListSuggestionModel topMatchListSuggestionModel = new TopMatchListSuggestionModel();
+			topMatchListSuggestionModel.setTopMovieSuggestions(topMovieSuggestions);
+			topMatchListSuggestionModel.setTopConcertSuggestions(topConcertSuggestions);
+			topMatchListSuggestionModel.setTopRestaurantSuggestions(topRestaurantSuggestions);
+			topMatchListSuggestionModel.setTopSportsSuggestions(topSportsSuggestions);
+			topMatchListSuggestionModel.setTopTheaterSuggestions(topTheaterSuggestions);
+			topSuggestionResponse.setTopMatchListSuggestions(topMatchListSuggestionModel);
 		}
 		else
 		{
@@ -799,6 +986,73 @@ public class UserService implements IUserService{
 		{
 			return (int)(o2.getLikeCount()-o1.getLikeCount());
 		}
+	}
+	
+	
+	@Transactional
+	@Override
+	public UserResponse editUserProfile(UserModel userModel) 
+	{
+		UserResponse response = new UserResponse();
+		User userList = userDAO.getUserById(userModel.getUserId());
+		if(userModel!=null && userList!=null)
+		{
+			User user = userList;
+			if(userModel.getAddressline1()!=null && !userModel.getAddressline1().equals(""))
+			{
+				user.setAddressline1(userModel.getAddressline1());
+			}
+			if(userModel.getBirthDate()!=null && !userModel.getBirthDate().equals(""))
+			{
+				user.setBirthDate(userModel.getBirthDate());
+			}
+			if(userModel.getBirthMonth()!=null && !userModel.getBirthMonth().equals(""))
+			{
+				user.setBirthMonth(userModel.getBirthMonth());
+			}
+			if(userModel.getBirthYear()!=null && !userModel.getBirthYear().equals(""))
+			{
+				user.setBirthYear(userModel.getBirthYear());
+			}
+			if(userModel.getFirstName()!=null && !userModel.getFirstName().equals(""))
+			{
+				user.setFirstName(userModel.getFirstName());
+			}
+			if(userModel.getLastName()!=null && userModel.getLastName().equals(""))
+			{
+				user.setLastName(userModel.getLastName());
+			}
+			if(userModel.getImageUrl()!=null && !userModel.getImageUrl().equals(""))
+			{
+				user.setImageUrl(hostPath+userModel.getImageUrl());
+			}
+			userDAO.updateUser(user);
+			response.setUser(userModel);
+		}
+		return response;
+	}
+	
+	
+	@Transactional
+	@Override
+	public BaseResponse updatePrivacySetting(UserModel userModel) 
+	{
+		BaseResponse response = new BaseResponse();
+		if(userModel!=null)
+		{
+			User user = userDAO.getUserById(userModel.getUserId());
+			user.setIsShareCommunity(userModel.getIsShareCommunity());
+			user.setIsShareProfileWithFriend(userModel.getIsShareProfileWithFriend());
+			user.setIsShareProfileWithGroup(userModel.getIsShareProfileWithGroup());
+			userDAO.updateUser(user);
+			response.setStatus("Ok");
+		}
+		else
+		{
+			response.setError("Task Failed");
+			response.setStatus(ServiceAPIStatus.FAILED.getStatus()); 
+		}
+		return response;
 	}
 
 }

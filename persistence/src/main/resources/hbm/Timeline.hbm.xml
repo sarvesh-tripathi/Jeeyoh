@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Oct 10, 2013 9:08:14 AM by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+    <class name="com.jeeyoh.persistence.domain.Timeline" table="timeline" catalog="jeeyoh">
+        <id name="timeLineId" type="java.lang.Integer">
+            <column name="timeLineId" />
+            <generator class="identity" />
+        </id>
+        <property name="timeLineType" type="string">
+            <column name="timeLineType" length="13" not-null="true" />
+        </property>
+         <property name="startTime" type="time">
+            <column name="startTime" />
+        </property>
+         <property name="endTime" type="time">
+            <column name="endTime" />
+        </property>
+        <set name="funBoard" inverse="true" lazy="false" cascade="all">
+            <key>
+                <column name="timeLineId" not-null="true" />
+            </key>
+            <one-to-many class="com.jeeyoh.persistence.domain.Funboard" />
+        </set>
+    </class>
+</hibernate-mapping>

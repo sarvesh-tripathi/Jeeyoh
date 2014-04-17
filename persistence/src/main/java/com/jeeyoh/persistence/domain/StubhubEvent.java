@@ -2,6 +2,8 @@ package com.jeeyoh.persistence.domain;
 
 import java.util.Date;
 
+import org.codehaus.jackson.annotate.JsonProperty;
+
 public class StubhubEvent implements java.io.Serializable {
 
 	/**
@@ -72,6 +74,10 @@ public class StubhubEvent implements java.io.Serializable {
 	private String	title;
 	
 	private String ancestorGenreDescriptions;
+	
+	private String image_url;
+	
+	private String genre_parent_name;
 	
 	public int getId() {
 		return id;
@@ -319,5 +325,32 @@ public class StubhubEvent implements java.io.Serializable {
 		return ancestorGenreDescriptions;
 	}
 
+	/**
+	 * @return the image_url
+	 */
+	public String getImage_url() {
+		return image_url;
+	}
+
+	/**
+	 * @param image_url the image_url to set
+	 */
+	public void setImage_url(String image_url) {
+		this.image_url = image_url;
+	}
+
+	/**
+	 * @return the genre_parent_name
+	 */
+	public String getGenre_parent_name() {
+		return genre_parent_name;
+	}
+
+	/**
+	 * @param genre_parent_name the genre_parent_name to set
+	 */
+	public void setGenre_parent_name(String genre_parent_name) {
+		this.genre_parent_name = genre_parent_name;
+	}
 
 }

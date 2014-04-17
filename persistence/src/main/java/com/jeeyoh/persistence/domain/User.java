@@ -35,9 +35,13 @@ public class User  implements java.io.Serializable {
      private String longitude;
      private String lattitude;
      private String confirmationId;
+     private String imageUrl;
      private String sessionId;
      private Date createdtime;
      private Date updatedtime;
+     private Boolean isShareProfileWithFriend;
+     private Boolean isShareProfileWithGroup;
+     private Boolean isShareCommunity;
      private Set jeeyohgroupsForOwnerId = new HashSet(0);
      private Set dealsusages = new HashSet(0);
      private Set pagesForCreatorId = new HashSet(0);
@@ -272,7 +276,55 @@ public class User  implements java.io.Serializable {
     public void setUpdatedtime(Date updatedtime) {
         this.updatedtime = updatedtime;
     }
-    public Set getJeeyohgroupsForOwnerId() {
+    /**
+	 * @return the isShareProfileWithFriend
+	 */
+	public Boolean getIsShareProfileWithFriend() {
+		return isShareProfileWithFriend;
+	}
+
+
+	/**
+	 * @param isShareProfileWithFriend the isShareProfileWithFriend to set
+	 */
+	public void setIsShareProfileWithFriend(Boolean isShareProfileWithFriend) {
+		this.isShareProfileWithFriend = isShareProfileWithFriend;
+	}
+
+
+	/**
+	 * @return the isShareProfileWithGroup
+	 */
+	public Boolean getIsShareProfileWithGroup() {
+		return isShareProfileWithGroup;
+	}
+
+
+	/**
+	 * @param isShareProfileWithGroup the isShareProfileWithGroup to set
+	 */
+	public void setIsShareProfileWithGroup(Boolean isShareProfileWithGroup) {
+		this.isShareProfileWithGroup = isShareProfileWithGroup;
+	}
+
+
+	/**
+	 * @return the isShareCommunity
+	 */
+	public Boolean getIsShareCommunity() {
+		return isShareCommunity;
+	}
+
+
+	/**
+	 * @param isShareCommunity the isShareCommunity to set
+	 */
+	public void setIsShareCommunity(Boolean isShareCommunity) {
+		this.isShareCommunity = isShareCommunity;
+	}
+
+
+	public Set getJeeyohgroupsForOwnerId() {
         return this.jeeyohgroupsForOwnerId;
     }
     
@@ -478,6 +530,25 @@ public class User  implements java.io.Serializable {
 	}
 
 
+	/**
+	 * @return the imageUrl
+	 */
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+
+	/**
+	 * @param imageUrl the imageUrl to set
+	 */
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+
+
+	public String toString() {
+		return "emailId : " + emailId;
+	}
 
 
 }

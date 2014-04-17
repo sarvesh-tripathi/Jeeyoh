@@ -1,6 +1,7 @@
 package com.jeeyoh.controller;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -9,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.slf4j.Logger;
@@ -19,11 +21,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.jeeyoh.model.funboard.CommentModel;
 import com.jeeyoh.model.funboard.FunBoardModel;
 import com.jeeyoh.model.funboard.FunBoardRequest;
+import com.jeeyoh.model.funboard.MediaContenModel;
 import com.jeeyoh.model.response.CommunityResponse;
-import com.jeeyoh.model.response.MatchingEventsResponse;
+import com.jeeyoh.model.response.FriendListResponse;
 import com.jeeyoh.model.response.SearchResponse;
+import com.jeeyoh.model.response.UploadMediaServerResponse;
+import com.jeeyoh.model.search.AddGroupModel;
 import com.jeeyoh.model.search.BusinessModel;
 import com.jeeyoh.model.search.DealModel;
 import com.jeeyoh.model.search.EventModel;
@@ -32,6 +38,8 @@ import com.jeeyoh.model.search.PageModel;
 import com.jeeyoh.model.search.SearchRequest;
 import com.jeeyoh.model.user.UserModel;
 import com.jeeyoh.notification.service.IMessagingEventPublisher;
+import com.jeeyoh.service.addfriend.IAddFriendService;
+import com.jeeyoh.service.addgroup.IAddGroupService;
 import com.jeeyoh.service.fandango.IFandangoService;
 import com.jeeyoh.service.funboard.IFunBoardService;
 import com.jeeyoh.service.groupon.IGrouponFilterEngineService;
@@ -41,6 +49,9 @@ import com.jeeyoh.service.jobs.IDealSearch;
 import com.jeeyoh.service.jobs.IEventSearch;
 import com.jeeyoh.service.jobs.INonDealSearch;
 import com.jeeyoh.service.jobs.IWallService;
+import com.jeeyoh.service.livingsocial.ILivingSocialFilterEngineService;
+import com.jeeyoh.service.livingsocial.ILivingSocialService;
+import com.jeeyoh.service.search.IAddDirectSuggestionService;
 import com.jeeyoh.service.search.ICommunitySearchService;
 import com.jeeyoh.service.search.IEventsSuggestionSearchService;
 import com.jeeyoh.service.search.IManualUpload;
@@ -51,7 +62,9 @@ import com.jeeyoh.service.search.ISpotSearchService;
 import com.jeeyoh.service.search.IUserDealsSearchService;
 import com.jeeyoh.service.stubhub.IStubhubFilterEngineService;
 import com.jeeyoh.service.stubhub.IStubhubService;
+import com.jeeyoh.service.userservice.IMediaService;
 import com.jeeyoh.service.userservice.IUserService;
+import com.jeeyoh.service.wallfeed.IWallFeedSharingService;
 import com.jeeyoh.service.yelp.IYelpFilterEngineService;
 import com.jeeyoh.service.yelp.IYelpService;
 
@@ -122,13 +135,33 @@ public class AccountController {
 
 	@Autowired
 	private IMatchingEventsService matchingEventsService;
-	
+
 	@Autowired
 	private IFunBoardService funBoardService;
 
 	@Autowired
 	private IWallService wallService;
+
+	@Autowired
+	private IMediaService mediaService;
 	
+	@Autowired
+	private IAddGroupService addGroupService;
+	
+	@Autowired
+	private ILivingSocialService livingSocialService;
+
+	@Autowired
+	private ILivingSocialFilterEngineService livingSocialFilterEngineService;
+	
+	@Autowired
+	private IAddFriendService addFriendService;
+	
+	@Autowired
+	private IAddDirectSuggestionService addDirectSuggestionService;
+	
+	@Autowired
+	private IWallFeedSharingService wallFeedSharingService;
 
 	private final String UPLOAD_DIRECTORY = "C:/uploads";
 
@@ -190,6 +223,13 @@ public class AccountController {
 	public ModelAndView spotSearch(HttpServletRequest request,
 			HttpServletResponse response) {
 		ModelAndView modelAndView = new ModelAndView("spotSearch");
+		return modelAndView;
+	}
+	
+	@RequestMapping(value = "/searchFriend", method = RequestMethod.GET)
+	public ModelAndView searchFriend(HttpServletRequest request,
+			HttpServletResponse response) {
+		ModelAndView modelAndView = new ModelAndView("searchFriend");
 		return modelAndView;
 	}
 
@@ -436,10 +476,11 @@ public class AccountController {
 		//user.setEmailId("gaurav.shandilya@gmail.com");
 		//userService.getUserSuggestions(user);
 		int pageId = Integer.parseInt(request.getParameter("pageId"));
+		int offset = Integer.parseInt(request.getParameter("offset"));
 		System.out.println("pageid : "+pageId);
 		if(pageId!=0)
 		{
-			CommunityResponse communityResponse = communitySearchService.searchCommunityDetails(1, pageId);
+			CommunityResponse communityResponse = communitySearchService.searchCommunityDetails(1, pageId,offset,10);
 			PageModel pageDetails = communityResponse.getCommunityDetails();
 			logger.debug("getCommunityDetails => about: "+pageDetails.getAbout()+";created date: "+pageDetails.getCreatedDate()+";Owner: "+pageDetails.getOwner()+";PageType: "+pageDetails.getPageType()+";profile picture: "+pageDetails.getProfilePicture()+";page url: "+pageDetails.getPageUrl());
 			List<EventModel> currentEventsList = communityResponse.getCurrentEvents();
@@ -471,12 +512,12 @@ public class AccountController {
 
 		UserModel user = new UserModel();
 		user.setEmailId("gaurav.shandilya@gmail.com");
-		/*user.setLimit(10);
-		userService.getUserSuggestions(user);*/
+		user.setLimit(10);
+		userService.getUserSuggestions(user);
 		//userService.getUserTopSuggestions(user);
 
 		//nonDealSearch.caculateTopSuggestions();
-		wallService.addWeightContentOnItem();
+		//wallService.addWeightContentOnItem();
 		return modelAndView;
 
 	}
@@ -489,11 +530,35 @@ public class AccountController {
 	}
 
 	@SuppressWarnings("unchecked")
-	@RequestMapping(value = "/uploadFile", method = RequestMethod.GET) 
-	public ModelAndView uploadFile(HttpServletRequest request, HttpServletResponse response) {
+	@RequestMapping(value = "/uploadFile", method = RequestMethod.POST) 
+	public ModelAndView uploadFile(HttpServletRequest request, HttpServletResponse response) throws IOException, FileUploadException {
 		ModelAndView modelAndView = new ModelAndView("manualUpload");
 
-		if(ServletFileUpload.isMultipartContent(request))
+		logger.debug("Upload File");
+		UploadMediaServerResponse uploadMediaServerResponse = new UploadMediaServerResponse();
+
+		List<FileItem> multiparts = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
+		for(FileItem item : multiparts)
+		{
+			if(!item.isFormField())
+			{
+				String name = new File(item.getName()).getName();
+				logger.debug("uploadedMediaServerPATH = " + name);
+				uploadMediaServerResponse = mediaService.uploadOnServer(item.getInputStream(), name, "34");
+				String output = "File uploaded to : " + uploadMediaServerResponse.getMediaUrl();
+				logger.debug(output);
+			}
+		}
+		// File mediaFileObject = new File(uploadedMediaServerPATH + "34_" +
+		// randomNumber + "_" + fileDetail.getFileName());
+		// save it
+		MediaContenModel mediaContenModel = new MediaContenModel();
+		mediaContenModel.setFunBoardId(8);
+		mediaContenModel.setUserId(1);
+		mediaContenModel.setMediaType("image");
+		mediaContenModel.setImageUrl(uploadMediaServerResponse.getMediaUrl());
+		funBoardService.uploadMediaContent(mediaContenModel);
+		/*if(ServletFileUpload.isMultipartContent(request))
 		{
 			try{
 				List<FileItem> multiparts = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
@@ -514,7 +579,7 @@ public class AccountController {
 		}
 		else{
 			request.setAttribute("message","Sorry this Servlet only handles file upload request");
-		}
+		}*/
 		return modelAndView;
 	}
 
@@ -553,56 +618,282 @@ public class AccountController {
 		int userId = Integer.parseInt(request.getParameter("userId"));
 		if(userId!=0)
 		{
-			MatchingEventsResponse matchingEventsResponse = matchingEventsService.searchMatchingEvents(userId);
-
-			List<EventModel> bookedEventsList = matchingEventsResponse.getMatchingevents();
-			for(EventModel eventModel:bookedEventsList)
-			{
-				logger.debug("getCurrentEvents => description: "+eventModel.getDescription()+"; event date: "+eventModel.getEvent_date()+"\n");
-			}
+			matchingEventsService.searchMatchingEvents();
 		}
 		return modelAndView;
 	}
-	
+
 	@RequestMapping(value = "/funBaord", method = RequestMethod.GET)
 	public ModelAndView funBaord(HttpServletRequest request, HttpServletResponse response)
 	{
 		ModelAndView modelAndView = new ModelAndView("home");
 		FunBoardRequest funBoardRequest = new FunBoardRequest();
-		funBoardRequest.setUserEmail("gaurav.shandilya@gmail.com");
-		ArrayList<FunBoardModel> list = new ArrayList<FunBoardModel>();
+		funBoardRequest.setEmailId("gaurav.shandilya@gmail.com");
+		funBoardRequest.setUserId(1);
+		//ArrayList<FunBoardModel> list = new ArrayList<FunBoardModel>();
 		FunBoardModel funBoardModel = new FunBoardModel();
-		funBoardModel.setCategory("Restaurant");
-		funBoardModel.setType("Business");
-		funBoardModel.setItemId(442);
-		list.add(funBoardModel);
-		
+		funBoardModel.setCategory("Sport");
+		funBoardModel.setType("Deal");
+		funBoardModel.setItemId(3232);
+		//list.add(funBoardModel);
+
 		funBoardModel = new FunBoardModel();
-		funBoardModel.setCategory("Restaurant");
-		funBoardModel.setType("Business");
-		funBoardModel.setItemId(456);
-		list.add(funBoardModel);
-		
-		funBoardModel = new FunBoardModel();
+		funBoardModel.setCategory("Sport");
+		funBoardModel.setType("Deal");
+		funBoardModel.setItemId(3233);
+	
+
+		/*funBoardModel = new FunBoardModel();
 		funBoardModel.setCategory("Restaurant");
 		funBoardModel.setType("Deal");
 		funBoardModel.setItemId(691);
 		list.add(funBoardModel);
-		
+
 		funBoardModel = new FunBoardModel();
 		funBoardModel.setCategory("Theater");
 		funBoardModel.setType("Events");
 		funBoardModel.setItemId(51);
 		list.add(funBoardModel);
-		
+
 		funBoardModel = new FunBoardModel();
 		funBoardModel.setCategory("Theater");
 		funBoardModel.setType("Page");
 		funBoardModel.setItemId(26);
-		list.add(funBoardModel);
-		
+		list.add(funBoardModel);*/
+
+		funBoardRequest.setFunBoard(funBoardModel);
 		funBoardService.saveFunBoardItem(funBoardRequest);
+		funBoardModel.setItemId(26);
+		funBoardService.saveFunBoardItem(funBoardRequest);
+
+		UserModel user = new UserModel();
+		user.setEmailId("gaurav.shandilya@gmail.com");
+		user.setUserId(1);
+
+		CommentModel commentModel = new CommentModel();
+		commentModel.setUserId(1);
+		commentModel.setItemId(2);
+		commentModel.setComment("hi all, how are you?");
+		commentModel.setIsComment(false);
+		funBoardService.addFunBoardComment(commentModel);
+
+
+		commentModel.setUserId(2);
+		commentModel.setItemId(3);
+		commentModel.setComment("hi all");
+		commentModel.setIsComment(false);
+		funBoardService.addFunBoardComment(commentModel);
+
+		commentModel.setUserId(2);
+		commentModel.setItemId(3);
+		commentModel.setComment("hi all, how are you?");
+		commentModel.setIsComment(false);
+		//funBoardService.addFunBoardComment(commentModel);
+
+		funBoardService.getUserFunBoardItems(user);
+
+		//funBoardService.getFunBoardItem(funBoardRequest);
+
+		//funBoardService.deleteFunBoarditem(funBoardRequest);
 		return modelAndView;
 	}
-
+	
+	
+	@RequestMapping(value = "/addGroup", method = RequestMethod.GET)
+	public ModelAndView addGroup(HttpServletRequest request,
+			HttpServletResponse httpresponse) {
+		ModelAndView modelAndView = new ModelAndView("home");
+		String userId = request.getParameter("userId");
+		String groupName = request.getParameter("groupName");
+		String category = request.getParameter("category");
+		String members = request.getParameter("addMember");
+		String privacy = request.getParameter("privacy");
+		logger.debug("add group => userId =>"+userId+"; groupName => "+groupName+"; category =>"+category+"; addMember =>"+members+"; privacy =>"+privacy);
+		AddGroupModel addGroupModel = new AddGroupModel();
+		addGroupService.addGroup(addGroupModel);
+		return modelAndView;
+	}
+	
+	@RequestMapping(value = "/savePageComment", method = RequestMethod.GET)
+	public ModelAndView savePageComment(HttpServletRequest request,
+			HttpServletResponse httpresponse) {
+		ModelAndView modelAndView = new ModelAndView("home");
+		String userId = request.getParameter("userId");
+		String itemId = request.getParameter("itemId");
+		String comment = request.getParameter("comment");
+		CommentModel commentModel = new CommentModel();
+		commentModel.setComment(comment);
+		commentModel.setUserId(Integer.parseInt(userId));
+		commentModel.setItemId(Integer.parseInt(itemId));
+		communitySearchService.saveCommunityComments(commentModel);
+		return modelAndView;
+	}
+	
+	@RequestMapping(value = "/getCities", method = RequestMethod.GET)
+	public ModelAndView getCities(HttpServletRequest request,
+			HttpServletResponse httpresponse) {
+		ModelAndView modelAndView = new ModelAndView("home");
+		livingSocialService.loadCities();
+		return modelAndView;
+	}
+	
+	@RequestMapping(value = "/getLivingSocialDeals", method = RequestMethod.GET)
+	public ModelAndView getLivingSocialDeals(HttpServletRequest request,
+			HttpServletResponse httpresponse) {
+		ModelAndView modelAndView = new ModelAndView("home");
+		livingSocialService.loadLdeals();
+		return modelAndView;
+	}@RequestMapping(value = "/filterLivingSocialDealsByDiscount", method = RequestMethod.GET)
+	public ModelAndView filterLivingSocialDealsByDiscount(HttpServletRequest request,
+			HttpServletResponse httpresponse) {
+		ModelAndView modelAndView = new ModelAndView("home");
+		livingSocialFilterEngineService.filter();
+		return modelAndView;
+	}
+	
+	@RequestMapping(value = "/saveIfFollowingPage", method = RequestMethod.GET)
+	public ModelAndView saveIfFollowingPage(HttpServletRequest request, HttpServletResponse httpresponse){
+		ModelAndView modelAndView = new ModelAndView("home");
+		String userId = request.getParameter("userId");
+		String pageId = request.getParameter("pageId");
+		String isFollow = request.getParameter("isFollow");
+		communitySearchService.saveIsFollowingPage(Integer.parseInt(userId), Integer.parseInt(pageId), Boolean.parseBoolean(isFollow));
+		MainModel model = new MainModel();
+		modelAndView.addObject("mainModel", model);
+		return modelAndView;
+	}
+	
+	
+	@RequestMapping(value = "/wallFeed", method = RequestMethod.GET)
+	public ModelAndView wallFeed(HttpServletRequest request, HttpServletResponse response)
+	{
+		ModelAndView modelAndView = new ModelAndView("home");
+		wallService.addWeightContentOnItem();
+		
+		return modelAndView;
+	}
+	
+	
+	@RequestMapping(value = "/saveIsFollowingEvent", method = RequestMethod.GET)
+	public ModelAndView saveIsFollowingEvent(HttpServletRequest request, HttpServletResponse httpresponse){
+		ModelAndView modelAndView = new ModelAndView("home");
+		String userId = request.getParameter("userId");
+		String eventId = request.getParameter("eventId");
+		String isFollow = request.getParameter("isFollow");
+		communitySearchService.saveIsFollowingEvent(Integer.parseInt(userId), Integer.parseInt(eventId), Boolean.parseBoolean(isFollow));
+		MainModel model = new MainModel();
+		modelAndView.addObject("mainModel", model);
+		return modelAndView;
+	}
+	@RequestMapping(value = "/saveIsFavEvent", method = RequestMethod.GET)
+	public ModelAndView saveIsFavEvent(HttpServletRequest request, HttpServletResponse httpresponse){
+		ModelAndView modelAndView = new ModelAndView("home");
+		String userId = request.getParameter("userId");
+		String eventId = request.getParameter("eventId");
+		String isFav = request.getParameter("isFav");
+		logger.debug("saveIsFavEvent => userID :" + userId + "eventID : "+eventId + "isFav : "+isFav);
+		communitySearchService.saveIsFavoriteEvent(Integer.parseInt(userId), Integer.parseInt(eventId), Boolean.parseBoolean(isFav));
+		MainModel model = new MainModel();
+		modelAndView.addObject("mainModel", model);
+		return modelAndView;
+	}
+	
+	
+	
+	
+	@RequestMapping(value = "/friendSearch", method = RequestMethod.GET)
+	public ModelAndView friendSearch(HttpServletRequest request, HttpServletResponse httpresponse){
+		ModelAndView modelAndView = new ModelAndView("searchFriend");
+		String location = request.getParameter("location");
+		String name = request.getParameter("name");
+		String userId = request.getParameter("userId");
+		
+		FriendListResponse friendList = addFriendService.searchFriend(location, name, Integer.parseInt(userId));
+		MainModel model = new MainModel();
+		if(friendList!=null)
+		{
+			model.setUsersList(friendList.getUser());	
+		}
+	
+		modelAndView.addObject("mainModel", model);
+		return modelAndView;
+	}
+	@RequestMapping(value = "/sendFriendRequest", method = RequestMethod.GET)
+	public ModelAndView sendFriendRequest(HttpServletRequest request, HttpServletResponse httpresponse){
+		ModelAndView modelAndView = new ModelAndView("home");
+		String userId = request.getParameter("userId");
+		String contactId = request.getParameter("contactId");
+		logger.debug("sendFriendRequest => userID :" + userId + "contactId : "+contactId);
+		addFriendService.sendFriendRequest(Integer.parseInt(userId), Integer.parseInt(contactId));
+		MainModel model = new MainModel();
+		modelAndView.addObject("mainModel", model);
+		return modelAndView;
+	}
+	@RequestMapping(value = "/acceptFriendRequest", method = RequestMethod.GET)
+	public ModelAndView acceptFriendRequest(HttpServletRequest request, HttpServletResponse httpresponse){
+		ModelAndView modelAndView = new ModelAndView("home");
+		String userId = request.getParameter("userId");
+		String contactId = request.getParameter("contactId");
+		logger.debug("acceptFriendRequest => userID :" + userId + "contactId : "+contactId);
+		addFriendService.acceptFriendRequest(Integer.parseInt(userId), Integer.parseInt(contactId));
+		MainModel model = new MainModel();
+		modelAndView.addObject("mainModel", model);
+		return modelAndView;
+	}
+	@RequestMapping(value = "/denyFriendRequest", method = RequestMethod.GET)
+	public ModelAndView denyFriendRequest(HttpServletRequest request, HttpServletResponse httpresponse){
+		ModelAndView modelAndView = new ModelAndView("home");
+		String userId = request.getParameter("userId");
+		String contactId = request.getParameter("contactId");
+		logger.debug("denyFriendRequest => userID :" + userId + "contactId : "+contactId);
+		addFriendService.denyFriendRequest(Integer.parseInt(userId), Integer.parseInt(contactId));
+		MainModel model = new MainModel();
+		modelAndView.addObject("mainModel", model);
+		return modelAndView;
+	}
+	@RequestMapping(value = "/blockFriendRequest", method = RequestMethod.GET)
+	public ModelAndView BlockFriendRequest(HttpServletRequest request, HttpServletResponse httpresponse){
+		ModelAndView modelAndView = new ModelAndView("home");
+		String userId = request.getParameter("userId");
+		String contactId = request.getParameter("contactId");
+		logger.debug("blockFriendRequest => userID :" + userId + "contactId : "+contactId);
+		addFriendService.blockFriendRequest(Integer.parseInt(userId), Integer.parseInt(contactId));
+		MainModel model = new MainModel();
+		modelAndView.addObject("mainModel", model);
+		return modelAndView;
+	}
+	
+	
+	@RequestMapping(value = "/addDirectSuggestion", method = RequestMethod.GET)
+	public ModelAndView addEventSuggestion(HttpServletRequest request, HttpServletResponse httpresponse){
+		ModelAndView modelAndView = new ModelAndView("home");
+		String userId = request.getParameter("userId");
+		String contactId = request.getParameter("contactId");
+		String category = request.getParameter("category");
+		String suggestionId = request.getParameter("suggestionId");
+		String suggestionType = request.getParameter("suggestionType");
+		ArrayList<Integer> friendsList = new ArrayList<Integer>();
+		String[] s =contactId.split(",");
+		for(int i = 0; i<s.length;i++)
+		{
+			friendsList.add(Integer.parseInt(s[i]));
+		}
+		addDirectSuggestionService.addSuggestions(Integer.parseInt(userId), friendsList, Integer.parseInt(suggestionId), category, suggestionType);
+		return modelAndView;
+	}
+	
+	@RequestMapping(value = "/wallFeedSharing", method = RequestMethod.GET)
+	public ModelAndView wallFeedSharing(HttpServletRequest request, HttpServletResponse response)
+	{
+		ModelAndView modelAndView = new ModelAndView("home");
+		String funBoradIdList[]= request.getParameterValues("funBoardId");
+		String sharedWithUserList[] = request.getParameterValues("sharedWithUserId");
+		
+		for(int i=0;i<funBoradIdList.length;i++)
+		{
+			int funBoardId = Integer.parseInt(funBoradIdList[i]);
+			wallFeedSharingService.saveWallFeedSharingData(funBoardId, sharedWithUserList);
+		}
+		return modelAndView;
+	}
 }

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import com.jeeyoh.persistence.domain.Business;
 import com.jeeyoh.persistence.domain.Businesstype;
 import com.jeeyoh.persistence.domain.Gcategory;
+import com.jeeyoh.persistence.domain.Lcategory;
 
 @Repository("businessDAO")
 public interface IBusinessDAO {
@@ -20,7 +21,7 @@ public interface IBusinessDAO {
 	public Businesstype getBusinesstypeByType(String type);
 	public void saveBusiness(Business business);
 	public List<Business> getBusinessByCriteria(String userEmail, String searchText, String category, String location, String rating);
-	public List<Business> getBusinessByuserLikes(String likekeyword, String itemCategory, String providerName);
+	public List<Business> getBusinessByuserLikes(String likekeyword, String itemCategory, String providerName, double latitude, double longitude);
 	public Gcategory getBusinessCategory(String name);
 	public List<Business> getBusinessBySearchKeyword(String searchText,String category, String location,int offset, int limit);
 	public List<Business> getBusinessByLikeSearchKeyword(String searchText,String category, String location,int offset, int limit);
@@ -28,4 +29,9 @@ public interface IBusinessDAO {
 	public List<Business> getUserNonDealSuggestions(String userEmail, int offset, int limit);
 	public List<Object[]> getTopBusinessByRating(String idsArray);
 	public List<Object[]> getNonDealLikeCountByPage(String idsStr);
+	public int getTotalBusinessBySearchKeyWord(String searchText,String category, String location);
+	public Lcategory getLivingSocialBusinessCategory(String name);
+	public List<Business> getBusinessByIdForLivingSocial(String businessId);
+	public List<Business> getBusinessByNameForLivingSocial(String merchantName);
+	public List<Businesstype> getBusinesstypes();
 }
