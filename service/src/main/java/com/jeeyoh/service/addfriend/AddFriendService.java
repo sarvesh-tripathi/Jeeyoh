@@ -67,7 +67,7 @@ public class AddFriendService implements IAddFriendService{
 					userModel.setCity(user.getCity());
 					userModel.setConfirmationId(user.getConfirmationId());
 					userModel.setCountry(user.getCountry());
-					userModel.setCreatedtime(user.getCreatedtime());
+					userModel.setCreatedtime(user.getCreatedtime().toString());
 					userModel.setEmailId(user.getEmailId());
 					userModel.setFirstName(user.getFirstName());
 					userModel.setGender(user.getGender());
@@ -79,7 +79,7 @@ public class AddFriendService implements IAddFriendService{
 					userModel.setSessionId(user.getSessionId());
 					userModel.setState(user.getState());
 					userModel.setStreet(user.getStreet());
-					userModel.setUpdatedtime(user.getUpdatedtime());
+					userModel.setUpdatedtime(user.getUpdatedtime().toString());
 					userModel.setUserId(user.getUserId());
 					userModel.setZipcode(user.getZipcode());
 					addedIds.add(user.getUserId());
@@ -111,7 +111,7 @@ public class AddFriendService implements IAddFriendService{
 				userModel.setCity(user.getCity());
 				userModel.setConfirmationId(user.getConfirmationId());
 				userModel.setCountry(user.getCountry());
-				userModel.setCreatedtime(user.getCreatedtime());
+				userModel.setCreatedtime(user.getCreatedtime().toString());
 				userModel.setEmailId(user.getEmailId());
 				userModel.setFirstName(user.getFirstName());
 				userModel.setGender(user.getGender());
@@ -123,7 +123,7 @@ public class AddFriendService implements IAddFriendService{
 				userModel.setSessionId(user.getSessionId());
 				userModel.setState(user.getState());
 				userModel.setStreet(user.getStreet());
-				userModel.setUpdatedtime(user.getUpdatedtime());
+				userModel.setUpdatedtime(user.getUpdatedtime().toString());
 				userModel.setUserId(user.getUserId());
 				userModel.setZipcode(user.getZipcode());
 				addedIds.add(user.getUserId());
@@ -149,7 +149,7 @@ public class AddFriendService implements IAddFriendService{
 				userModel.setCity(user.getCity());
 				userModel.setConfirmationId(user.getConfirmationId());
 				userModel.setCountry(user.getCountry());
-				userModel.setCreatedtime(user.getCreatedtime());
+				userModel.setCreatedtime(user.getCreatedtime().toString());
 				userModel.setEmailId(user.getEmailId());
 				userModel.setFirstName(user.getFirstName());
 				userModel.setGender(user.getGender());
@@ -161,7 +161,7 @@ public class AddFriendService implements IAddFriendService{
 				userModel.setSessionId(user.getSessionId());
 				userModel.setState(user.getState());
 				userModel.setStreet(user.getStreet());
-				userModel.setUpdatedtime(user.getUpdatedtime());
+				userModel.setUpdatedtime(user.getUpdatedtime().toString());
 				userModel.setUserId(user.getUserId());
 				userModel.setZipcode(user.getZipcode());
 				userModelList.add(userModel);

@@ -26,6 +26,7 @@ import com.jeeyoh.model.response.BaseResponse;
 import com.jeeyoh.model.response.CategoryLikesResponse;
 import com.jeeyoh.model.response.CategoryResponse;
 import com.jeeyoh.model.response.CommentResponse;
+import com.jeeyoh.model.response.FriendListResponse;
 import com.jeeyoh.model.response.FunBoardDetailResponse;
 import com.jeeyoh.model.response.FunBoardResponse;
 import com.jeeyoh.model.response.LoginResponse;
@@ -37,6 +38,7 @@ import com.jeeyoh.model.response.UserResponse;
 import com.jeeyoh.model.search.AddGroupModel;
 import com.jeeyoh.model.search.CategoryModel;
 import com.jeeyoh.model.search.DirectSuggestionModel;
+import com.jeeyoh.model.search.FavoriteRequestModel;
 import com.jeeyoh.model.search.PageModel;
 import com.jeeyoh.model.user.UserModel;
 import com.jeeyoh.notification.service.IMessagingEventPublisher;
@@ -66,10 +68,10 @@ public class UserAccountService {
 
 	@InjectParam
 	IMediaService mediaService;
-	
+
 	@InjectParam
 	IAddGroupService addGroupService;
-	
+
 	@InjectParam
 	IAddDirectSuggestionService addDirectSuggestionService;
 
@@ -408,44 +410,45 @@ public class UserAccountService {
 		FunBoardDetailResponse response = funBoardService.getFunBoardItem(request);
 		return response;
 	}
-	
-	 // For Testing purpose
-    @POST
-    @Path("/upload")
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response uploadFile(@FormDataParam("file") InputStream uploadedInputStream,
-            @FormDataParam("file") FormDataContentDisposition fileDetail)
-    {
-        // logger.debug("userId = " + userId);
-        // String randomNumber = Util.getRandomCode();
-        // String uploadedFileLocation = "d://uploaded/" +
-        // fileDetail.getFileName();
-        String fileName = fileDetail.getFileName();
-        logger.debug("uploadedMediaServerPATH = " + fileName);
-        UploadMediaServerResponse uploadMediaServerResponse = new UploadMediaServerResponse();
 
-        // File mediaFileObject = new File(uploadedMediaServerPATH + "34_" +
-        // randomNumber + "_" + fileDetail.getFileName());
-        // save it
-        uploadMediaServerResponse = mediaService.uploadOnServer(uploadedInputStream, fileName, "34");
-        String output = "File uploaded to : " + uploadMediaServerResponse.getMediaUrl();
+	// For Testing purpose
+	@POST
+	@Path("/upload")
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	public Response uploadFile(@FormDataParam("file") InputStream uploadedInputStream,
+			@FormDataParam("file") FormDataContentDisposition fileDetail)
+	{
+		// logger.debug("userId = " + userId);
+		// String randomNumber = Util.getRandomCode();
+		// String uploadedFileLocation = "d://uploaded/" +
+		// fileDetail.getFileName();
+		String fileName = fileDetail.getFileName();
+		logger.debug("uploadedMediaServerPATH = " + fileName);
+		UploadMediaServerResponse uploadMediaServerResponse = new UploadMediaServerResponse();
 
-        return Response.status(200).entity(output).build();
+		// File mediaFileObject = new File(uploadedMediaServerPATH + "34_" +
+		// randomNumber + "_" + fileDetail.getFileName());
+		// save it
+		uploadMediaServerResponse = mediaService.uploadOnServer(uploadedInputStream, fileName, "34");
+		String output = "File uploaded to : " + uploadMediaServerResponse.getMediaUrl();
 
-    }
-    
-    @POST
+		return Response.status(200).entity(output).build();
+
+	}
+
+	@POST
 	@Path("/addGroup")
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public AddGroupResponse addGroup(AddGroupModel addGroupModel)
 	{
 		logger.debug("Enter in categoey mobile api :: "+addGroupModel.getGroupName());
 		AddGroupResponse addGroupResponse = addGroupService.addGroup(addGroupModel);
 		return addGroupResponse;
-		
+
 	}
-    
-    @GET
+
+	@GET
 	@Path("/addGroupButton")
 	@Produces(MediaType.APPLICATION_JSON)
 	public AddGroupButtonResponse addGroupButton(@QueryParam("userId") int userId)
@@ -453,10 +456,10 @@ public class UserAccountService {
 		logger.debug("Enter in addGroupButton api :: "+userId);
 		AddGroupButtonResponse addGroupButtonResponse = addGroupService.addGroupPage(userId);
 		return addGroupButtonResponse;
-		
+
 	}
-    
-    @POST
+
+	@POST
 	@Path("/addEventSuggestion")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -466,8 +469,8 @@ public class UserAccountService {
 		BaseResponse response = addDirectSuggestionService.addSuggestions(eventSuggestionModel.getUserId(), eventSuggestionModel.getFriendsIdList(), eventSuggestionModel.getSuggestionId(), eventSuggestionModel.getCategory(), eventSuggestionModel.getSuggestionType());
 		return response;
 	}
-    
-    @POST
+
+	@POST
 	@Path("/updateProfile")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -485,9 +488,9 @@ public class UserAccountService {
 		userModel.setBirthMonth(dateOfBirth.getMonth());
 		userModel.setBirthYear(dateOfBirth.getYear());
 		userModel.setUserId(Integer.parseInt(userId));
-		
+
 		UserResponse userResponse = new UserResponse();
-		
+
 		UploadMediaServerResponse uploadMediaServerResponse = new UploadMediaServerResponse();
 		boolean isMediaProcessedAndUploaded = true;
 		String mediaProcessingError = "";
@@ -523,9 +526,9 @@ public class UserAccountService {
 		}
 		return userResponse;
 	}
-    
-    
-    @POST
+
+
+	@POST
 	@Path("/updatePrivacySetting")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -533,6 +536,33 @@ public class UserAccountService {
 	{
 		logger.debug("updatePrivacySetting => userid => "+userModel.getUserId()+" ;IsShareProfileWithGroup => "+userModel.getIsShareProfileWithGroup()+" ;IsShareProfileWithFriend() => "+userModel.getIsShareProfileWithFriend()+" ;IsShareCommunity => "+userModel.getIsShareCommunity());
 		BaseResponse response = userService.updatePrivacySetting(userModel);
+		return response;
+	}
+
+
+	@POST
+	@Path("/makeFavorite")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public BaseResponse makeFavorite(FavoriteRequestModel requestModel)
+	{
+		BaseResponse response =null;
+		if(requestModel.getUserId()!=0 && requestModel.getItemId()!=0)
+			response =userService.saveFavoriteItem(requestModel.getUserId(), requestModel.getItemId(), requestModel.getItemType(), requestModel.getIsFav());
+		return response;
+	}
+
+	@POST
+	@Path("/getFriendsList")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public FriendListResponse getFriendsList(UserModel user)
+	{
+		FriendListResponse response = new FriendListResponse();
+		if(user.getUserId() != null && user.getUserId() !=0)
+		{
+			response = userService.getFriendsOfUser(user.getUserId());
+		}
 		return response;
 	}
 

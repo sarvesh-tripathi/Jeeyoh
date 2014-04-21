@@ -41,7 +41,7 @@ public interface IUserDAO {
 	public List<Jeeyohgroup> getUserGroups(int userId);
 
 	public List<Jeeyohgroup> getUserContactGroups(int contactId);
-	public List<Pageuserlikes> getUserPageProperties(int userId, int pageId);
+	public Pageuserlikes getUserPageProperties(int userId, int pageId);
 	public List<Pagetype> getCommunityType(int pageId);
 	public void saveNonDealSuggestions(Usernondealsuggestion suggestion, int batch_size);
 	public User getUserById(int userid);

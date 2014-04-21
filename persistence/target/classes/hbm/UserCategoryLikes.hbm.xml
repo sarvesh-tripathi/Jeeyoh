@@ -22,7 +22,7 @@
 			<column name="userCategoryId " />
 		</many-to-one>
 		<property name="isActive" type="java.lang.Boolean">
-			<column name="isActive" precision="10" scale="0" />
+			<column name="isActive" default ="false" not-null="false"/>
 		</property>
 		<property name="rank" type="java.lang.Long">
 			<column name="rank" precision="10" scale="0" />

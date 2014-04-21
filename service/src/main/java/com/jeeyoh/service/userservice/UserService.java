@@ -19,6 +19,7 @@ import com.jeeyoh.model.enums.ServiceAPIStatus;
 import com.jeeyoh.model.response.BaseResponse;
 import com.jeeyoh.model.response.CategoryLikesResponse;
 import com.jeeyoh.model.response.CategoryResponse;
+import com.jeeyoh.model.response.FriendListResponse;
 import com.jeeyoh.model.response.LoginResponse;
 import com.jeeyoh.model.response.SuggestionResponse;
 import com.jeeyoh.model.response.TopSuggestionResponse;
@@ -43,7 +44,9 @@ import com.jeeyoh.persistence.IFunBoardDAO;
 import com.jeeyoh.persistence.IUserDAO;
 import com.jeeyoh.persistence.domain.Business;
 import com.jeeyoh.persistence.domain.Deals;
+import com.jeeyoh.persistence.domain.Dealsusage;
 import com.jeeyoh.persistence.domain.Events;
+import com.jeeyoh.persistence.domain.Eventuserlikes;
 import com.jeeyoh.persistence.domain.Funboard;
 import com.jeeyoh.persistence.domain.Notificationpermission;
 import com.jeeyoh.persistence.domain.Page;
@@ -72,6 +75,16 @@ public class UserService implements IUserService{
 
 	@Value("${host.path}")
 	private String hostPath;
+	
+	@Value("${app.jeeyoh.favorite.success}")
+	private String favSuccess;
+	
+	@Value("${app.jeeyoh.favorite.already.exist}")
+	private String alreadyExists;
+	
+	@Value("${app.jeeyoh.failed}")
+	private String errorMessage;
+	
 	
 	@Autowired
 	private IUserDAO userDAO;
@@ -252,7 +265,7 @@ public class UserService implements IUserService{
 			user.setCity(userDetails.getCity());
 			user.setConfirmationId(userDetails.getConfirmationId());
 			user.setCountry(userDetails.getCountry());
-			user.setCreatedtime(userDetails.getCreatedtime());
+			user.setCreatedtime(userDetails.getCreatedtime().toString());
 			user.setEmailId(userDetails.getEmailId());
 			user.setFirstName(userDetails.getFirstName());
 			user.setGender(userDetails.getGender());
@@ -268,7 +281,7 @@ public class UserService implements IUserService{
 			user.setSessionId(userDetails.getSessionId());
 			user.setState(userDetails.getState());
 			user.setStreet(userDetails.getStreet());
-			user.setUpdatedtime(userDetails.getUpdatedtime());
+			user.setUpdatedtime(userDetails.getUpdatedtime().toString());
 			user.setUserId(userDetails.getUserId());
 			user.setZipcode(userDetails.getZipcode());
 			categoryResponse.setUser(user);
@@ -1052,6 +1065,204 @@ public class UserService implements IUserService{
 			response.setError("Task Failed");
 			response.setStatus(ServiceAPIStatus.FAILED.getStatus()); 
 		}
+		return response;
+	}
+
+	@Transactional
+	@Override
+	public BaseResponse saveFavoriteItem(int userId, int itemId, String itemType, boolean isFav) {
+		logger.debug("saveIsFavoriteEvent  ===>");
+		//User user = userDAO.getUserById(userId);
+		boolean isUpdated = false, isAlreadyExists = false;
+		User user = new User();
+		user.setUserId(userId);
+
+		BaseResponse baseResponse = new BaseResponse();
+		if(itemType.equalsIgnoreCase("Community") || itemType.equalsIgnoreCase("Business"))
+		{
+			Notificationpermission notificationPermission = userDAO.getDafaultNotification();
+			Page page = new Page();
+			if(itemType.equalsIgnoreCase("Business"))
+			{
+				page = eventsDAO.getPageByBusinessId(itemId);
+			}
+			else
+				page.setPageId(itemId);
+			
+			Pageuserlikes pageuserlikes = null;
+
+			if(page != null)
+			{
+				// Check if entry already exists in table
+				pageuserlikes = userDAO.getUserPageProperties(userId, page.getPageId());
+				//Eventuserlikes existingEventUserLikes = eventsDAO.isEventExistInUserProfile(userId, eventId);
+				logger.debug("pageuserlikes =>"+pageuserlikes);
+				if(pageuserlikes!=null && !pageuserlikes.equals(""))
+				{
+					if(pageuserlikes.getIsFavorite()!=isFav){
+						pageuserlikes.setIsFavorite(isFav);
+						isUpdated = eventsDAO.updatePageUserLikes(pageuserlikes);
+					}
+					else
+					{
+						isAlreadyExists = true;
+					}
+				}
+				else if (pageuserlikes == null)
+				{
+					pageuserlikes = new Pageuserlikes();
+					pageuserlikes.setIsFavorite(isFav);
+					pageuserlikes.setIsFollowing(false);
+					pageuserlikes.setIsLike(false);
+					pageuserlikes.setIsVisited(false);
+					pageuserlikes.setIsProfileDetailsHidden(false);
+					pageuserlikes.setIsProfileHidden(false);
+					pageuserlikes.setIsSuggested(false);
+					pageuserlikes.setUser(user);
+					pageuserlikes.setPage(page);
+					pageuserlikes.setNotificationpermission(notificationPermission);
+					pageuserlikes.setCreatedtime(new Date());
+					pageuserlikes.setUpdatedtime(new Date());
+					isUpdated = eventsDAO.savePageUserLikes(pageuserlikes);
+				}
+			}
+		}
+		else if(itemType.equalsIgnoreCase("Event"))
+		{
+			Events event = new Events();
+			event.setEventId(itemId);
+			
+			Eventuserlikes eventUserLikes = new Eventuserlikes();
+
+			// Check if entry already exists in table
+			Eventuserlikes existingEventUserLikes = eventsDAO.isEventExistInUserProfile(userId, itemId);
+			logger.debug("existingEventUserLikes =>"+existingEventUserLikes);
+			if(existingEventUserLikes!=null && !existingEventUserLikes.equals(""))
+			{
+				if(existingEventUserLikes.getIsFavorite()!=isFav){
+					existingEventUserLikes.setIsFavorite(isFav);
+					isUpdated = eventsDAO.updateUserEvents(existingEventUserLikes);
+				}
+				else
+				{
+					isAlreadyExists = true;
+				}
+
+			}
+			else if (existingEventUserLikes == null)
+			{
+				eventUserLikes.setIsFavorite(isFav);
+				eventUserLikes.setIsFollowing(false);
+				eventUserLikes.setIsBooked(false);
+				eventUserLikes.setIsLike(false);
+				eventUserLikes.setIsVisited(false);
+				eventUserLikes.setIsProfileDetailsHidden(false);
+				eventUserLikes.setIsProfileHidden(false);
+				eventUserLikes.setIsSuggested(false);
+				eventUserLikes.setEvent(event);
+				eventUserLikes.setUser(user);
+				eventUserLikes.setCreatedtime(new Date());
+				eventUserLikes.setUpdatedtime(new Date());
+				isUpdated = eventsDAO.saveUserEvents(eventUserLikes);
+			}
+		}
+		else if(itemType.equalsIgnoreCase("Deal"))
+		{
+			//Page page = eventsDAO.getPageDetailsByID(pageId);
+			Deals deal = new Deals();
+			deal.setId(itemId);
+
+			
+			Dealsusage dealsusage = null;
+
+			// Check if entry already exists in table
+			
+			dealsusage = userDAO.getUserLikeDeal(userId, itemId);
+			logger.debug("dealsusage =>"+dealsusage);
+			if(dealsusage!=null && !dealsusage.equals(""))
+			{
+				if(dealsusage.getIsFavorite()!=isFav){
+					dealsusage.setIsFavorite(isFav);
+					isUpdated = dealsDAO.updateDealUserLikes(dealsusage);
+				}
+				else
+				{
+					isAlreadyExists = true;
+				}
+
+			}
+			else if (dealsusage == null)
+			{
+				dealsusage = new Dealsusage();
+				dealsusage.setIsFavorite(isFav);
+				dealsusage.setIsFollowing(false);
+				dealsusage.setIsLike(false);
+				dealsusage.setIsVisited(false);
+				dealsusage.setIsSuggested(false);
+				dealsusage.setIsRedempted(false);
+				dealsusage.setUser(user);
+				dealsusage.setDeals(deal);
+				dealsusage.setCreatedtime(new Date());
+				dealsusage.setUpdatedtime(new Date());
+				isUpdated = dealsDAO.saveDealUserLikes(dealsusage);
+			}
+		}
+		
+		if(isUpdated)
+		{
+			baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
+			baseResponse.setMessage(favSuccess);
+		}
+		else if(isAlreadyExists)
+		{
+			baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
+			baseResponse.setMessage(alreadyExists);
+		}
+		else
+		{
+			baseResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
+			baseResponse.setError(errorMessage);
+		}
+			
+		return baseResponse;
+	}
+	
+	
+	@Transactional
+	@Override
+	public FriendListResponse getFriendsOfUser(int userId) {
+		logger.debug("getFriendsOfUser =>"+userId);
+		FriendListResponse response = new FriendListResponse();
+		List<UserModel> userList = new ArrayList<UserModel>();
+		List<User> friendsList = userDAO.getUserContacts(userId);
+		for(User friend: friendsList)
+		{
+			UserModel user =  new UserModel();
+			user.setAddressline1(friend.getAddressline1());
+			user.setBirthDate(friend.getBirthDate());
+			user.setBirthMonth(friend.getBirthMonth());
+			user.setBirthYear(friend.getBirthYear());
+			user.setCity(friend.getCity());
+			user.setConfirmationId(friend.getConfirmationId());
+			user.setCountry(friend.getCountry());
+			user.setCreatedtime(friend.getCreatedtime().toString());
+			user.setEmailId(friend.getEmailId());
+			user.setFirstName(friend.getFirstName());
+			user.setGender(friend.getGender());
+			user.setIsActive(friend.getIsActive());
+			user.setIsDeleted(friend.getIsDeleted());
+			user.setLastName(friend.getLastName());
+			user.setMiddleName(friend.getMiddleName());
+			user.setPassword(friend.getPassword());
+			user.setState(friend.getState());
+			user.setSessionId(friend.getSessionId());
+			user.setStreet(friend.getStreet());
+			user.setUpdatedtime(friend.getUpdatedtime().toString());
+			user.setUserId(friend.getUserId());
+			user.setZipcode(friend.getZipcode());
+			userList.add(user);
+		}
+		response.setUser(userList);
 		return response;
 	}
 

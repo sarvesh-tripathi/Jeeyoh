@@ -512,6 +512,7 @@ public class AccountController {
 
 		UserModel user = new UserModel();
 		user.setEmailId("gaurav.shandilya@gmail.com");
+		user.setUserId(1);
 		user.setLimit(10);
 		userService.getUserSuggestions(user);
 		//userService.getUserTopSuggestions(user);
@@ -792,7 +793,7 @@ public class AccountController {
 		String eventId = request.getParameter("eventId");
 		String isFav = request.getParameter("isFav");
 		logger.debug("saveIsFavEvent => userID :" + userId + "eventID : "+eventId + "isFav : "+isFav);
-		communitySearchService.saveIsFavoriteEvent(Integer.parseInt(userId), Integer.parseInt(eventId), Boolean.parseBoolean(isFav));
+		communitySearchService.saveFavoritePage(Integer.parseInt(userId), Integer.parseInt(eventId), Boolean.parseBoolean(isFav));
 		MainModel model = new MainModel();
 		modelAndView.addObject("mainModel", model);
 		return modelAndView;

@@ -175,18 +175,19 @@ public class UserDAO implements IUserDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Pageuserlikes> getUserPageProperties(int userId, int pageId) {
+	public Pageuserlikes getUserPageProperties(int userId, int pageId) {
 		List<Pageuserlikes> pageProperties = null;
-		String hqlQuery = "select c from User a, Page b, Pageuserlikes c where a.userId = :userId and c.user.userId = a.userId and b.pageId = c.page.pageId";
+		String hqlQuery = "select c from User a, Page b, Pageuserlikes c where a.userId = :userId and b.pageId = :pageId and c.user.userId = a.userId and b.pageId = c.page.pageId";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
 			query.setParameter("userId", userId);
+			query.setParameter("pageId", pageId);
 			pageProperties = (List<Pageuserlikes>) query.list();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return pageProperties;
+		return pageProperties != null && !pageProperties.isEmpty() ? pageProperties.get(0) : null;
 	}
 
 	@Override
@@ -1646,14 +1647,15 @@ public class UserDAO implements IUserDAO {
 
 	@Override
 	public int getTotalUserDealSuggestions(Integer userId) {
-		logger.debug("userNonDealSuggestionCount => ");
+		logger.debug("getTotalUserDealSuggestions => ");
 		int rowCount = 0;
-		String hqlQuery = "select count(userDealMapId) from Userdealssuggestion where user.userId = :userId";
+		String hqlQuery = "select count(a.userDealMapId) from Userdealssuggestion a where a.user.userId = :userId and (a.deals.endAt >= :currentDate and a.deals.endAt > :weekendDate)";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
 			query.setParameter("userId", userId);
-
+			query.setParameter("currentDate", Utils.getCurrentDate());
+			query.setParameter("weekendDate", Utils.getNearestThursday());
 			rowCount = ((Number)query.uniqueResult()).intValue();
 
 		} catch (Exception e) {
@@ -1666,14 +1668,14 @@ public class UserDAO implements IUserDAO {
 
 	@Override
 	public int getTotalUserEventSuggestions(Integer userId) {
-		logger.debug("userNonDealSuggestionCount => ");
+		logger.debug("getTotalUserEventSuggestions => ");
 		int rowCount = 0;
-		String hqlQuery = "select count(userEventMapId) from Usereventsuggestion where user.userId = :userId";
+		String hqlQuery = "select count(a.userEventMapId) from Usereventsuggestion a where a.user.userId = :userId and a.events.event_date >= :currentDate";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
 			query.setParameter("userId", userId);
-
+			query.setParameter("currentDate", Utils.getCurrentDate());
 			rowCount = ((Number)query.uniqueResult()).intValue();
 
 		} catch (Exception e) {
@@ -2004,4 +2006,6 @@ public class UserDAO implements IUserDAO {
 		}
 		return usercontacts!=null ? usercontacts.get(0):null;
 	}
+	
+	
 }

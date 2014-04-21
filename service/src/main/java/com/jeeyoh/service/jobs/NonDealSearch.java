@@ -304,11 +304,11 @@ public class NonDealSearch implements INonDealSearch {
 									{
 										rating = business.getRating();
 									}
-									List<Pageuserlikes> pageProperties = userDAO.getUserPageProperties(userId, community.getPageId());
-									if(pageProperties != null)
+									Pageuserlikes pageProperty = userDAO.getUserPageProperties(userId, community.getPageId());
+									if(pageProperty != null)
 									{
 										logger.debug("NonDealSearch ==> search ==> pageProperties ==> not null" );
-										Pageuserlikes pageProperty = pageProperties.get(0);
+										//Pageuserlikes pageProperty = pageProperties.get(0);
 										if(pageProperty != null) {
 											logger.debug("NonDealSearch ==> search ==> pageProperty ==> not null" );
 											boolean isLiked = pageProperty.getIsLike();

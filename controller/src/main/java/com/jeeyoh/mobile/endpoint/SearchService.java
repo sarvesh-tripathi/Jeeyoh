@@ -18,6 +18,8 @@ import com.jeeyoh.model.response.CommunityResponse;
 import com.jeeyoh.model.response.FriendListResponse;
 import com.jeeyoh.model.response.MemoryCardResponse;
 import com.jeeyoh.model.response.SearchResponse;
+import com.jeeyoh.model.search.FavoriteRequestModel;
+import com.jeeyoh.model.search.FriendModel;
 import com.jeeyoh.model.search.MemoryCardModel;
 import com.jeeyoh.model.search.SearchRequest;
 import com.jeeyoh.service.addfriend.IAddFriendService;
@@ -79,114 +81,117 @@ public class SearchService {
 	}
 	
 	
-	@GET
+	@POST
 	@Path("/followPage")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public BaseResponse saveIsFollowPage(@QueryParam("userId") int userId, @QueryParam("pageId") int pageId,@QueryParam("isFollow") boolean isFollow)
+	public BaseResponse followPage(FavoriteRequestModel requestModel)
 	{
-		BaseResponse response =null;
-		logger.debug("userId1111 =>"+userId+"; pageId =>"+pageId + "; isFollow => "+ isFollow);
-		if(userId!=0 && pageId!=0)
-			response =communitySearchService.saveIsFollowingPage(userId, pageId, isFollow);	
+		BaseResponse response = new BaseResponse();
+		logger.debug("userId1111 =>"+requestModel.getUserId()+"; eventId =>"+requestModel.getItemId() + " ; isFav => "+ requestModel.getIsFollow());
+		if(requestModel.getUserId()!=0 && requestModel.getItemId()!=0)
+			response =communitySearchService.saveIsFollowingPage(requestModel.getUserId(), requestModel.getItemId(), requestModel.getIsFollow());	
 		return response;
 	}
 	
 	
-	@GET
-	@Path("/makeFavorite")
+	@POST
+	@Path("/community/makeFavorite")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public BaseResponse saveIsFavEvent(@QueryParam("userId") int userId, @QueryParam("eventId") int eventId,@QueryParam("isFav") boolean isFav)
+	public BaseResponse makeFavorite(FavoriteRequestModel requestModel)
 	{
-		BaseResponse response =null;
-		logger.debug("userId1111 =>"+userId+"; eventId =>"+eventId + " ; isFav => "+ isFav);
-		if(userId!=0 && eventId!=0)
-			response =communitySearchService.saveIsFavoriteEvent(userId, eventId, isFav);
+		BaseResponse response = new BaseResponse();
+		logger.debug("userId1111 =>"+requestModel.getUserId()+"; eventId =>"+requestModel.getItemId() + " ; isFav => "+ requestModel.getIsFav());
+		if(requestModel.getUserId()!=0 && requestModel.getItemId()!=0)
+			response =communitySearchService.saveFavoritePage(requestModel.getUserId(), requestModel.getItemId(), requestModel.getIsFav());
 		return response;
 	}
 	
-	@GET
+	
+	
+	
+	@POST
 	@Path("/followEvent")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public BaseResponse saveIsFollowEvent(@QueryParam("userId") int userId, @QueryParam("eventId") int eventId,@QueryParam("isFollow") boolean isFollow)
+	public BaseResponse saveIsFollowEvent(FavoriteRequestModel requestModel)
 	{
-		BaseResponse response =null;
-		logger.debug("userId1111 =>"+userId+"; eventId =>"+eventId + " ; isFav => "+ isFollow);
-		if(userId!=0 && eventId!=0)
-			response =communitySearchService.saveIsFollowingEvent(userId, eventId, isFollow);
+		BaseResponse response = new BaseResponse();
+		logger.debug("userId1111 =>"+requestModel.getUserId()+"; eventId =>"+requestModel.getItemId() + " ; isFav => "+ requestModel.getIsFollow());
+		if(requestModel.getUserId()!=0 && requestModel.getItemId()!=0)
+			response =communitySearchService.saveIsFollowingEvent(requestModel.getUserId(), requestModel.getItemId(), requestModel.getIsFollow());
 		return response;
 	}
 	
 	
-	@GET
+	@POST
 	@Path("/searchFriend")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public FriendListResponse searchFriend(@QueryParam("location") String location, @QueryParam("name") String name, @QueryParam("userId") int userId)
+	public FriendListResponse searchFriend(FriendModel friendModel)
 	{
-		logger.debug("searchFriend =>"+location+"; name =>"+name);
-		FriendListResponse response = addFriendService.searchFriend(location, name, userId);
+		logger.debug("searchFriend =>"+friendModel.getLocation()+"; name =>"+friendModel.getName());
+		FriendListResponse response = addFriendService.searchFriend(friendModel.getLocation(), friendModel.getName(), friendModel.getUserId());
 		return response;
 	}
 	
-	@GET
+	@POST
 	@Path("/sendFriendRequest")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public BaseResponse sendFriendRequest(@QueryParam("userId") int userId, @QueryParam("contactId") int contactId)
+	public BaseResponse sendFriendRequest(FriendModel friendModel)
 	{
-		logger.debug("sendFriendRequest userId=>"+userId+"; contactId =>"+contactId);
-		BaseResponse response =null;
-		if(userId!=0 && contactId!=0)
+		logger.debug("sendFriendRequest userId=>"+friendModel.getUserId()+"; contactId =>"+friendModel.getContactId());
+		BaseResponse response =new BaseResponse();
+		if(friendModel.getUserId()!=0 && friendModel.getContactId()!=0)
 		{
-			response = addFriendService.sendFriendRequest(userId, contactId);
+			response = addFriendService.sendFriendRequest(friendModel.getUserId(), friendModel.getContactId());
 		}
 		return response;
 	}
 	
-	@GET
+	@POST
 	@Path("/acceptFriendRequest")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public BaseResponse acceptFriendRequest(@QueryParam("userId") int userId, @QueryParam("contactId") int contactId)
+	public BaseResponse acceptFriendRequest(FriendModel friendModel)
 	{
-		logger.debug("sendFriendRequest userId=>"+userId+"; contactId =>"+contactId);
-		BaseResponse response =null;
-		if(userId!=0 && contactId!=0)
+		logger.debug("sendFriendRequest userId=>"+friendModel.getUserId()+"; contactId =>"+friendModel.getContactId());
+		BaseResponse response =new BaseResponse();
+		if(friendModel.getUserId()!=0 && friendModel.getContactId()!=0)
 		{
-			response = addFriendService.acceptFriendRequest(userId, contactId);
+			response = addFriendService.acceptFriendRequest(friendModel.getUserId(), friendModel.getContactId());
 		}
 		return response;
 	}
 	
-	@GET
+	@POST
 	@Path("/denyFriendRequest")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public BaseResponse denyFriendRequest(@QueryParam("userId") int userId, @QueryParam("contactId") int contactId, @QueryParam("isDeny") boolean isDeny)
+	public BaseResponse denyFriendRequest(FriendModel friendModel)
 	{
-		logger.debug("sendFriendRequest userId=>"+userId+"; contactId =>"+contactId);
-		BaseResponse response =null;
-		if(userId!=0 && contactId!=0)
+		logger.debug("sendFriendRequest userId=>"+friendModel.getUserId()+"; contactId =>"+friendModel.getContactId());
+		BaseResponse response =new BaseResponse();
+		if(friendModel.getUserId()!=0 && friendModel.getContactId()!=0)
 		{
-			response = addFriendService.denyFriendRequest(userId, contactId);
+			response = addFriendService.denyFriendRequest(friendModel.getUserId(), friendModel.getContactId());
 		}
 		return response;
 	}
 	
-	@GET
+	@POST
 	@Path("/blockFriendRequest")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public BaseResponse blockFriendRequest(@QueryParam("userId") int userId, @QueryParam("contactId") int contactId, @QueryParam("isBlock") boolean isBlock)
+	public BaseResponse blockFriendRequest(FriendModel friendModel)
 	{
-		logger.debug("sendFriendRequest userId=>"+userId+"; contactId =>"+contactId);
-		BaseResponse response =null;
-		if(userId!=0 && contactId!=0)
+		logger.debug("sendFriendRequest userId=>"+friendModel.getUserId()+"; contactId =>"+friendModel.getContactId());
+		BaseResponse response =new BaseResponse();
+		if(friendModel.getUserId()!=0 && friendModel.getContactId()!=0)
 		{
-			response = addFriendService.denyFriendRequest(userId, contactId);
+			response = addFriendService.blockFriendRequest(friendModel.getUserId(), friendModel.getContactId());
 		}
 		return response;
 	}

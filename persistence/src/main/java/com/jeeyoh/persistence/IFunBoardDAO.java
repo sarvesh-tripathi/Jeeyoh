@@ -7,7 +7,6 @@ import com.jeeyoh.persistence.domain.Funboard;
 import com.jeeyoh.persistence.domain.FunboardComments;
 import com.jeeyoh.persistence.domain.FunboardMediaContent;
 import com.jeeyoh.persistence.domain.Timeline;
-import com.jeeyoh.persistence.domain.WallFeedSharing;
 
 public interface IFunBoardDAO {
 	
@@ -25,12 +24,7 @@ public interface IFunBoardDAO {
 	public Funboard isFunBoardExists(int userId, int itemId);
 	public List<Funboard> getUserFunBoardItemsByCurrentsDate(int userId);
 	public Funboard getFunboardById(int funBoardId);
-	public List<WallFeedSharing> getWallFeedSharing();
-	public List<WallFeedSharing> getDistinctWallFeedSharing();
-	public void updateWallFeedSharing(WallFeedSharing feedSharing);
-	public void deleteWallFeedSharing(WallFeedSharing feedSharing);
 	public int getFunboardComment(Integer funBoardId, Integer userId);
-	public double getAVGItemRank(String packageName);
-	public void updatePackageRank(double packageRank, String packageName);
+	public Timeline getDefaultTimeLine();
 	
 }

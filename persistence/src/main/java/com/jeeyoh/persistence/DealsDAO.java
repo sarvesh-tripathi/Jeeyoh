@@ -18,6 +18,7 @@ import org.springframework.stereotype.Repository;
 
 import com.jeeyoh.persistence.domain.Business;
 import com.jeeyoh.persistence.domain.Deals;
+import com.jeeyoh.persistence.domain.Dealsusage;
 import com.jeeyoh.persistence.domain.User;
 import com.jeeyoh.persistence.domain.Userdealssuggestion;
 import com.jeeyoh.utils.Utils;
@@ -658,4 +659,32 @@ public class DealsDAO implements IDealsDAO {
 		List<Deals> dealsList = criteria.list();
 		return dealsList;
 	}
+
+	@Override
+	public boolean  saveDealUserLikes(Dealsusage dealsusage) {
+		try{
+			sessionFactory.getCurrentSession().save(dealsusage);        
+			return true;
+		}
+		catch(Exception e)
+		{
+			logger.error(e.toString());
+			return false;
+		}
+	}
+
+	@Override
+	public boolean updateDealUserLikes(Dealsusage dealsusage) {
+		try{
+			sessionFactory.getCurrentSession().update(dealsusage);        
+			return true;
+		}
+		catch(Exception e)
+		{
+			logger.error(e.toString());
+			return false;
+		}
+		
+	}
+	
 }

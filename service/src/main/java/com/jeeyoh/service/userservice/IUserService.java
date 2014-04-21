@@ -3,6 +3,7 @@ package com.jeeyoh.service.userservice;
 import com.jeeyoh.model.response.BaseResponse;
 import com.jeeyoh.model.response.CategoryLikesResponse;
 import com.jeeyoh.model.response.CategoryResponse;
+import com.jeeyoh.model.response.FriendListResponse;
 import com.jeeyoh.model.response.LoginResponse;
 import com.jeeyoh.model.response.SuggestionResponse;
 import com.jeeyoh.model.response.TopSuggestionResponse;
@@ -33,6 +34,8 @@ public interface IUserService {
 	public TopSuggestionResponse getUserTopSuggestions(UserModel user);
 	public UserResponse editUserProfile(UserModel userModel);
 	public BaseResponse updatePrivacySetting(UserModel userModel);
+	public BaseResponse saveFavoriteItem(int userId, int itemId, String itemType, boolean isFav);
+	public FriendListResponse getFriendsOfUser(int userId);
 
 
 }

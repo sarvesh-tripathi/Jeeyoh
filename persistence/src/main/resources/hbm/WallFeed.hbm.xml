@@ -14,13 +14,13 @@
        <property name="packageName" type="string">
             <column name="packageName" length="250" />
         </property>
-         <set name="wallFeedItems" inverse="true">
+         <set name="wallFeedItems" inverse="true" cascade="all">
             <key>
                 <column name="wallFeedId" not-null="true" />
             </key>
             <one-to-many class="com.jeeyoh.persistence.domain.WallFeedItems" />
         </set>
-        <set name="wallFeedUserShareMap" inverse="true">
+        <set name="wallFeedUserShareMap" inverse="true" cascade="all">
             <key>
                 <column name="wallFeedId" not-null="true" />
             </key>

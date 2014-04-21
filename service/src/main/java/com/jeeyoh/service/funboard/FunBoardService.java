@@ -77,96 +77,71 @@ public class FunBoardService implements IFunBoardService{
 			FunBoardModel funBoardModel = request.getFunBoard();
 			Funboard funboard = funBoardDAO.isFunBoardExists(user.getUserId(), funBoardModel.getItemId());
 			int batch_size = 0;
-
-			//ArrayList<FunBoardModel> funBoradList = request.getFunBoardList();
-
-			//for(FunBoardModel funBoardModel : funBoradList)
-			//{
-			//batch_size ++;
 			logger.debug("funboard::::  "+funboard);
 			if(funboard == null)
 			{
 				SimpleDateFormat simple=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-
-				logger.debug("funboard...." +funBoardModel.getStartDate());
 				funboard = new Funboard();
+				Timeline timeline = null;
 				funboard.setUser(user);
 				funboard.setItemId(funBoardModel.getItemId());
+				funboard.setItemType(funBoardModel.getType());
+				Date currentDate = new Date();
+				funboard.setCreatedTime(currentDate);
+				funboard.setUpdatedTime(currentDate);
+				funboard.setImageUrl(funBoardModel.getImageUrl());
+				funboard.setSource(funBoardModel.getSource());
 				if(funBoardModel.getCategory().equalsIgnoreCase("Sports"))
 				{
 					funboard.setCategory("SPORT");
 				}
 				else
 					funboard.setCategory(funBoardModel.getCategory());
-				funboard.setItemType(funBoardModel.getType());
+				
 				try {
+					Date endDate = simple.parse(funBoardModel.getEndDate());
+					if(funBoardModel.getType().equalsIgnoreCase("Event"))
+					{
+						Time funboardCreationTime = new Time(endDate.getTime());
+						logger.debug("funboardCreationTime::  "+funboardCreationTime);
+						timeline = funBoardDAO.getTimeLine(funboardCreationTime);
+					}
+					else
+					{
+						if(funBoardModel.getScheduledDate() != null)
+						{
+							funboard.setScheduledTime(simple.parse(funBoardModel.getScheduledDate()));
+						}
+						if(funBoardModel.getTimeLine() == null)
+						{
+							timeline = funBoardDAO.getDefaultTimeLine();
+						}
+						else
+						{
+							
+						}
+					}
+					
 					funboard.setStartDate(simple.parse(funBoardModel.getStartDate()));
-					funboard.setEndDate(simple.parse(funBoardModel.getEndDate()));
+					funboard.setEndDate(endDate);
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 
-				Date currentDate = new Date();
-				funboard.setCreatedTime(currentDate);
-				funboard.setUpdatedTime(currentDate);
-				funboard.setImageUrl(funBoardModel.getImageUrl());
-
-				Time funboardCreationTime = new Time(currentDate.getTime());
-
-				//Timeline timeline = new Timeline();
-				//timeline.setTimeLineId(1);
-
-				logger.debug("funboardCreationTime::  "+funboardCreationTime);
-				Timeline timeline = funBoardDAO.getTimeLine(funboardCreationTime);
-
 				logger.debug("Funboard timeline : " + timeline);
 				funboard.setTimeline(timeline);
 
-				/*if(funBoardModel.getType().equalsIgnoreCase("Business"))
-					{
-						Business business = businessDAO.getBusinessById(funBoardModel.getItemId());
-						BusinessFunboard businessFunboard = new BusinessFunboard();
-						businessFunboard.setBusiness(business);
-						businessFunboard.setCategory(funBoardModel.getCategory());
-
-
-					}
-					else if(funBoardModel.getType().equalsIgnoreCase("Deal"))
-					{
-						Deals deal = dealsDAO.getDealById(funBoardModel.getItemId());
-						DealFunboard dealFunboard = new DealFunboard();
-						dealFunboard.setDeal(deal);
-						dealFunboard.setCategory(funBoardModel.getCategory());
-
-					}
-					else if(funBoardModel.getType().equalsIgnoreCase("Page"))
-					{
-						Page page = eventsDAO.getPageDetailsByID(funBoardModel.getItemId());
-						PageFunboard pageFunboard = new PageFunboard();
-						pageFunboard.setPage(page);
-						pageFunboard.setCategory(funBoardModel.getCategory());
-
-					}
-					else if(funBoardModel.getType().equalsIgnoreCase("Event"))
-					{
-						Events events = eventsDAO.getEventById(funBoardModel.getItemId());
-						EventFunboard eventFunboard = new EventFunboard();
-						eventFunboard.setEvents(events);
-						eventFunboard.setCategory(funBoardModel.getCategory());
-
-					}
-				 */
+				
 				funBoardDAO.saveFunBoard(funboard, batch_size);
 				baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
-				//}
 			}
 			else
 			{
 				logger.debug("Item Already exists in your Fun Board....");
-				baseResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
+				baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
 				baseResponse.setError("Item Already exists in your Fun Board");
 			}
-
 		}
 		else
 		{

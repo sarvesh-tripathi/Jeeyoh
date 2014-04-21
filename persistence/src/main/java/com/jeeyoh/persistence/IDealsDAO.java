@@ -3,6 +3,7 @@ package com.jeeyoh.persistence;
 import java.util.List;
 
 import com.jeeyoh.persistence.domain.Deals;
+import com.jeeyoh.persistence.domain.Dealsusage;
 import com.jeeyoh.persistence.domain.Userdealssuggestion;
 
 public interface IDealsDAO {
@@ -38,5 +39,7 @@ public interface IDealsDAO {
 	public int getTotalDealsBySearchKeyWord(String searchText,String category, String location);
 	public List<Deals> getDealsByUserCategory(String itemCategory,
 			String itemType, String providerName);
+	public boolean saveDealUserLikes(Dealsusage dealsusage);
+	public boolean updateDealUserLikes(Dealsusage dealsusage);
 	
 }

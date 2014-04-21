@@ -54,9 +54,9 @@ public class UserModel implements Serializable {
     @JsonProperty
     private String zipcode;
     @JsonProperty
-    private Date createdtime;
+    private String createdtime;
     @JsonProperty
-    private Date updatedtime;
+    private String updatedtime;
 
     @JsonProperty
     private String confirmationId;
@@ -184,16 +184,16 @@ public class UserModel implements Serializable {
 	public void setZipcode(String zipcode) {
 		this.zipcode = zipcode;
 	}
-	public Date getCreatedtime() {
+	public String getCreatedtime() {
 		return createdtime;
 	}
-	public void setCreatedtime(Date createdtime) {
+	public void setCreatedtime(String createdtime) {
 		this.createdtime = createdtime;
 	}
-	public Date getUpdatedtime() {
+	public String getUpdatedtime() {
 		return updatedtime;
 	}
-	public void setUpdatedtime(Date updatedtime) {
+	public void setUpdatedtime(String updatedtime) {
 		this.updatedtime = updatedtime;
 	}
 	public void setConfirmationId(String confirmationId) {

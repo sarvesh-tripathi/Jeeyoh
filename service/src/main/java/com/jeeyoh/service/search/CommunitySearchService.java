@@ -7,6 +7,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +35,21 @@ public class CommunitySearchService implements ICommunitySearchService{
 
 	static final Logger logger = LoggerFactory.getLogger("debugLogger");
 
+	@Value("${app.jeeyoh.favorite.success}")
+	private String favSuccess;
+	
+	@Value("${app.jeeyoh.favorite.already.exist}")
+	private String alreadyExists;
+	
+	@Value("${app.jeeyoh.follow.success}")
+	private String followSuccess;
+	
+	@Value("${app.jeeyoh.follow.already.exists}")
+	private String alreadyFollowed;
+
+	@Value("${app.jeeyoh.failed}")
+	private String errorMessage;
+	
 	@Autowired
 	private IUserDAO userDAO;
 
@@ -64,7 +80,7 @@ public class CommunitySearchService implements ICommunitySearchService{
 		CommunityResponse communityResponse = new CommunityResponse();
 
 		logger.debug("searchCommunityDetails:::: "+"userId =>"+userId+"; pageId =>"+pageId+";offset =>"+offset);
-		
+
 		//community details
 		Page page = eventsDAO.getPageDetailsByID(pageId);
 		logger.debug("Page::::::"+page);
@@ -87,7 +103,7 @@ public class CommunitySearchService implements ICommunitySearchService{
 
 		//current event details
 		List<Events> currentEventList = eventsDAO.getCurrentEvents(pageId, offset, limit);
-		
+
 		List<EventModel> currentEventModelList = new ArrayList<EventModel>();
 		for(Events event: currentEventList)
 		{
@@ -116,6 +132,8 @@ public class CommunitySearchService implements ICommunitySearchService{
 			currentEventModel.setZip(event.getZip());
 			currentEventModelList.add(currentEventModel);
 			currentEventModel.setSource(event.getEventSource());
+			currentEventModel.setItemType("Event");
+			currentEventModel.setCategory(pageModel.getPageType());
 		}
 		communityResponse.setCurrentEvents(currentEventModelList);
 
@@ -149,6 +167,8 @@ public class CommunitySearchService implements ICommunitySearchService{
 			upcomingEventModel.setZip(event.getZip());
 			upcomingEventModelList.add(upcomingEventModel);
 			upcomingEventModel.setSource(event.getEventSource());
+			upcomingEventModel.setItemType("Event");
+			upcomingEventModel.setCategory(pageModel.getPageType());
 		}
 		communityResponse.setUpcomingEvents(upcomingEventModelList);
 
@@ -182,12 +202,14 @@ public class CommunitySearchService implements ICommunitySearchService{
 			pastEventModel.setZip(event.getZip());
 			pastEventModelList.add(pastEventModel);
 			pastEventModel.setSource(event.getEventSource());
+			pastEventModel.setItemType("Event");
+			pastEventModel.setCategory(pageModel.getPageType());
 		}
 		logger.debug("end of comunity response");
 		communityResponse.setPastEvents(pastEventModelList);
-		
+
 		// append community comments
-		
+
 		if(pageId!=0)
 		{
 			List<CommunityComments> communityCommentsList = eventsDAO.getCommunityCommentsByPageId(pageId);
@@ -206,10 +228,10 @@ public class CommunitySearchService implements ICommunitySearchService{
 			logger.debug("add community comments in response");
 			communityResponse.setCommunityComments(commentModelList);
 		}
-		
+
 		return communityResponse;
 	}
-	
+
 	@Override
 	@Transactional
 	public CommunityPaginationResponse searchCommunityPaginationDetails(int userId, int pageId,int offset,int limit, String listType)
@@ -261,17 +283,20 @@ public class CommunitySearchService implements ICommunitySearchService{
 			eventModel.setVenue_config_name(event.getVenue_config_name());
 			eventModel.setVenue_name(event.getVenue_name());
 			eventModel.setZip(event.getZip());
+			eventModel.setSource(event.getEventSource());
+			eventModel.setItemType("Event");
+			eventModel.setCategory(event.getChannel().split(" ")[0]);
 			eventModelList.add(eventModel);
 		}
 		communityResponse.setEvents(eventModelList);
 		return communityResponse;
 	}
-	
-	
+
+
 	@Transactional
 	@Override
 	public CommentResponse saveCommunityComments(CommentModel commentModel) {
-		
+
 		Date date = null;
 		//BaseResponse baseResponse = new BaseResponse();
 		User user = userDAO.getUserById(commentModel.getUserId());
@@ -310,17 +335,23 @@ public class CommunitySearchService implements ICommunitySearchService{
 		}
 		return response;
 	}
-	
-	
+
+
 	@Transactional
 	@Override
 	public BaseResponse saveIsFollowingPage(int userId, int pageId, boolean isFollow) {
-		
+
 		logger.debug("saveIsFollowingPage  ===>");
-		User user = userDAO.getUserById(userId);
-		Page page = eventsDAO.getPageDetailsByID(pageId);
+		boolean isUpdated = false;
+		//User user = userDAO.getUserById(userId);
+		User user = new User();
+		user.setUserId(userId);
+
+		//Page page = eventsDAO.getPageDetailsByID(pageId);
+		Page page = new Page();
+		page.setPageId(pageId);
 		BaseResponse baseResponse = new BaseResponse();
-		Pageuserlikes pageUserLikes = new Pageuserlikes();
+		Pageuserlikes pageuserlikes = new Pageuserlikes();
 		Notificationpermission notificationPermission = userDAO.getDafaultNotification();
 		// Check if entry already exists in table
 		Pageuserlikes existingPageUserLikes = userDAO.isPageExistInUserProfile(userId, pageId);
@@ -330,45 +361,63 @@ public class CommunitySearchService implements ICommunitySearchService{
 			if(existingPageUserLikes.getIsFollowing()!=isFollow)
 			{
 				existingPageUserLikes.setIsFollowing(isFollow);
-				userDAO.updateUserCommunity(existingPageUserLikes);
-				baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
-				return baseResponse;
+				isUpdated = eventsDAO.updatePageUserLikes(existingPageUserLikes);
+				if(isUpdated)
+				{
+					baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
+					baseResponse.setMessage(followSuccess);
+				}
+				else
+					baseResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
 			}
 			else
 			{
 				baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
-				return baseResponse;
+				baseResponse.setMessage(alreadyFollowed);
 			}
-			
+
 		}
 		else if (existingPageUserLikes == null)
 		{
-			pageUserLikes.setIsFollowing(isFollow);
-			pageUserLikes.setPage(page);
-			pageUserLikes.setUser(user);
-			pageUserLikes.setCreatedtime(new Date());
-			pageUserLikes.setUpdatedtime(new Date());
-			pageUserLikes.setNotificationpermission(notificationPermission);
-			userDAO.saveUserCommunity(pageUserLikes);
-			baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
+			pageuserlikes.setIsFollowing(isFollow);
+			pageuserlikes.setIsFavorite(false);
+			pageuserlikes.setIsFollowing(false);
+			pageuserlikes.setIsLike(false);
+			pageuserlikes.setIsVisited(false);
+			pageuserlikes.setIsProfileDetailsHidden(false);
+			pageuserlikes.setIsProfileHidden(false);
+			pageuserlikes.setIsSuggested(false);
+			pageuserlikes.setUser(user);
+			pageuserlikes.setPage(page);
+			pageuserlikes.setNotificationpermission(notificationPermission);
+			pageuserlikes.setCreatedtime(new Date());
+			pageuserlikes.setUpdatedtime(new Date());
+			isUpdated = eventsDAO.savePageUserLikes(pageuserlikes);
+			if(isUpdated)
+			{
+				baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
+				baseResponse.setMessage(followSuccess);
+			}
+			else
+				baseResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
 		}
 		else
 		{
 			baseResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
-			baseResponse.setError("Invalid Parameter");
+			baseResponse.setError(errorMessage);
 		}
 		return baseResponse;
 	}
 	@Transactional
 	@Override
 	public BaseResponse saveIsFollowingEvent(int userId, int eventId, boolean isFollow) {
-		
+
 		logger.debug("saveIsFollowingPage  ===>");
 		User user = userDAO.getUserById(userId);
 		Events event = eventsDAO.getEventById(eventId);
 		BaseResponse baseResponse = new BaseResponse();
 		Eventuserlikes eventUserLikes = new Eventuserlikes();
-		
+
 		// Check if entry already exists in table
 		Eventuserlikes existingEventUserLikes = eventsDAO.isEventExistInUserProfile(userId, eventId);
 		logger.debug("existingEventUserLikes =>"+existingEventUserLikes);
@@ -386,7 +435,7 @@ public class CommunitySearchService implements ICommunitySearchService{
 				baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
 				return baseResponse;
 			}
-			
+
 		}
 		else if (existingEventUserLikes == null)
 		{
@@ -407,58 +456,80 @@ public class CommunitySearchService implements ICommunitySearchService{
 		else
 		{
 			baseResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
-			baseResponse.setError("Invalid Parameter");
+			baseResponse.setError(errorMessage);
 		}
 		return baseResponse;
 	}
 	@Transactional
 	@Override
-	public BaseResponse saveIsFavoriteEvent(int userId, int eventId, boolean isFav) {
-		
+	public BaseResponse saveFavoritePage(int userId, int pageId, boolean isFav) {
+
 		logger.debug("saveIsFavoriteEvent  ===>");
-		User user = userDAO.getUserById(userId);
-		Events event = eventsDAO.getEventById(eventId);
+		boolean isUpdated = false;
+		//User user = userDAO.getUserById(userId);
+		User user = new User();
+		user.setUserId(userId);
+
+		//Page page = eventsDAO.getPageDetailsByID(pageId);
+		Page page = new Page();
+		page.setPageId(pageId);
+
 		BaseResponse baseResponse = new BaseResponse();
-		Eventuserlikes eventUserLikes = new Eventuserlikes();
+		Pageuserlikes pageuserlikes = null;
+
+		Notificationpermission notificationPermission = userDAO.getDafaultNotification();
 		
 		// Check if entry already exists in table
-		Eventuserlikes existingEventUserLikes = eventsDAO.isEventExistInUserProfile(userId, eventId);
-		logger.debug("existingEventUserLikes =>"+existingEventUserLikes);
-		if(existingEventUserLikes!=null && !existingEventUserLikes.equals(""))
+		pageuserlikes = userDAO.getUserPageProperties(userId, pageId);
+		logger.debug("existingEventUserLikes =>"+pageuserlikes);
+		if(pageuserlikes!=null && !pageuserlikes.equals(""))
 		{
-			if(existingEventUserLikes.getIsFavorite()!=isFav){
-				existingEventUserLikes.setIsFavorite(isFav);
-				eventsDAO.updateUserEvents(existingEventUserLikes);
-				baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
-				return baseResponse;
+			if(pageuserlikes.getIsFavorite()!=isFav){
+				pageuserlikes.setIsFavorite(isFav);
+				isUpdated = eventsDAO.updatePageUserLikes(pageuserlikes);
+				if(isUpdated)
+				{
+					baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
+					baseResponse.setMessage(favSuccess);
+				}
+				else
+					baseResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
 			}
 			else
 			{
 				baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
-				return baseResponse;
+				baseResponse.setMessage(alreadyExists);
 			}
-			
+
 		}
-		else if (existingEventUserLikes == null)
+		else if (pageuserlikes == null)
 		{
-			eventUserLikes.setIsFavorite(isFav);
-			eventUserLikes.setIsFollowing(false);
-			eventUserLikes.setIsBooked(false);
-			eventUserLikes.setIsLike(false);
-			eventUserLikes.setIsVisited(false);
-			eventUserLikes.setIsProfileDetailsHidden(false);
-			eventUserLikes.setIsProfileHidden(false);
-			eventUserLikes.setEvent(event);
-			eventUserLikes.setUser(user);
-			eventUserLikes.setCreatedtime(new Date());
-			eventUserLikes.setUpdatedtime(new Date());
-			eventsDAO.saveUserEvents(eventUserLikes);
-			baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
+			pageuserlikes = new Pageuserlikes();
+			pageuserlikes.setIsFavorite(isFav);
+			pageuserlikes.setIsFollowing(false);
+			pageuserlikes.setIsLike(false);
+			pageuserlikes.setIsVisited(false);
+			pageuserlikes.setIsProfileDetailsHidden(false);
+			pageuserlikes.setIsProfileHidden(false);
+			pageuserlikes.setIsSuggested(false);
+			pageuserlikes.setUser(user);
+			pageuserlikes.setPage(page);
+			pageuserlikes.setNotificationpermission(notificationPermission);
+			pageuserlikes.setCreatedtime(new Date());
+			pageuserlikes.setUpdatedtime(new Date());
+			isUpdated = eventsDAO.savePageUserLikes(pageuserlikes);
+			if(isUpdated)
+			{
+				baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
+				baseResponse.setMessage(favSuccess);
+			}
+			else
+				baseResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
 		}
 		else
 		{
 			baseResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
-			baseResponse.setError("Invalid Parameter");
+			baseResponse.setError(errorMessage);
 		}
 		return baseResponse;
 	}

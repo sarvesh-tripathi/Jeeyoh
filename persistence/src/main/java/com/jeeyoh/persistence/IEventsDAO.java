@@ -7,6 +7,7 @@ import com.jeeyoh.persistence.domain.Events;
 import com.jeeyoh.persistence.domain.Eventuserlikes;
 import com.jeeyoh.persistence.domain.Page;
 import com.jeeyoh.persistence.domain.Pagetype;
+import com.jeeyoh.persistence.domain.Pageuserlikes;
 
 public interface IEventsDAO {
 	
@@ -43,7 +44,9 @@ public interface IEventsDAO {
 	public void saveCommunityComments(CommunityComments communityComments);
 	public Page getPageByBusinessId(Integer itemId);
 	public Eventuserlikes isEventExistInUserProfile(int userId, int eventId);
-	public void updateUserEvents(Eventuserlikes eventuserlikes);
-	public void saveUserEvents(Eventuserlikes eventuserlikes);
+	public boolean updateUserEvents(Eventuserlikes eventuserlikes);
+	public boolean saveUserEvents(Eventuserlikes eventuserlikes);
+	public boolean updatePageUserLikes(Pageuserlikes pageuserlikes);
+	public boolean savePageUserLikes(Pageuserlikes pageuserlikes);
 
 }

@@ -16,7 +16,6 @@ import com.jeeyoh.persistence.domain.Funboard;
 import com.jeeyoh.persistence.domain.FunboardComments;
 import com.jeeyoh.persistence.domain.FunboardMediaContent;
 import com.jeeyoh.persistence.domain.Timeline;
-import com.jeeyoh.persistence.domain.WallFeedSharing;
 import com.jeeyoh.utils.Utils;
 
 @Repository("funBoardDAO")
@@ -277,75 +276,6 @@ public class FunBoardDAO implements IFunBoardDAO{
 		return funBoardList != null && !funBoardList.isEmpty() ? funBoardList.get(0) : null;
 	}
 	
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<WallFeedSharing> getWallFeedSharing() {
-		// TODO Auto-generated method stub
-		
-		List<WallFeedSharing> list = null;
-		String hqlquery = "from WallFeedSharing";
-		try{
-			
-			Query query = sessionFactory.getCurrentSession().createQuery(hqlquery);
-			list = query.list();
-			
-		}catch(HibernateException e)
-		{
-			logger.debug(e.toString());
-		}
-		
-		return list;
-	}
-	
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<WallFeedSharing> getDistinctWallFeedSharing() {
-		List<WallFeedSharing> list = null;
-		String hqlquery = "from WallFeedSharing group by packageName";
-		try{
-			
-			Query query = sessionFactory.getCurrentSession().createQuery(hqlquery);
-			list = query.list();
-			
-		}catch(HibernateException e)
-		{
-			logger.debug(e.toString());
-		}
-		
-		return list;
-	}
-	
-	
-	@Override
-	public void updateWallFeedSharing(WallFeedSharing feedSharing) {
-		// TODO Auto-generated method stub
-		try
-		{
-			sessionFactory.getCurrentSession().update(feedSharing);
-		}
-		catch(HibernateException e)
-		{
-			logger.error(e.toString());
-		}
-		
-	}
-
-	@Override
-	public void deleteWallFeedSharing(WallFeedSharing feedSharing) {
-		// TODO Auto-generated method stub
-		
-		try
-		{
-			sessionFactory.getCurrentSession().delete(feedSharing);
-		}
-		catch(HibernateException e)
-		{
-			logger.error(e.toString());
-		}
-	}
-
 	@Override
 	public int getFunboardComment(Integer funBoardId, Integer userId) {
 		logger.debug("funboard :: "+funBoardId+"userId :::"+userId);
@@ -370,45 +300,24 @@ public class FunBoardDAO implements IFunBoardDAO{
 	
 	}
 	
-	@Override
-	public double getAVGItemRank(String packageName) {
-		double rowCount = 0;
-		String hqlquery = "select avg(itemRank) from WallFeedSharing where packageName=:packageName";
-		try{
-			//Query query = sessionFactory.getCurrentSession().createSQLQuery(hqlquery);
-			Query query = sessionFactory.getCurrentSession().createQuery(hqlquery);
-			query.setParameter("packageName", packageName);
-					
-			rowCount = ((Double)query.uniqueResult()).doubleValue();
-			
-		}
-		catch(Exception e)
-		{
-			
-			logger.error(e.toString());
-		}
-		logger.debug("getAVGItemRank Count"+rowCount);
-		return rowCount;
-		
-	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
-	public void updatePackageRank(double packageRank, String packageName) {
-		// TODO Auto-generated method stub
-		
-		String hqlquery = "update WallFeedSharing set packageRank=:packageRank where packageName=:packageName";
-		try{
-			
-			Query query = sessionFactory.getCurrentSession().createQuery(hqlquery);
-			query.setParameter("packageRank", packageRank);
-			query.setParameter("packageName", packageName);
-			 query.executeUpdate();
-			
-		}catch(HibernateException e)
-		{
-			logger.debug(e.toString());
-		}
-		
+	public Timeline getDefaultTimeLine() {
+		logger.debug("getTimeLine::");
+		List<Timeline>  timelines = null;
+	    String hqlQuery = "from Timeline where timeLineId = 6";
+	    try{
+	    	Query query = sessionFactory.getCurrentSession().createQuery(hqlQuery);
+	    	timelines = query.list();
+	    }
+	    catch(HibernateException e)
+	    {
+	    	logger.error(e.toString());
+	    	e.printStackTrace();
+	    }
+	    
+	    return timelines != null && !timelines.isEmpty() ? timelines.get(0) : null;
 	}
 
 }

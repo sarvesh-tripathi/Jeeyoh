@@ -8,17 +8,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jeeyoh.persistence.IFunBoardDAO;
 import com.jeeyoh.persistence.IUserDAO;
-import com.jeeyoh.persistence.IWallFeedSharingDAO;
+import com.jeeyoh.persistence.IWallFeedDAO;
 import com.jeeyoh.persistence.domain.Funboard;
 import com.jeeyoh.persistence.domain.User;
-import com.jeeyoh.persistence.domain.WallFeedSharing;
+import com.jeeyoh.persistence.domain.WallFeed;
 
 @Component("wallFeedSharingService")
 public class WallFeedSharingService implements IWallFeedSharingService{
 
 	static final Logger logger = LoggerFactory.getLogger("debugLogger");
 	@Autowired
-	private IWallFeedSharingDAO wallFeedSharingDAO;
+	private IWallFeedDAO wallFeedSharingDAO;
 	@Autowired
 	private IFunBoardDAO funBoardDAO;
 	@Autowired
@@ -40,8 +40,8 @@ public class WallFeedSharingService implements IWallFeedSharingService{
 			User shareWithUser = (User)userDAO.getUserById(shareWithUserId);
 			if(funboard!=null)
 			{
-				WallFeedSharing wallFeedSharing = new WallFeedSharing();
-				wallFeedSharing.setCategory(funboard.getCategory());
+				WallFeed wallFeedSharing = new WallFeed();
+				/*wallFeedSharing.setCategory(funboard.getCategory());
 				wallFeedSharing.setCreatedTime(funboard.getCreatedTime());
 				wallFeedSharing.setItemId(funboard.getItemId());
 				wallFeedSharing.setItemType(funboard.getItemType());
@@ -49,7 +49,7 @@ public class WallFeedSharingService implements IWallFeedSharingService{
 				wallFeedSharing.setSharedWithUser(shareWithUser);
 				wallFeedSharing.setPackageName("ABC");
 				wallFeedSharing.setFunboard(funboard);
-				wallFeedSharingDAO.saveWallFeedSharing(wallFeedSharing);
+				wallFeedSharingDAO.saveWallFeedSharing(wallFeedSharing);*/
 			}
 			
 		}

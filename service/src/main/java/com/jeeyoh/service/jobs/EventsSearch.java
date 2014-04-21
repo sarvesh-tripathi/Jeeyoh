@@ -172,11 +172,11 @@ public class EventsSearch implements IEventSearch{
 						boolean isFavorite = false;
 						boolean isVisited = false;
 						boolean isFollowing = false;
-						List<Pageuserlikes> pageProperties = userDAO.getUserPageProperties(userId, community.getPageId());
-						if(pageProperties != null)
+						Pageuserlikes pageProperty = userDAO.getUserPageProperties(userId, community.getPageId());
+						if(pageProperty != null)
 						{
 							logger.debug("NonDealSearch ==> search ==> pageProperties ==> not null" );
-							Pageuserlikes pageProperty = pageProperties.get(0);
+							//Pageuserlikes pageProperty = pageProperties.get(0);
 							if(pageProperty != null) {
 								logger.debug("NonDealSearch ==> search ==> pageProperty ==> not null" );
 								isLiked = pageProperty.getIsLike();

@@ -17,5 +17,5 @@ public interface ICommunitySearchService {
 	public CommentResponse saveCommunityComments(CommentModel commentModel);
 	public BaseResponse saveIsFollowingPage(int userId, int pageId, boolean isFollow);
 	public BaseResponse saveIsFollowingEvent(int userId, int eventId, boolean isFollow);
-	public BaseResponse saveIsFavoriteEvent(int userId, int eventId, boolean isFav);
+	public BaseResponse saveFavoritePage(int userId, int eventId, boolean isFav);
 }

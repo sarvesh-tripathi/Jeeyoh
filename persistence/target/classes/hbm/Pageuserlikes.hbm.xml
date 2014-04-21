@@ -18,22 +18,22 @@
             <column name="notificationPermissionId" not-null="true" />
         </many-to-one>
         <property name="isFavorite" type="java.lang.Boolean">
-            <column name="isFavorite" />
+            <column name="isFavorite" default="false" not-null="false"/>
         </property>
         <property name="isFollowing" type="java.lang.Boolean">
-            <column name="isFollowing" />
+            <column name="isFollowing" default="false" not-null="false"/>
         </property>
         <property name="isLike" type="java.lang.Boolean">
-            <column name="isLike" />
+            <column name="isLike" default="false" not-null="false"/>
         </property>
         <property name="isVisited" type="java.lang.Boolean">
-            <column name="isVisited" />
+            <column name="isVisited" default="false" not-null="false"/>
         </property>
         <property name="isProfileHidden" type="java.lang.Boolean">
-            <column name="isProfileHidden" />
+            <column name="isProfileHidden" default="false" not-null="false"/>
         </property>
          <property name="isSuggested" type="java.lang.Boolean">
-            <column name="isSuggested" />
+            <column name="isSuggested" default="false" not-null="false"/>
         </property>
         <property name="isProfileDetailsHidden" type="java.lang.Boolean">
             <column name="isProfileDetailsHidden" />

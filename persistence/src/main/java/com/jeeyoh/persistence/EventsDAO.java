@@ -9,7 +9,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
@@ -18,11 +17,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.jeeyoh.persistence.domain.CommunityComments;
-import com.jeeyoh.persistence.domain.Deals;
 import com.jeeyoh.persistence.domain.Events;
 import com.jeeyoh.persistence.domain.Eventuserlikes;
 import com.jeeyoh.persistence.domain.Page;
 import com.jeeyoh.persistence.domain.Pagetype;
+import com.jeeyoh.persistence.domain.Pageuserlikes;
 import com.jeeyoh.utils.Utils;
 
 @Repository("eventsDAO")
@@ -781,20 +780,58 @@ public class EventsDAO implements IEventsDAO{
 	}
 
 	@Override
-	public void updateUserEvents(Eventuserlikes eventuserlikes) {
-		sessionFactory.getCurrentSession().update(eventuserlikes);
-
-	}
-
-	@Override
-	public void saveUserEvents(Eventuserlikes eventuserlikes) {
+	public boolean updateUserEvents(Eventuserlikes eventuserlikes) {
 		try{
-			sessionFactory.getCurrentSession().saveOrUpdate(eventuserlikes);
+			sessionFactory.getCurrentSession().update(eventuserlikes);
+			return true;
 		}
 		catch(Exception e)
 		{
 			logger.error(e.toString());
+			return false;
+		}
+	}
+	
+	
+	@Override
+	public boolean updatePageUserLikes(Pageuserlikes pageuserlikes) {
+		try{
+			sessionFactory.getCurrentSession().update(pageuserlikes);
+			return true;
+		}
+		catch(Exception e)
+		{
+			logger.error(e.toString());
+			return false;
+		}
+		
+
+	}
+
+	@Override
+	public boolean saveUserEvents(Eventuserlikes eventuserlikes) {
+		try{
+			sessionFactory.getCurrentSession().saveOrUpdate(eventuserlikes);
+			return true;
+		}
+		catch(Exception e)
+		{
+			logger.error(e.toString());
+			return false;
 		}
 	}
 
+	@Override
+	public boolean savePageUserLikes(Pageuserlikes pageuserlikes) {
+		try{
+			sessionFactory.getCurrentSession().save(pageuserlikes);
+			return true;
+		}
+		catch(Exception e)
+		{
+			logger.error(e.toString());
+			return false;
+		}
+		
+	}
 }
