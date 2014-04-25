@@ -44,15 +44,16 @@ public class DealSearch implements IDealSearch {
 		List<Businesstype> businesstypes = businessDAO.getBusinesstypeByTypeArray(type);	*/
 		List<User> userList = userDAO.getUsers();
 		// Iterate user list for suggestion
-
+		Date  weekendDate = Utils.getNearestWeekend(null);
 		for (User user : userList)
 		{
 			if(user != null)
 			{
+				logger.debug("user ::"+user.getUserId());
 				//for user Contacts affinity level
 				List<Object[]> userContactsList = userDAO.getAllUserContacts(user.getUserId());
-				
-				saveDealSuggestion(user,user,false,false,false,null);
+
+				saveDealSuggestion(user,user,false,false,false,null,true,false,true,weekendDate);
 				if(userContactsList != null)
 				{
 					for(Object[] row:userContactsList)
@@ -61,9 +62,7 @@ public class DealSearch implements IDealSearch {
 						Boolean isStar = usercontacts.getIsStar();
 						User contact = (User)row[0];
 						logger.debug("Friend Name ::"+contact.getFirstName());
-						logger.debug("IS STAR ::"+isStar);
-						saveDealSuggestion(contact,user,true,isStar,false,null);
-
+						saveDealSuggestion(contact,user,true,isStar,false,null,contact.getIsShareProfileWithFriend(),contact.getIsShareProfileWithGroup(),contact.getIsShareCommunity(),weekendDate);
 					}
 				}
 
@@ -72,14 +71,13 @@ public class DealSearch implements IDealSearch {
 				{
 					for(Jeeyohgroup jeeyohGroup1 : jeeyohGroup) {
 
-						String groupType = jeeyohGroup1.getGroupType();
-						Set<Groupusermap> groups   = jeeyohGroup1.getGroupusermaps();
-						for (Groupusermap groups1 : groups)
+						List<User> groupusermapList = userDAO.getGroupMembers(jeeyohGroup1.getGroupId(), user.getUserId());
+						if(groupusermapList != null)
 						{
-							User groupMember = groups1.getUser();
-							if(groupMember.getUserId() != user.getUserId())
+							String groupType = jeeyohGroup1.getGroupType();
+							for(User groupMember : groupusermapList)
 							{
-								saveDealSuggestion(groupMember,user,false,false,true,groupType);
+								saveDealSuggestion(groupMember,user,false,false,true,groupType,groupMember.getIsShareProfileWithFriend(),groupMember.getIsShareProfileWithGroup(),groupMember.getIsShareCommunity(),weekendDate);
 							}
 						}
 					}
@@ -89,19 +87,21 @@ public class DealSearch implements IDealSearch {
 	}
 
 
-	private void saveDealSuggestion(User user,User userFor,Boolean contactFlag,Boolean isStar, Boolean isGroupMember, String groupType)
+	private void saveDealSuggestion(User user,User userFor,Boolean contactFlag,Boolean isStar, Boolean isGroupMember, String groupType, boolean isSharedWithFriends, boolean isSharedWithGroup, boolean isSharedWithCommunity, Date weekendDate)
 	{
 
 		//get user detail and deal usage	
 		List<Dealsusage> dealUsage = null;
 		if(!isGroupMember)
 		{
-			dealUsage = userDAO.getUseDealUsage(user.getUserId(), Double.parseDouble(userFor.getLattitude()), Double.parseDouble(userFor.getLongitude()));		
+			if(isSharedWithFriends)
+				dealUsage = userDAO.getUseDealUsage(user.getUserId(), Double.parseDouble(userFor.getLattitude()), Double.parseDouble(userFor.getLongitude()));		
 			logger.debug("size of dealusage11 :: "+dealUsage);
 		}
 		else
 		{
-			dealUsage = userDAO.getUserDealUsageByType(user.getUserId(),groupType, Double.parseDouble(userFor.getLattitude()), Double.parseDouble(userFor.getLongitude()));
+			if(isSharedWithGroup)
+				dealUsage = userDAO.getUserDealUsageByType(user.getUserId(),groupType, Double.parseDouble(userFor.getLattitude()), Double.parseDouble(userFor.getLongitude()));
 			logger.debug("Group MEMBER "+isGroupMember);
 			if(dealUsage != null)
 			{
@@ -111,38 +111,35 @@ public class DealSearch implements IDealSearch {
 
 		// user community 
 		List<Page> userCommunities = null;
-		if(!isGroupMember)
+		if(isSharedWithCommunity)
 		{
-			userCommunities = userDAO.getUserCommunities(user.getUserId(),Double.parseDouble(userFor.getLattitude()), Double.parseDouble(userFor.getLongitude()));
+			if(!isGroupMember)
+			{
+				userCommunities = userDAO.getUserCommunities(user.getUserId(),Double.parseDouble(userFor.getLattitude()), Double.parseDouble(userFor.getLongitude()));
+			}
+			else
+			{
+				userCommunities = userDAO.getUserCommunitiesByPageType(user.getUserId(), groupType,Double.parseDouble(userFor.getLattitude()), Double.parseDouble(userFor.getLongitude()));
+			}
 		}
-		else
-		{
-			userCommunities = userDAO.getUserCommunitiesByPageType(user.getUserId(), groupType,Double.parseDouble(userFor.getLattitude()), Double.parseDouble(userFor.getLongitude()));
-		}
-
 
 
 		//user category
 		List<UserCategory> userCategoryList =null;
 		if(!isGroupMember)
 		{
-			userCategoryList = userDAO.getUserCategoryLikesById(user.getUserId());
+			if(isSharedWithFriends)
+				userCategoryList = userDAO.getUserCategoryLikesById(user.getUserId());
 		}
 		else
 		{
-			userCategoryList = userDAO.getUserCategoryLikesByType(user.getUserId(),groupType);
+			if(isSharedWithGroup)
+				userCategoryList = userDAO.getUserCategoryLikesByType(user.getUserId(),groupType);
 		}
-		// user group member
-		/*List<Jeeyohgroup> jeeyohGroup = null;
-		if(!contactFlag)
-		{
-			jeeyohGroup = userDAO.getUserGroups(user.getUserId());
-		}*/
-
+		
 		double[] array = null;	
 		if(dealUsage != null){
 			for(Dealsusage dealsusage : dealUsage) {
-				//logger.debug("DealSearch ==> search ==> dealusage ==> " + dealsusage.getIsFavorite());
 				Deals deal = dealsusage.getDeals();
 				List<Userdealssuggestion> userdealsuggestions = userDAO.isDealSuggestionExists(userFor.getUserId(), deal.getId());
 				if(userdealsuggestions == null || userdealsuggestions.size() == 0)
@@ -161,27 +158,24 @@ public class DealSearch implements IDealSearch {
 						//logger.debug("Distance::  "+distance +" lat::  "+userFor.getLattitude()+" lon::  "+userFor.getLongitude());
 						//if(distance <= 50)
 						//{
-							int likeCount = dealDAO.getDealsLikeCounts(dealsusage.getDeals().getId());
-							logger.debug("Like COUNT :::::"+likeCount);
-							if(dealsusage.getIsFavorite() || dealsusage.getIsLike() || likeCount >= 2)
-							{
-								//if(deal.getEndAt().compareTo(Utils.getCurrentDate()) >= 0)
-								//{
-								//{
-								try {
-									logger.debug("deal.getId():::  "+deal.getId());
-									logger.debug("Cross basic three level3",deal.getId());									
-									saveDealsSuggestionInDataBase(deal,userFor,isGroupMember, contactFlag, false,false);
-									
-								} catch (Exception e) {
-									logger.debug("Error:::  "+e.getLocalizedMessage());
-								}
-								
-								
-								
-								//}
-								
+						int likeCount = dealDAO.getDealsLikeCounts(dealsusage.getDeals().getId());
+						logger.debug("Like COUNT :::::"+likeCount);
+						if(dealsusage.getIsFavorite() || dealsusage.getIsLike() || likeCount >= 2)
+						{
+							//if(deal.getEndAt().compareTo(Utils.getCurrentDate()) >= 0)
+							//{
+							//{
+							try {
+								logger.debug("deal.getId():::  "+deal.getId());
+								logger.debug("Cross basic three level3",deal.getId());									
+								saveDealsSuggestionInDataBase(deal,userFor,isGroupMember, contactFlag, false,false, weekendDate);
+
+							} catch (Exception e) {
+								logger.debug("Error:::  "+e.getLocalizedMessage());
 							}
+
+							//}
+						}
 						//}
 					}
 				}
@@ -207,15 +201,15 @@ public class DealSearch implements IDealSearch {
 					//logger.debug("Distance::  "+distance +" lat::  "+userFor.getLattitude()+" lon::  "+userFor.getLongitude());
 					//if(distance <= 50)
 					//{
-						List<Deals> deals = dealDAO.getDealsByBusinessId(business.getId());
-						for(Deals deal : deals)
+					List<Deals> deals = dealDAO.getDealsByBusinessId(business.getId());
+					for(Deals deal : deals)
+					{
+						List<Userdealssuggestion> userdealsuggestions = userDAO.isDealSuggestionExists(userFor.getUserId(), deal.getId());
+						if(userdealsuggestions == null || userdealsuggestions.size() == 0)
 						{
-							List<Userdealssuggestion> userdealsuggestions = userDAO.isDealSuggestionExists(userFor.getUserId(), deal.getId());
-							if(userdealsuggestions == null || userdealsuggestions.size() == 0)
-							{
-								saveDealsSuggestionInDataBase(deal,userFor,isGroupMember, contactFlag, true,false);
-							}
+							saveDealsSuggestionInDataBase(deal,userFor,isGroupMember, contactFlag, true,false, weekendDate);
 						}
+					}
 					//}
 
 				}
@@ -225,23 +219,19 @@ public class DealSearch implements IDealSearch {
 
 
 		// for user category likes item
-
-
-		///List<UserCategory> userCategoryList = userDAO.getUserCategoryLikesById(user.getUserId());
 		if(userCategoryList != null)
 		{
 			logger.debug("userCategoryList size::  "+userCategoryList.size());
 			for(UserCategory userCategory : userCategoryList) {
-				//UserCategoryLikes userCategoryLikes = (UserCategoryLikes)userCategory.getUserCategoryLikes().iterator().next();
 				
 				UserCategoryLikes userCategoryLikes = userDAO.getUserCategoryLikes(user.getUserId(), userCategory.getUserCategoryId());
+
+
 				
-				
-				Date  weekendDate = Utils.getNearestWeekend(null);
 				//Get nearest weekend date for UserLike
 				Date userLikeWeekend = Utils.getNearestWeekend(userCategoryLikes.getCreatedTime());
-				
-				
+
+
 				logger.debug("Date Comparison: "+userLikeWeekend.compareTo(weekendDate));
 				try {
 					if(userLikeWeekend.compareTo(weekendDate) == 0) // Deals is open for nearst weekend only
@@ -266,12 +256,12 @@ public class DealSearch implements IDealSearch {
 									//double distance = Utils.distance(Double.parseDouble(userFor.getLattitude()), Double.parseDouble(userFor.getLongitude()), Double.parseDouble(business.getLattitude()), Double.parseDouble(business.getLongitude()), "M");
 									//logger.debug("Distance::  "+distance +" lat::  "+userFor.getLattitude()+" lon::  "+userFor.getLongitude());
 									//if(distance <= 50)
-									
-										List<Userdealssuggestion> userdealsuggestions = userDAO.isDealSuggestionExists(userFor.getUserId(), catdeal.getId());
-										if(userdealsuggestions == null || userdealsuggestions.size() == 0)
-										{
-											saveDealsSuggestionInDataBase(catdeal,userFor,isGroupMember, contactFlag, false,true);
-										}
+
+									List<Userdealssuggestion> userdealsuggestions = userDAO.isDealSuggestionExists(userFor.getUserId(), catdeal.getId());
+									if(userdealsuggestions == null || userdealsuggestions.size() == 0)
+									{
+										saveDealsSuggestionInDataBase(catdeal,userFor,isGroupMember, contactFlag, false,true, weekendDate);
+									}
 									//}
 								}
 
@@ -299,11 +289,11 @@ public class DealSearch implements IDealSearch {
 										//logger.debug("Distance::  "+distance +" lat::  "+userFor.getLattitude()+" lon::  "+userFor.getLongitude());
 										//if(distance <= 50)
 										//{
-											List<Userdealssuggestion> userdealsuggestions = userDAO.isDealSuggestionExists(userFor.getUserId(), catdeal.getId());
-											if(userdealsuggestions == null || userdealsuggestions.size() == 0)
-											{
-												saveDealsSuggestionInDataBase(catdeal,userFor, isGroupMember, contactFlag, false,true);
-											}
+										List<Userdealssuggestion> userdealsuggestions = userDAO.isDealSuggestionExists(userFor.getUserId(), catdeal.getId());
+										if(userdealsuggestions == null || userdealsuggestions.size() == 0)
+										{
+											saveDealsSuggestionInDataBase(catdeal,userFor, isGroupMember, contactFlag, false,true, weekendDate);
+										}
 										//}
 									}
 
@@ -330,14 +320,13 @@ public class DealSearch implements IDealSearch {
 											//logger.debug("Distance::  "+distance +" lat::  "+userFor.getLattitude()+" lon::  "+userFor.getLongitude());
 											//if(distance <= 50)
 											//{
-												List<Userdealssuggestion> userdealsuggestions = userDAO.isDealSuggestionExists(userFor.getUserId(), catdeal.getId());
-												if(userdealsuggestions == null || userdealsuggestions.size() == 0)
-												{
-													saveDealsSuggestionInDataBase(catdeal,userFor, isGroupMember, contactFlag, false,true);
-												}
+											List<Userdealssuggestion> userdealsuggestions = userDAO.isDealSuggestionExists(userFor.getUserId(), catdeal.getId());
+											if(userdealsuggestions == null || userdealsuggestions.size() == 0)
+											{
+												saveDealsSuggestionInDataBase(catdeal,userFor, isGroupMember, contactFlag, false,true, weekendDate);
+											}
 											//}
 										}
-
 									}
 								}
 							}
@@ -353,7 +342,7 @@ public class DealSearch implements IDealSearch {
 	}
 
 
-	private void saveDealsSuggestionInDataBase(Deals deal, User user, boolean isGroupMember, boolean isContact, boolean isCommunityLike, boolean isUserCategoryLikes)
+	private void saveDealsSuggestionInDataBase(Deals deal, User user, boolean isGroupMember, boolean isContact, boolean isCommunityLike, boolean isUserCategoryLikes, Date weekendDate)
 	{
 		Date date = new Date();
 		Userdealssuggestion dealSuggestion = new Userdealssuggestion();
@@ -364,6 +353,7 @@ public class DealSearch implements IDealSearch {
 		dealSuggestion.setIsLike(true);
 		dealSuggestion.setIsRedempted(true);
 		dealSuggestion.setUpdatedtime(date);
+		dealSuggestion.setSuggestedTime(weekendDate);
 		dealSuggestion.setUser(user);
 		if(isCommunityLike)
 		{

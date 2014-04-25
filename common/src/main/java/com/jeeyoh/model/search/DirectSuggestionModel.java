@@ -26,6 +26,8 @@ public class DirectSuggestionModel implements Serializable{
 	private String suggestionType;
 	@JsonProperty
 	private ArrayList<Integer> friendsIdList;
+	@JsonProperty
+	private String suggestedTime;
 	
 	public Integer getUserId() {
 		return userId;
@@ -56,5 +58,17 @@ public class DirectSuggestionModel implements Serializable{
 	}
 	public void setFriendsIdList(ArrayList<Integer> friendsIdList) {
 		this.friendsIdList = friendsIdList;
+	}
+	/**
+	 * @return the suggestedTime
+	 */
+	public String getSuggestedTime() {
+		return suggestedTime;
+	}
+	/**
+	 * @param suggestedTime the suggestedTime to set
+	 */
+	public void setSuggestedTime(String suggestedTime) {
+		this.suggestedTime = suggestedTime;
 	}
 }

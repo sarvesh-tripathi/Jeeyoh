@@ -30,6 +30,9 @@
         <property name="updatedtime" type="timestamp">
             <column name="updatedtime" length="19" not-null="true" />
         </property>
+         <property name="suggestedTime" type="timestamp">
+            <column name="suggestedTime" length="19" not-null="true" />
+        </property>
         <property name="suggestionType" type="string">
 			<column name="suggestionType" length="250" />
 		</property>

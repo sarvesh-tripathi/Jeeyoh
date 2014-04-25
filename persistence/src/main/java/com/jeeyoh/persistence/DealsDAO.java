@@ -506,6 +506,7 @@ public class DealsDAO implements IDealsDAO {
 		criteria.createAlias("userdealssuggestion.deals", "deals");
 		criteria.add(Restrictions.conjunction().add(Restrictions.ge("deals.endAt", Utils.getCurrentDate()))
 				.add(Restrictions.gt("deals.endAt", Utils.getNearestThursday())));
+		criteria.add(Restrictions.ge("userdealssuggestion.suggestedTime", Utils.getNearestWeekend(null)));
 		criteria.setFirstResult(offset*10)
 		.setMaxResults(limit);
 

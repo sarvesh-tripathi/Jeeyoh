@@ -23,6 +23,7 @@ public class Usernondealsuggestion  implements java.io.Serializable {
      private String suggestionType;
      private Date createdtime;
      private Date updatedtime;
+     private Date suggestedTime;
 
     public Usernondealsuggestion() {
     }
@@ -123,6 +124,22 @@ public class Usernondealsuggestion  implements java.io.Serializable {
 	 */
 	public String getSuggestionType() {
 		return suggestionType;
+	}
+
+
+	/**
+	 * @return the suggestedTime
+	 */
+	public Date getSuggestedTime() {
+		return suggestedTime;
+	}
+
+
+	/**
+	 * @param suggestedTime the suggestedTime to set
+	 */
+	public void setSuggestedTime(Date suggestedTime) {
+		this.suggestedTime = suggestedTime;
 	}
 
 

@@ -26,5 +26,6 @@ public interface IFunBoardDAO {
 	public Funboard getFunboardById(int funBoardId);
 	public int getFunboardComment(Integer funBoardId, Integer userId);
 	public Timeline getDefaultTimeLine();
+	public void updateFunBoard(Funboard funboard);
 	
 }

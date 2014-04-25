@@ -187,21 +187,10 @@ public class FunBoardDAO implements IFunBoardDAO{
 		logger.debug("getTimeLine::");
 		List<Timeline>  timelines = null;
 	    String hqlQuery = "from Timeline where startTime <= :funboardCreationTime and endTime >= :funboardCreationTime";
-	    Timeline foundTimeline = null;
 	    try{
 	    	Query query = sessionFactory.getCurrentSession().createQuery(hqlQuery);
 	    	query.setParameter("funboardCreationTime",funboardCreationTime);
 	    	timelines = query.list();
-	    	/*if(timelines != null) {
-	    		for(Timeline timeline : timelines) {
-	    			logger.debug("time start: "+timeline.getStartTime().before(funboardCreationTime) +" after: "+timeline.getEndTime().after(funboardCreationTime));
-	    			if(timeline.getStartTime().before(funboardCreationTime) && timeline.getEndTime().after(funboardCreationTime))
-	    			{
-	    				foundTimeline = timeline;
-	    				break;
-	    			}
-	    		}
-	    	}*/
 	    }
 	    catch(HibernateException e)
 	    {
@@ -209,11 +198,7 @@ public class FunBoardDAO implements IFunBoardDAO{
 	    	e.printStackTrace();
 	    }
 	    
-	    /*if(foundTimeline != null) {
-	    	return foundTimeline;
-	    } else {*/
-	    	return timelines != null && !timelines.isEmpty() ? timelines.get(0) : null;
-	  //  }
+	    return timelines != null && !timelines.isEmpty() ? timelines.get(0) : null;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -318,6 +303,18 @@ public class FunBoardDAO implements IFunBoardDAO{
 	    }
 	    
 	    return timelines != null && !timelines.isEmpty() ? timelines.get(0) : null;
+	}
+
+	@Override
+	public void updateFunBoard(Funboard funboard) {
+		try
+		{
+			sessionFactory.getCurrentSession().update(funboard);
+		}
+		catch(HibernateException e)
+		{
+			logger.error(e.toString());
+		}
 	}
 
 }

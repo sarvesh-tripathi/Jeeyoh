@@ -1,6 +1,7 @@
 package com.jeeyoh.persistence.domain;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,17 +12,20 @@ public class WallFeed implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private Integer packageId;
+	private Integer wallFeedId;
 	private User user;
 	private String packageName;
+	private Date createdTime;
+	private Date updatedTime;
 	 private Set wallFeedItems = new HashSet(0);
 	 private Set wallFeedUserShareMap = new HashSet(0);
+	 private Set wallFeedComments = new HashSet(0);
 	
-	public Integer getPackageId() {
-		return packageId;
+	public Integer getWallFeedId() {
+		return wallFeedId;
 	}
-	public void setPackageId(Integer packageId) {
-		this.packageId = packageId;
+	public void setWallFeedId(Integer wallFeedId) {
+		this.wallFeedId = wallFeedId;
 	}
 	public User getUser() {
 		return user;
@@ -58,6 +62,42 @@ public class WallFeed implements Serializable {
 	 */
 	public void setWallFeedUserShareMap(Set wallFeedUserShareMap) {
 		this.wallFeedUserShareMap = wallFeedUserShareMap;
+	}
+	/**
+	 * @return the createdTime
+	 */
+	public Date getCreatedTime() {
+		return createdTime;
+	}
+	/**
+	 * @param createdTime the createdTime to set
+	 */
+	public void setCreatedTime(Date createdTime) {
+		this.createdTime = createdTime;
+	}
+	/**
+	 * @return the updatedTime
+	 */
+	public Date getUpdatedTime() {
+		return updatedTime;
+	}
+	/**
+	 * @param updatedTime the updatedTime to set
+	 */
+	public void setUpdatedTime(Date updatedTime) {
+		this.updatedTime = updatedTime;
+	}
+	/**
+	 * @return the wallFeedComments
+	 */
+	public Set getWallFeedComments() {
+		return wallFeedComments;
+	}
+	/**
+	 * @param wallFeedComments the wallFeedComments to set
+	 */
+	public void setWallFeedComments(Set wallFeedComments) {
+		this.wallFeedComments = wallFeedComments;
 	}
 	
 	

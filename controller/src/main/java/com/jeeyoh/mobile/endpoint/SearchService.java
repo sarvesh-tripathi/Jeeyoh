@@ -18,6 +18,7 @@ import com.jeeyoh.model.response.CommunityResponse;
 import com.jeeyoh.model.response.FriendListResponse;
 import com.jeeyoh.model.response.MemoryCardResponse;
 import com.jeeyoh.model.response.SearchResponse;
+import com.jeeyoh.model.search.CommunityReviewModel;
 import com.jeeyoh.model.search.FavoriteRequestModel;
 import com.jeeyoh.model.search.FriendModel;
 import com.jeeyoh.model.search.MemoryCardModel;
@@ -205,5 +206,16 @@ public class SearchService {
 		MemoryCardResponse response = memoryCardService.getMemoryCardDetails(memoryCardRequest);
 		return response;
 	}
+	
+	@POST
+   	@Path("/communityReview")
+   	@Consumes(MediaType.APPLICATION_JSON)
+   	@Produces(MediaType.APPLICATION_JSON)
+   	public BaseResponse communityReview(CommunityReviewModel communityReviewModel)
+   	{
+   		logger.debug("communityReview => userid => "+communityReviewModel.getUserId()+" ;pageid => "+communityReviewModel.getPageId()+ " ;rating => "+communityReviewModel.getRating()+" ;comment => "+communityReviewModel.getComment());
+   		BaseResponse response = communitySearchService.saveCommunityReview(communityReviewModel);
+   		return response;
+   	}
 
 }

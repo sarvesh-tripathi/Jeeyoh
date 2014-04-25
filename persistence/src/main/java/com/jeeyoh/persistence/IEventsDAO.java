@@ -3,6 +3,8 @@ package com.jeeyoh.persistence;
 import java.util.List;
 
 import com.jeeyoh.persistence.domain.CommunityComments;
+import com.jeeyoh.persistence.domain.CommunityReview;
+import com.jeeyoh.persistence.domain.CommunityReviewMap;
 import com.jeeyoh.persistence.domain.Events;
 import com.jeeyoh.persistence.domain.Eventuserlikes;
 import com.jeeyoh.persistence.domain.Page;
@@ -48,5 +50,7 @@ public interface IEventsDAO {
 	public boolean saveUserEvents(Eventuserlikes eventuserlikes);
 	public boolean updatePageUserLikes(Pageuserlikes pageuserlikes);
 	public boolean savePageUserLikes(Pageuserlikes pageuserlikes);
+	public void saveCommunityReview(CommunityReviewMap communityReviewMap);
+	public List<CommunityReview> getCommunityReviewByPageId(int pageId);
 
 }

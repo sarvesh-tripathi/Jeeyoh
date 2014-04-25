@@ -20,6 +20,8 @@ public class AddGroupModel implements Serializable{
 	@JsonProperty
 	private Integer userId;
 	@JsonProperty
+	private Integer groupId;
+	@JsonProperty
 	private String groupName;
 	@JsonProperty
 	private String category;
@@ -33,6 +35,18 @@ public class AddGroupModel implements Serializable{
 	}
 	public void setUserId(Integer userId) {
 		this.userId = userId;
+	}
+	/**
+	 * @return the groupId
+	 */
+	public Integer getGroupId() {
+		return groupId;
+	}
+	/**
+	 * @param groupId the groupId to set
+	 */
+	public void setGroupId(Integer groupId) {
+		this.groupId = groupId;
 	}
 	public String getGroupName() {
 		return groupName;

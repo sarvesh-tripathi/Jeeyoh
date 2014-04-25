@@ -1,6 +1,7 @@
 package com.jeeyoh.service.funboard;
 
 import com.jeeyoh.model.funboard.CommentModel;
+import com.jeeyoh.model.funboard.FunBoardModel;
 import com.jeeyoh.model.funboard.FunBoardRequest;
 import com.jeeyoh.model.funboard.MediaContenModel;
 import com.jeeyoh.model.response.BaseResponse;
@@ -18,5 +19,6 @@ public interface IFunBoardService {
 	public CommentResponse addFunBoardComment(CommentModel commentModel);
 	public FunBoardDetailResponse getFunBoardItem(FunBoardRequest request);
 	public UploadMediaServerResponse uploadMediaContent(MediaContenModel mediaContenModel);
+	public BaseResponse updateTimeLine(FunBoardModel funBoardModel);
 
 }

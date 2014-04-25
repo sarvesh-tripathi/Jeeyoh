@@ -6,5 +6,5 @@ import com.jeeyoh.model.response.BaseResponse;
 
 public interface IAddDirectSuggestionService 
 {
-	public BaseResponse addSuggestions(int userId, ArrayList<Integer> friendsIdList,int suggetstionId,String category, String suggestionType);
+	public BaseResponse addSuggestions(int userId, ArrayList<Integer> friendsIdList,int suggetstionId,String category, String suggestionType, String suggestedTime);
 }

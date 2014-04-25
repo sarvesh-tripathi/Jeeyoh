@@ -38,8 +38,8 @@ public class WallService implements IWallService {
 	
 	@Autowired
 	IWallFeedDAO wallFeedDAO;
+	
 
-	@SuppressWarnings("unchecked")
 	@Transactional
 	@Override
 	public void addWeightContentOnItem() {
@@ -51,7 +51,6 @@ public class WallService implements IWallService {
 			for(WallFeed wallFeed :list)
 			{
 				java.util.List<User> userContactsList = userDAO.getUserContacts(wallFeed.getUser().getUserId());
-				
 				Set<WallFeedItems> feedItems = wallFeed.getWallFeedItems();
 				for(WallFeedItems feedSharing:feedItems)
 				{
@@ -191,8 +190,8 @@ public class WallService implements IWallService {
 		logger.debug("WallFeedSharing :::: "+list.size());
 		for(WallFeedItems feedSharing :list)
 		{
-			double packageRank= wallFeedDAO.getAVGItemRank(feedSharing.getWallFeed().getPackageId());
-			wallFeedDAO.updatePackageRank(packageRank,feedSharing.getPackageName());
+			double packageRank= wallFeedDAO.getAVGItemRank(feedSharing.getWallFeed().getWallFeedId());
+			wallFeedDAO.updatePackageRank(packageRank,feedSharing.getWallFeed().getWallFeedId());
 			
 		}
 	}

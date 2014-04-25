@@ -41,11 +41,8 @@ public class Utils {
 		Calendar cal = null;
 		cal = Calendar.getInstance();
 
-		// Set time fields to end  
-		cal.set(Calendar.HOUR_OF_DAY, 23);
-		cal.set(Calendar.MINUTE, 59);
-		cal.set(Calendar.SECOND, 59);
-		cal.set(Calendar.MILLISECOND, 59);
+		// Set time fields to end 
+		setTimeFields(cal);
 
 		// The while loop ensures that you are only checking dates in the specified year
 		while(cal.get(Calendar.YEAR) == Calendar.getInstance().get(Calendar.YEAR)){
@@ -73,11 +70,8 @@ public class Utils {
 		Calendar cal = null;
 		cal = Calendar.getInstance();
 
-		// Set time fields to end  
-		cal.set(Calendar.HOUR_OF_DAY, 23);
-		cal.set(Calendar.MINUTE, 59);
-		cal.set(Calendar.SECOND, 59);
-		cal.set(Calendar.MILLISECOND, 59);
+		// Set time fields to end 
+		setTimeFields(cal);
 
 		// The while loop ensures that you are only checking dates in the specified year
 		while(cal.get(Calendar.YEAR) == Calendar.getInstance().get(Calendar.YEAR)){
@@ -190,10 +184,8 @@ public class Utils {
 				c.add(Calendar.DATE,7);
 
 			// Set time fields to end  
-			c.set(Calendar.HOUR_OF_DAY, 23);
-			c.set(Calendar.MINUTE, 59);
-			c.set(Calendar.SECOND, 59);
-			c.set(Calendar.MILLISECOND, 59);
+			setTimeFields(c);
+			
 			return c.getTime();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -219,11 +211,9 @@ public class Utils {
 			if(c.get(Calendar.DAY_OF_MONTH) < cal1.get(Calendar.DAY_OF_MONTH))
 				c.add(Calendar.DATE,7*4);
 
-			// Set time fields to end  
-			c.set(Calendar.HOUR_OF_DAY, 23);
-			c.set(Calendar.MINUTE, 59);
-			c.set(Calendar.SECOND, 59);
-			c.set(Calendar.MILLISECOND, 59);
+			// Set time fields to end 
+			setTimeFields(c);
+			
 			return c.getTime();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -245,10 +235,8 @@ public class Utils {
 			c.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
 
 			// Set time fields to end  
-			c.set(Calendar.HOUR_OF_DAY, 23);
-			c.set(Calendar.MINUTE, 59);
-			c.set(Calendar.SECOND, 59);
-			c.set(Calendar.MILLISECOND, 59);
+			setTimeFields(c);
+			
 			return c.getTime();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -256,8 +244,8 @@ public class Utils {
 		}
 
 	}
-	
-	
+
+
 	/**
 	 * Get nearest Thursday for a particular date
 	 * @return weekendDate
@@ -269,10 +257,8 @@ public class Utils {
 			c.set(Calendar.DAY_OF_WEEK, Calendar.THURSDAY);
 
 			// Set time fields to end  
-			c.set(Calendar.HOUR_OF_DAY, 23);
-			c.set(Calendar.MINUTE, 59);
-			c.set(Calendar.SECOND, 59);
-			c.set(Calendar.MILLISECOND, 59);
+			setTimeFields(c);
+			
 			return c.getTime();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -295,11 +281,8 @@ public class Utils {
 			cal.setTime(date);
 
 			// Set time fields to end  
-			cal.set(Calendar.HOUR_OF_DAY, 23);
-			cal.set(Calendar.MINUTE, 59);
-			cal.set(Calendar.SECOND, 59);
-			cal.set(Calendar.MILLISECOND, 59);
-
+			setTimeFields(cal);
+			
 			switch(cal.get(Calendar.DAY_OF_WEEK)){
 			case Calendar.FRIDAY: 
 				eventDate = cal.getTime();
@@ -419,16 +402,6 @@ public class Utils {
 						}
 					}
 				}
-
-
-			/*if(geList.get(geList.size()-1).getTypes().get(0).trim().equalsIgnoreCase("postal_code"))
-			{
-				zipcode = geList.get(geList.size()-1).getLongName();
-			}
-			else if(geList.get(0).getTypes().get(0).trim().equalsIgnoreCase("postal_code"))
-			{
-				zipcode = geList.get(0).getLongName();
-			}*/
 
 			logger.debug("zipcode :  " + zipcode);
 
@@ -627,6 +600,70 @@ public class Utils {
 		}
 		return interval;
 
+	}
+
+
+	/**
+	 * Get weekends date for the current year
+	 * @return
+	 */
+	public static List<Date> findWeekendsBetweenTwoDates(Date startDate, Date endDate){
+		List<Date >weekendList = new ArrayList<Date>();
+		Calendar start = null;
+		start = Calendar.getInstance();
+		start.setTime(startDate);
+		Calendar cal = null;
+		cal = Calendar.getInstance();
+		cal.setTime(startDate);
+		Calendar end = Calendar.getInstance();
+		end.setTime(endDate);
+
+		// Set time fields to end  
+		setTimeFields(end);
+
+		// Set time fields to end  
+		setTimeFields(cal);
+		
+		// The while loop ensures that you are only checking dates in the specified timeLine
+		while(!cal.after(end)){
+			// The switch checks the day of the week for Saturdays and Sundays
+			switch(cal.get(Calendar.DAY_OF_WEEK)){
+			case Calendar.SUNDAY:
+				if(cal.get(Calendar.DAY_OF_MONTH) < start.get(Calendar.DAY_OF_MONTH))
+					cal.add(Calendar.DATE,7);
+				weekendList.add(cal.getTime());
+				break;
+			}
+			// Increment the day of the year for the next iteration of the while loop
+			cal.add(Calendar.DAY_OF_YEAR, 1);
+		}
+		return weekendList;
+	}
+	
+	/**
+	 * Set time fields to end  
+	 * @param calendar
+	 */
+	public static void setTimeFields(Calendar calendar)
+	{
+		// Set time fields to end  
+		calendar.set(Calendar.HOUR_OF_DAY, 23);
+		calendar.set(Calendar.MINUTE, 59);
+		calendar.set(Calendar.SECOND, 59);
+		calendar.set(Calendar.MILLISECOND, 59);
+	}
+	
+	/**
+	 * Set time fields to start 
+	 * @param calendar
+	 */
+	public static void setTimeFieldsToStart(Calendar calendar)
+	{
+		// Set time fields to end  
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 1);
+		calendar.set(Calendar.MILLISECOND, 0);
 	}
 
 

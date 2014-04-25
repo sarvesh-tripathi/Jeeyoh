@@ -8,7 +8,7 @@ public class WallFeedItems implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private Integer wallFeddItemId;
+	private Integer wallFeedItemId;
 	private WallFeed wallFeed;
 	private Funboard funboard;
 	private Integer itemId;
@@ -76,11 +76,11 @@ public class WallFeedItems implements Serializable{
 	public void setWallFeed(WallFeed wallFeed) {
 		this.wallFeed = wallFeed;
 	}
-	public Integer getWallFeddItemId() {
-		return wallFeddItemId;
+	public Integer getWallFeedItemId() {
+		return wallFeedItemId;
 	}
-	public void setWallFeddItemId(Integer wallFeddItemId) {
-		this.wallFeddItemId = wallFeddItemId;
+	public void setWallFeedItemId(Integer wallFeedItemId) {
+		this.wallFeedItemId = wallFeedItemId;
 	}
 
 }

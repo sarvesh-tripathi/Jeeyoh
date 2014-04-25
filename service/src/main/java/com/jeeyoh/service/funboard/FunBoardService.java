@@ -1,7 +1,6 @@
 package com.jeeyoh.service.funboard;
 
 import java.sql.Time;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -97,7 +96,7 @@ public class FunBoardService implements IFunBoardService{
 				}
 				else
 					funboard.setCategory(funBoardModel.getCategory());
-				
+
 				try {
 					Date endDate = simple.parse(funBoardModel.getEndDate());
 					if(funBoardModel.getType().equalsIgnoreCase("Event"))
@@ -118,13 +117,13 @@ public class FunBoardService implements IFunBoardService{
 						}
 						else
 						{
-							
+
 						}
 					}
-					
+
 					funboard.setStartDate(simple.parse(funBoardModel.getStartDate()));
 					funboard.setEndDate(endDate);
-					
+
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -132,7 +131,7 @@ public class FunBoardService implements IFunBoardService{
 				logger.debug("Funboard timeline : " + timeline);
 				funboard.setTimeline(timeline);
 
-				
+
 				funBoardDAO.saveFunBoard(funboard, batch_size);
 				baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
 			}
@@ -182,52 +181,25 @@ public class FunBoardService implements IFunBoardService{
 					funBoardModel.setStartDate(funboard.getStartDate().toString());
 					funBoardModel.setEndDate(funboard.getEndDate().toString());
 					funBoardModel.setSource(funboard.getSource());
+					int day = 0;
 					if(funboard.getItemType().equalsIgnoreCase("Event"))
 					{
-						int day = Utils.getDayOfWeek(funboard.getStartDate());
-						switch(day){
-						case 6: 
-							fridayActivefunBoardModels.add(funBoardModel);
-							break;	
-						case 7: 
-							saturadyActivefunBoardModels.add(funBoardModel);
-							break;	
-						case 1: 
-							sundayActivefunBoardModels.add(funBoardModel);
-							break;	
-						}
+						day = Utils.getDayOfWeek(funboard.getStartDate());
 					}
 					else
 					{
-						Calendar start = Calendar.getInstance();
-						start.setTime(funboard.getStartDate());
-						Calendar end = Calendar.getInstance();
-						end.setTime(funboard.getEndDate());
-						int count = 1;
-						int day = 0;
-						for (Date date = start.getTime(); !start.after(end); start.add(Calendar.DATE, 1), date = start.getTime()) {
-							if(count <= 3)
-							{
-								day = Utils.getDayOfWeek(date);
-								switch(day){
-								case 6: 
-									fridayActivefunBoardModels.add(funBoardModel);
-									count++;
-									break;	
-								case 7: 
-									saturadyActivefunBoardModels.add(funBoardModel);
-									count++;
-									break;	
-								case 1: 
-									sundayActivefunBoardModels.add(funBoardModel);
-									count++;
-									break;	
-								}
-							}
-							else 
-								break;
-
-						}
+						day = Utils.getDayOfWeek(funboard.getScheduledTime());
+					}
+					switch(day){
+					case 6: 
+						fridayActivefunBoardModels.add(funBoardModel);
+						break;	
+					case 7: 
+						saturadyActivefunBoardModels.add(funBoardModel);
+						break;	
+					case 1: 
+						sundayActivefunBoardModels.add(funBoardModel);
+						break;	
 					}
 				}
 			}
@@ -487,4 +459,39 @@ public class FunBoardService implements IFunBoardService{
 		response.setStatus(ServiceAPIStatus.OK.getStatus());
 		return response;
 	}
+
+
+	@Transactional
+	@Override
+	public BaseResponse updateTimeLine(FunBoardModel funBoardModel) {
+		BaseResponse baseResponse = new BaseResponse();
+		logger.debug("updateTimeLine::  ");
+		try
+		{
+			Funboard funboard = funBoardDAO.getFunboardById(funBoardModel.getFunBoardId());
+			SimpleDateFormat simple=new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+			Date scheduleTime = simple.parse(funBoardModel.getTimeLine());
+
+			Time funboardCreationTime = new Time(scheduleTime.getTime());
+			logger.debug("funboardCreationTime::  "+funboardCreationTime);
+			Timeline timeline = funBoardDAO.getTimeLine(funboardCreationTime);
+			logger.debug("Funboard timeline : " + timeline);
+			if(timeline != null)
+			{
+				funboard.setTimeline(timeline);
+				funboard.setUpdatedTime(new Date());
+				funBoardDAO.updateFunBoard(funboard);
+			}
+			baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
+
+		}catch(Exception e)
+		{
+			logger.debug("Error: "+e.getLocalizedMessage());
+			baseResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
+			baseResponse.setError("Error");
+		}
+		return baseResponse;
+	}
+	
+	
 }

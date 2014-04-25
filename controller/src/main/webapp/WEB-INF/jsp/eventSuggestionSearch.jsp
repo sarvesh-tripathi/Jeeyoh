@@ -28,9 +28,9 @@
 		<td>Category:</td>
 		<td>
 		<div align="center"><select name="eventCategory">
-			<option value="Concert">Concerts</option>
+		<option value="NightLife">NightLife</option>
+			<!--<option value="Concert">Concerts</option>
 			<option value="Theater">Theater</option>
-			<!--<option value="NIGHT LIFE">NIGHT LIFE</option>
 			-->
 			<!--<option value="EVENT">EVENT</option>
 			<option value="GETAWAYS">GETAWAYS</option>

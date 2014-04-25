@@ -17,11 +17,14 @@ import com.jeeyoh.model.response.BaseResponse;
 import com.jeeyoh.model.response.CommentResponse;
 import com.jeeyoh.model.response.CommunityPaginationResponse;
 import com.jeeyoh.model.response.CommunityResponse;
+import com.jeeyoh.model.search.CommunityReviewModel;
 import com.jeeyoh.model.search.EventModel;
 import com.jeeyoh.model.search.PageModel;
 import com.jeeyoh.persistence.IEventsDAO;
 import com.jeeyoh.persistence.IUserDAO;
 import com.jeeyoh.persistence.domain.CommunityComments;
+import com.jeeyoh.persistence.domain.CommunityReview;
+import com.jeeyoh.persistence.domain.CommunityReviewMap;
 import com.jeeyoh.persistence.domain.Events;
 import com.jeeyoh.persistence.domain.Eventuserlikes;
 import com.jeeyoh.persistence.domain.Notificationpermission;
@@ -227,6 +230,27 @@ public class CommunitySearchService implements ICommunitySearchService{
 			}
 			logger.debug("add community comments in response");
 			communityResponse.setCommunityComments(commentModelList);
+		}
+		
+		if(pageId!=0)
+		{
+			List<CommunityReview> communityReviewList = eventsDAO.getCommunityReviewByPageId(pageId);
+			int rating = 0;
+			int count = 0;
+			if(communityReviewList != null)
+			{
+				for(CommunityReview communityReview:communityReviewList)
+				{
+					rating = rating + communityReview.getRating();
+					count++;
+				}
+				double avg = (double)rating/count;
+				logger.debug("avg rating =>"+avg);
+				communityResponse.setRating(avg);
+			}
+			else
+				communityResponse.setRating(0);
+			logger.debug("CommunityReview rating =>"+communityResponse.getRating());
 		}
 
 		return communityResponse;
@@ -530,6 +554,39 @@ public class CommunitySearchService implements ICommunitySearchService{
 		{
 			baseResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
 			baseResponse.setError(errorMessage);
+		}
+		return baseResponse;
+	}
+	
+	
+	@Transactional
+	@Override
+	public BaseResponse saveCommunityReview(CommunityReviewModel communityReviewModel) {
+		logger.debug("saveCommunityReview ===>");
+		BaseResponse baseResponse = new BaseResponse();
+		if(communityReviewModel!=null)
+		{
+			Date date = new Date();
+			CommunityReview communityReview = new CommunityReview();
+			CommunityReviewMap communityReviewMap = new CommunityReviewMap();
+			User user = (User)userDAO.getUserById(communityReviewModel.getUserId());
+			Page page = (Page)eventsDAO.getPageDetailsByID(communityReviewModel.getPageId());
+			communityReview.setUser(user);
+			communityReview.setComment(communityReviewModel.getComment());
+			communityReview.setCreatedTime(date);
+			communityReview.setUpdatedTime(date);
+			communityReview.setRating(communityReviewModel.getRating());
+			communityReviewMap.setPage(page);
+			communityReviewMap.setCreatedTime(date);
+			communityReviewMap.setUpdatedTime(date);
+			communityReviewMap.setCommunityReview(communityReview);
+			eventsDAO.saveCommunityReview(communityReviewMap);
+			baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
+		}
+		else
+		{
+			baseResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
+			baseResponse.setError("Invalid Parameter");
 		}
 		return baseResponse;
 	}

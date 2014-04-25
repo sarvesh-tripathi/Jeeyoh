@@ -19,6 +19,7 @@ import com.jeeyoh.persistence.domain.Business;
 import com.jeeyoh.persistence.domain.Businesstype;
 import com.jeeyoh.persistence.domain.Gcategory;
 import com.jeeyoh.persistence.domain.Lcategory;
+import com.jeeyoh.utils.Utils;
 
 @Repository("businessDAO")
 public class BusinessDAO implements IBusinessDAO {
@@ -460,7 +461,7 @@ public class BusinessDAO implements IBusinessDAO {
 			criteria.add(Restrictions.eq("user.emailId", userEmail));
 		}
 
-
+		criteria.add(Restrictions.eq("usernondealsuggestion.suggestedTime", Utils.getNearestWeekend(null)));
 
 		criteria.setFirstResult(offset)
 		.setMaxResults(limit);

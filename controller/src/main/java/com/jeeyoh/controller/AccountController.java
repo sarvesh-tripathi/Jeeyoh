@@ -25,12 +25,14 @@ import com.jeeyoh.model.funboard.CommentModel;
 import com.jeeyoh.model.funboard.FunBoardModel;
 import com.jeeyoh.model.funboard.FunBoardRequest;
 import com.jeeyoh.model.funboard.MediaContenModel;
+import com.jeeyoh.model.funboard.WallFeedRequest;
 import com.jeeyoh.model.response.CommunityResponse;
 import com.jeeyoh.model.response.FriendListResponse;
 import com.jeeyoh.model.response.SearchResponse;
 import com.jeeyoh.model.response.UploadMediaServerResponse;
 import com.jeeyoh.model.search.AddGroupModel;
 import com.jeeyoh.model.search.BusinessModel;
+import com.jeeyoh.model.search.CommunityReviewModel;
 import com.jeeyoh.model.search.DealModel;
 import com.jeeyoh.model.search.EventModel;
 import com.jeeyoh.model.search.MainModel;
@@ -554,7 +556,7 @@ public class AccountController {
 		// randomNumber + "_" + fileDetail.getFileName());
 		// save it
 		MediaContenModel mediaContenModel = new MediaContenModel();
-		mediaContenModel.setFunBoardId(8);
+		mediaContenModel.setFunBoardId(1);
 		mediaContenModel.setUserId(1);
 		mediaContenModel.setMediaType("image");
 		mediaContenModel.setImageUrl(uploadMediaServerResponse.getMediaUrl());
@@ -873,28 +875,56 @@ public class AccountController {
 		String category = request.getParameter("category");
 		String suggestionId = request.getParameter("suggestionId");
 		String suggestionType = request.getParameter("suggestionType");
+		String suggestedTime = request.getParameter("suggestedTime");
 		ArrayList<Integer> friendsList = new ArrayList<Integer>();
 		String[] s =contactId.split(",");
 		for(int i = 0; i<s.length;i++)
 		{
 			friendsList.add(Integer.parseInt(s[i]));
 		}
-		addDirectSuggestionService.addSuggestions(Integer.parseInt(userId), friendsList, Integer.parseInt(suggestionId), category, suggestionType);
+		addDirectSuggestionService.addSuggestions(Integer.parseInt(userId), friendsList, Integer.parseInt(suggestionId), category, suggestionType,suggestedTime);
 		return modelAndView;
 	}
+	
 	
 	@RequestMapping(value = "/wallFeedSharing", method = RequestMethod.GET)
 	public ModelAndView wallFeedSharing(HttpServletRequest request, HttpServletResponse response)
 	{
 		ModelAndView modelAndView = new ModelAndView("home");
-		String funBoradIdList[]= request.getParameterValues("funBoardId");
-		String sharedWithUserList[] = request.getParameterValues("sharedWithUserId");
+		WallFeedRequest wallFeedModel = new WallFeedRequest();
+		UserModel userModel = new UserModel();
+		userModel.setUserId(2);
+		UserModel userModel1 = new UserModel();
+		userModel1.setUserId(3);
+		List<UserModel> userList = new ArrayList<UserModel>();
+		userList.add(userModel);
+		userList.add(userModel1);
 		
-		for(int i=0;i<funBoradIdList.length;i++)
-		{
-			int funBoardId = Integer.parseInt(funBoradIdList[i]);
-			wallFeedSharingService.saveWallFeedSharingData(funBoardId, sharedWithUserList);
-		}
+		FunBoardModel funBoardModel = new FunBoardModel();
+		funBoardModel.setFunBoardId(1);
+		FunBoardModel funBoardModel1 = new FunBoardModel();
+		funBoardModel1.setFunBoardId(2);
+		List<FunBoardModel> funBoardList = new ArrayList<FunBoardModel>();
+		funBoardList.add(funBoardModel);
+		funBoardList.add(funBoardModel1);
+		
+		wallFeedModel.setUserId(1);
+		wallFeedModel.setSharedWithUserList(userList);
+		wallFeedModel.setSharedfunBoardItemsList(funBoardList);
+		wallFeedSharingService.saveWallFeedSharingData(wallFeedModel);
+		return modelAndView;
+	}
+	
+	@RequestMapping(value = "/communityReview", method = RequestMethod.GET)
+	public ModelAndView communityReview(HttpServletRequest request, HttpServletResponse response)
+	{
+		ModelAndView modelAndView = new ModelAndView("home");
+		CommunityReviewModel reviewModel = new CommunityReviewModel();
+		reviewModel.setComment("testing");
+		reviewModel.setRating(1);
+		reviewModel.setUserId(1);
+		reviewModel.setPageId(25);
+		communitySearchService.saveCommunityReview(reviewModel);
 		return modelAndView;
 	}
 }

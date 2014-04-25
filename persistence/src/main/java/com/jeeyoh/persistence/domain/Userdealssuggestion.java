@@ -25,6 +25,7 @@ public class Userdealssuggestion  implements java.io.Serializable {
 	private Boolean isRedempted;
 	private Date createdtime;
 	private Date updatedtime;
+	private Date suggestedTime;
 	private String suggestionType;
 	
 
@@ -143,6 +144,22 @@ public class Userdealssuggestion  implements java.io.Serializable {
 	 */
 	 public String getSuggestionType() {
 		return suggestionType;
+	}
+
+
+	/**
+	 * @return the suggestedTime
+	 */
+	public Date getSuggestedTime() {
+		return suggestedTime;
+	}
+
+
+	/**
+	 * @param suggestedTime the suggestedTime to set
+	 */
+	public void setSuggestedTime(Date suggestedTime) {
+		this.suggestedTime = suggestedTime;
 	}
 
 

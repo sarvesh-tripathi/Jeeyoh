@@ -28,6 +28,8 @@ public class CommunityResponse extends BaseResponse{
 	private List<EventModel> pastEvents;
 	@JsonProperty
 	private List<CommentModel> communityComments;
+	@JsonProperty
+	private double rating;
 	/**
 	 * @return the currentEvents
 	 */
@@ -87,6 +89,18 @@ public class CommunityResponse extends BaseResponse{
 	 */
 	public void setCommunityComments(List<CommentModel> communityComments) {
 		this.communityComments = communityComments;
+	}
+	/**
+	 * @return the rating
+	 */
+	public double getRating() {
+		return rating;
+	}
+	/**
+	 * @param rating the rating to set
+	 */
+	public void setRating(double rating) {
+		this.rating = rating;
 	}
 	
 

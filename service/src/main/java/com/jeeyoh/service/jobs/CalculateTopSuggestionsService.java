@@ -36,7 +36,7 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 
 	static final Logger logger = LoggerFactory.getLogger("debugLogger");
 
-	String[] categoryList = {"RESTAURANT","Movies","Sport","THEATER","CONCERT","SPA","NIGHTLIFE"};
+	String[] categoryList = {"RESTAURANT","MOVIES","SPORT","THEATER","CONCERT","SPA","NIGHTLIFE"};
 
 	@Autowired
 	private IUserDAO userDAO;
@@ -374,7 +374,7 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 			List<Object[]> rows = businessDAO.getNonDealLikeCountByPage(idsStr);
 
 
-			ArrayList<String> idsArray = new ArrayList<String>();
+			ArrayList<String> idsArray = null;
 
 			ArrayList<ArrayList<String>> main = new ArrayList<ArrayList<String>>();
 			int likecount = 0;
@@ -386,7 +386,7 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 				{
 					if(count <= totalCount)
 					{
-						idsArray.clear();
+						idsArray = new ArrayList<String>();
 						//idsArray.setLength(0);
 						likecount = Integer.parseInt(rows.get(i)[0].toString());
 						//idsArray.append("'"+rows.get(i)[1]+"',");
@@ -515,7 +515,7 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 			logger.debug("dealIdsStr: "+dealIdsStr +" : "+rows);
 			//Collections.sort(rows, new SuggestionComparator());
 			logger.debug("rows after sorting: "+rows);
-			ArrayList<String> idsArray = new ArrayList<String>();
+			ArrayList<String> idsArray = null;
 
 			int likecount = 0;
 			if(rows != null)
@@ -526,7 +526,7 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 				{
 					if(count <= totalCount)
 					{
-						idsArray.clear();
+						idsArray = new ArrayList<String>();
 						likecount = Integer.parseInt(rows.get(i)[0].toString());
 						idsArray.add(rows.get(i)[1].toString());
 						for(int j = i+1; j < rows.size(); j++)
@@ -541,7 +541,7 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 
 						if(idsArray.size() > 1)
 						{
-							ArrayList<String> dealsIds = new ArrayList<String>();
+							ArrayList<String> dealsIds = null;
 							List<Object[]> rows1 = dealsDAO.getTopDealsByRating(StringUtils.join(idsArray.toArray(new String[idsArray.size()]), ","));
 							if(rows1 != null)
 							{
@@ -549,7 +549,7 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 								{
 									if(count <= totalCount)
 									{
-										dealsIds.clear();
+										dealsIds = new ArrayList<String>();
 										dealsIds.add(rows1.get(k)[0].toString());
 										for(int j = k+1; j < rows1.size(); j++)
 										{
@@ -707,7 +707,7 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 			//Collections.sort(rows, new SuggestionComparator());
 			int likecount = 0,id = 0;
 			//StringBuilder idsArray = new StringBuilder();
-			ArrayList<String> idsArray = new ArrayList<String>();
+			ArrayList<String> idsArray = null;
 			HashMap<Integer, ArrayList<String>> rowMap = new HashMap<Integer, ArrayList<String>>();
 
 			ArrayList<ArrayList<String>> main = new ArrayList<ArrayList<String>>();
@@ -716,7 +716,7 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 			{
 				if(count <= totalCount)
 				{
-					idsArray.clear();
+					idsArray = new ArrayList<String>();
 					likecount = Integer.parseInt(rows.get(i)[0].toString());
 					idsArray.add(rows.get(i)[1].toString());
 					for(int j = i+1; j < rows.size(); j++)
@@ -846,6 +846,8 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 					//Checking if the suggestions is already exists or not
 
 					Topeventsuggestion topeventsuggestion = new Topeventsuggestion();
+					if(usereventsuggestion.getUserContact() != null)
+						topeventsuggestion.setUserContact(usereventsuggestion.getUserContact());
 					topeventsuggestion.setEvents(events);
 					topeventsuggestion.setUser(usereventsuggestion.getUser());
 
@@ -887,6 +889,8 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 				if(topnondealsuggestions == null || topnondealsuggestions.size() == 0)
 				{
 					Topnondealsuggestion topnondealsuggestion = new Topnondealsuggestion();
+					if(usernondealsuggestion.getUserContact() != null)
+						topnondealsuggestion.setUserContact(usernondealsuggestion.getUserContact());
 					topnondealsuggestion.setBusiness(business);
 					topnondealsuggestion.setUser(usernondealsuggestion.getUser());
 					if(forFriendsSuggestion)
@@ -925,6 +929,8 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 				if(topdealsuggestions == null || topdealsuggestions.size() == 0)
 				{
 					Topdealssuggestion topdealsuggestion = new Topdealssuggestion();
+					if(userdealsuggestion.getUserContact() != null)
+						topdealsuggestion.setUserContact(userdealsuggestion.getUserContact());
 					topdealsuggestion.setDeals(deal);
 					topdealsuggestion.setUser(userdealsuggestion.getUser());
 					if(forJeeyohSuggestion)

@@ -88,5 +88,7 @@
 		<mapping resource="hbm/WallFeedComments.hbm.xml" />	
 		<mapping resource="hbm/WallFeedItems.hbm.xml" />	
 		<mapping resource="hbm/WallFeedUserShareMap.hbm.xml" />
+		<mapping resource="hbm/CommunityReviewMap.hbm.xml" />	
+		<mapping resource="hbm/CommunityReview.hbm.xml" />
 	</session-factory>
 </hibernate-configuration>

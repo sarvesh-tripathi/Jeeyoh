@@ -1,7 +1,6 @@
 package com.jeeyoh.service.userservice;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -23,8 +22,10 @@ import com.jeeyoh.model.response.FriendListResponse;
 import com.jeeyoh.model.response.LoginResponse;
 import com.jeeyoh.model.response.SuggestionResponse;
 import com.jeeyoh.model.response.TopSuggestionResponse;
+import com.jeeyoh.model.response.UserFriendsGroupResponse;
 import com.jeeyoh.model.response.UserRegistrationResponse;
 import com.jeeyoh.model.response.UserResponse;
+import com.jeeyoh.model.search.AddGroupModel;
 import com.jeeyoh.model.search.BusinessModel;
 import com.jeeyoh.model.search.CategoryModel;
 import com.jeeyoh.model.search.DealModel;
@@ -48,6 +49,7 @@ import com.jeeyoh.persistence.domain.Dealsusage;
 import com.jeeyoh.persistence.domain.Events;
 import com.jeeyoh.persistence.domain.Eventuserlikes;
 import com.jeeyoh.persistence.domain.Funboard;
+import com.jeeyoh.persistence.domain.Jeeyohgroup;
 import com.jeeyoh.persistence.domain.Notificationpermission;
 import com.jeeyoh.persistence.domain.Page;
 import com.jeeyoh.persistence.domain.Pageuserlikes;
@@ -75,17 +77,17 @@ public class UserService implements IUserService{
 
 	@Value("${host.path}")
 	private String hostPath;
-	
+
 	@Value("${app.jeeyoh.favorite.success}")
 	private String favSuccess;
-	
+
 	@Value("${app.jeeyoh.favorite.already.exist}")
 	private String alreadyExists;
-	
+
 	@Value("${app.jeeyoh.failed}")
 	private String errorMessage;
-	
-	
+
+
 	@Autowired
 	private IUserDAO userDAO;
 
@@ -103,7 +105,7 @@ public class UserService implements IUserService{
 
 	@Autowired
 	private IMatchingEventsService matchingEventsService;
-	
+
 	@Autowired
 	private IFunBoardDAO funBoardDAO;
 
@@ -142,6 +144,9 @@ public class UserService implements IUserService{
 		RandomGUID myGUID = new RandomGUID();
 		String confirmationId = myGUID.toString();
 		user.setConfirmationId(confirmationId);
+		user.setIsShareCommunity(true);
+		user.setIsShareProfileWithFriend(true);
+		user.setIsShareProfileWithGroup(true);
 		UserRegistrationResponse userRegistrationResponse = new UserRegistrationResponse();
 		userRegistrationResponse.setConfirmationId(confirmationId);
 		userDAO.registerUser(user);
@@ -448,7 +453,7 @@ public class UserService implements IUserService{
 	@Transactional
 	@Override
 	public SuggestionResponse getUserSuggestions(UserModel user) {
-		
+
 		logger.debug("getOffset:::   "+user.getOffset());
 		int totalCount = 0;
 		//Getting total number of suggestions
@@ -459,10 +464,10 @@ public class UserService implements IUserService{
 			int totalEventSuggestions = userDAO.getTotalUserEventSuggestions(user.getUserId());
 			totalCount = totalNonDealSuggestions + totalDealSuggestions + totalEventSuggestions;
 		}
-		
+
 		logger.debug("totalCount::  "+totalCount);
-		
-		
+
+
 		//Get user's non deal suggestions
 		List<Business> userNonDealSuggestions = businessDAO.getUserNonDealSuggestions(user.getEmailId(), user.getOffset(), user.getLimit());
 		logger.debug("userNonDealSuggestions ==> "+userNonDealSuggestions.size());
@@ -703,52 +708,27 @@ public class UserService implements IUserService{
 			{
 				if(funboard.getEndDate().compareTo(Utils.getCurrentDate()) >=0)
 				{
+					logger.debug("getEndDate: "+funboard.getEndDate() +" : "+ funboard.getFunBoardId());
+					int day = 0;
 					if(funboard.getItemType().equalsIgnoreCase("Event"))
 					{
-						int day = Utils.getDayOfWeek(funboard.getStartDate());
-						switch(day){
-						case 6: 
-							totalFridayActivity++;
-							break;	
-						case 7: 
-							totalSaturdayActivity++;
-							break;	
-						case 1: 
-							totalSundayActivity++;
-							break;	
-						}
+						day = Utils.getDayOfWeek(funboard.getStartDate());
 					}
 					else
 					{
-						Calendar start = Calendar.getInstance();
-						start.setTime(funboard.getStartDate());
-						Calendar end = Calendar.getInstance();
-						end.setTime(funboard.getEndDate());
-
-						int count = 1;
-						int day = 0;
-						for (Date date = start.getTime(); !start.after(end); start.add(Calendar.DATE, 1), date = start.getTime()) {
-							if(count <= 3)
-							{
-								day = Utils.getDayOfWeek(date);
-								switch(day){
-								case 6: 
-									totalFridayActivity++;
-									count++;
-									break;	
-								case 7: 
-									totalSaturdayActivity++;
-									count++;
-									break;	
-								case 1: 
-									totalSundayActivity++;
-									count++;
-									break;	
-								}
-							}
-							else 
-								break;
-						}
+						day = Utils.getDayOfWeek(funboard.getScheduledTime());
+					}
+					logger.debug("Day:::  "+day);
+					switch(day){
+					case 6: 
+						totalFridayActivity++;
+						break;	
+					case 7: 
+						totalSaturdayActivity++;
+						break;	
+					case 1: 
+						totalSundayActivity++;
+						break;	
 					}
 				}
 			}
@@ -759,15 +739,15 @@ public class UserService implements IUserService{
 				totalSundayActivity++;
 			}
 		}
-		
-		
+
+
 		TopSuggestionResponse topSuggestionResponse = new TopSuggestionResponse();
 
 		//Set Total Activity
 		topSuggestionResponse.setTotalFridayActivity(totalFridayActivity);
 		topSuggestionResponse.setTotalSaturdayActivity(totalSaturdayActivity);
 		topSuggestionResponse.setTotalSundayActivity(totalSundayActivity);
-		
+
 		// Top 10 Friends Suggestions
 		TopSuggestionResponse topFriendsSuggestionResponse = getTopSuggestions(user.getEmailId(), "Friend's Suggestion");
 		topSuggestionResponse.setTopFriendsSuggestions(topFriendsSuggestionResponse.getTopFriendsSuggestions());
@@ -861,6 +841,16 @@ public class UserService implements IUserService{
 			suggestionModel.setSource(business.getSource());
 			suggestionModel.setCategoryType(topnondealsuggestion.getCategoryType());
 			suggestionModel.setLikeCount(topnondealsuggestion.getTotalLikes());
+			if(topnondealsuggestion.getUserContact() != null)
+			{
+				User user = topnondealsuggestion.getUserContact();
+				UserModel userModel = new UserModel();
+				userModel.setFirstName(user.getFirstName());
+				userModel.setLastName(user.getLastName());
+				userModel.setImageUrl(user.getImageUrl());
+				userModel.setUserId(user.getUserId());
+				suggestionModel.setSuggestingUser(userModel);
+			}
 			if(topnondealsuggestion.getCategoryType().equalsIgnoreCase("Sport"))
 				topSportsSuggestions.add(suggestionModel);
 			else if(topnondealsuggestion.getCategoryType().equalsIgnoreCase("Restaurant"))
@@ -902,6 +892,16 @@ public class UserService implements IUserService{
 			suggestionModel.setLikeCount(topdealsuggestion.getTotalLikes());
 			suggestionModel.setStartAt(deals.getStartAt().toString());
 			suggestionModel.setEndAt(deals.getEndAt().toString());
+			if(topdealsuggestion.getUserContact() != null)
+			{
+				User user = topdealsuggestion.getUserContact();
+				UserModel userModel = new UserModel();
+				userModel.setFirstName(user.getFirstName());
+				userModel.setLastName(user.getLastName());
+				userModel.setImageUrl(user.getImageUrl());
+				userModel.setUserId(user.getUserId());
+				suggestionModel.setSuggestingUser(userModel);
+			}
 			if(topdealsuggestion.getCategoryType().equalsIgnoreCase("Sport"))
 				topSportsSuggestions.add(suggestionModel);
 			else if(topdealsuggestion.getCategoryType().equalsIgnoreCase("Restaurant"))
@@ -932,6 +932,16 @@ public class UserService implements IUserService{
 			suggestionModel.setEndAt(events.getEvent_date().toString());
 			suggestionModel.setCategoryType(topEventSuggestion.getCategoryType());
 			suggestionModel.setLikeCount(topEventSuggestion.getTotalLikes());
+			if(topEventSuggestion.getUserContact() != null)
+			{
+				User user = topEventSuggestion.getUserContact();
+				UserModel userModel = new UserModel();
+				userModel.setFirstName(user.getFirstName());
+				userModel.setLastName(user.getLastName());
+				userModel.setImageUrl(user.getImageUrl());
+				userModel.setUserId(user.getUserId());
+				suggestionModel.setSuggestingUser(userModel);
+			}
 			if(topEventSuggestion.getCategoryType().equalsIgnoreCase("Sport"))
 				topSportsSuggestions.add(suggestionModel);
 			else if(topEventSuggestion.getCategoryType().equalsIgnoreCase("Restaurant"))
@@ -1000,8 +1010,8 @@ public class UserService implements IUserService{
 			return (int)(o2.getLikeCount()-o1.getLikeCount());
 		}
 	}
-	
-	
+
+
 	@Transactional
 	@Override
 	public UserResponse editUserProfile(UserModel userModel) 
@@ -1044,21 +1054,33 @@ public class UserService implements IUserService{
 		}
 		return response;
 	}
-	
-	
+
+
 	@Transactional
 	@Override
 	public BaseResponse updatePrivacySetting(UserModel userModel) 
 	{
+		logger.debug("updatePrivacySetting =>");
 		BaseResponse response = new BaseResponse();
 		if(userModel!=null)
 		{
 			User user = userDAO.getUserById(userModel.getUserId());
-			user.setIsShareCommunity(userModel.getIsShareCommunity());
-			user.setIsShareProfileWithFriend(userModel.getIsShareProfileWithFriend());
-			user.setIsShareProfileWithGroup(userModel.getIsShareProfileWithGroup());
+			if(userModel.getIsSharePublic())
+			{
+				logger.debug("public");
+				user.setIsShareCommunity(true);
+				user.setIsShareProfileWithFriend(true);
+				user.setIsShareProfileWithGroup(true);
+			}
+			else 
+			{
+				logger.debug("community");
+				user.setIsShareCommunity(userModel.getIsShareCommunity());
+				user.setIsShareProfileWithFriend(userModel.getIsShareProfileWithFriend());
+				user.setIsShareProfileWithGroup(userModel.getIsShareProfileWithGroup());
+			}
 			userDAO.updateUser(user);
-			response.setStatus("Ok");
+			response.setStatus(ServiceAPIStatus.OK.getStatus());
 		}
 		else
 		{
@@ -1088,14 +1110,13 @@ public class UserService implements IUserService{
 			}
 			else
 				page.setPageId(itemId);
-			
+
 			Pageuserlikes pageuserlikes = null;
 
 			if(page != null)
 			{
 				// Check if entry already exists in table
 				pageuserlikes = userDAO.getUserPageProperties(userId, page.getPageId());
-				//Eventuserlikes existingEventUserLikes = eventsDAO.isEventExistInUserProfile(userId, eventId);
 				logger.debug("pageuserlikes =>"+pageuserlikes);
 				if(pageuserlikes!=null && !pageuserlikes.equals(""))
 				{
@@ -1131,7 +1152,7 @@ public class UserService implements IUserService{
 		{
 			Events event = new Events();
 			event.setEventId(itemId);
-			
+
 			Eventuserlikes eventUserLikes = new Eventuserlikes();
 
 			// Check if entry already exists in table
@@ -1172,11 +1193,11 @@ public class UserService implements IUserService{
 			Deals deal = new Deals();
 			deal.setId(itemId);
 
-			
+
 			Dealsusage dealsusage = null;
 
 			// Check if entry already exists in table
-			
+
 			dealsusage = userDAO.getUserLikeDeal(userId, itemId);
 			logger.debug("dealsusage =>"+dealsusage);
 			if(dealsusage!=null && !dealsusage.equals(""))
@@ -1207,7 +1228,7 @@ public class UserService implements IUserService{
 				isUpdated = dealsDAO.saveDealUserLikes(dealsusage);
 			}
 		}
-		
+
 		if(isUpdated)
 		{
 			baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
@@ -1223,11 +1244,11 @@ public class UserService implements IUserService{
 			baseResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
 			baseResponse.setError(errorMessage);
 		}
-			
+
 		return baseResponse;
 	}
-	
-	
+
+
 	@Transactional
 	@Override
 	public FriendListResponse getFriendsOfUser(int userId) {
@@ -1266,4 +1287,76 @@ public class UserService implements IUserService{
 		return response;
 	}
 
+	@Transactional
+	@Override
+	public UserResponse getPrivacySetting(int userId) 
+	{
+		logger.debug("getPrivacySetting => userId => "+userId);
+		UserResponse response = new UserResponse();
+		if(userId!=0)
+		{
+			User user = (User)userDAO.getUserById(userId);
+			UserModel userModel = new UserModel();
+			userModel.setUserId(userId);
+			userModel.setIsShareCommunity(user.getIsShareCommunity());
+			userModel.setIsShareProfileWithFriend(user.getIsShareProfileWithFriend());
+			userModel.setIsShareProfileWithGroup(user.getIsShareProfileWithGroup());
+			if(user.getIsShareCommunity() && user.getIsShareProfileWithFriend() && user.getIsShareProfileWithGroup())
+			{
+				logger.debug("public");
+				userModel.setIsSharePublic(true);
+			}
+			else
+			{
+				userModel.setIsSharePublic(false);
+			}
+			response.setUser(userModel);
+		}
+		return response;
+	}
+	
+	@Transactional
+	@Override
+	public UserFriendsGroupResponse getUserFriendsAndGroup(int userId) 
+	{
+		UserFriendsGroupResponse friendsGroupResponse = new UserFriendsGroupResponse();
+		List<User> userContacts = userDAO.getUserContacts(userId);
+		List<UserModel> userModels = new ArrayList<UserModel>();
+		logger.debug("user contact :: "+userContacts);
+		if(userContacts != null)
+		{
+			for(User user:userContacts)
+			{
+				UserModel userModel = new UserModel();
+				userModel.setFirstName(user.getFirstName());
+				userModel.setUserId(user.getUserId());
+				userModels.add(userModel);
+			}
+		}
+		List<Jeeyohgroup> jeeyohGroup = userDAO.getUserGroups(userId);
+		logger.debug("user group :: "+jeeyohGroup);
+		List<AddGroupModel>	groupModels = new ArrayList<AddGroupModel>();
+		if(jeeyohGroup != null)
+		{
+		
+			for(Jeeyohgroup jeeyohGroup1 : jeeyohGroup) 
+			{
+				AddGroupModel addGroupModel = new AddGroupModel();
+				addGroupModel.setGroupName(jeeyohGroup1.getGroupName());
+				addGroupModel.setGroupId(jeeyohGroup1.getGroupId());
+				groupModels.add(addGroupModel);
+			}
+		}
+		
+		if(userModels != null || !userModels.isEmpty())
+		{
+			friendsGroupResponse.setFriends(userModels);
+		}
+		if(groupModels != null || !groupModels.isEmpty())
+		{
+			friendsGroupResponse.setGroups(groupModels);
+		}
+		friendsGroupResponse.setStatus(ServiceAPIStatus.OK.getStatus());
+		return friendsGroupResponse;
+	}
 }

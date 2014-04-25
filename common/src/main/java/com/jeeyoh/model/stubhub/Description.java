@@ -82,6 +82,8 @@ public class Description {
 	
 	@JsonProperty
 	private String genre_parent_name;
+	@JsonProperty
+	private String title_en_US;
 	
 	public String getEvent_date() {
 		return event_date;
@@ -348,6 +350,20 @@ public class Description {
 	 */
 	public void setGenre_parent_name(String genre_parent_name) {
 		this.genre_parent_name = genre_parent_name;
+	}
+
+	/**
+	 * @return the title_en_US
+	 */
+	public String getTitle_en_US() {
+		return title_en_US;
+	}
+
+	/**
+	 * @param title_en_US the title_en_US to set
+	 */
+	public void setTitle_en_US(String title_en_US) {
+		this.title_en_US = title_en_US;
 	}
 
 

@@ -18,8 +18,11 @@ import org.slf4j.LoggerFactory;
 
 import com.jeeyoh.model.enums.ServiceAPIStatus;
 import com.jeeyoh.model.funboard.CommentModel;
+import com.jeeyoh.model.funboard.FunBoardModel;
 import com.jeeyoh.model.funboard.FunBoardRequest;
 import com.jeeyoh.model.funboard.MediaContenModel;
+import com.jeeyoh.model.funboard.SaveShareWallRequest;
+import com.jeeyoh.model.funboard.WallFeedRequest;
 import com.jeeyoh.model.response.AddGroupButtonResponse;
 import com.jeeyoh.model.response.AddGroupResponse;
 import com.jeeyoh.model.response.BaseResponse;
@@ -33,8 +36,10 @@ import com.jeeyoh.model.response.LoginResponse;
 import com.jeeyoh.model.response.SuggestionResponse;
 import com.jeeyoh.model.response.TopSuggestionResponse;
 import com.jeeyoh.model.response.UploadMediaServerResponse;
+import com.jeeyoh.model.response.UserFriendsGroupResponse;
 import com.jeeyoh.model.response.UserRegistrationResponse;
 import com.jeeyoh.model.response.UserResponse;
+import com.jeeyoh.model.response.WallFeedResponse;
 import com.jeeyoh.model.search.AddGroupModel;
 import com.jeeyoh.model.search.CategoryModel;
 import com.jeeyoh.model.search.DirectSuggestionModel;
@@ -47,6 +52,7 @@ import com.jeeyoh.service.funboard.IFunBoardService;
 import com.jeeyoh.service.search.IAddDirectSuggestionService;
 import com.jeeyoh.service.userservice.IMediaService;
 import com.jeeyoh.service.userservice.IUserService;
+import com.jeeyoh.service.wallfeed.IWallFeedSharingService;
 import com.sun.jersey.api.core.InjectParam;
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
@@ -74,6 +80,9 @@ public class UserAccountService {
 
 	@InjectParam
 	IAddDirectSuggestionService addDirectSuggestionService;
+
+	@InjectParam
+	IWallFeedSharingService wallFeedSharingService;
 
 	@Path("/test/{name}")
 	@GET
@@ -466,7 +475,7 @@ public class UserAccountService {
 	public BaseResponse addEventSuggestion(DirectSuggestionModel eventSuggestionModel)
 	{
 		logger.debug("addEventSuggestion => userid => "+eventSuggestionModel.getUserId()+" ;friend list => "+eventSuggestionModel.getFriendsIdList()+" ;category => "+eventSuggestionModel.getCategory()+" ;suggestion id => "+eventSuggestionModel.getSuggestionId()+" ;suggestion type =>"+eventSuggestionModel.getSuggestionType());
-		BaseResponse response = addDirectSuggestionService.addSuggestions(eventSuggestionModel.getUserId(), eventSuggestionModel.getFriendsIdList(), eventSuggestionModel.getSuggestionId(), eventSuggestionModel.getCategory(), eventSuggestionModel.getSuggestionType());
+		BaseResponse response = addDirectSuggestionService.addSuggestions(eventSuggestionModel.getUserId(), eventSuggestionModel.getFriendsIdList(), eventSuggestionModel.getSuggestionId(), eventSuggestionModel.getCategory(), eventSuggestionModel.getSuggestionType(), eventSuggestionModel.getSuggestedTime());
 		return response;
 	}
 
@@ -563,6 +572,106 @@ public class UserAccountService {
 		{
 			response = userService.getFriendsOfUser(user.getUserId());
 		}
+		return response;
+	}
+
+	@POST
+	@Path("/wallFeed")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public BaseResponse wallFeed(WallFeedRequest wallFeedModel)
+	{
+		logger.debug("wallFeed => userid => "+wallFeedModel.getUserId()+" ;SharedWithUserList => "+wallFeedModel.getSharedWithUserList()+" ;SharedfunBoardItemsList() => "+wallFeedModel.getSharedfunBoardItemsList());
+		BaseResponse response = wallFeedSharingService.saveWallFeedSharingData(wallFeedModel);
+		return response;
+	}
+
+	@GET
+	@Path("/getPrivacySetting")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public UserResponse getPrivacySetting(@QueryParam("userId") int userId)
+	{
+		logger.debug("getPrivacySetting => userid => "+userId);
+		UserResponse response = userService.getPrivacySetting(userId);
+		return response;
+	}
+
+	@GET
+	@Path("/shareWith")
+	@Produces(MediaType.APPLICATION_JSON)
+	public UserFriendsGroupResponse shareWith(@QueryParam("userId") int userId)
+	{
+		logger.debug("Category Respose ::: "+userId);
+		UserFriendsGroupResponse userFriendsGroupResponse = userService.getUserFriendsAndGroup(userId);
+		logger.debug("Responce ::::: "+userFriendsGroupResponse.getStatus());
+		return userFriendsGroupResponse;
+
+	}
+	@GET
+	@Path("/getUserWall")
+	@Produces(MediaType.APPLICATION_JSON)
+	public WallFeedResponse getUserWall(@QueryParam("userId") int userId)
+	{
+		logger.debug("Category Respose ::: "+userId);
+		WallFeedResponse userFriendsGroupResponse = wallFeedSharingService.getUserWallFeed(userId);
+		logger.debug("Responce ::::: "+userFriendsGroupResponse.getStatus());
+		return userFriendsGroupResponse;
+
+	}
+	@POST
+	@Path("/saveShareWallFeed")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public BaseResponse saveShareWallFeed(SaveShareWallRequest request)
+	{
+		logger.debug(" SAVE USER WALL :: ");
+		BaseResponse response = wallFeedSharingService.saveShareWallFeedRecord(request);
+		return response;
+	}
+	@POST
+	@Path("/addWallFeedSuggestion")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public BaseResponse addWallFeedSuggestion(SaveShareWallRequest request)
+	{
+		logger.debug(" SAVE USER WALL :: ");
+		BaseResponse response = wallFeedSharingService.addWallFeedSuggestions(request);
+		return response;
+	}
+
+	@POST
+	@Path("/wallFeed/addComment")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public CommentResponse addWallFeedComment(CommentModel request)
+	{
+		CommentResponse response = wallFeedSharingService.saveWallFeedComments(request);
+		return response;
+	}
+
+
+	@GET
+	@Path("/getWallFeedComments")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public WallFeedResponse getWallFeedComments(@QueryParam("userId") int userId, @QueryParam("wallFeedId") int wallFeedId)
+	{
+		WallFeedResponse wallFeedResponse = null;
+		logger.debug("userId1111 =>"+userId+"; wallFeedId =>"+wallFeedId);
+		if(userId!=0 && wallFeedId!=0)
+			wallFeedResponse = wallFeedSharingService.getWallFeedComments(userId, wallFeedId);
+		logger.debug("wallFeedResponse =>"+wallFeedResponse);
+		return wallFeedResponse;
+	}
+	
+	@POST
+	@Path("/updateFunBoard")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public BaseResponse updateFunBoard(FunBoardModel funBoardModel)
+	{
+		BaseResponse response = funBoardService.updateTimeLine(funBoardModel);
 		return response;
 	}
 

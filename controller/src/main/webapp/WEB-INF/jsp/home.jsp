@@ -62,11 +62,15 @@
    				<li>|<li>
    				<li><a href="wallFeed" title="Wall Feed">Wall Feed</a></li>
    				<li>|<li>
+   				<li><a href="wallFeedSharing" title="Wall Feed">Wall Feed Sharing</a></li>
+   				<li>|<li>
    				<li><a href="saveIsFollowingEvent?userId=1&eventId=25&isFollow=true" title="Is Following Event">IsFollowing Event</a></li>			
    				<li>|</li>
    				<li><a href="saveIsFavEvent?userId=1&eventId=25&isFav=true" title="Is Favorite Page">IsFavorite Event</a></li>
 				<li>|</li>
    				<li><a href="addDirectSuggestion?userId=1&contactId=2,3&category=Sport&suggestionId=708&suggestionType=deal" title="Add Event Suggestion">Add Direct Suggestion</a></li>
+				<li>|<li>
+   				<li><a href="communityReview" title="Save Community Review">Save Community Review</a></li>
 			</ul>
 		</div>
 	</body>

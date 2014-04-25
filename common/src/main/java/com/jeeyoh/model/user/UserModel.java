@@ -75,6 +75,8 @@ public class UserModel implements Serializable {
 	private Boolean isShareProfileWithGroup;
 	@JsonProperty
 	private Boolean isShareCommunity;
+	@JsonProperty
+	private Boolean isSharePublic;
     
 	public Integer getUserId() {
 		return userId;
@@ -279,6 +281,18 @@ public class UserModel implements Serializable {
 	 */
 	public void setIsShareCommunity(Boolean isShareCommunity) {
 		this.isShareCommunity = isShareCommunity;
+	}
+	/**
+	 * @return the isSharePublic
+	 */
+	public Boolean getIsSharePublic() {
+		return isSharePublic;
+	}
+	/**
+	 * @param isSharePublic the isSharePublic to set
+	 */
+	public void setIsSharePublic(Boolean isSharePublic) {
+		this.isSharePublic = isSharePublic;
 	}
 
 }

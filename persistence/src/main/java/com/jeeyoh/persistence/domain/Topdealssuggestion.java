@@ -11,6 +11,7 @@ public class Topdealssuggestion implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private Integer suggestionId;
 	private User user;
+	private User userContact;
 	private Deals deals;
 	private Long rank;
 	private int totalLikes;
@@ -131,6 +132,18 @@ public class Topdealssuggestion implements Serializable{
 	 */
 	public static long getSerialVersionUID() {
 		return serialVersionUID;
+	}
+	/**
+	 * @return the userContact
+	 */
+	public User getUserContact() {
+		return userContact;
+	}
+	/**
+	 * @param userContact the userContact to set
+	 */
+	public void setUserContact(User userContact) {
+		this.userContact = userContact;
 	}
 
 

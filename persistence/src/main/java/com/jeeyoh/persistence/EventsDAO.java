@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.jeeyoh.persistence.domain.CommunityComments;
+import com.jeeyoh.persistence.domain.CommunityReview;
+import com.jeeyoh.persistence.domain.CommunityReviewMap;
 import com.jeeyoh.persistence.domain.Events;
 import com.jeeyoh.persistence.domain.Eventuserlikes;
 import com.jeeyoh.persistence.domain.Page;
@@ -479,6 +481,7 @@ public class EventsDAO implements IEventsDAO{
 			criteria.add(Restrictions.eq("user.emailId", userEmail));
 		}
 		
+		criteria.add(Restrictions.ge("usereventsuggestions.suggestedTime", Utils.getNearestWeekend(null)));
 		criteria.add(Restrictions.ge("events.event_date", Utils.getCurrentDate()));
 		
 		criteria.setFirstResult(offset*10)
@@ -833,5 +836,34 @@ public class EventsDAO implements IEventsDAO{
 			return false;
 		}
 		
+	}
+	
+	@Override
+	public void saveCommunityReview(CommunityReviewMap communityReviewMap) {
+		try{
+			sessionFactory.getCurrentSession().save(communityReviewMap);
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			logger.error(e.toString());
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<CommunityReview> getCommunityReviewByPageId(int pageId)
+	{
+		List<CommunityReview> communityReviewList = null;
+		String hqlQuery = "select a from CommunityReview a, CommunityReviewMap b where b.page.pageId=:pageId and b.communityReview.reviewId=a.reviewId";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("pageId", pageId);
+			communityReviewList = (List<CommunityReview>) query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return communityReviewList;
 	}
 }

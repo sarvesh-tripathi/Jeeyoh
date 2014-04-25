@@ -7,6 +7,7 @@ import com.jeeyoh.model.response.BaseResponse;
 import com.jeeyoh.model.response.CommentResponse;
 import com.jeeyoh.model.response.CommunityPaginationResponse;
 import com.jeeyoh.model.response.CommunityResponse;
+import com.jeeyoh.model.search.CommunityReviewModel;
 import com.jeeyoh.model.search.PageModel;
 
 public interface ICommunitySearchService {
@@ -18,4 +19,5 @@ public interface ICommunitySearchService {
 	public BaseResponse saveIsFollowingPage(int userId, int pageId, boolean isFollow);
 	public BaseResponse saveIsFollowingEvent(int userId, int eventId, boolean isFollow);
 	public BaseResponse saveFavoritePage(int userId, int eventId, boolean isFav);
+	public BaseResponse saveCommunityReview(CommunityReviewModel communityReviewModel);
 }

@@ -302,11 +302,15 @@
 				<stubhub.base.url>http://www.stubhub.com/</stubhub.base.url>
 				<stubhub.image.url>http://www.stubhub.com/data/venue_maps/</stubhub.image.url>
 				
-					<!-- Living Social Configuration -->
+				<!-- Living Social Configuration -->
 				<livingsocial.api.key>646DACA59DAE4C4E92D9D8B6CA3E293D</livingsocial.api.key>
 				<livingsocial.deals.api.url>http://monocle.livingsocial.com/v2/deals?city={cityId}&amp;api-key={apiKey}</livingsocial.deals.api.url>
 				<livingsocial.cities.api.url>https://www.livingsocial.com/services/city/v2/cities</livingsocial.cities.api.url>
 
+				<!-- jobs configuration -->
+				<jobs.wallfeed.crontime>0 10 12 * * ?</jobs.wallfeed.crontime><!-- 0 0 10 ? * FRI,SAT -->
+				<jobs.suggestion.crontime>0 10 7 * * ?</jobs.suggestion.crontime><!-- 0 0 10 ? * FRI,SAT -->
+				<jobs.fetchfilter.crontime >0 10 12 * * ?</jobs.fetchfilter.crontime >
 			</properties>
 		</profile>
 	</profiles>

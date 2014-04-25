@@ -13,7 +13,8 @@
 		<param-value>
 			classpath:config/applicationContext.xml			
 			classpath:config/applicationContext-service.xml
-			classpath:config/applicationContext-persistence.xml							
+			classpath:config/applicationContext-persistence.xml	
+			classpath:config/spring-quartz.xml						
 		</param-value>
 	</context-param>
  	<context-param>

@@ -149,4 +149,12 @@ public interface IUserDAO {
 	public List<User> findInMutualFriends(String name, String friendsIds, String alreadyExistingIds);
 	public List<User> findOtherThanMutualFriends(String name, List<Integer> alreadyExistingIds);
 	public Usercontacts isUsercontactExists(int userId, int contactId);
+	public List<User> getGroupMembers(int groupId, int userId);
+	public Jeeyohgroup getGroupByGroupId(Integer groupId);
+	public Usereventsuggestion isEventSuggestionExistsForDirectSuggestion(int userId,int eventId, int userContactId);
+	public Usernondealsuggestion isNonDealSuggestionExistsForDirectSuggestion(int userId,int businessId, int userContactId);
+	public Userdealssuggestion isDealSuggestionExistsForDirectSuggestion(int userId,int dealId, int userContactId);
+	public void updateUserDealSuggestion(Userdealssuggestion userdealssuggestion);
+	public void updateUserNonDealSuggestion(Usernondealsuggestion usernondealsuggestion);
+	public void updateUserEventSuggestion(Usereventsuggestion usereventsuggestion);
 }

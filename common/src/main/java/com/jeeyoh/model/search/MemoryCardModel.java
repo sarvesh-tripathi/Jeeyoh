@@ -22,6 +22,8 @@ public class MemoryCardModel implements Serializable{
 	@JsonProperty
 	private String category;
 	@JsonProperty
+	private String searchText;
+	@JsonProperty
 	private String startDate;
 	@JsonProperty
 	private String endDate;
@@ -87,5 +89,17 @@ public class MemoryCardModel implements Serializable{
 	 */
 	public void setImages(List<MediaContenModel> images) {
 		this.images = images;
+	}
+	/**
+	 * @return the searchText
+	 */
+	public String getSearchText() {
+		return searchText;
+	}
+	/**
+	 * @param searchText the searchText to set
+	 */
+	public void setSearchText(String searchText) {
+		this.searchText = searchText;
 	}
 }

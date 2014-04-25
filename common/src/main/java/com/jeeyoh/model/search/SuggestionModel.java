@@ -6,6 +6,8 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
+import com.jeeyoh.model.user.UserModel;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_DEFAULT)
 public class SuggestionModel implements Serializable{
@@ -83,6 +85,8 @@ public class SuggestionModel implements Serializable{
     private String ancestorGenreDescriptions;
 	@JsonProperty
     private int likeCount;
+	@JsonProperty
+    private UserModel suggestingUser;
 	
 	/**
 	 * @param itemId the itemId to set
@@ -515,6 +519,18 @@ public class SuggestionModel implements Serializable{
 	 */
 	public int getLikeCount() {
 		return likeCount;
+	}
+	/**
+	 * @return the suggestingUser
+	 */
+	public UserModel getSuggestingUser() {
+		return suggestingUser;
+	}
+	/**
+	 * @param suggestingUser the suggestingUser to set
+	 */
+	public void setSuggestingUser(UserModel suggestingUser) {
+		this.suggestingUser = suggestingUser;
 	}
 
 }

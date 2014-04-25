@@ -12,7 +12,6 @@ import com.jeeyoh.model.stubhub.Description;
 import com.jeeyoh.model.stubhub.StubHubEvents;
 import com.jeeyoh.persistence.dao.stubhub.IStubhubDAO;
 import com.jeeyoh.persistence.domain.StubhubEvent;
-import com.jeeyoh.utils.Utils;
 
 @Component("stubhubService")
 public class StubhubService implements IStubhubService {
@@ -41,6 +40,8 @@ public class StubhubService implements IStubhubService {
 				if(stubhubList != null)
 				{
 					logger.debug("TOTAL Count == >"+count);
+					logger.debug("Title == >"+stubhubList.getTitle());
+					logger.debug("title_en_US == >"+stubhubList.getTitle_en_US());
 					StubhubEvent stubhub = new StubhubEvent();
 					stubhub.setChannel(stubhubList.getChannel());
 					stubhub.setCity(stubhubList.getCity());
@@ -88,7 +89,5 @@ public class StubhubService implements IStubhubService {
 				}
 			}
 		}
-
 	}
-
 }

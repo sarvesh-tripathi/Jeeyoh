@@ -7,6 +7,7 @@ import com.jeeyoh.model.response.FriendListResponse;
 import com.jeeyoh.model.response.LoginResponse;
 import com.jeeyoh.model.response.SuggestionResponse;
 import com.jeeyoh.model.response.TopSuggestionResponse;
+import com.jeeyoh.model.response.UserFriendsGroupResponse;
 import com.jeeyoh.model.response.UserRegistrationResponse;
 import com.jeeyoh.model.response.UserResponse;
 import com.jeeyoh.model.search.CategoryModel;
@@ -36,6 +37,7 @@ public interface IUserService {
 	public BaseResponse updatePrivacySetting(UserModel userModel);
 	public BaseResponse saveFavoriteItem(int userId, int itemId, String itemType, boolean isFav);
 	public FriendListResponse getFriendsOfUser(int userId);
-
+	public UserResponse getPrivacySetting(int userId);
+	public UserFriendsGroupResponse getUserFriendsAndGroup(int userId);
 
 }

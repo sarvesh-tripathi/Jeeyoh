@@ -54,7 +54,7 @@ public class EventsSearch implements IEventSearch{
 					user.setLattitude(Double.toString(array[0]));
 					user.setLongitude(Double.toString(array[1]));
 				}*/
-				saveEventsSuggestion(userId, user, true, isContactsAccessed, weekendDate,  false,null,false);
+				saveEventsSuggestion(userId, user, true, isContactsAccessed, weekendDate,  false,null,false,true,false,true);
 			}
 		}
 
@@ -73,7 +73,7 @@ public class EventsSearch implements IEventSearch{
 	 * @param isStar
 	 */
 	@SuppressWarnings("unchecked")
-	private void saveEventsSuggestion(int userId, User user, boolean forUser, boolean isContactsAccessed, Date weekendDate, boolean isGroupMember, String groupType, boolean isStar)
+	private void saveEventsSuggestion(int userId, User user, boolean forUser, boolean isContactsAccessed, Date weekendDate, boolean isGroupMember, String groupType, boolean isStar, boolean isSharedWithFriends, boolean isSharedWithGroup, boolean isSharedWithCommunity)
 	{
 		try
 		{
@@ -84,19 +84,24 @@ public class EventsSearch implements IEventSearch{
 			List<Events> eventsList = null;
 			if(isGroupMember)
 			{
-				eventsList = userDAO.getUserLikesEventsByType(userId, groupType,Double.parseDouble(user.getLattitude()),Double.parseDouble(user.getLongitude()));
+				if(isSharedWithGroup)
+					eventsList = userDAO.getUserLikesEventsByType(userId, groupType,Double.parseDouble(user.getLattitude()),Double.parseDouble(user.getLongitude()));
 			}
 			else
 			{
-				eventsList = userDAO.getUserLikesEvents(userId,Double.parseDouble(user.getLattitude()),Double.parseDouble(user.getLongitude()));
+				if(isSharedWithFriends)
+					eventsList = userDAO.getUserLikesEvents(userId,Double.parseDouble(user.getLattitude()),Double.parseDouble(user.getLongitude()));
+
 			}
-			logger.debug("EventSearch => UserLikeEvents List => "+eventsList.size());
+			
+			logger.debug("EventSearch => UserLikeEvents List => "+eventsList);
 			if(eventsList != null)
 			{
+				logger.debug("EventSearch => UserLikeEvents List => "+eventsList.size());
 				int batch_size = 0;
 				for(Events event : eventsList) {
 
-					saveEventSuggesstion(event, userId, user, batch_size, currentDate, isGroupMember, isContactsAccessed, forUser, false,false,false,false,false,false);
+					saveEventSuggesstion(event, userId, user, batch_size, currentDate, isGroupMember, isContactsAccessed, forUser, false,false,false,false,false,false,weekendDate);
 				}
 			}
 
@@ -106,12 +111,15 @@ public class EventsSearch implements IEventSearch{
 			int categoryLikesCount = 0;
 			if(isGroupMember)
 			{
-				userCategoryList = userDAO.getUserCategoryLikesByType(userId, groupType);
+				if(isSharedWithGroup)
+					userCategoryList = userDAO.getUserCategoryLikesByType(userId, groupType);
 				logger.debug("isGroupMember: "+userCategoryList);
 			}
 			else
 			{
-				userCategoryList = userDAO.getUserCategoryLikesById(userId);
+				if(isSharedWithFriends)
+					userCategoryList = userDAO.getUserCategoryLikesById(userId);
+
 				logger.debug("not a group member: "+userCategoryList);
 			}
 
@@ -119,9 +127,9 @@ public class EventsSearch implements IEventSearch{
 			{
 				for(UserCategory userCategory : userCategoryList) {
 					//UserCategoryLikes userCategoryLikes = (UserCategoryLikes)userCategory.getUserCategoryLikes().iterator().next();
-					
+
 					UserCategoryLikes userCategoryLikes = userDAO.getUserCategoryLikes(userId, userCategory.getUserCategoryId());
-					
+
 					//Get nearest weekend date for UserLike
 					Date userLikeWeekend = Utils.getNearestWeekend(userCategoryLikes.getCreatedTime());
 
@@ -140,7 +148,7 @@ public class EventsSearch implements IEventSearch{
 									int batch_size = 0;
 									for(Events event : eventsList) {
 
-										saveEventSuggesstion(event, userId, user, batch_size, currentDate, isGroupMember, isContactsAccessed, forUser, true,false,true,true,false,false);
+										saveEventSuggesstion(event, userId, user, batch_size, currentDate, isGroupMember, isContactsAccessed, forUser, true,false,true,true,false,false,weekendDate);
 									}
 								}
 							}
@@ -153,18 +161,22 @@ public class EventsSearch implements IEventSearch{
 
 				// For User Communities
 				List<Page> userCommunities = null;
-				if(isGroupMember)
+				if(isSharedWithCommunity)
 				{
-					userCommunities = userDAO.getUserCommunitiesByPageType(userId, groupType);
+					if(isGroupMember)
+					{
+						userCommunities = userDAO.getUserCommunitiesByPageType(userId, groupType);
+					}
+					else
+					{
+						userCommunities = userDAO.getUserCommunities(userId);
+					}
 				}
-				else
-				{
-					userCommunities = userDAO.getUserCommunities(userId);
-				}
-				logger.debug("NonDealSearch ==> userCommunities ==> size ==> " + userCommunities.size());
+				logger.debug("NonDealSearch ==> userCommunities ==> size ==> " + userCommunities);
 
 				if(userCommunities != null) 
 				{
+					logger.debug("NonDealSearch ==> userCommunities ==> size ==> " + userCommunities.size());
 					int batch_size = 0;
 					for(Page community : userCommunities) {
 						boolean communityLiked = false;
@@ -204,7 +216,7 @@ public class EventsSearch implements IEventSearch{
 								logger.debug("EventSearch => Events List => "+events.size());
 								for(Events event : events)
 								{
-									saveEventSuggesstion(event, userId, user, batch_size, currentDate, isGroupMember, isContactsAccessed, forUser, false,true,isLiked,isFavorite,isFollowing,isVisited);
+									saveEventSuggesstion(event, userId, user, batch_size, currentDate, isGroupMember, isContactsAccessed, forUser, false,true,isLiked,isFavorite,isFollowing,isVisited,weekendDate);
 								}
 							}
 						}
@@ -223,7 +235,23 @@ public class EventsSearch implements IEventSearch{
 			{
 				for(Jeeyohgroup jeeyohgroup : groups)
 				{
-					Set<Groupusermap> groupusermapList = jeeyohgroup.getGroupusermaps();
+					List<User> groupusermapList = userDAO.getGroupMembers(jeeyohgroup.getGroupId(), userId);
+					if(groupusermapList != null)
+					{
+						logger.debug("groupusermapList::  "+groupusermapList.size());
+						String groupType1 = jeeyohgroup.getGroupType();
+						logger.debug("groupType1::  "+groupType1);
+						for(User groupusermap : groupusermapList)
+						{
+							int userid = groupusermap.getUserId();
+
+							logger.debug("USERID for userGroup::  "+userid);
+							//if(user.getUserId() != userid)
+							saveEventsSuggestion(userid, user, false , false,weekendDate,true,groupType1,false,groupusermap.getIsShareProfileWithFriend(),groupusermap.getIsShareProfileWithGroup(),groupusermap.getIsShareCommunity());
+
+						}
+					}
+					/*Set<Groupusermap> groupusermapList = jeeyohgroup.getGroupusermaps();
 					String groupType1 = jeeyohgroup.getGroupType();
 					logger.debug("groupType1::  "+groupType1);
 					for(Groupusermap groupusermap : groupusermapList)
@@ -233,7 +261,7 @@ public class EventsSearch implements IEventSearch{
 						logger.debug("USERID for userGroup::  "+userid);
 						if(user.getUserId() != userid)
 							saveEventsSuggestion(userid, user, false , false,weekendDate,true,groupType1,false);
-					}
+					}*/
 				}
 			}
 		}
@@ -257,7 +285,7 @@ public class EventsSearch implements IEventSearch{
 						logger.debug("Friend Name ::"+contact.getFirstName());
 						logger.debug("IS STAR ::"+isStar);
 						int contactId = contact.getUserId();
-						saveEventsSuggestion(contactId, userList, false , isContactsAccessed,weekendDate,false,null,usercontacts.getIsStar());
+						saveEventsSuggestion(contactId, userList, false , isContactsAccessed,weekendDate,false,null,usercontacts.getIsStar(),contact.getIsShareProfileWithFriend(),contact.getIsShareProfileWithGroup(),contact.getIsShareCommunity());
 					}
 				}
 			}
@@ -285,7 +313,7 @@ public class EventsSearch implements IEventSearch{
 	 * @param events
 	 * @param user
 	 */
-	private void saveEventSuggesstion(Events event, int userId, User user,int batch_size, Date currentDate, boolean isGroupMember, boolean isContactAccessed, boolean forUser,boolean isUserCategoryLikes, boolean isCommunityLike, boolean isLiked, boolean isFavorite,boolean isFollowing, boolean isVisited)
+	private void saveEventSuggesstion(Events event, int userId, User user,int batch_size, Date currentDate, boolean isGroupMember, boolean isContactAccessed, boolean forUser,boolean isUserCategoryLikes, boolean isCommunityLike, boolean isLiked, boolean isFavorite,boolean isFollowing, boolean isVisited,Date weekendDate)
 	{
 		try
 		{
@@ -351,6 +379,7 @@ public class EventsSearch implements IEventSearch{
 						usereventsuggestion.setIsFavorite(isFavorite);
 						usereventsuggestion.setIsLike(isLiked);
 						usereventsuggestion.setIsFollowing(isFollowing);
+						usereventsuggestion.setSuggestedTime(weekendDate);
 						if(isCommunityLike)
 						{
 							if(isGroupMember)
@@ -390,5 +419,5 @@ public class EventsSearch implements IEventSearch{
 			logger.debug("Error in EventSearch => "+e.getMessage());
 		}
 	}
-	
+
 }

@@ -88,7 +88,7 @@ public class UserDAO implements IUserDAO {
 		logger.debug("getAllUserContacts userId::  "+userId);
 		List<Object[]> contactList = null;
 		//String hqlQuery = "from Usercontacts b where b.userByUserId.userId = :userId and b.isApproved is true";
-		String hqlQuery = "select a,b from User a, Usercontacts b where (b.userByUserId.userId = :userId and a.userId = b.userByContactId.userId) or (b.userByContactId.userId = :userId and a.userId = b.userByUserId.userId) and b.isApproved is true group by a.userId";
+		String hqlQuery = "select a,b from User a, Usercontacts b where (b.userByUserId.userId = :userId and a.userId = b.userByContactId.userId) or (b.userByContactId.userId = :userId and a.userId = b.userByUserId.userId) and b.isApproved is true and (a.isShareProfileWithFriend is true or a.isShareCommunity is true) group by a.userId";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
@@ -548,8 +548,6 @@ public class UserDAO implements IUserDAO {
 		criteria.add(Restrictions.eq("deals.id", dealId));
 		List<Userdealssuggestion> userdealsuggestions = criteria.list();
 		return userdealsuggestions;
-
-
 	}
 
 	@Override
@@ -987,7 +985,7 @@ public class UserDAO implements IUserDAO {
 	@Override
 	public List<Object[]> userDealSuggestionCount(String dealIdsStr, int limit) {
 		List<Object[]> rows = null;
-		
+
 		//String hqlQuery = "select count(*) as likes ,a.deals.id from Dealsusage a where (a.isLike is true or a.isFavorite is true)  and ("+ dealIdsStr +") group by a.deals.id order by likes desc";
 		//String hqlQuery = "select count(a.deals.id) as likes ,b.id from Deals as b left join b.dealsusages a where ("+ dealIdsStr +") group by a.deals.id order by likes desc";
 		String hqlQuery = "select count(a.deals.id) as likes ,b.id from Deals as b left join b.dealsusages a where b.id in ("+ dealIdsStr +") group by b.id order by likes desc";
@@ -1176,7 +1174,7 @@ public class UserDAO implements IUserDAO {
 		List<Object[]> rows = null;
 		//String hqlQuery = "select count(*) as likes ,a from Pageuserlikes a where (a.isLike is true or a.isFavorite is true or a.isVisited is true or isFollowing is true) and a.page.pageId in (select b.page.pageId from Pageuserlikes b where b.user.userId = :userId and b.page.business.id is null and b.page.pagetype.pageType = :category) group by a.page.pageId order by likes desc";
 		String hqlQuery = "select count(*) as likes ,a from Pageuserlikes a where (a.isLike is true or a.isFavorite is true or a.isVisited is true or isFollowing is true) and a.page.pageId in (select b.page.pageId from Pageuserlikes b where b.user.userId = :userId and b.page.pagetype.pageType = :category) group by a.page.pageId order by likes desc";
-		
+
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
@@ -1629,12 +1627,12 @@ public class UserDAO implements IUserDAO {
 	public int getTotalUserNonDealSuggestions(Integer userId) {
 		logger.debug("userNonDealSuggestionCount => ");
 		int rowCount = 0;
-		String hqlQuery = "select count(suggestionId) from Usernondealsuggestion where user.userId = :userId";
+		String hqlQuery = "select count(suggestionId) from Usernondealsuggestion where user.userId = :userId and suggestedTime = :currentWeekend";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
 			query.setParameter("userId", userId);
-
+			query.setParameter("currentWeekend", Utils.getNearestWeekend(null));
 			rowCount = ((Number)query.uniqueResult()).intValue();
 
 		} catch (Exception e) {
@@ -1649,13 +1647,14 @@ public class UserDAO implements IUserDAO {
 	public int getTotalUserDealSuggestions(Integer userId) {
 		logger.debug("getTotalUserDealSuggestions => ");
 		int rowCount = 0;
-		String hqlQuery = "select count(a.userDealMapId) from Userdealssuggestion a where a.user.userId = :userId and (a.deals.endAt >= :currentDate and a.deals.endAt > :weekendDate)";
+		String hqlQuery = "select count(a.userDealMapId) from Userdealssuggestion a where a.user.userId = :userId and (a.deals.endAt >= :currentDate and a.deals.endAt > :weekendDate) and a.suggestedTime = :currentWeekend";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
 			query.setParameter("userId", userId);
 			query.setParameter("currentDate", Utils.getCurrentDate());
 			query.setParameter("weekendDate", Utils.getNearestThursday());
+			query.setParameter("currentWeekend", Utils.getNearestWeekend(null));
 			rowCount = ((Number)query.uniqueResult()).intValue();
 
 		} catch (Exception e) {
@@ -1670,12 +1669,13 @@ public class UserDAO implements IUserDAO {
 	public int getTotalUserEventSuggestions(Integer userId) {
 		logger.debug("getTotalUserEventSuggestions => ");
 		int rowCount = 0;
-		String hqlQuery = "select count(a.userEventMapId) from Usereventsuggestion a where a.user.userId = :userId and a.events.event_date >= :currentDate";
+		String hqlQuery = "select count(a.userEventMapId) from Usereventsuggestion a where a.user.userId = :userId and a.events.event_date >= :currentDate and a.suggestedTime = :currentWeekend";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
 			query.setParameter("userId", userId);
 			query.setParameter("currentDate", Utils.getCurrentDate());
+			query.setParameter("currentWeekend", Utils.getNearestWeekend(null));
 			rowCount = ((Number)query.uniqueResult()).intValue();
 
 		} catch (Exception e) {
@@ -1784,9 +1784,9 @@ public class UserDAO implements IUserDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public UserCategoryLikes getUserCategoryLikes(int userId, int categoryId) {
-		
+
 		logger.debug("getUserCategoryLikes :: --> ");
-		
+
 		List<UserCategoryLikes> userCategoryLikes = null;
 		String hqlQuery = "select a from UserCategoryLikes a, User b where b.userId =:userId and b.userId = a.user.userId and a.userCategory.userCategoryId =:categoryId ";
 		//String hqlQuery = "from User a where a.emailId=:emailId and a.password=:password";
@@ -1803,26 +1803,26 @@ public class UserDAO implements IUserDAO {
 		}
 		return userCategoryLikes != null && !userCategoryLikes.isEmpty() ? userCategoryLikes.get(0) : null;
 	}
-	
-	
+
+
 	@Override
 	public Dealsusage getUserLikeDeal(Integer userId,Integer itemId) {
 		// TODO Auto-generated method stub
 		logger.debug("funboard :: "+itemId+"userId :::"+userId);
 		List<Dealsusage>  deals = null;
-	    String hqlQuery = "from Dealsusage where user.userId=:userId and deals.id=:itemId";
-	    
-	    try{
-	    	Query query = sessionFactory.getCurrentSession().createQuery(hqlQuery);
-	    	query.setParameter("userId",userId);
-	    	query.setParameter("itemId",itemId);
-	    	deals = query.list();
-	    }
-	    catch(HibernateException e)
-	    {
-	    	logger.error(e.toString());
-	    }
-	    return deals != null && !deals.isEmpty() ? deals.get(0) : null;
+		String hqlQuery = "from Dealsusage where user.userId=:userId and deals.id=:itemId";
+
+		try{
+			Query query = sessionFactory.getCurrentSession().createQuery(hqlQuery);
+			query.setParameter("userId",userId);
+			query.setParameter("itemId",itemId);
+			deals = query.list();
+		}
+		catch(HibernateException e)
+		{
+			logger.error(e.toString());
+		}
+		return deals != null && !deals.isEmpty() ? deals.get(0) : null;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1830,42 +1830,42 @@ public class UserDAO implements IUserDAO {
 	public Eventuserlikes getUserLikeEvent(Integer userId,Integer itemId) {
 		// TODO Auto-generated method stub
 		List<Eventuserlikes>  events = null;
-	    String hqlQuery = "from Eventuserlikes a where a.user.userId =:userId and event.eventId=:itemId";
-	    
-	    try{
-	    	Query query = sessionFactory.getCurrentSession().createQuery(hqlQuery);
-	    	query.setParameter("userId",userId);
-	    	query.setParameter("itemId",itemId);
-	    	events = query.list();
-	    }
-	    catch(HibernateException e)
-	    {
-	    	logger.error(e.toString());
-	    }
-	    return events != null && !events.isEmpty() ? events.get(0) : null;
+		String hqlQuery = "from Eventuserlikes a where a.user.userId =:userId and event.eventId=:itemId";
+
+		try{
+			Query query = sessionFactory.getCurrentSession().createQuery(hqlQuery);
+			query.setParameter("userId",userId);
+			query.setParameter("itemId",itemId);
+			events = query.list();
+		}
+		catch(HibernateException e)
+		{
+			logger.error(e.toString());
+		}
+		return events != null && !events.isEmpty() ? events.get(0) : null;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public Pageuserlikes getUserLikeCommunity(Integer userId,Integer itemId) {
 		// TODO Auto-generated method stub
 		List<Pageuserlikes>  pages = null;
-	    String hqlQuery = "from Pageuserlikes a where a.user.userId =:userId and page.pageId=:itemId";
-	    
-	    try{
-	    	Query query = sessionFactory.getCurrentSession().createQuery(hqlQuery);
-	    	query.setParameter("userId",userId);
-	    	query.setParameter("itemId",itemId);
-	    	pages = query.list();
-	    }
-	    catch(HibernateException e)
-	    {
-	    	logger.error(e.toString());
-	    }
-	    return pages != null && !pages.isEmpty() ? pages.get(0) : null;
+		String hqlQuery = "from Pageuserlikes a where a.user.userId =:userId and page.pageId=:itemId";
+
+		try{
+			Query query = sessionFactory.getCurrentSession().createQuery(hqlQuery);
+			query.setParameter("userId",userId);
+			query.setParameter("itemId",itemId);
+			pages = query.list();
+		}
+		catch(HibernateException e)
+		{
+			logger.error(e.toString());
+		}
+		return pages != null && !pages.isEmpty() ? pages.get(0) : null;
 	}
-	
-	
+
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<User> getUserByNameAndLocation(String location, String name, int userId, List<Integer> friendsIds) {
@@ -1894,8 +1894,8 @@ public class UserDAO implements IUserDAO {
 		List<User> userList = criteria.list();
 		return userList;
 	}
-	
-	
+
+
 	@Override
 	public void saveUsercontacts(Usercontacts userContacts) {
 		logger.debug("saveUsercontacts ==>");
@@ -1921,7 +1921,7 @@ public class UserDAO implements IUserDAO {
 		}
 
 	}
-@SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<User> findInMutualFriends(String name,String friendsIds, String alreadyExistingIds) 
 	{
@@ -2006,6 +2006,139 @@ public class UserDAO implements IUserDAO {
 		}
 		return usercontacts!=null ? usercontacts.get(0):null;
 	}
+
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<User> getGroupMembers(int groupId, int userId) {
+		List<User> contactList = null;
+		//String hqlQuery = "select a from User a, Usercontacts b where b.userByUserId.userId = :userId and a.userId = b.userByContactId.userId and b.isApproved is true";
+		String hqlQuery = "select a from User a, Groupusermap b where b.jeeyohgroup.groupId = :groupId and b.user.userId != :userId and a.userId = b.user.userId and (a.isShareProfileWithGroup is true or a.isShareCommunity is true)";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("userId", userId);
+			query.setParameter("groupId", groupId);
+			contactList = (List<User>) query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return contactList;
+	}
+
+	@Override
+	public Jeeyohgroup getGroupByGroupId(Integer groupId) {
+		List<Jeeyohgroup> Jeeyohgroups = null;
+		String hqlQuery = "from Jeeyohgroup a where a.groupId =:groupId";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);	
+			query.setParameter("groupId", groupId);
+			Jeeyohgroups = (List<Jeeyohgroup>) query.list();
+			logger.debug("userList => " + Jeeyohgroups);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return Jeeyohgroups.get(0);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Usereventsuggestion isEventSuggestionExistsForDirectSuggestion(int userId,
+			int eventId, int userContactId) {
+
+		List<Usereventsuggestion> usereventsuggestions = null;
+		String hqlQuery = "from Usereventsuggestion a where a.events.eventId = :eventId and a.user.userId =:userId and a.userContact.userId = :userContactId";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);	
+			query.setParameter("eventId", eventId);
+			query.setParameter("userId", userId);
+			query.setParameter("userContactId", userContactId);
+			usereventsuggestions = (List<Usereventsuggestion>) query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return usereventsuggestions != null && !usereventsuggestions.isEmpty() ? usereventsuggestions.get(0) : null;
+
+	}
 	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Usernondealsuggestion isNonDealSuggestionExistsForDirectSuggestion(int userId,
+			int businessId, int userContactId) {
+		List<Usernondealsuggestion> usernondealsuggestions = null;
+		String hqlQuery = "from Usernondealsuggestion a where a.business.id = :businessId and a.user.userId =:userId and a.userContact.userId = :userContactId";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);	
+			query.setParameter("businessId", businessId);
+			query.setParameter("userId", userId);
+			query.setParameter("userContactId", userContactId);
+			usernondealsuggestions = (List<Usernondealsuggestion>) query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return usernondealsuggestions != null && !usernondealsuggestions.isEmpty() ? usernondealsuggestions.get(0) : null;
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Userdealssuggestion isDealSuggestionExistsForDirectSuggestion(
+			int userId, int dealId, int userContactId) {
+		List<Userdealssuggestion> userdealssuggestions = null;
+		String hqlQuery = "from Userdealssuggestion a where a.deals.id = :dealId and a.user.userId =:userId and a.userContact.userId = :userContactId";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);	
+			query.setParameter("dealId", dealId);
+			query.setParameter("userId", userId);
+			query.setParameter("userContactId", userContactId);
+			userdealssuggestions = (List<Userdealssuggestion>) query.list();
+		} catch (Exception e) {
+			logger.debug(e.getLocalizedMessage());
+			e.printStackTrace();
+		}
+		return userdealssuggestions != null && !userdealssuggestions.isEmpty() ? userdealssuggestions.get(0) : null;
+
+	}
+
+	@Override
+	public void updateUserDealSuggestion(Userdealssuggestion userdealssuggestion) {
+		try{
+			sessionFactory.getCurrentSession().update(userdealssuggestion);
+		}
+		catch(HibernateException e)
+		{
+			logger.error(e.toString());
+		}
+
+	}
+
+	@Override
+	public void updateUserNonDealSuggestion(
+			Usernondealsuggestion usernondealsuggestion) {
+		try{
+			sessionFactory.getCurrentSession().update(usernondealsuggestion);
+		}
+		catch(HibernateException e)
+		{
+			logger.error(e.toString());
+		}
+	}
+
+	@Override
+	public void updateUserEventSuggestion(
+			Usereventsuggestion usereventsuggestion) {
+		try{
+			sessionFactory.getCurrentSession().update(usereventsuggestion);
+		}
+		catch(HibernateException e)
+		{
+			logger.error(e.toString());
+		}
+	}
 	
 }
