@@ -27,10 +27,13 @@ public class Page  implements java.io.Serializable {
      private Boolean isOrganization;
      private Boolean isEvent;
      private Boolean isCommunity;
+     private String source;
      private Date createdtime;
      private Date updatedtime;
      private Set pageuserlikeses = new HashSet(0);
      private Set topcommunitysuggestions = new HashSet(0);
+     private Set events = new HashSet(0);
+     private Set communityReviewMap = new HashSet(0);
      
     // private List<PageFunboard> funboards;
 
@@ -174,6 +177,54 @@ public class Page  implements java.io.Serializable {
 	 */
 	public Set getTopcommunitysuggestions() {
 		return topcommunitysuggestions;
+	}
+
+
+	/**
+	 * @return the source
+	 */
+	public String getSource() {
+		return source;
+	}
+
+
+	/**
+	 * @param source the source to set
+	 */
+	public void setSource(String source) {
+		this.source = source;
+	}
+
+
+	/**
+	 * @return the events
+	 */
+	public Set getEvents() {
+		return events;
+	}
+
+
+	/**
+	 * @param events the events to set
+	 */
+	public void setEvents(Set events) {
+		this.events = events;
+	}
+
+
+	/**
+	 * @return the communityReviewMap
+	 */
+	public Set getCommunityReviewMap() {
+		return communityReviewMap;
+	}
+
+
+	/**
+	 * @param communityReviewMap the communityReviewMap to set
+	 */
+	public void setCommunityReviewMap(Set communityReviewMap) {
+		this.communityReviewMap = communityReviewMap;
 	}
 
 

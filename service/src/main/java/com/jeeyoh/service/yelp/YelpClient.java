@@ -73,8 +73,7 @@ public class YelpClient implements IYelpClient {
                 consumer.setSigningStrategy(new QueryStringSigningStrategy());                       
                 String signedQuery = consumer.sign(query);
                 consumer.setMessageSigner(new HmacSha1MessageSigner()); 
-                System.out.println(getClass().getName() + ">> " + "Signed query: " 
-                                + signedQuery); 
+               
                 HttpGet request = new HttpGet(signedQuery); 
                 HttpClient httpClient = new DefaultHttpClient(); 
                 HttpResponse response = (HttpResponse) httpClient.execute(request); 
@@ -148,8 +147,7 @@ public class YelpClient implements IYelpClient {
                 consumer.setSigningStrategy(new QueryStringSigningStrategy());                       
                 String signedQuery = consumer.sign(query);
                 consumer.setMessageSigner(new HmacSha1MessageSigner()); 
-                System.out.println(getClass().getName() + ">> " + "Signed query: " 
-                                + signedQuery); 
+              
                 HttpGet request = new HttpGet(signedQuery); 
                 HttpClient httpClient = new DefaultHttpClient(); 
                 HttpResponse response = (HttpResponse) httpClient.execute(request); 
@@ -202,8 +200,7 @@ public class YelpClient implements IYelpClient {
 	                consumer.setSigningStrategy(new QueryStringSigningStrategy());                       
 	                String signedQuery = consumer.sign(service);
 	                consumer.setMessageSigner(new HmacSha1MessageSigner()); 
-	                System.out.println(getClass().getName() + ">> " + "Signed query: " 
-	                                + signedQuery); 
+	               
 	                HttpGet request = new HttpGet(signedQuery); 
 	                HttpClient httpClient = new DefaultHttpClient(); 
 	                HttpResponse response = (HttpResponse) httpClient.execute(request); 

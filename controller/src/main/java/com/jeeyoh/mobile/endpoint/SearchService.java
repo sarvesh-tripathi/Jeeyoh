@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import com.jeeyoh.model.funboard.CommentModel;
 import com.jeeyoh.model.response.BaseResponse;
 import com.jeeyoh.model.response.CommentResponse;
+import com.jeeyoh.model.response.CommunityListResponse;
 import com.jeeyoh.model.response.CommunityResponse;
 import com.jeeyoh.model.response.FriendListResponse;
 import com.jeeyoh.model.response.MemoryCardResponse;
@@ -23,6 +24,7 @@ import com.jeeyoh.model.search.FavoriteRequestModel;
 import com.jeeyoh.model.search.FriendModel;
 import com.jeeyoh.model.search.MemoryCardModel;
 import com.jeeyoh.model.search.SearchRequest;
+import com.jeeyoh.model.user.UserModel;
 import com.jeeyoh.service.addfriend.IAddFriendService;
 import com.jeeyoh.service.memorycard.IMemoryCardService;
 import com.jeeyoh.service.search.ICommunitySearchService;
@@ -108,8 +110,6 @@ public class SearchService {
 			response =communitySearchService.saveFavoritePage(requestModel.getUserId(), requestModel.getItemId(), requestModel.getIsFav());
 		return response;
 	}
-	
-	
 	
 	
 	@POST
@@ -217,5 +217,25 @@ public class SearchService {
    		BaseResponse response = communitySearchService.saveCommunityReview(communityReviewModel);
    		return response;
    	}
+	
+	@POST
+	@Path("/searchCommunity")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public CommunityListResponse searchCommunity(SearchRequest searchRequest)
+	{
+		CommunityListResponse response = communitySearchService.serachCommunity(searchRequest);
+		return response;
+	}
+	
+	@POST
+	@Path("/getCommunityList")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public CommunityListResponse getCommunityList(UserModel userModel)
+	{
+		CommunityListResponse response = communitySearchService.getCommunityList();
+		return response;
+	}
 
 }

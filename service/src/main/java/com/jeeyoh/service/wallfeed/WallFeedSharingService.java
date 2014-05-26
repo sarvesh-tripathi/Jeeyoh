@@ -11,6 +11,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +30,7 @@ import com.jeeyoh.persistence.IBusinessDAO;
 import com.jeeyoh.persistence.IDealsDAO;
 import com.jeeyoh.persistence.IEventsDAO;
 import com.jeeyoh.persistence.IFunBoardDAO;
+import com.jeeyoh.persistence.IGroupDAO;
 import com.jeeyoh.persistence.IUserDAO;
 import com.jeeyoh.persistence.IWallFeedDAO;
 import com.jeeyoh.persistence.domain.Business;
@@ -51,6 +53,10 @@ import com.jeeyoh.utils.Utils;
 public class WallFeedSharingService implements IWallFeedSharingService{
 
 	static final Logger logger = LoggerFactory.getLogger("debugLogger");
+
+	@Value("${host.path}")
+	private String hostPath;
+
 	@Autowired
 	private IWallFeedDAO wallFeedDAO;
 	@Autowired
@@ -63,6 +69,8 @@ public class WallFeedSharingService implements IWallFeedSharingService{
 	private IEventsDAO eventsDAO;
 	@Autowired
 	private IDealsDAO dealsDAO;
+	@Autowired
+	private IGroupDAO groupDAO;
 
 	@Override
 	@Transactional
@@ -150,7 +158,8 @@ public class WallFeedSharingService implements IWallFeedSharingService{
 		{
 			commentModel.setCreatedTime(Utils.getTime(date));
 			commentModel.setUserName(user.getFirstName());
-			commentModel.setImageUrl(user.getImageUrl());
+			if(user.getImageUrl() != null)
+				commentModel.setImageUrl(hostPath + user.getImageUrl());
 			response.setComment(commentModel);
 			response.setStatus(ServiceAPIStatus.OK.getStatus());
 		}
@@ -174,13 +183,15 @@ public class WallFeedSharingService implements IWallFeedSharingService{
 			List<CommentModel> commentModelList = new ArrayList<CommentModel>();
 			for(WallFeedComments wallFeedComment:wallFeedCommentsList)
 			{
+				User user = wallFeedComment.getUser();
 				CommentModel commentModel = new CommentModel();
 				commentModel.setComment(wallFeedComment.getComment());
 				commentModel.setCreatedTime(Utils.getTime(wallFeedComment.getCreatedTime()));
 				commentModel.setItemId(wallFeedComment.getWallFeed().getWallFeedId());
-				commentModel.setUserId(wallFeedComment.getUser().getUserId());
-				commentModel.setImageUrl(wallFeedComment.getUser().getImageUrl());
-				commentModel.setUserName(wallFeedComment.getUser().getFirstName()+" "+wallFeedComment.getUser().getLastName());
+				commentModel.setUserId(user.getUserId());
+				if(user.getImageUrl() != null)
+					commentModel.setImageUrl(hostPath + user.getImageUrl());
+				commentModel.setUserName(user.getFirstName()+" "+user.getLastName());
 				commentModelList.add(commentModel);
 			}
 			logger.debug("add community comments in response");
@@ -240,11 +251,13 @@ public class WallFeedSharingService implements IWallFeedSharingService{
 				List<CommentModel> commentsList = new ArrayList<CommentModel>();
 				for(WallFeedComments comment:comments)
 				{
+					User user = comment.getUser();
 					CommentModel commentModel = new CommentModel();
 					commentModel.setComment(comment.getComment());
-					commentModel.setUserId(comment.getUser().getUserId());
-					commentModel.setUserName(comment.getUser().getFirstName());
-					commentModel.setImageUrl(comment.getUser().getImageUrl());
+					commentModel.setUserId(user.getUserId());
+					commentModel.setUserName(user.getFirstName());
+					if(user.getImageUrl() != null)
+						commentModel.setImageUrl(hostPath + user.getImageUrl());
 					commentsList.add(commentModel);
 				}
 				feedModel.setItems(itemsList);
@@ -288,7 +301,6 @@ public class WallFeedSharingService implements IWallFeedSharingService{
 					wallFeedUserShareMap.setShareWithUser(users1);
 					wallFeedDAO.saveWallFeedShareMap(wallFeedUserShareMap);
 				}
-
 			}
 		}
 
@@ -297,7 +309,7 @@ public class WallFeedSharingService implements IWallFeedSharingService{
 		{
 			for(Integer groupId:groups)
 			{
-				Jeeyohgroup jeeyohGroup = userDAO.getGroupByGroupId(groupId);
+				Jeeyohgroup jeeyohGroup = groupDAO.getGroupByGroupId(groupId);
 				Set<Groupusermap> groups2   = jeeyohGroup.getGroupusermaps();
 				for (Groupusermap groups1 : groups2)
 				{
@@ -343,13 +355,11 @@ public class WallFeedSharingService implements IWallFeedSharingService{
 		WallFeed wallFeed = wallFeedDAO.getWallFeedDetailsByID(request.getWallFeedId());
 		if(wallFeed.getUser().getUserId() == user.getUserId())
 		{
-			suggestionDate = Utils.getNearestWeekend(new Date());
+			suggestionDate = Utils.getNearestWeekend(date);
 		}
 		else
 		{
 			SimpleDateFormat simple=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-			String dateInString = "7-Jun-2013";
-
 			try {
 
 				suggestionDate = simple.parse(request.getSheduleDate());
@@ -374,35 +384,38 @@ public class WallFeedSharingService implements IWallFeedSharingService{
 					logger.debug("event => "+suggetstionId);
 					Events event = eventsDAO.getEventById(suggetstionId);
 					logger.debug("event desc => "+event.getDescription());
-
-					for(Integer friendId:friendsIdList)
+					if(friendsIdList != null)
 					{
-						User users1 = userDAO.getUserById(friendId);
-						Usereventsuggestion userEventSuggestion = userDAO.isEventSuggestionExistsForDirectSuggestion(friendId, event.getEventId(), user.getUserId());
-						logger.debug("userEventSuggestion:::  "+userEventSuggestion);
-						if(userEventSuggestion != null)
+						for(Integer friendId:friendsIdList)
 						{
-							if(userEventSuggestion.getSuggestedTime().compareTo(suggestionDate) < 0)
+							User users1 = userDAO.getUserById(friendId);
+							Usereventsuggestion userEventSuggestion = userDAO.isEventSuggestionExistsForDirectSuggestion(friendId, event.getEventId(), user.getUserId());
+							logger.debug("userEventSuggestion:::  "+userEventSuggestion);
+							if(userEventSuggestion != null)
 							{
-								userEventSuggestion.setUpdatedTime(date);
-								userEventSuggestion.setSuggestedTime(suggestionDate);
-								userDAO.updateUserEventSuggestion(userEventSuggestion);
+								if(userEventSuggestion.getSuggestedTime().compareTo(suggestionDate) < 0)
+								{
+									userEventSuggestion.setUpdatedTime(date);
+									userEventSuggestion.setSuggestedTime(suggestionDate);
+									userEventSuggestion.setSuggestionType("Wall Feed Suggestion");
+									userDAO.updateUserEventSuggestion(userEventSuggestion);
+								}
+								response.setStatus("Ok");
 							}
-							response.setStatus("Ok");
-						}
-						else
-						{
-							userEventSuggestion = new Usereventsuggestion();
-							userEventSuggestion.setEvents(event);
-							userEventSuggestion.setCreatedTime(date);
-							userEventSuggestion.setSuggestionType("Wall Feed Suggestion");
-							userEventSuggestion.setUpdatedTime(date);
-							userEventSuggestion.setUser(users1);
-							userEventSuggestion.setUserContact(user);
-							userEventSuggestion.setSuggestedTime(suggestionDate);
-							userDAO.saveEventsSuggestions(userEventSuggestion, batch_size);
-							batch_size++;
-							response.setStatus("Ok");
+							else
+							{
+								userEventSuggestion = new Usereventsuggestion();
+								userEventSuggestion.setEvents(event);
+								userEventSuggestion.setCreatedTime(date);
+								userEventSuggestion.setSuggestionType("Wall Feed Suggestion");
+								userEventSuggestion.setUpdatedTime(date);
+								userEventSuggestion.setUser(users1);
+								userEventSuggestion.setUserContact(user);
+								userEventSuggestion.setSuggestedTime(suggestionDate);
+								userDAO.saveEventsSuggestions(userEventSuggestion, batch_size);
+								batch_size++;
+								response.setStatus("Ok");
+							}
 						}
 					}
 
@@ -410,19 +423,19 @@ public class WallFeedSharingService implements IWallFeedSharingService{
 					{
 						for(Integer groupId:groups)
 						{
-							Jeeyohgroup jeeyohGroup = userDAO.getGroupByGroupId(groupId);
+							Jeeyohgroup jeeyohGroup = groupDAO.getGroupByGroupId(groupId);
 							Set<Groupusermap> groups2   = jeeyohGroup.getGroupusermaps();
 							for (Groupusermap groups1 : groups2)
 							{
 								User users1 = groups1.getUser();
 								Usereventsuggestion userEventSuggestion = userDAO.isEventSuggestionExistsForDirectSuggestion(users1.getUserId(), event.getEventId(), user.getUserId());
-								logger.debug(" group userEventSuggestion:::  "+userEventSuggestion);
 								if(userEventSuggestion != null)
 								{
 									if(userEventSuggestion.getSuggestedTime().compareTo(suggestionDate) < 0)
 									{
 										userEventSuggestion.setUpdatedTime(date);
 										userEventSuggestion.setSuggestedTime(suggestionDate);
+										userEventSuggestion.setSuggestionType("Wall Feed Suggestion");
 										userDAO.updateUserEventSuggestion(userEventSuggestion);
 									}
 									response.setStatus("Ok");
@@ -451,34 +464,37 @@ public class WallFeedSharingService implements IWallFeedSharingService{
 					logger.debug("deal => "+suggetstionId);
 					Deals deal = dealsDAO.getDealById(suggetstionId);
 					logger.debug("event desc => "+deal.getTitle());
-					for(Integer friendId:friendsIdList)
+					if(friendsIdList != null)
 					{
-						Userdealssuggestion userDealSuggestion = userDAO.isDealSuggestionExistsForDirectSuggestion(friendId, deal.getId(), user.getUserId());
-						logger.debug("userDealSuggestion:::  "+userDealSuggestion);
-						if(userDealSuggestion != null)
+						for(Integer friendId:friendsIdList)
 						{
-							if(userDealSuggestion.getSuggestedTime().compareTo(suggestionDate) < 0)
+							Userdealssuggestion userDealSuggestion = userDAO.isDealSuggestionExistsForDirectSuggestion(friendId, deal.getId(), user.getUserId());
+							if(userDealSuggestion != null)
 							{
-								userDealSuggestion.setUpdatedtime(date);
-								userDealSuggestion.setSuggestedTime(suggestionDate);
-								userDAO.updateUserDealSuggestion(userDealSuggestion);
+								if(userDealSuggestion.getSuggestedTime().compareTo(suggestionDate) < 0)
+								{
+									userDealSuggestion.setUpdatedtime(date);
+									userDealSuggestion.setSuggestedTime(suggestionDate);
+									userDealSuggestion.setSuggestionType("Wall Feed Suggestion");
+									userDAO.updateUserDealSuggestion(userDealSuggestion);
+								}
+								response.setStatus("Ok");
 							}
-							response.setStatus("Ok");
-						}
-						else
-						{
-							User users1 = userDAO.getUserById(friendId);
-							userDealSuggestion = new Userdealssuggestion();
-							userDealSuggestion.setDeals(deal);
-							userDealSuggestion.setCreatedtime(date);
-							userDealSuggestion.setSuggestionType("Wall Feed Suggestion");
-							userDealSuggestion.setUpdatedtime(date);
-							userDealSuggestion.setUser(users1);
-							userDealSuggestion.setUserContact(user);
-							userDealSuggestion.setSuggestedTime(suggestionDate);
-							dealsDAO.saveSuggestions(userDealSuggestion);
-							batch_size++;
-							response.setStatus("Ok");
+							else
+							{
+								User users1 = userDAO.getUserById(friendId);
+								userDealSuggestion = new Userdealssuggestion();
+								userDealSuggestion.setDeals(deal);
+								userDealSuggestion.setCreatedtime(date);
+								userDealSuggestion.setSuggestionType("Wall Feed Suggestion");
+								userDealSuggestion.setUpdatedtime(date);
+								userDealSuggestion.setUser(users1);
+								userDealSuggestion.setUserContact(user);
+								userDealSuggestion.setSuggestedTime(suggestionDate);
+								dealsDAO.saveSuggestions(userDealSuggestion);
+								batch_size++;
+								response.setStatus("Ok");
+							}
 						}
 					}
 
@@ -486,19 +502,19 @@ public class WallFeedSharingService implements IWallFeedSharingService{
 					{
 						for(Integer groupId:groups)
 						{
-							Jeeyohgroup jeeyohGroup = userDAO.getGroupByGroupId(groupId);
+							Jeeyohgroup jeeyohGroup = groupDAO.getGroupByGroupId(groupId);
 							Set<Groupusermap> groups2   = jeeyohGroup.getGroupusermaps();
 							for (Groupusermap groups1 : groups2)
 							{
 								User users1 = groups1.getUser();
 								Userdealssuggestion userDealSuggestion = userDAO.isDealSuggestionExistsForDirectSuggestion(users1.getUserId(), deal.getId(), user.getUserId());
-								logger.debug(" group userDealSuggestion:::  "+userDealSuggestion);
 								if(userDealSuggestion != null)
 								{
 									if(userDealSuggestion.getSuggestedTime().compareTo(suggestionDate) < 0)
 									{
 										userDealSuggestion.setUpdatedtime(date);
 										userDealSuggestion.setSuggestedTime(suggestionDate);
+										userDealSuggestion.setSuggestionType("Wall Feed Suggestion");
 										userDAO.updateUserDealSuggestion(userDealSuggestion);
 									}
 									response.setStatus("Ok");
@@ -525,34 +541,37 @@ public class WallFeedSharingService implements IWallFeedSharingService{
 					logger.debug("business => "+suggetstionId);
 					Business business = businessDAO.getBusinessById(suggetstionId);
 					logger.debug("event desc => "+business.getName());
-					for(Integer friendId:friendsIdList)
+					if(friendsIdList != null)
 					{
-						Usernondealsuggestion userNonDealSuggestion = userDAO.isNonDealSuggestionExistsForDirectSuggestion(friendId, business.getId(), user.getUserId());
-						logger.debug(" userNonDealSuggestion:::  "+userNonDealSuggestion);
-						if(userNonDealSuggestion != null)
+						for(Integer friendId:friendsIdList)
 						{
-							if(userNonDealSuggestion.getSuggestedTime().compareTo(suggestionDate) < 0)
+							Usernondealsuggestion userNonDealSuggestion = userDAO.isNonDealSuggestionExistsForDirectSuggestion(friendId, business.getId(), user.getUserId());
+							if(userNonDealSuggestion != null)
 							{
-								userNonDealSuggestion.setUpdatedtime(date);
-								userNonDealSuggestion.setSuggestedTime(suggestionDate);
-								userDAO.updateUserNonDealSuggestion(userNonDealSuggestion);
+								if(userNonDealSuggestion.getSuggestedTime().compareTo(suggestionDate) < 0)
+								{
+									userNonDealSuggestion.setUpdatedtime(date);
+									userNonDealSuggestion.setSuggestedTime(suggestionDate);
+									userNonDealSuggestion.setSuggestionType("Wall Feed Suggestion");
+									userDAO.updateUserNonDealSuggestion(userNonDealSuggestion);
+								}
+								response.setStatus("Ok");
 							}
-							response.setStatus("Ok");
-						}
-						else
-						{
-							User users1 = userDAO.getUserById(friendId);
-							userNonDealSuggestion = new Usernondealsuggestion();
-							userNonDealSuggestion.setBusiness(business);
-							userNonDealSuggestion.setCreatedtime(date);
-							userNonDealSuggestion.setSuggestionType("Wall Feed Suggestion");
-							userNonDealSuggestion.setUpdatedtime(date);
-							userNonDealSuggestion.setUser(users1);
-							userNonDealSuggestion.setUserContact(user);
-							userNonDealSuggestion.setSuggestedTime(suggestionDate);
-							userDAO.saveNonDealSuggestions(userNonDealSuggestion, batch_size);
-							batch_size++;
-							response.setStatus("Ok");
+							else
+							{
+								User users1 = userDAO.getUserById(friendId);
+								userNonDealSuggestion = new Usernondealsuggestion();
+								userNonDealSuggestion.setBusiness(business);
+								userNonDealSuggestion.setCreatedtime(date);
+								userNonDealSuggestion.setSuggestionType("Wall Feed Suggestion");
+								userNonDealSuggestion.setUpdatedtime(date);
+								userNonDealSuggestion.setUser(users1);
+								userNonDealSuggestion.setUserContact(user);
+								userNonDealSuggestion.setSuggestedTime(suggestionDate);
+								userDAO.saveNonDealSuggestions(userNonDealSuggestion, batch_size);
+								batch_size++;
+								response.setStatus("Ok");
+							}
 						}
 					}
 
@@ -560,19 +579,19 @@ public class WallFeedSharingService implements IWallFeedSharingService{
 					{
 						for(Integer groupId:groups)
 						{
-							Jeeyohgroup jeeyohGroup = userDAO.getGroupByGroupId(groupId);
+							Jeeyohgroup jeeyohGroup = groupDAO.getGroupByGroupId(groupId);
 							Set<Groupusermap> groups2   = jeeyohGroup.getGroupusermaps();
 							for (Groupusermap groups1 : groups2)
 							{
 								User users1 = groups1.getUser();
 								Usernondealsuggestion userNonDealSuggestion = userDAO.isNonDealSuggestionExistsForDirectSuggestion(users1.getUserId(), business.getId(), user.getUserId());
-								logger.debug(" group userNonDealSuggestion:::  "+userNonDealSuggestion);
 								if(userNonDealSuggestion != null)
 								{
 									if(userNonDealSuggestion.getSuggestedTime().compareTo(suggestionDate) < 0)
 									{
 										userNonDealSuggestion.setUpdatedtime(date);
 										userNonDealSuggestion.setSuggestedTime(suggestionDate);
+										userNonDealSuggestion.setSuggestionType("Wall Feed Suggestion");
 										userDAO.updateUserNonDealSuggestion(userNonDealSuggestion);
 									}
 									response.setStatus("Ok");

@@ -2,8 +2,6 @@ package com.jeeyoh.persistence.domain;
 
 import java.util.Date;
 
-import org.codehaus.jackson.annotate.JsonProperty;
-
 public class StubhubEvent implements java.io.Serializable {
 
 	/**
@@ -21,6 +19,7 @@ public class StubhubEvent implements java.io.Serializable {
 	
 	private Date event_date_local;
 	
+	private Date event_date_time_local;
 	
 	private String event_time_local;	
 	
@@ -351,6 +350,20 @@ public class StubhubEvent implements java.io.Serializable {
 	 */
 	public void setGenre_parent_name(String genre_parent_name) {
 		this.genre_parent_name = genre_parent_name;
+	}
+
+	/**
+	 * @return the event_date_time_local
+	 */
+	public Date getEvent_date_time_local() {
+		return event_date_time_local;
+	}
+
+	/**
+	 * @param event_date_time_local the event_date_time_local to set
+	 */
+	public void setEvent_date_time_local(Date event_date_time_local) {
+		this.event_date_time_local = event_date_time_local;
 	}
 
 }

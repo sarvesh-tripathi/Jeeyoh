@@ -463,7 +463,7 @@ public class BusinessDAO implements IBusinessDAO {
 
 		criteria.add(Restrictions.eq("usernondealsuggestion.suggestedTime", Utils.getNearestWeekend(null)));
 
-		criteria.setFirstResult(offset)
+		criteria.setFirstResult(offset*10)
 		.setMaxResults(limit);
 
 		List<Business> businessList = criteria.list();
@@ -516,7 +516,9 @@ public class BusinessDAO implements IBusinessDAO {
 	@Override
 	public int getTotalBusinessBySearchKeyWord(String searchText,
 			String category, String location) {
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Business.class, "business").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).setProjection(Projections.property("business.id"));
+		logger.debug("getTotalBusinessBySearchKeyWord::  ");
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Business.class, "business").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+				.setProjection(Projections.count("business.id"));
 
 		criteria.createAlias("business.businesstype", "businessTypes");
 		
@@ -545,7 +547,8 @@ public class BusinessDAO implements IBusinessDAO {
 					.add(Restrictions.like("business.stateCode", "%" + location + "%")));
 		}
 		
-		int rowCount = criteria.list().size();
+		//int rowCount = criteria.list().size();
+		int rowCount = Integer.parseInt(criteria.uniqueResult().toString());
 		return rowCount;
 	}
 

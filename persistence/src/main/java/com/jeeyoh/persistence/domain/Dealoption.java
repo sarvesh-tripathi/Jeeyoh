@@ -12,223 +12,227 @@ import java.util.Set;
 public class Dealoption  implements java.io.Serializable {
 
 
-     private Integer id;
-     private Deals deals;
-     private String optionId;
-     private String title;
-     private Integer soldQuantity;
-     private Boolean isSoldOut;
-     private Long price;
-     private String formattedPrice;
-     private Long originalPrice;
-     private String formattedOriginalPrice;
-     private Long discountPrice;
-     private String formattedDiscountPrice;
-     private Integer discountPercent;
-     private Boolean isLimitedQuantity;
-     private Integer initialQuantity;
-     private Integer remainingQuantity;
-     private Integer minimumPurchaseQuantity;
-     private Integer maximumPurchaseQuantity;
-     private Date expiresAt;
-     private String externalUrl;
-     private String buyUrl;
-     private String description;
-     private Set dealredemptionlocations = new HashSet(0);
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private Integer id;
+	private Deals deals;
+	private String optionId;
+	private String title;
+	private Integer soldQuantity;
+	private Boolean isSoldOut;
+	private Long price;
+	private String formattedPrice;
+	private Long originalPrice;
+	private String formattedOriginalPrice;
+	private Long discountPrice;
+	private String formattedDiscountPrice;
+	private Integer discountPercent;
+	private Boolean isLimitedQuantity;
+	private Integer initialQuantity;
+	private Integer remainingQuantity;
+	private Integer minimumPurchaseQuantity;
+	private Integer maximumPurchaseQuantity;
+	private Date expiresAt;
+	private String externalUrl;
+	private String buyUrl;
+	private String description;
+	private Set dealredemptionlocations = new HashSet(0);
 
-    public Dealoption() {
-    }
+	public Dealoption() {
+	}
 
-	
-    public Dealoption(Deals deals) {
-        this.deals = deals;
-    }
-    public Dealoption(Deals deals, String optionId, String title, Integer soldQuantity, Boolean isSoldOut, Long price, String formattedPrice, Long originalPrice, String formattedOriginalPrice, Long discountPrice, String formattedDiscountPrice, Integer discountPercent, Boolean isLimitedQuantity, Integer initialQuantity, Integer remainingQuantity, Integer minimumPurchaseQuantity, Integer maximumPurchaseQuantity, Date expiresAt, String externalUrl, String buyUrl, String description, Set dealredemptionlocations) {
-       this.deals = deals;
-       this.optionId = optionId;
-       this.title = title;
-       this.soldQuantity = soldQuantity;
-       this.isSoldOut = isSoldOut;
-       this.price = price;
-       this.formattedPrice = formattedPrice;
-       this.originalPrice = originalPrice;
-       this.formattedOriginalPrice = formattedOriginalPrice;
-       this.discountPrice = discountPrice;
-       this.formattedDiscountPrice = formattedDiscountPrice;
-       this.discountPercent = discountPercent;
-       this.isLimitedQuantity = isLimitedQuantity;
-       this.initialQuantity = initialQuantity;
-       this.remainingQuantity = remainingQuantity;
-       this.minimumPurchaseQuantity = minimumPurchaseQuantity;
-       this.maximumPurchaseQuantity = maximumPurchaseQuantity;
-       this.expiresAt = expiresAt;
-       this.externalUrl = externalUrl;
-       this.buyUrl = buyUrl;
-       this.description = description;
-       this.dealredemptionlocations = dealredemptionlocations;
-    }
-   
-    public Integer getId() {
-        return this.id;
-    }
-    
-    public void setId(Integer id) {
-        this.id = id;
-    }
-    public Deals getDeals() {
-        return this.deals;
-    }
-    
-    public void setDeals(Deals deals) {
-        this.deals = deals;
-    }
-    public String getOptionId() {
-        return this.optionId;
-    }
-    
-    public void setOptionId(String optionId) {
-        this.optionId = optionId;
-    }
-    public String getTitle() {
-        return this.title;
-    }
-    
-    public void setTitle(String title) {
-        this.title = title;
-    }
-    public Integer getSoldQuantity() {
-        return this.soldQuantity;
-    }
-    
-    public void setSoldQuantity(Integer soldQuantity) {
-        this.soldQuantity = soldQuantity;
-    }
-    public Boolean getIsSoldOut() {
-        return this.isSoldOut;
-    }
-    
-    public void setIsSoldOut(Boolean isSoldOut) {
-        this.isSoldOut = isSoldOut;
-    }
-    public Long getPrice() {
-        return this.price;
-    }
-    
-    public void setPrice(Long price) {
-        this.price = price;
-    }
-    public String getFormattedPrice() {
-        return this.formattedPrice;
-    }
-    
-    public void setFormattedPrice(String formattedPrice) {
-        this.formattedPrice = formattedPrice;
-    }
-    public Long getOriginalPrice() {
-        return this.originalPrice;
-    }
-    
-    public void setOriginalPrice(Long originalPrice) {
-        this.originalPrice = originalPrice;
-    }
-    public String getFormattedOriginalPrice() {
-        return this.formattedOriginalPrice;
-    }
-    
-    public void setFormattedOriginalPrice(String formattedOriginalPrice) {
-        this.formattedOriginalPrice = formattedOriginalPrice;
-    }
-    public Long getDiscountPrice() {
-        return this.discountPrice;
-    }
-    
-    public void setDiscountPrice(Long discountPrice) {
-        this.discountPrice = discountPrice;
-    }
-    public String getFormattedDiscountPrice() {
-        return this.formattedDiscountPrice;
-    }
-    
-    public void setFormattedDiscountPrice(String formattedDiscountPrice) {
-        this.formattedDiscountPrice = formattedDiscountPrice;
-    }
-    public Integer getDiscountPercent() {
-        return this.discountPercent;
-    }
-    
-    public void setDiscountPercent(Integer discountPercent) {
-        this.discountPercent = discountPercent;
-    }
-    public Boolean getIsLimitedQuantity() {
-        return this.isLimitedQuantity;
-    }
-    
-    public void setIsLimitedQuantity(Boolean isLimitedQuantity) {
-        this.isLimitedQuantity = isLimitedQuantity;
-    }
-    public Integer getInitialQuantity() {
-        return this.initialQuantity;
-    }
-    
-    public void setInitialQuantity(Integer initialQuantity) {
-        this.initialQuantity = initialQuantity;
-    }
-    public Integer getRemainingQuantity() {
-        return this.remainingQuantity;
-    }
-    
-    public void setRemainingQuantity(Integer remainingQuantity) {
-        this.remainingQuantity = remainingQuantity;
-    }
-    public Integer getMinimumPurchaseQuantity() {
-        return this.minimumPurchaseQuantity;
-    }
-    
-    public void setMinimumPurchaseQuantity(Integer minimumPurchaseQuantity) {
-        this.minimumPurchaseQuantity = minimumPurchaseQuantity;
-    }
-    public Integer getMaximumPurchaseQuantity() {
-        return this.maximumPurchaseQuantity;
-    }
-    
-    public void setMaximumPurchaseQuantity(Integer maximumPurchaseQuantity) {
-        this.maximumPurchaseQuantity = maximumPurchaseQuantity;
-    }
-    public Date getExpiresAt() {
-        return this.expiresAt;
-    }
-    
-    public void setExpiresAt(Date expiresAt) {
-        this.expiresAt = expiresAt;
-    }
-    public String getExternalUrl() {
-        return this.externalUrl;
-    }
-    
-    public void setExternalUrl(String externalUrl) {
-        this.externalUrl = externalUrl;
-    }
-    public String getBuyUrl() {
-        return this.buyUrl;
-    }
-    
-    public void setBuyUrl(String buyUrl) {
-        this.buyUrl = buyUrl;
-    }
-    public String getDescription() {
-        return this.description;
-    }
-    
-    public void setDescription(String description) {
-        this.description = description;
-    }
-    public Set getDealredemptionlocations() {
-        return this.dealredemptionlocations;
-    }
-    
-    public void setDealredemptionlocations(Set dealredemptionlocations) {
-        this.dealredemptionlocations = dealredemptionlocations;
-    }
+
+	public Dealoption(Deals deals) {
+		this.deals = deals;
+	}
+	public Dealoption(Deals deals, String optionId, String title, Integer soldQuantity, Boolean isSoldOut, Long price, String formattedPrice, Long originalPrice, String formattedOriginalPrice, Long discountPrice, String formattedDiscountPrice, Integer discountPercent, Boolean isLimitedQuantity, Integer initialQuantity, Integer remainingQuantity, Integer minimumPurchaseQuantity, Integer maximumPurchaseQuantity, Date expiresAt, String externalUrl, String buyUrl, String description, Set dealredemptionlocations) {
+		this.deals = deals;
+		this.optionId = optionId;
+		this.title = title;
+		this.soldQuantity = soldQuantity;
+		this.isSoldOut = isSoldOut;
+		this.price = price;
+		this.formattedPrice = formattedPrice;
+		this.originalPrice = originalPrice;
+		this.formattedOriginalPrice = formattedOriginalPrice;
+		this.discountPrice = discountPrice;
+		this.formattedDiscountPrice = formattedDiscountPrice;
+		this.discountPercent = discountPercent;
+		this.isLimitedQuantity = isLimitedQuantity;
+		this.initialQuantity = initialQuantity;
+		this.remainingQuantity = remainingQuantity;
+		this.minimumPurchaseQuantity = minimumPurchaseQuantity;
+		this.maximumPurchaseQuantity = maximumPurchaseQuantity;
+		this.expiresAt = expiresAt;
+		this.externalUrl = externalUrl;
+		this.buyUrl = buyUrl;
+		this.description = description;
+		this.dealredemptionlocations = dealredemptionlocations;
+	}
+
+	public Integer getId() {
+		return this.id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	public Deals getDeals() {
+		return this.deals;
+	}
+
+	public void setDeals(Deals deals) {
+		this.deals = deals;
+	}
+	public String getOptionId() {
+		return this.optionId;
+	}
+
+	public void setOptionId(String optionId) {
+		this.optionId = optionId;
+	}
+	public String getTitle() {
+		return this.title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	public Integer getSoldQuantity() {
+		return this.soldQuantity;
+	}
+
+	public void setSoldQuantity(Integer soldQuantity) {
+		this.soldQuantity = soldQuantity;
+	}
+	public Boolean getIsSoldOut() {
+		return this.isSoldOut;
+	}
+
+	public void setIsSoldOut(Boolean isSoldOut) {
+		this.isSoldOut = isSoldOut;
+	}
+	public Long getPrice() {
+		return this.price;
+	}
+
+	public void setPrice(Long price) {
+		this.price = price;
+	}
+	public String getFormattedPrice() {
+		return this.formattedPrice;
+	}
+
+	public void setFormattedPrice(String formattedPrice) {
+		this.formattedPrice = formattedPrice;
+	}
+	public Long getOriginalPrice() {
+		return this.originalPrice;
+	}
+
+	public void setOriginalPrice(Long originalPrice) {
+		this.originalPrice = originalPrice;
+	}
+	public String getFormattedOriginalPrice() {
+		return this.formattedOriginalPrice;
+	}
+
+	public void setFormattedOriginalPrice(String formattedOriginalPrice) {
+		this.formattedOriginalPrice = formattedOriginalPrice;
+	}
+	public Long getDiscountPrice() {
+		return this.discountPrice;
+	}
+
+	public void setDiscountPrice(Long discountPrice) {
+		this.discountPrice = discountPrice;
+	}
+	public String getFormattedDiscountPrice() {
+		return this.formattedDiscountPrice;
+	}
+
+	public void setFormattedDiscountPrice(String formattedDiscountPrice) {
+		this.formattedDiscountPrice = formattedDiscountPrice;
+	}
+	public Integer getDiscountPercent() {
+		return this.discountPercent;
+	}
+
+	public void setDiscountPercent(Integer discountPercent) {
+		this.discountPercent = discountPercent;
+	}
+	public Boolean getIsLimitedQuantity() {
+		return this.isLimitedQuantity;
+	}
+
+	public void setIsLimitedQuantity(Boolean isLimitedQuantity) {
+		this.isLimitedQuantity = isLimitedQuantity;
+	}
+	public Integer getInitialQuantity() {
+		return this.initialQuantity;
+	}
+
+	public void setInitialQuantity(Integer initialQuantity) {
+		this.initialQuantity = initialQuantity;
+	}
+	public Integer getRemainingQuantity() {
+		return this.remainingQuantity;
+	}
+
+	public void setRemainingQuantity(Integer remainingQuantity) {
+		this.remainingQuantity = remainingQuantity;
+	}
+	public Integer getMinimumPurchaseQuantity() {
+		return this.minimumPurchaseQuantity;
+	}
+
+	public void setMinimumPurchaseQuantity(Integer minimumPurchaseQuantity) {
+		this.minimumPurchaseQuantity = minimumPurchaseQuantity;
+	}
+	public Integer getMaximumPurchaseQuantity() {
+		return this.maximumPurchaseQuantity;
+	}
+
+	public void setMaximumPurchaseQuantity(Integer maximumPurchaseQuantity) {
+		this.maximumPurchaseQuantity = maximumPurchaseQuantity;
+	}
+	public Date getExpiresAt() {
+		return this.expiresAt;
+	}
+
+	public void setExpiresAt(Date expiresAt) {
+		this.expiresAt = expiresAt;
+	}
+	public String getExternalUrl() {
+		return this.externalUrl;
+	}
+
+	public void setExternalUrl(String externalUrl) {
+		this.externalUrl = externalUrl;
+	}
+	public String getBuyUrl() {
+		return this.buyUrl;
+	}
+
+	public void setBuyUrl(String buyUrl) {
+		this.buyUrl = buyUrl;
+	}
+	public String getDescription() {
+		return this.description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	public Set getDealredemptionlocations() {
+		return this.dealredemptionlocations;
+	}
+
+	public void setDealredemptionlocations(Set dealredemptionlocations) {
+		this.dealredemptionlocations = dealredemptionlocations;
+	}
 
 
 

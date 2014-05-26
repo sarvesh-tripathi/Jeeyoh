@@ -65,7 +65,7 @@ public class RandomGUID {
 		try {
 			md5 = MessageDigest.getInstance("MD5");
 		} catch (NoSuchAlgorithmException e) {
-			System.out.println(e.getMessage());
+			
 		}
 
 		try {
@@ -105,7 +105,7 @@ public class RandomGUID {
 			valueAfterMD5 = sb.toString();
 
 		} catch (Exception e) {
-			System.out.println("Error:" + e);
+			
 		}
 	}
 

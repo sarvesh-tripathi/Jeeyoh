@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Time;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -185,7 +187,7 @@ public class Utils {
 
 			// Set time fields to end  
 			setTimeFields(c);
-			
+
 			return c.getTime();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -213,7 +215,7 @@ public class Utils {
 
 			// Set time fields to end 
 			setTimeFields(c);
-			
+
 			return c.getTime();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -236,7 +238,7 @@ public class Utils {
 
 			// Set time fields to end  
 			setTimeFields(c);
-			
+
 			return c.getTime();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -258,7 +260,7 @@ public class Utils {
 
 			// Set time fields to end  
 			setTimeFields(c);
-			
+
 			return c.getTime();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -282,7 +284,7 @@ public class Utils {
 
 			// Set time fields to end  
 			setTimeFields(cal);
-			
+
 			switch(cal.get(Calendar.DAY_OF_WEEK)){
 			case Calendar.FRIDAY: 
 				eventDate = cal.getTime();
@@ -301,6 +303,45 @@ public class Utils {
 	}
 
 
+	/**
+	 * Get current date for event
+	 * @return 
+	 */
+	public static Date getCurrentDateForEvent()
+	{
+		try {
+			Calendar c = Calendar.getInstance();
+
+			// Set time fields to end  
+			setTimeFieldsToStart(c);
+
+			return c.getTime();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	/**
+	 * Get current time for event
+	 * @return 
+	 */
+	public static Time getCurrentTimeForEvent()
+	{
+		try {
+			Calendar c = Calendar.getInstance();
+			c.set(Calendar.DAY_OF_WEEK, Calendar.THURSDAY);
+
+			Time currentTime = new Time(c.getTimeInMillis());
+
+			return currentTime;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	
 	/**
 	 * Get current date
 	 * @return
@@ -483,7 +524,7 @@ public class Utils {
 			MessageDigest digest = MessageDigest.getInstance("MD5");
 			md5Text = new BigInteger(1, digest.digest((text).getBytes())).toString(16);
 		} catch (Exception e) {
-			System.out.println("Error in call to MD5");
+			logger.debug("Error in call to MD5");
 		}
 
 		if (md5Text.length() == 31) {
@@ -623,7 +664,7 @@ public class Utils {
 
 		// Set time fields to end  
 		setTimeFields(cal);
-		
+
 		// The while loop ensures that you are only checking dates in the specified timeLine
 		while(!cal.after(end)){
 			// The switch checks the day of the week for Saturdays and Sundays
@@ -639,7 +680,7 @@ public class Utils {
 		}
 		return weekendList;
 	}
-	
+
 	/**
 	 * Set time fields to end  
 	 * @param calendar
@@ -652,7 +693,7 @@ public class Utils {
 		calendar.set(Calendar.SECOND, 59);
 		calendar.set(Calendar.MILLISECOND, 59);
 	}
-	
+
 	/**
 	 * Set time fields to start 
 	 * @param calendar
@@ -662,9 +703,48 @@ public class Utils {
 		// Set time fields to end  
 		calendar.set(Calendar.HOUR_OF_DAY, 0);
 		calendar.set(Calendar.MINUTE, 0);
-		calendar.set(Calendar.SECOND, 1);
+		calendar.set(Calendar.SECOND, 0);
 		calendar.set(Calendar.MILLISECOND, 0);
 	}
 
 
+	/**
+	 * Get timeLine from Event Date
+	 * @param eventDate
+	 * @return
+	 */
+	public static String getTimeLineForEvent(Date eventDate, String eventTime)
+	{
+
+		Date event_time = null;
+		SimpleDateFormat simple=new SimpleDateFormat("HH:mm:ss");
+		try {
+			event_time = simple.parse(eventTime);
+		} catch (ParseException e) {
+			logger.debug("Error: "+e.getMessage());
+			e.printStackTrace();
+		}
+		simple.applyPattern(TIME_FORMAT);
+		String interval = "";
+		interval= new SimpleDateFormat(MONTH_DAY_FORMAT).format(eventDate);
+		interval= interval + " at " + simple.format(event_time);
+
+		return interval;
+	}
+	
+	/**
+	 * Get timeLine from Event Date
+	 * @param eventDate
+	 * @return
+	 */
+	public static String getTimeLineForEvent(Date eventDate)
+	{
+		SimpleDateFormat simple=new SimpleDateFormat();
+		simple.applyPattern(TIME_FORMAT);
+		String interval = "";
+		interval= new SimpleDateFormat(MONTH_DAY_FORMAT).format(eventDate);
+		interval= interval + " at " + simple.format(eventDate);
+
+		return interval;
+	}
 }

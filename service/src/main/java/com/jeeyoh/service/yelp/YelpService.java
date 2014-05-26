@@ -87,18 +87,6 @@ public class YelpService implements IYelpService {
 	//@Transactional
 	private void loadData(YelpSearchResponse searchResponse) {
 		
-		/*try 
-		   {
-			    
-			     ObjectMapper mapper = new ObjectMapper();
-			     //System.out.println(mapper.writeValueAsString(locuMenuResponce));
-			     logger.debug(mapper.writeValueAsString(searchResponse));
-		   } 
-		   catch (Exception e) 
-		   {
-			     e.printStackTrace();
-			   
-		   }*/
 		List<YelpBusiness> businesses = searchResponse.getBusinesses();
 		Yregion region = new Yregion();
 		if(searchResponse.getRegion() != null)

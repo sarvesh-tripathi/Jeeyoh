@@ -2,7 +2,6 @@ package com.jeeyoh.service.jobs;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,11 +10,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jeeyoh.persistence.IDealsDAO;
+import com.jeeyoh.persistence.IGroupDAO;
 import com.jeeyoh.persistence.IUserDAO;
 import com.jeeyoh.persistence.domain.Business;
 import com.jeeyoh.persistence.domain.Deals;
 import com.jeeyoh.persistence.domain.Dealsusage;
-import com.jeeyoh.persistence.domain.Groupusermap;
 import com.jeeyoh.persistence.domain.Jeeyohgroup;
 import com.jeeyoh.persistence.domain.Page;
 import com.jeeyoh.persistence.domain.User;
@@ -34,14 +33,14 @@ public class DealSearch implements IDealSearch {
 
 	@Autowired
 	private IDealsDAO dealDAO;
+	
+	@Autowired
+	private IGroupDAO groupDAO;
 
-	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional
 	public void search() {
 
-		/*String[] type = {"RESTAURANT","SPA","SPORT"};
-		List<Businesstype> businesstypes = businessDAO.getBusinesstypeByTypeArray(type);	*/
 		List<User> userList = userDAO.getUsers();
 		// Iterate user list for suggestion
 		Date  weekendDate = Utils.getNearestWeekend(null);
@@ -66,7 +65,7 @@ public class DealSearch implements IDealSearch {
 					}
 				}
 
-				List<Jeeyohgroup> jeeyohGroup = userDAO.getUserGroups(user.getUserId());
+				List<Jeeyohgroup> jeeyohGroup = groupDAO.getUserGroups(user.getUserId());
 				if(jeeyohGroup != null)
 				{
 					for(Jeeyohgroup jeeyohGroup1 : jeeyohGroup) {
@@ -102,7 +101,7 @@ public class DealSearch implements IDealSearch {
 		{
 			if(isSharedWithGroup)
 				dealUsage = userDAO.getUserDealUsageByType(user.getUserId(),groupType, Double.parseDouble(userFor.getLattitude()), Double.parseDouble(userFor.getLongitude()));
-			logger.debug("Group MEMBER "+isGroupMember);
+			
 			if(dealUsage != null)
 			{
 				logger.debug("size of deal usage :: "+dealUsage.size());
@@ -162,21 +161,15 @@ public class DealSearch implements IDealSearch {
 						logger.debug("Like COUNT :::::"+likeCount);
 						if(dealsusage.getIsFavorite() || dealsusage.getIsLike() || likeCount >= 2)
 						{
-							//if(deal.getEndAt().compareTo(Utils.getCurrentDate()) >= 0)
-							//{
-							//{
 							try {
 								logger.debug("deal.getId():::  "+deal.getId());
 								logger.debug("Cross basic three level3",deal.getId());									
-								saveDealsSuggestionInDataBase(deal,userFor,isGroupMember, contactFlag, false,false, weekendDate);
+								saveDealsSuggestionInDataBase(deal,user,userFor,isGroupMember, contactFlag, false,false, weekendDate);
 
 							} catch (Exception e) {
 								logger.debug("Error:::  "+e.getLocalizedMessage());
 							}
-
-							//}
 						}
-						//}
 					}
 				}
 			}
@@ -197,21 +190,16 @@ public class DealSearch implements IDealSearch {
 						business.setLattitude(Double.toString(array[0]));
 						business.setLongitude(Double.toString(array[1]));
 					}
-					//double distance = Utils.distance(Double.parseDouble(userFor.getLattitude()), Double.parseDouble(userFor.getLongitude()), Double.parseDouble(business.getLattitude()), Double.parseDouble(business.getLongitude()), "M");
-					//logger.debug("Distance::  "+distance +" lat::  "+userFor.getLattitude()+" lon::  "+userFor.getLongitude());
-					//if(distance <= 50)
-					//{
+					
 					List<Deals> deals = dealDAO.getDealsByBusinessId(business.getId());
 					for(Deals deal : deals)
 					{
 						List<Userdealssuggestion> userdealsuggestions = userDAO.isDealSuggestionExists(userFor.getUserId(), deal.getId());
 						if(userdealsuggestions == null || userdealsuggestions.size() == 0)
 						{
-							saveDealsSuggestionInDataBase(deal,userFor,isGroupMember, contactFlag, true,false, weekendDate);
+							saveDealsSuggestionInDataBase(deal,user,userFor,isGroupMember, contactFlag, true,false, weekendDate);
 						}
 					}
-					//}
-
 				}
 
 			}
@@ -225,8 +213,6 @@ public class DealSearch implements IDealSearch {
 			for(UserCategory userCategory : userCategoryList) {
 				
 				UserCategoryLikes userCategoryLikes = userDAO.getUserCategoryLikes(user.getUserId(), userCategory.getUserCategoryId());
-
-
 				
 				//Get nearest weekend date for UserLike
 				Date userLikeWeekend = Utils.getNearestWeekend(userCategoryLikes.getCreatedTime());
@@ -253,16 +239,12 @@ public class DealSearch implements IDealSearch {
 										business.setLattitude(Double.toString(array[0]));
 										business.setLongitude(Double.toString(array[1]));
 									}
-									//double distance = Utils.distance(Double.parseDouble(userFor.getLattitude()), Double.parseDouble(userFor.getLongitude()), Double.parseDouble(business.getLattitude()), Double.parseDouble(business.getLongitude()), "M");
-									//logger.debug("Distance::  "+distance +" lat::  "+userFor.getLattitude()+" lon::  "+userFor.getLongitude());
-									//if(distance <= 50)
-
+							
 									List<Userdealssuggestion> userdealsuggestions = userDAO.isDealSuggestionExists(userFor.getUserId(), catdeal.getId());
 									if(userdealsuggestions == null || userdealsuggestions.size() == 0)
 									{
-										saveDealsSuggestionInDataBase(catdeal,userFor,isGroupMember, contactFlag, false,true, weekendDate);
+										saveDealsSuggestionInDataBase(catdeal,user,userFor,isGroupMember, contactFlag, false,true, weekendDate);
 									}
-									//}
 								}
 
 							}
@@ -285,16 +267,11 @@ public class DealSearch implements IDealSearch {
 											business.setLattitude(Double.toString(array[0]));
 											business.setLongitude(Double.toString(array[1]));
 										}
-										//double distance = Utils.distance(Double.parseDouble(userFor.getLattitude()), Double.parseDouble(userFor.getLongitude()), Double.parseDouble(business.getLattitude()), Double.parseDouble(business.getLongitude()), "M");
-										//logger.debug("Distance::  "+distance +" lat::  "+userFor.getLattitude()+" lon::  "+userFor.getLongitude());
-										//if(distance <= 50)
-										//{
 										List<Userdealssuggestion> userdealsuggestions = userDAO.isDealSuggestionExists(userFor.getUserId(), catdeal.getId());
 										if(userdealsuggestions == null || userdealsuggestions.size() == 0)
 										{
-											saveDealsSuggestionInDataBase(catdeal,userFor, isGroupMember, contactFlag, false,true, weekendDate);
+											saveDealsSuggestionInDataBase(catdeal,user,userFor, isGroupMember, contactFlag, false,true, weekendDate);
 										}
-										//}
 									}
 
 								}
@@ -316,16 +293,11 @@ public class DealSearch implements IDealSearch {
 												business.setLattitude(Double.toString(array[0]));
 												business.setLongitude(Double.toString(array[1]));
 											}
-											//double distance = Utils.distance(Double.parseDouble(userFor.getLattitude()), Double.parseDouble(userFor.getLongitude()), Double.parseDouble(business.getLattitude()), Double.parseDouble(business.getLongitude()), "M");
-											//logger.debug("Distance::  "+distance +" lat::  "+userFor.getLattitude()+" lon::  "+userFor.getLongitude());
-											//if(distance <= 50)
-											//{
 											List<Userdealssuggestion> userdealsuggestions = userDAO.isDealSuggestionExists(userFor.getUserId(), catdeal.getId());
 											if(userdealsuggestions == null || userdealsuggestions.size() == 0)
 											{
-												saveDealsSuggestionInDataBase(catdeal,userFor, isGroupMember, contactFlag, false,true, weekendDate);
+												saveDealsSuggestionInDataBase(catdeal,user,userFor, isGroupMember, contactFlag, false,true, weekendDate);
 											}
-											//}
 										}
 									}
 								}
@@ -342,7 +314,7 @@ public class DealSearch implements IDealSearch {
 	}
 
 
-	private void saveDealsSuggestionInDataBase(Deals deal, User user, boolean isGroupMember, boolean isContact, boolean isCommunityLike, boolean isUserCategoryLikes, Date weekendDate)
+	private void saveDealsSuggestionInDataBase(Deals deal, User suggestingUser, User user, boolean isGroupMember, boolean isContact, boolean isCommunityLike, boolean isUserCategoryLikes, Date weekendDate)
 	{
 		Date date = new Date();
 		Userdealssuggestion dealSuggestion = new Userdealssuggestion();
@@ -355,6 +327,7 @@ public class DealSearch implements IDealSearch {
 		dealSuggestion.setUpdatedtime(date);
 		dealSuggestion.setSuggestedTime(weekendDate);
 		dealSuggestion.setUser(user);
+		dealSuggestion.setUserContact(suggestingUser);
 		if(isCommunityLike)
 		{
 			if(isGroupMember)

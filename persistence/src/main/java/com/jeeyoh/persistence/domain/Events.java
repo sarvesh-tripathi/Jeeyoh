@@ -16,6 +16,7 @@ public class Events implements Serializable{
 	private String description;	
 	private Date event_date;
 	private Date event_date_local;
+	private Date event_date_time_local;
 	private String event_time_local;	
 	private String geography_parent;	
 	private String venue_name;
@@ -395,6 +396,20 @@ public class Events implements Serializable{
 	 */
 	public void setStateCode(String stateCode) {
 		this.stateCode = stateCode;
+	}
+
+	/**
+	 * @return the event_date_time_local
+	 */
+	public Date getEvent_date_time_local() {
+		return event_date_time_local;
+	}
+
+	/**
+	 * @param event_date_time_local the event_date_time_local to set
+	 */
+	public void setEvent_date_time_local(Date event_date_time_local) {
+		this.event_date_time_local = event_date_time_local;
 	}
 
 

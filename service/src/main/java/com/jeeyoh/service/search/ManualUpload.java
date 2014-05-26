@@ -44,7 +44,7 @@ public class ManualUpload implements IManualUpload {
 	public ArrayList<ExcelUpload> parseData(String filename) {
 		ExcelUpload excelUpload;
 		ArrayList<ExcelUpload> excelUploadList = new ArrayList<ExcelUpload>();
-		System.out.println("File name:" + filename);
+		
 		try {
 			if (filename != null && !filename.equals("")) {
 				Workbook wb1 = new XSSFWorkbook(filename);
@@ -53,7 +53,7 @@ public class ManualUpload implements IManualUpload {
 				Cell cell;
 				int rows; // No of rows
 				rows = sheet.getPhysicalNumberOfRows();
-				System.out.println("the total number of rows are" + rows);
+				
 				int cols = 0; // No of columns
 				int tmp = 0;
 				for (int i = 0; i < rows; i++) {
@@ -149,7 +149,6 @@ public class ManualUpload implements IManualUpload {
 			}
 			return excelUploadList;
 		} catch (Exception e) {
-			System.out.print(e.getStackTrace());
 			return null;
 		}
 	}

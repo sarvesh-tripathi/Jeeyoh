@@ -37,6 +37,39 @@ public class PageModel implements Serializable{
 	private String imageUrl;
 	@JsonProperty
 	private String itemType;
+	@JsonProperty
+	private boolean isFavorite;
+	@JsonProperty
+	private double rating;
+	@JsonProperty
+	private String source;
+	@JsonProperty
+	private boolean isFollowed;
+	@JsonProperty
+	private String startDate;
+	@JsonProperty
+	private String endDate;
+	@JsonProperty
+    private String timeLine;
+	@JsonProperty
+    private String suggestionCriteria;
+	@JsonProperty
+	private String suggestedBy;
+	@JsonProperty
+	private boolean isBooked;
+	
+	/**
+	 * @return the isBooked
+	 */
+	public boolean getIsBooked() {
+		return isBooked;
+	}
+	/**
+	 * @param isBooked the isBooked to set
+	 */
+	public void setIsBooked(boolean isBooked) {
+		this.isBooked = isBooked;
+	}
 	/**
 	 * @return the pagetype
 	 */
@@ -169,7 +202,114 @@ public class PageModel implements Serializable{
 	public void setItemType(String itemType) {
 		this.itemType = itemType;
 	}
-	
+	/**
+	 * @return the isFavorite
+	 */
+	public boolean getIsFavorite() {
+		return isFavorite;
+	}
+	/**
+	 * @param isFavorite the isFavorite to set
+	 */
+	public void setIsFavorite(boolean isFavorite) {
+		this.isFavorite = isFavorite;
+	}
+	/**
+	 * @return the rating
+	 */
+	public double getRating() {
+		return rating;
+	}
+	/**
+	 * @param rating the rating to set
+	 */
+	public void setRating(double rating) {
+		this.rating = rating;
+	}
+	/**
+	 * @return the source
+	 */
+	public String getSource() {
+		return source;
+	}
+	/**
+	 * @param source the source to set
+	 */
+	public void setSource(String source) {
+		this.source = source;
+	}
+	/**
+	 * @return the isFollowed
+	 */
+	public boolean getIsFollowed() {
+		return isFollowed;
+	}
+	/**
+	 * @param isFollowed the isFollowed to set
+	 */
+	public void setIsFollowed(boolean isFollowed) {
+		this.isFollowed = isFollowed;
+	}
+	/**
+	 * @return the startDate
+	 */
+	public String getStartDate() {
+		return startDate;
+	}
+	/**
+	 * @return the endDate
+	 */
+	public String getEndDate() {
+		return endDate;
+	}
+	/**
+	 * @param startDate the startDate to set
+	 */
+	public void setStartDate(String startDate) {
+		this.startDate = startDate;
+	}
+	/**
+	 * @param endDate the endDate to set
+	 */
+	public void setEndDate(String endDate) {
+		this.endDate = endDate;
+	}
+	/**
+	 * @return the timeLine
+	 */
+	public String getTimeLine() {
+		return timeLine;
+	}
+	/**
+	 * @param timeLine the timeLine to set
+	 */
+	public void setTimeLine(String timeLine) {
+		this.timeLine = timeLine;
+	}
+	/**
+	 * @return the suggestionCriteria
+	 */
+	public String getSuggestionCriteria() {
+		return suggestionCriteria;
+	}
+	/**
+	 * @return the suggestedBy
+	 */
+	public String getSuggestedBy() {
+		return suggestedBy;
+	}
+	/**
+	 * @param suggestionCriteria the suggestionCriteria to set
+	 */
+	public void setSuggestionCriteria(String suggestionCriteria) {
+		this.suggestionCriteria = suggestionCriteria;
+	}
+	/**
+	 * @param suggestedBy the suggestedBy to set
+	 */
+	public void setSuggestedBy(String suggestedBy) {
+		this.suggestedBy = suggestedBy;
+	}
 	
 
 }

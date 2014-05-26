@@ -6,6 +6,14 @@
 		<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
 		<property name="hibernate.connection.url">jdbc:mysql://localhost:3306/jeeyoh?zeroDateTimeBehavior=convertToNull</property>
 		<property name="hibernate.connection.username">root</property>
+		<property name="hibernate.connection.password"></property>
+		<property name="connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
+		<property name="c3p0.acquire_increment">1</property>
+		<property name="c3p0.idle_test_period">100</property> <!-- seconds -->
+		<property name="c3p0.max_size">100</property>
+		<property name="c3p0.max_statements">0</property>
+		<property name="c3p0.min_size">10</property>
+		<property name="c3p0.timeout">1800</property> <!-- seconds -->
 		<property name="show_sql">true</property>
 		<property name="hibernate.jdbc.batch_size">20</property>
 		<mapping resource="hbm/Yreview.hbm.xml" />
@@ -69,26 +77,26 @@
 		<mapping resource="hbm/Topdealssuggestion.hbm.xml" />
 		<mapping resource="hbm/Topeventsuggestion.hbm.xml" />
 		<mapping resource="hbm/Topnondealsuggestion.hbm.xml" />
-		<mapping resource="hbm/Topcommunitysuggestion.hbm.xml"/>
-		<mapping resource="hbm/Funboard.hbm.xml" />	
-		<mapping resource="hbm/PageFunboard.hbm.xml" />	
-		<mapping resource="hbm/BusinessFunboard.hbm.xml" />	
-		<mapping resource="hbm/DealFunboard.hbm.xml" />	
-		<mapping resource="hbm/EventFunboard.hbm.xml" />	
-		<mapping resource="hbm/FunboardComments.hbm.xml"/>	
-		<mapping resource="hbm/FunboardMediaContent.hbm.xml"/>
-		<mapping resource="hbm/Timeline.hbm.xml"/>
-		<mapping resource="hbm/CommunityComments.hbm.xml" />	
-		<mapping resource="hbm/LCities.hbm.xml" />	
+		<mapping resource="hbm/Topcommunitysuggestion.hbm.xml" />
+		<mapping resource="hbm/Funboard.hbm.xml" />
+		<mapping resource="hbm/PageFunboard.hbm.xml" />
+		<mapping resource="hbm/BusinessFunboard.hbm.xml" />
+		<mapping resource="hbm/DealFunboard.hbm.xml" />
+		<mapping resource="hbm/EventFunboard.hbm.xml" />
+		<mapping resource="hbm/FunboardComments.hbm.xml" />
+		<mapping resource="hbm/FunboardMediaContent.hbm.xml" />
+		<mapping resource="hbm/Timeline.hbm.xml" />
+		<mapping resource="hbm/CommunityComments.hbm.xml" />
+		<mapping resource="hbm/LCities.hbm.xml" />
 		<mapping resource="hbm/Ldeal.hbm.xml" />
 		<mapping resource="hbm/LdealCategory.hbm.xml" />
 		<mapping resource="hbm/LdealOption.hbm.xml" />
 		<mapping resource="hbm/Lcategory.hbm.xml" />
-		<mapping resource="hbm/WallFeed.hbm.xml" />	
-		<mapping resource="hbm/WallFeedComments.hbm.xml" />	
-		<mapping resource="hbm/WallFeedItems.hbm.xml" />	
+		<mapping resource="hbm/WallFeed.hbm.xml" />
+		<mapping resource="hbm/WallFeedComments.hbm.xml" />
+		<mapping resource="hbm/WallFeedItems.hbm.xml" />
 		<mapping resource="hbm/WallFeedUserShareMap.hbm.xml" />
-		<mapping resource="hbm/CommunityReviewMap.hbm.xml" />	
+		<mapping resource="hbm/CommunityReviewMap.hbm.xml" />
 		<mapping resource="hbm/CommunityReview.hbm.xml" />
 	</session-factory>
 </hibernate-configuration>

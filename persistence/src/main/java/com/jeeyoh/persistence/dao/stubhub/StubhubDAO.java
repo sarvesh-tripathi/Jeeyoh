@@ -53,13 +53,16 @@ public class StubhubDAO implements IStubhubDAO {
 	@Override
 	public List<StubhubEvent> getStubhubEvents() {
 		List<StubhubEvent> eventsList = null;
-		String hqlQuery = "from StubhubEvent where event_date >= :currentDate";
+		String hqlQuery = "from StubhubEvent where event_date_local >= :currentDate and event_time_local >= :currentTime";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
-			query.setParameter("currentDate", Utils.getCurrentDate());
+			query.setParameter("currentDate", Utils.getCurrentDateForEvent());
+			query.setParameter("currentTime", Utils.getCurrentTimeForEvent().toString());
+			logger.debug("getCurrentTimeForEvent:  "+Utils.getCurrentTimeForEvent().toString());
 			eventsList = (List<StubhubEvent>) query.list();
 		} catch (Exception e) {
+			logger.debug("ERROR::  "+e.getMessage());
 			e.printStackTrace();
 		}
 		return eventsList;

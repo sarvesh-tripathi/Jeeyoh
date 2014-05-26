@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import com.jeeyoh.persistence.domain.Gdeal;
 import com.jeeyoh.persistence.domain.Gdealoption;
+import com.jeeyoh.persistence.domain.Goptiondetail;
 import com.jeeyoh.utils.Utils;
 @Repository("gDealsDAO")
 public class GDealsDAO implements IGDealsDAO {
@@ -64,6 +65,68 @@ public class GDealsDAO implements IGDealsDAO {
 			e.printStackTrace();
 		}
 		return gDealList;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Gdeal> getGDeals() {
+		List<Gdeal> gDealList = null;
+		logger.debug("loadDeals => getDeals... ");
+		String h = "select distinct a from Gdeal a, Gtags b,Gcategory c where a.endAt >= :currentDate and c.category = b.name and b.gdeal.id = a.id";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					h);
+			query.setParameter("currentDate", Utils.getCurrentDate());
+			
+			gDealList = (List<Gdeal>) query.list();
+			logger.debug("Gdeal loadDeals => query.list() size " + gDealList.size());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return gDealList;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Gdealoption> getDealOptions(int dealId) {
+		List<Gdealoption> gDealOptionsList = null;
+		logger.debug("loadDeals => getDealOptions... ");
+		String h = "select a from Gdealoption a where a.gdeal.id = :dealId and a.discountPercent > 20";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					h);
+			query.setParameter("dealId", dealId);
+			gDealOptionsList = (List<Gdealoption>) query.list();
+			logger.debug("loadDeals => query.list() size " + gDealOptionsList);
+
+		} catch (Exception e) {
+			logger.debug(e.getLocalizedMessage());
+			e.printStackTrace();
+		}
+		return gDealOptionsList;
+	}
+
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Goptiondetail getOptionDeatils(int optonId) {
+		List<Goptiondetail> gOptiondetailList = null;
+		
+		String h = "select a from Goptiondetail a where a.gdealoption.id = :optonId";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					h);
+			query.setParameter("optonId", optonId);
+			
+			gOptiondetailList = (List<Goptiondetail>) query.list();
+			logger.debug("getOptionDeatils => query.list() size " + gOptiondetailList);
+
+		} catch (Exception e) {
+			logger.debug(e.getLocalizedMessage());
+			e.printStackTrace();
+		}
+		return gOptiondetailList != null && !gOptiondetailList.isEmpty() ? gOptiondetailList.get(0) : null;
 	}
 
 }

@@ -479,7 +479,6 @@ public class AccountController {
 		//userService.getUserSuggestions(user);
 		int pageId = Integer.parseInt(request.getParameter("pageId"));
 		int offset = Integer.parseInt(request.getParameter("offset"));
-		System.out.println("pageid : "+pageId);
 		if(pageId!=0)
 		{
 			CommunityResponse communityResponse = communitySearchService.searchCommunityDetails(1, pageId,offset,10);
@@ -608,7 +607,7 @@ public class AccountController {
 	public ModelAndView calculateTop10Suggestions(HttpServletRequest request, HttpServletResponse httpresponse){
 		ModelAndView modelAndView = new ModelAndView("home");
 		calculateTopSuggestionsService.caculateTopFriendsSuggestions();
-		//calculateTopSuggestionsService.calculateTopCommunitySuggestions();
+		calculateTopSuggestionsService.calculateTopCommunitySuggestions();
 		calculateTopSuggestionsService.calculateTopJeyoohSuggestions();
 		return modelAndView;
 	}
@@ -882,7 +881,7 @@ public class AccountController {
 		{
 			friendsList.add(Integer.parseInt(s[i]));
 		}
-		addDirectSuggestionService.addSuggestions(Integer.parseInt(userId), friendsList, Integer.parseInt(suggestionId), category, suggestionType,suggestedTime);
+		addDirectSuggestionService.addSuggestions(Integer.parseInt(userId), friendsList,null, Integer.parseInt(suggestionId), category, suggestionType,suggestedTime);
 		return modelAndView;
 	}
 	

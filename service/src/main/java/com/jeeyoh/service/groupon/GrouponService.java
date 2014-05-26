@@ -100,6 +100,8 @@ public class GrouponService implements IGrouponService {
 	@Transactional
 	public void loadDeals(String country) {
 		logger.debug("Inside loadDeals");
+		try
+		{
 		List<Gdivision> divisions = divisionDAO.getDivisionsByCountry(country);
 		//List<Gdivision> divisions = divisionDAO.getDivisionsById(560);
 		if(divisions != null) {
@@ -148,12 +150,18 @@ public class GrouponService implements IGrouponService {
 								deal.setTippingPoint(dealModel.getTippingPoint());
 								deal.setTitle(dealModel.getTitle());
 								MerchantModel merchantModel = dealModel.getMerchant();
+								logger.debug("merchantModel::  "+merchantModel);
 								if(merchantModel != null) {									
 									Gmerchant merchant = new Gmerchant();
 									merchant.setMerchantId(merchantModel.getMerchantId());
 									merchant.setName(merchantModel.getName());
 									merchant.setWebsiteUrl(merchantModel.getWebsiteUrl());
+									List<RatingModel> ratings = merchantModel.getRatings();
 									RatingModel ratingModel = new RatingModel();
+									if(!ratings.isEmpty())
+									{
+										ratingModel = merchantModel.getRatings().get(0);
+									}
 									Gmerchantrating gmerchantrating = new Gmerchantrating();
 									gmerchantrating.setLinkText(ratingModel.getLinkText());
 									gmerchantrating.setRating(ratingModel.getRating());
@@ -276,6 +284,11 @@ public class GrouponService implements IGrouponService {
 					}
 				}
 			}
+		}
+		}
+		catch(Exception e)
+		{
+			logger.debug("Error in Groupon Service::  "+e.getMessage());
 		}
 	}
 	

@@ -16,10 +16,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.jeeyoh.persistence.domain.Business;
+import com.jeeyoh.persistence.domain.Dealoption;
+import com.jeeyoh.persistence.domain.Dealredemptionlocation;
 import com.jeeyoh.persistence.domain.Deals;
 import com.jeeyoh.persistence.domain.Dealsusage;
-import com.jeeyoh.persistence.domain.User;
+import com.jeeyoh.persistence.domain.Events;
 import com.jeeyoh.persistence.domain.Userdealssuggestion;
 import com.jeeyoh.utils.Utils;
 
@@ -310,7 +311,7 @@ public class DealsDAO implements IDealsDAO {
 			//criteria.add(Restrictions.like("tags.name", "%" + keyword + "%"));
 
 		}
-		
+
 		criteria.add(Restrictions.ge("endAt", Utils.getCurrentDate()));
 
 		List<Deals> dealsList = criteria.list();*/
@@ -413,7 +414,7 @@ public class DealsDAO implements IDealsDAO {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Deals.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		criteria.createAlias("business", "business");
 		criteria.createAlias("business.businesstype", "businesstype");
-		
+
 		if(category != null && category.isEmpty() == false)
 		{
 			criteria.add(Restrictions.eq("businesstype.businessType", category));
@@ -427,7 +428,7 @@ public class DealsDAO implements IDealsDAO {
 					.add(Restrictions.like("business.state", "%" + location + "%"))
 					.add(Restrictions.like("business.stateCode", "%" + location + "%")));
 		}
-		
+
 		if(searchText != null && searchText.isEmpty() == false)
 		{
 			logger.debug("IN KEYWORD CHECKING ::: ");
@@ -438,11 +439,11 @@ public class DealsDAO implements IDealsDAO {
 							.add(Restrictions.ne("dealId", searchText)));
 
 		}
-		
+
 		criteria.add(Restrictions.conjunction().add(Restrictions.ge("endAt", Utils.getCurrentDate()))
 				.add(Restrictions.gt("endAt", Utils.getNearestThursday())));
 		//criteria.add(Restrictions.ge("endAt", Utils.getCurrentDate()));
-		
+
 		criteria.setFirstResult(offset)
 		.setMaxResults(limit);
 		List<Deals> dealsList = criteria.list();
@@ -459,7 +460,7 @@ public class DealsDAO implements IDealsDAO {
 
 		criteria.createAlias("business", "business");
 		criteria.createAlias("business.businesstype", "businesstype");
-		
+
 		if(category != null && category.isEmpty() == false)
 		{
 			criteria.add(Restrictions.eq("businesstype.businessType", category));
@@ -473,7 +474,7 @@ public class DealsDAO implements IDealsDAO {
 					.add(Restrictions.like("business.state", "%" + location + "%"))
 					.add(Restrictions.like("business.stateCode", "%" + location + "%")));
 		}
-		
+
 		if(searchText != null && searchText.isEmpty() == false)
 		{
 			logger.debug("IN KEYWORD CHECKING ::: ");
@@ -482,11 +483,11 @@ public class DealsDAO implements IDealsDAO {
 					.add(Restrictions.eq("dealId", searchText)));
 
 		}
-		
+
 		criteria.add(Restrictions.conjunction().add(Restrictions.ge("endAt", Utils.getCurrentDate()))
 				.add(Restrictions.gt("endAt", Utils.getNearestThursday())));
 		//criteria.add(Restrictions.ge("endAt", Utils.getCurrentDate()));
-		
+
 		criteria.setFirstResult(offset)
 		.setMaxResults(limit);
 		List<Deals> dealsList = criteria.list();
@@ -523,7 +524,7 @@ public class DealsDAO implements IDealsDAO {
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
-			
+
 			rows = (List<Object[]>) query.list();
 		} catch (Exception e) {
 			logger.debug("Error: "+e.getMessage());
@@ -577,7 +578,7 @@ public class DealsDAO implements IDealsDAO {
 					hqlQuery);
 			query.setParameter("dealId", dealId);
 			dealList = (List<Deals>)query.list();
-			
+
 		}
 		catch (HibernateException e) {
 			e.printStackTrace();
@@ -594,10 +595,11 @@ public class DealsDAO implements IDealsDAO {
 		logger.error("getTotalDealsBySearchKeyWord ==== > "+searchText);
 
 
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Deals.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).setProjection(Projections.property("id"));
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Deals.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+				.setProjection(Projections.count("id"));
 		criteria.createAlias("business", "business");
 		criteria.createAlias("business.businesstype", "businesstype");
-		
+
 		if(category != null && category.isEmpty() == false)
 		{
 			criteria.add(Restrictions.eq("businesstype.businessType", category));
@@ -611,7 +613,7 @@ public class DealsDAO implements IDealsDAO {
 					.add(Restrictions.like("business.businessId", "%" + location + "%"))
 					.add(Restrictions.eq("business.postalCode", location)));
 		}
-		
+
 		if(searchText != null && searchText.isEmpty() == false)
 		{
 			logger.debug("IN KEYWORD CHECKING ::: ");
@@ -620,12 +622,13 @@ public class DealsDAO implements IDealsDAO {
 					.add(Restrictions.like("dealId", "%" + searchText + "%")));
 
 		}
-		
+
 		criteria.add(Restrictions.conjunction().add(Restrictions.ge("endAt", Utils.getCurrentDate()))
 				.add(Restrictions.gt("endAt", Utils.getNearestThursday())));
 		//criteria.add(Restrictions.ge("endAt", Utils.getCurrentDate()));
-		
-		int rowCount = criteria.list().size();
+
+		//int rowCount = criteria.list().size();
+		int rowCount = Integer.parseInt(criteria.uniqueResult().toString());
 		return rowCount;
 	}
 
@@ -654,7 +657,7 @@ public class DealsDAO implements IDealsDAO {
 			//criteria.add(Restrictions.like("tags.name", "%" + keyword + "%"));
 
 		}
-		
+
 		criteria.add(Restrictions.ge("endAt", Utils.getCurrentDate()));
 
 		List<Deals> dealsList = criteria.list();
@@ -685,7 +688,97 @@ public class DealsDAO implements IDealsDAO {
 			logger.error(e.toString());
 			return false;
 		}
-		
+
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Dealoption getDealOptionByDealId(int dealId) {
+		List<Dealoption> dealsList = null;
+		String hqlQuery = "from Dealoption a where a.deals.id = :dealId";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("dealId", dealId);
+			dealsList = (List<Dealoption>) query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return dealsList != null && !dealsList.isEmpty() ? dealsList.get(0) : null;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Dealredemptionlocation getRedemptionLocationByDealOption(
+			int dealOptionId) {
+		List<Dealredemptionlocation> locationList = null;
+		String hqlQuery = "from Dealredemptionlocation a where a.dealoption.id = :dealOptionId";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("dealOptionId", dealOptionId);
+			locationList = (List<Dealredemptionlocation>) query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return locationList != null && !locationList.isEmpty() ? locationList.get(0) : null;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Deals> getBookedDealList(int userId, String category) {
+		logger.debug("getBookedDealList => ");
+		List<Deals> dealList = null;
+		logger.debug("get next weekend =>"+Utils.getNearestWeekend(null));
+		//String hqlQuery = "select a from Deals a where a.id in (select b.deals.id from Dealsusage b where b.user.userId=:userId and b.isBooked=1) and endAt>=:currentDate and endAt<=:nearestFriday";
+		String hqlQuery = "select b from Dealsusage a, Deals b, Business c, Businesstype d where a.user.userId = :userId and a.isBooked is true and a.deals.id = b.id and (b.endAt >= :currentDate and  b.endAt <= :nearestFriday) and d.businessType = :category and b.business.businessId = c.id and c.businesstype.businessTypeId = d.businessTypeId";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("userId", userId);
+			query.setParameter("currentDate", Utils.getCurrentDate());
+			query.setParameter("nearestFriday", Utils.getNearestFriday());
+			query.setParameter("category", category);
+			dealList = (List<Deals>) query.list();
+			logger.debug("getBookedDealList dealList => "+dealList);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.debug(e.toString());
+			logger.debug(e.getLocalizedMessage());
+		}
+		return dealList;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Deals> getDealsByuserLikesForCurrentWeekend(String itemCategory,
+			String itemType,String providerName, double latitude, double longitude) {
+		List<Deals> dealsList = null;
+		String hqlQuery = "select a from Deals a, Business b, Businesstype c where c.businessType = :category and (a.endAt >= :currentDate and a.endAt <= :weekendDate) and a.business.id = b.id and b.businesstype.businessTypeId = c.businessTypeId and (a.title like '%"+ itemType + "%' or a.dealUrl like '%" + itemType + "%' or a.dealId like '%" + itemType + "%') and (((acos(sin(((:latitude)*pi()/180)) * sin((b.lattitude*pi()/180))+cos(((:latitude)*pi()/180)) * cos((b.lattitude*pi()/180)) * cos((((:longitude)- b.longitude)*pi()/180))))*180/pi())*60*1.1515) <=50 group by a.dealId";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("category", itemCategory);
+			query.setParameter("currentDate", Utils.getCurrentDate());
+			query.setParameter("weekendDate", Utils.getNearestWeekend(null));
+			query.setDouble("latitude", latitude);
+			query.setDouble("longitude", longitude);
+			dealsList = (List<Deals>) query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.debug(e.getMessage());
+		}
+		return dealsList;
+	}
+
+	@Override
+	public void updateDeal(Deals deals) {
+		try {
+			sessionFactory.getCurrentSession().update(deals);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.debug(e.getMessage());
+		}
+	}
+
 }

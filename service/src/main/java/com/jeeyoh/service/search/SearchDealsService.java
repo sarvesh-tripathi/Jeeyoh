@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jeeyoh.model.search.DealModel;
 import com.jeeyoh.persistence.IDealsDAO;
+import com.jeeyoh.persistence.IGroupDAO;
 import com.jeeyoh.persistence.IUserDAO;
 import com.jeeyoh.persistence.domain.Deals;
 import com.jeeyoh.persistence.domain.Groupusermap;
@@ -31,6 +32,8 @@ public class SearchDealsService implements ISearchDealsService {
 	IDealsDAO dealsDAO;
 	@Autowired
 	private IUserDAO userDAO;
+	@Autowired
+	private IGroupDAO groupDAO;
 
 	@Override
 	@Transactional
@@ -257,7 +260,7 @@ public class SearchDealsService implements ISearchDealsService {
 			List<Page> userCommunities = userDAO.getUserCommunities(user.getUserId(),Double.parseDouble(user.getLattitude()), Double.parseDouble(user.getLongitude()));
 			
 			// user group member 
-			List<Jeeyohgroup> jeeyohGroup = userDAO.getUserGroups(user.getUserId());
+			List<Jeeyohgroup> jeeyohGroup = groupDAO.getUserGroups(user.getUserId());
 						
 		//contacts deals
 		if(userContacts != null) {

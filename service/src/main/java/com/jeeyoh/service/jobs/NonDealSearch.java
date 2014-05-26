@@ -2,7 +2,6 @@ package com.jeeyoh.service.jobs;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,11 +10,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jeeyoh.persistence.IBusinessDAO;
+import com.jeeyoh.persistence.IGroupDAO;
 import com.jeeyoh.persistence.IUserDAO;
 import com.jeeyoh.persistence.domain.Business;
 import com.jeeyoh.persistence.domain.Events;
 import com.jeeyoh.persistence.domain.Eventuserlikes;
-import com.jeeyoh.persistence.domain.Groupusermap;
 import com.jeeyoh.persistence.domain.Jeeyohgroup;
 import com.jeeyoh.persistence.domain.Page;
 import com.jeeyoh.persistence.domain.Pagetype;
@@ -44,6 +43,9 @@ public class NonDealSearch implements INonDealSearch {
 
 	@Autowired
 	private IBusinessDAO businessDAO;
+	
+	@Autowired
+	private IGroupDAO groupDAO;
 
 	@Override
 	@Transactional
@@ -65,7 +67,7 @@ public class NonDealSearch implements INonDealSearch {
 					user.setLattitude(Double.toString(array[0]));
 					user.setLongitude(Double.toString(array[1]));
 				}
-				saveNonDealSuggestion(userId, user, true, isContactsAccessed,weekendDate, false,null,false,true,false,true);
+				saveNonDealSuggestion(user, user, true, isContactsAccessed,weekendDate, false,null,false,true,false,true);
 			}
 		}
 	}
@@ -82,15 +84,14 @@ public class NonDealSearch implements INonDealSearch {
 	 * @param groupType
 	 * @param isStar
 	 */
-	@SuppressWarnings("unchecked")
-	private void saveNonDealSuggestion(int userId, User user, boolean forUser, boolean isContactsAccessed, Date weekendDate, boolean isGroupMember, String groupType, boolean isStar, boolean isSharedWithFriends, boolean isSharedWithGroup, boolean isSharedWithCommunity)
+	private void saveNonDealSuggestion(User suggestingUser, User user, boolean forUser, boolean isContactsAccessed, Date weekendDate, boolean isGroupMember, String groupType, boolean isStar, boolean isSharedWithFriends, boolean isSharedWithGroup, boolean isSharedWithCommunity)
 	{
+		int userId = suggestingUser.getUserId();
 		int countMain = 0;
 		double[] array = null;
 		if(user.getLattitude() == null && user.getLongitude() == null || (user.getLattitude().trim().equals("") && user.getLongitude().trim().equals("")) || (user.getLattitude().trim().equals("0.0") && user.getLongitude().trim().equals("0.0")))
 		{
 			array = Utils.getLatLong(user.getZipcode());
-			logger.debug("Lat/long length ==> " + Double.toString(array[0]).length()+" : "+Double.toString(array[1]).length());
 			user.setLattitude(Double.toString(array[0]));
 			user.setLongitude(Double.toString(array[1]));
 		}
@@ -102,14 +103,11 @@ public class NonDealSearch implements INonDealSearch {
 		{
 			if(isSharedWithGroup)
 				userCategoryList = userDAO.getUserCategoryLikesByType(userId, groupType);
-			logger.debug("isGroupMember: "+userCategoryList);
 		}
 		else
 		{
 			if(isSharedWithFriends)
 				userCategoryList = userDAO.getUserCategoryLikesById(userId);
-
-			logger.debug("not a group member: "+userCategoryList);
 		}
 
 		logger.debug("userCategoryList::  "+userCategoryList);
@@ -189,10 +187,10 @@ public class NonDealSearch implements INonDealSearch {
 													}
 												}
 												/*else
-													{
-														includePage = false;
-													}*/
-												logger.debug("NonDealSearch ==> search ==> rating ==> includePage ==> " + includePage);
+												{
+													includePage = false;
+												}*/
+
 												if(includePage) {
 													Usernondealsuggestion suggestion = new Usernondealsuggestion();									
 													suggestion.setBusiness(business);
@@ -202,6 +200,7 @@ public class NonDealSearch implements INonDealSearch {
 													suggestion.setIsRelevant(true);
 													suggestion.setUpdatedtime(currentDate);
 													suggestion.setUser(user);
+													suggestion.setUserContact(suggestingUser);
 													suggestion.setSuggestedTime(weekendDate);
 													if(isGroupMember)
 														suggestion.setSuggestionType("Group Member's Like");
@@ -228,13 +227,13 @@ public class NonDealSearch implements INonDealSearch {
 
 			if(forUser)
 			{
-				List<Jeeyohgroup> groups = userDAO.getUserGroups(userId);
+				List<Jeeyohgroup> groups = groupDAO.getUserGroups(user.getUserId());
 				if(groups != null)
 				{
 					for(Jeeyohgroup jeeyohgroup : groups)
 					{
 						//Set<Groupusermap> groupusermapList = jeeyohgroup.getGroupusermaps();
-						List<User> groupusermapList = userDAO.getGroupMembers(jeeyohgroup.getGroupId(), userId);
+						List<User> groupusermapList = userDAO.getGroupMembers(jeeyohgroup.getGroupId(), user.getUserId());
 						if(groupusermapList != null)
 						{
 							logger.debug("groupusermapList::  "+groupusermapList.size());
@@ -246,8 +245,8 @@ public class NonDealSearch implements INonDealSearch {
 
 								logger.debug("USERID for userGroup::  "+userid);
 								//if(user.getUserId() != userid)
-								saveNonDealSuggestion(userid, user, false , false,weekendDate,true,groupType1,false,true,groupusermap.getIsShareProfileWithGroup(),groupusermap.getIsShareCommunity());
-								
+								saveNonDealSuggestion(groupusermap, user, false , false,weekendDate,true,groupType1,false,true,groupusermap.getIsShareProfileWithGroup(),groupusermap.getIsShareCommunity());
+
 							}
 						}
 					}
@@ -260,7 +259,7 @@ public class NonDealSearch implements INonDealSearch {
 			{
 				if(isGroupMember)
 				{
-						userCommunities = userDAO.getUserCommunitiesByPageType(userId, groupType,Double.parseDouble(user.getLattitude()), Double.parseDouble(user.getLongitude()));
+					userCommunities = userDAO.getUserCommunitiesByPageType(userId, groupType,Double.parseDouble(user.getLattitude()), Double.parseDouble(user.getLongitude()));
 				}
 				else
 				{
@@ -287,16 +286,13 @@ public class NonDealSearch implements INonDealSearch {
 							if(pageTypeList != null) {
 								pageType = pageTypeList.get(0);
 							}
-							logger.debug("NonDealSearch ==> search ==> pagetype ==> " + pageType);
+
 							if(pageType != null) {
 								String type = pageType.getPageType();
-								logger.debug("NonDealSearch ==> search ==> type ==> " + type);
 
 								if(type.equalsIgnoreCase(MOVIE_CATEGORY) || type.equalsIgnoreCase(RESTAURANT_CATEGORY) || type.equalsIgnoreCase(NIGHTLIFE_CATEGORY) || type.equalsIgnoreCase(EVENTS_CATEGORY) || type.equalsIgnoreCase(GETAWAYS_CATEGORY) || type.equalsIgnoreCase(SPORTS_CATEGORY)) {
-									logger.debug("NonDealSearch ==> search ==> type ==> " + type);
-									Business business = businessDAO.getBusinessById(community.getBusiness().getId());
 
-									logger.debug("Lat/Long for business :  " + business.getLattitude() +" , "+business.getLongitude()+" Lat/Long for user:  "+user.getLattitude()+" , "+user.getLongitude());
+									Business business = businessDAO.getBusinessById(community.getBusiness().getId());
 									if(business.getLattitude() == null && business.getLongitude() == null || (business.getLattitude().trim().equals("") && business.getLongitude().trim().equals(""))  || (business.getLattitude().trim().equals("0.0") && business.getLongitude().trim().equals("0.0")))
 									{
 										array = Utils.getLatLong(business.getPostalCode());
@@ -323,10 +319,7 @@ public class NonDealSearch implements INonDealSearch {
 									Pageuserlikes pageProperty = userDAO.getUserPageProperties(userId, community.getPageId());
 									if(pageProperty != null)
 									{
-										logger.debug("NonDealSearch ==> search ==> pageProperties ==> not null" );
-										//Pageuserlikes pageProperty = pageProperties.get(0);
 										if(pageProperty != null) {
-											logger.debug("NonDealSearch ==> search ==> pageProperty ==> not null" );
 											boolean isLiked = pageProperty.getIsLike();
 											boolean isFavorite = pageProperty.getIsFavorite();
 											boolean isVisited = pageProperty.getIsVisited();
@@ -350,11 +343,9 @@ public class NonDealSearch implements INonDealSearch {
 										{
 											for(Events event : eventsList) {
 
-												List<Eventuserlikes> eventproperties = userDAO.getUserEventProperties(userId, event.getEventId());
-												if(eventproperties != null)
+												Eventuserlikes eventProperty = userDAO.getUserEventProperties(userId, event.getEventId());
+												if(eventProperty != null)
 												{
-													logger.debug("NonDealSearch ==> search ==> eventProperty ==> not null" );
-													Eventuserlikes eventProperty = eventproperties.get(0);
 													if(eventProperty != null) {
 														logger.debug("NonDealSearch ==> search ==> eventProperty ==> not null" );
 														boolean isLiked = eventProperty.getIsLike();
@@ -397,9 +388,9 @@ public class NonDealSearch implements INonDealSearch {
 										}
 									}
 									/*else
-										{
-											includePage = false;
-										}*/
+									{
+										includePage = false;
+									}*/
 									logger.debug("NonDealSearch ==> search ==> rating ==> includePage ==> " + includePage);
 									if(includePage) {
 										Usernondealsuggestion suggestion = new Usernondealsuggestion();									
@@ -410,6 +401,7 @@ public class NonDealSearch implements INonDealSearch {
 										suggestion.setIsRelevant(true);
 										suggestion.setUpdatedtime(currentDate);
 										suggestion.setUser(user);
+										suggestion.setUserContact(suggestingUser);
 										suggestion.setSuggestedTime(weekendDate);
 										if(isGroupMember)
 											suggestion.setSuggestionType("Group Member's Community Like");
@@ -432,7 +424,7 @@ public class NonDealSearch implements INonDealSearch {
 			{
 				List<Object[]> userContactsList = userDAO.getAllUserContacts(user.getUserId());
 				isContactsAccessed = true;
-				User userList = userDAO.getUserById(userId);
+				User userList = userDAO.getUserById(user.getUserId());
 				logger.debug("Contacts Size..............==> "+userContactsList.size());
 				if(userContactsList != null)
 				{
@@ -444,18 +436,11 @@ public class NonDealSearch implements INonDealSearch {
 							User contact = (User)row[0];
 							logger.debug("Friend Name ::"+contact.getUserId());
 							int contactId = contact.getUserId();
-							saveNonDealSuggestion(contactId, userList, false , isContactsAccessed,weekendDate,false,null,usercontacts.getIsStar(),contact.getIsShareProfileWithFriend(),contact.getIsShareProfileWithGroup(),contact.getIsShareCommunity());
+							saveNonDealSuggestion(contact, userList, false , isContactsAccessed,weekendDate,false,null,usercontacts.getIsStar(),contact.getIsShareProfileWithFriend(),contact.getIsShareProfileWithGroup(),contact.getIsShareCommunity());
 						}
 					}
 				}
 			}
 		}
-	}
-
-
-	@Transactional
-	@Override
-	public void caculateTopSuggestions() {
-
 	}
 }

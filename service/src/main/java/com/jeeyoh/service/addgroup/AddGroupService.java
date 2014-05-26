@@ -11,12 +11,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jeeyoh.model.enums.ServiceAPIStatus;
 import com.jeeyoh.model.response.AddGroupButtonResponse;
-import com.jeeyoh.model.response.AddGroupResponse;
+import com.jeeyoh.model.response.BaseResponse;
+import com.jeeyoh.model.response.GroupDetailResponse;
+import com.jeeyoh.model.response.GroupListResponse;
 import com.jeeyoh.model.search.AddGroupModel;
 import com.jeeyoh.model.search.JeeyohGroupModel;
 import com.jeeyoh.model.user.UserModel;
 import com.jeeyoh.persistence.IBusinessDAO;
+import com.jeeyoh.persistence.IGroupDAO;
 import com.jeeyoh.persistence.IUserDAO;
 import com.jeeyoh.persistence.domain.Businesstype;
 import com.jeeyoh.persistence.domain.Groupusermap;
@@ -32,88 +36,89 @@ public class AddGroupService implements IAddGroupService{
 
 	@Autowired
 	private IUserDAO userDAO;
-	
+
 	@Autowired
 	private IBusinessDAO businessDAO;
-	
+
+	@Autowired
+	private IGroupDAO groupDAO;
+
 	@Override
 	@Transactional
-	public AddGroupResponse addGroup(AddGroupModel addGroupModel) {
-		AddGroupResponse addGroupResponse =new AddGroupResponse();
-		// Check privacy id
-		Privacy privacyObj = userDAO.getUserPrivacyType(addGroupModel.getPrivacy());
-		User user = userDAO.getUserById(addGroupModel.getUserId());
-		
-		Notificationpermission notificationPermission = userDAO.getDafaultNotification();
-		Jeeyohgroup jeeyohGroup = new Jeeyohgroup();
-		JeeyohGroupModel jeeyohGroupModel = new JeeyohGroupModel();
-		jeeyohGroup.setAbout(addGroupModel.getGroupName());
-		jeeyohGroup.setCreatedtime(Utils.getCurrentDate());
-		jeeyohGroup.setGroupName(addGroupModel.getGroupName());
-		jeeyohGroup.setGroupType(addGroupModel.getCategory());
-		jeeyohGroup.setPrivacy(privacyObj);
-		jeeyohGroup.setUpdatedtime(Utils.getCurrentDate());
-		jeeyohGroup.setUserByCreatorId(user);
-		jeeyohGroup.setUserByOwnerId(user);
-		ArrayList<Integer> groupMembers = addGroupModel.getMember();
-		if(groupMembers!=null)
+	public BaseResponse addGroup(AddGroupModel addGroupModel) {
+		BaseResponse baseResponse =new BaseResponse();
+		Jeeyohgroup jeeyohgroup = groupDAO.isGroupExists(addGroupModel.getGroupName());
+		if(jeeyohgroup == null)
 		{
-			Set<Groupusermap> groupUserMapSet = new HashSet<Groupusermap>();
-			for(Integer memberId:groupMembers)
+			// Check privacy id
+			Privacy privacyObj = userDAO.getUserPrivacyType(addGroupModel.getPrivacy());
+			User user = userDAO.getUserById(addGroupModel.getUserId());
+
+			Notificationpermission notificationPermission = userDAO.getDafaultNotification();
+			Jeeyohgroup jeeyohGroup = new Jeeyohgroup();
+			jeeyohGroup.setAbout(addGroupModel.getGroupName());
+			jeeyohGroup.setCreatedtime(Utils.getCurrentDate());
+			jeeyohGroup.setGroupName(addGroupModel.getGroupName());
+			jeeyohGroup.setGroupType(addGroupModel.getCategory());
+			jeeyohGroup.setPrivacy(privacyObj);
+			jeeyohGroup.setUpdatedtime(Utils.getCurrentDate());
+			jeeyohGroup.setUserByCreatorId(user);
+			jeeyohGroup.setUserByOwnerId(user);
+			ArrayList<Integer> groupMembers = addGroupModel.getMember();
+			if(groupMembers!=null)
 			{
-				logger.debug("member id  =====>"+memberId);
-				User contactUser = userDAO.getUserById(memberId);
-				Groupusermap groupUserMap = new Groupusermap();
-				groupUserMap.setCreatedtime(Utils.getCurrentDate());
-				groupUserMap.setJeeyohgroup(jeeyohGroup);
-				groupUserMap.setUpdatedtime(Utils.getCurrentDate());
-				groupUserMap.setNotificationpermission(notificationPermission);
-				groupUserMap.setUser(contactUser);
-				groupUserMapSet.add(groupUserMap);
+				Set<Groupusermap> groupUserMapSet = new HashSet<Groupusermap>();
+				for(Integer memberId:groupMembers)
+				{
+					logger.debug("member id  =====>"+memberId);
+					//User contactUser = userDAO.getUserById(memberId);
+					User contactUser = new User();
+					contactUser.setUserId(memberId);
+					Groupusermap groupUserMap = new Groupusermap();
+					groupUserMap.setCreatedtime(Utils.getCurrentDate());
+					groupUserMap.setJeeyohgroup(jeeyohGroup);
+					groupUserMap.setUpdatedtime(Utils.getCurrentDate());
+					groupUserMap.setNotificationpermission(notificationPermission);
+					groupUserMap.setUser(contactUser);
+					groupUserMapSet.add(groupUserMap);
+				}
+				jeeyohGroup.setGroupusermaps(groupUserMapSet);
 			}
-			jeeyohGroup.setGroupusermaps(groupUserMapSet);
+
+			groupDAO.saveJeeyohGroup(jeeyohGroup);
+			logger.debug("Data saved successfully");
+			/*if(jeeyohGroup!=null)
+			{
+				JeeyohGroupModel jeeyohGroupModel = new JeeyohGroupModel();
+				jeeyohGroupModel.setAbout(jeeyohGroup.getAbout());
+				jeeyohGroupModel.setCreatedtime(jeeyohGroup.getCreatedtime());
+				jeeyohGroupModel.setGroupName(jeeyohGroup.getGroupName());
+				jeeyohGroupModel.setGroupType(jeeyohGroup.getGroupType());
+				jeeyohGroupModel.setPrivacy(jeeyohGroup.getPrivacy().getPrivacyType());
+				jeeyohGroupModel.setUpdatedtime(jeeyohGroup.getUpdatedtime());
+				jeeyohGroupModel.setUserByCreatorId(jeeyohGroup.getUserByCreatorId().getUserId());
+				jeeyohGroupModel.setUserId(jeeyohGroup.getUserByOwnerId().getUserId());*/
+			baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
+			//baseResponse.setAddGroupDetails(jeeyohGroupModel);
+			//}
 		}
-		
-		/*String[] contactUserList = members.split(",");
-		for(int i=0;i<contactUserList.length;i++)
+		else
 		{
-			logger.debug("contactUserList =>"+contactUserList[i]);
-			List<User> contactUser = userDAO.getUserById(Integer.parseInt(contactUserList[i]));
-			logger.debug("contactUser =>"+ contactUser.get(0).getFirstName());
-			Groupusermap groupUserMap = new Groupusermap();
-			groupUserMap.setCreatedtime(Utils.getCurrentDate());
-			groupUserMap.setJeeyohgroup(jeeyohGroup);
-			groupUserMap.setUpdatedtime(Utils.getCurrentDate());
-			groupUserMap.setNotificationpermission(notificationPermission);
-			groupUserMap.setUser(contactUser.get(0));
-			//userDAO.saveGroupUserMap(groupUserMap);
-		}*/
-		
-		userDAO.saveJeeyohGroup(jeeyohGroup);
-		logger.debug("Data saved successfully");
-		if(jeeyohGroup!=null)
-		{
-			jeeyohGroupModel.setAbout(jeeyohGroup.getAbout());
-			jeeyohGroupModel.setCreatedtime(jeeyohGroup.getCreatedtime());
-			jeeyohGroupModel.setGroupName(jeeyohGroup.getGroupName());
-			jeeyohGroupModel.setGroupType(jeeyohGroup.getGroupType());
-			jeeyohGroupModel.setPrivacy(jeeyohGroup.getPrivacy().getPrivacyType());
-			jeeyohGroupModel.setUpdatedtime(jeeyohGroup.getUpdatedtime());
-			jeeyohGroupModel.setUserByCreatorId(jeeyohGroup.getUserByCreatorId().getUserId());
-			jeeyohGroupModel.setUserByOwnerId(jeeyohGroup.getUserByOwnerId().getUserId());
-			addGroupResponse.setAddGroupDetails(jeeyohGroupModel);
+			baseResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
+			baseResponse.setError("Group name already exists");
 		}
-		return addGroupResponse;
+
+		return baseResponse;
 	}
-	
-	
+
+
 	@Override
 	@Transactional
 	public AddGroupButtonResponse addGroupPage(int userId)
 	{
 		logger.debug("addGroupPage =====>"+userId);
 		AddGroupButtonResponse addGroupButtonResponse = new AddGroupButtonResponse();
-		
+
 		List<Businesstype> businessTypeList = businessDAO.getBusinesstypes();
 		if(businessTypeList!=null)
 		{
@@ -125,8 +130,8 @@ public class AddGroupService implements IAddGroupService{
 			}
 			addGroupButtonResponse.setCategory(categoryList);
 		}
-		
-		List<User> usersList = userDAO.getUsers();
+
+		/*List<User> usersList = userDAO.getUserContacts(userId);
 		logger.debug("usersList =====>"+usersList);
 		if(usersList!=null)
 		{
@@ -136,38 +141,141 @@ public class AddGroupService implements IAddGroupService{
 				if(user.getUserId()!=userId)
 				{
 					UserModel userModel = new UserModel();
-					//userModel.setAddressline1(user.getAddressline1());
-					//userModel.setBirthDate(user.getBirthDate());
-					//userModel.setBirthMonth(user.getBirthMonth());
-					//userModel.setBirthYear(user.getBirthYear());
-					//userModel.setCity(user.getCity());
-					//userModel.setConfirmationId(user.getConfirmationId());
-				//	userModel.setCountry(user.getCountry());
-					//userModel.setCreatedtime(user.getCreatedtime());
+					userModel.setUserId(user.getUserId());
 					userModel.setEmailId(user.getEmailId());
 					userModel.setFirstName(user.getFirstName());
-					//userModel.setGender(user.getGender());
-					//userModel.setIsActive(user.getIsActive());
-					//userModel.setIsDeleted(user.getIsDeleted());
-					//userModel.setLastName(user.getLastName());
-					//userModel.setMiddleName(user.getMiddleName());
-					//userModel.setPassword(user.getPassword());
-					//userModel.setSessionId(user.getSessionId());
-					//userModel.setState(user.getState());
-					//userModel.setStreet(user.getStreet());
-					//userModel.setUpdatedtime(user.getUpdatedtime());
-					//userModel.setUserId(user.getUserId());
-					//userModel.setZipcode(user.getZipcode());
+					userModel.setLastName(user.getLastName());
 					userModelList.add(userModel);
 				}
-				
+
 			}
 			addGroupButtonResponse.setUserModel(userModelList);
 		}
-		
-		
+*/
+
 		return addGroupButtonResponse;
-		
+
 	}
-	
+
+
+	@SuppressWarnings("unchecked")
+	@Transactional
+	@Override
+	public GroupDetailResponse getGroupDetails(int groupId) {
+		Jeeyohgroup jeeyohgroup = groupDAO.getGroupByGroupId(groupId);
+		GroupDetailResponse groupDetailResponse = new GroupDetailResponse();
+		if(jeeyohgroup != null)
+		{
+			JeeyohGroupModel jeeyohGroupModel = new JeeyohGroupModel();
+			jeeyohGroupModel.setGroupId(jeeyohgroup.getGroupId());
+			jeeyohGroupModel.setGroupName(jeeyohgroup.getGroupName());
+			jeeyohGroupModel.setUserId(jeeyohgroup.getUserByCreatorId().getUserId());
+			jeeyohGroupModel.setGroupType(jeeyohgroup.getGroupType());
+			jeeyohGroupModel.setPrivacy(jeeyohgroup.getPrivacy().getPrivacyType());
+			List<UserModel> groupMembers = new ArrayList<UserModel>();
+			Set<Groupusermap> groupusermaps   = jeeyohgroup.getGroupusermaps();
+			for (Groupusermap groupusermap : groupusermaps)
+			{
+				User user = groupusermap.getUser();
+				if(user.getUserId() != jeeyohGroupModel.getUserId())
+				{
+					UserModel userModel = new UserModel();
+					userModel.setUserId(user.getUserId());
+					userModel.setEmailId(user.getEmailId());
+					userModel.setFirstName(user.getFirstName());
+					userModel.setLastName(user.getLastName());
+					groupMembers.add(userModel);
+				}
+			}
+			jeeyohGroupModel.setGroupMembers(groupMembers);
+			groupDetailResponse.setGroupDetail(jeeyohGroupModel);
+			groupDetailResponse.setStatus(ServiceAPIStatus.OK.getStatus());
+		}
+		else
+		{
+			groupDetailResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
+			groupDetailResponse.setError("Error");
+		}
+		return groupDetailResponse;
+	}
+
+
+	@Transactional
+	@Override
+	public GroupListResponse getGroupList(int userId) {
+		logger.debug("getGroupList =====>"+userId);
+		List<Jeeyohgroup> groupList = groupDAO.getGroupsByCreator(userId);
+		List<JeeyohGroupModel>	groupModels = new ArrayList<JeeyohGroupModel>();
+		if(groupList != null)
+		{
+			for(Jeeyohgroup jeeyohGroup : groupList) 
+			{
+				JeeyohGroupModel jeeyohGroupModel = new JeeyohGroupModel();
+				jeeyohGroupModel.setGroupName(jeeyohGroup.getGroupName());
+				jeeyohGroupModel.setGroupId(jeeyohGroup.getGroupId());
+				jeeyohGroupModel.setTotalMembers(jeeyohGroup.getGroupusermaps().size());
+				groupModels.add(jeeyohGroupModel);
+			}
+		}
+
+		GroupListResponse groupListResponse = new GroupListResponse();
+		groupListResponse.setGroups(groupModels);
+		groupListResponse.setStatus(ServiceAPIStatus.OK.getStatus());
+		return groupListResponse;
+	}
+
+	@Transactional
+	@Override
+	public BaseResponse editGroup(AddGroupModel addGroupModel) {
+		BaseResponse baseResponse =new BaseResponse();
+		Jeeyohgroup jeeyohGroup = groupDAO.getGroupByGroupId(addGroupModel.getGroupId());
+		if(jeeyohGroup != null)
+		{
+			// Check privacy id
+			Privacy privacyObj = userDAO.getUserPrivacyType(addGroupModel.getPrivacy());
+
+			Notificationpermission notificationPermission = userDAO.getDafaultNotification();
+			jeeyohGroup.setAbout(addGroupModel.getGroupName());
+			jeeyohGroup.setGroupName(addGroupModel.getGroupName());
+			jeeyohGroup.setGroupType(addGroupModel.getCategory());
+			jeeyohGroup.setPrivacy(privacyObj);
+			jeeyohGroup.setUpdatedtime(Utils.getCurrentDate());
+			ArrayList<Integer> groupMembers = addGroupModel.getMember();
+			if(groupMembers!=null)
+			{
+				Set<Groupusermap> groupUserMapSet = new HashSet<Groupusermap>();
+				for(Integer memberId:groupMembers)
+				{
+					logger.debug("member id  =====>"+memberId);
+					Groupusermap groupUserMapDetails = groupDAO.isContactInGroup(memberId, addGroupModel.getGroupId());
+					if(groupUserMapDetails == null)
+					{
+						User contactUser = new User();
+						contactUser.setUserId(memberId);
+						
+						Groupusermap groupUserMap = new Groupusermap();
+						groupUserMap.setCreatedtime(Utils.getCurrentDate());
+						groupUserMap.setJeeyohgroup(jeeyohGroup);
+						groupUserMap.setUpdatedtime(Utils.getCurrentDate());
+						groupUserMap.setNotificationpermission(notificationPermission);
+						groupUserMap.setUser(contactUser);
+						groupUserMapSet.add(groupUserMap);
+					}
+				}
+				jeeyohGroup.setGroupusermaps(groupUserMapSet);
+			}
+
+			groupDAO.updateJeeyohGroup(jeeyohGroup);
+			logger.debug("Data updated successfully");
+			baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
+		}
+		else
+		{
+			baseResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
+			baseResponse.setError("Group not found");
+		}
+
+		return baseResponse;
+	}
+
 }

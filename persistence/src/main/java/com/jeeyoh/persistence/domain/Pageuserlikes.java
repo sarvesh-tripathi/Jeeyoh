@@ -22,6 +22,7 @@ public class Pageuserlikes  implements java.io.Serializable {
      private Boolean isFollowing;
      private Boolean isLike;
      private Boolean isVisited;
+     private Boolean isBooked;
      private Boolean isProfileHidden;
      private Boolean isProfileDetailsHidden;
      private Boolean isSuggested;
@@ -161,6 +162,22 @@ public class Pageuserlikes  implements java.io.Serializable {
 	 */
 	public void setIsSuggested(Boolean isSuggested) {
 		this.isSuggested = isSuggested;
+	}
+
+
+	/**
+	 * @return the isBooked
+	 */
+	public Boolean getIsBooked() {
+		return isBooked;
+	}
+
+
+	/**
+	 * @param isBooked the isBooked to set
+	 */
+	public void setIsBooked(Boolean isBooked) {
+		this.isBooked = isBooked;
 	}
 
 

@@ -6,6 +6,8 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
+import com.jeeyoh.model.user.UserModel;
+
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_DEFAULT)
@@ -34,9 +36,9 @@ public class BusinessModel implements Serializable{
 	@JsonProperty
 	private String reviewCount;
 	@JsonProperty
-	private Long distance;
+	private double distance;
 	@JsonProperty
-	private Long rating;
+	private double rating;
 	@JsonProperty
 	private String ratingImgUrl;
 	@JsonProperty
@@ -71,8 +73,30 @@ public class BusinessModel implements Serializable{
 	private String suggestionType;
 	@JsonProperty
 	private String itemType;
+	@JsonProperty
+	private boolean isFavorite;
+	@JsonProperty
+    private String suggestionCriteria;
+	@JsonProperty
+    private String suggestedBy;
+	@JsonProperty
+    private UserModel suggestingUser;
+	@JsonProperty
+	private boolean isBooked;
 	
 	
+	/**
+	 * @return the suggestedBy
+	 */
+	public String getSuggestedBy() {
+		return suggestedBy;
+	}
+	/**
+	 * @param suggestedBy the suggestedBy to set
+	 */
+	public void setSuggestedBy(String suggestedBy) {
+		this.suggestedBy = suggestedBy;
+	}
 	/**
 	 * @return the itemId
 	 */
@@ -184,25 +208,25 @@ public class BusinessModel implements Serializable{
 	/**
 	 * @return the distance
 	 */
-	public Long getDistance() {
+	public double getDistance() {
 		return distance;
 	}
 	/**
 	 * @param distance the distance to set
 	 */
-	public void setDistance(Long distance) {
+	public void setDistance(double distance) {
 		this.distance = distance;
 	}
 	/**
 	 * @return the rating
 	 */
-	public Long getRating() {
+	public double getRating() {
 		return rating;
 	}
 	/**
 	 * @param rating the rating to set
 	 */
-	public void setRating(Long rating) {
+	public void setRating(double rating) {
 		this.rating = rating;
 	}
 	/**
@@ -408,6 +432,54 @@ public class BusinessModel implements Serializable{
 	 */
 	public void setItemType(String itemType) {
 		this.itemType = itemType;
+	}
+	/**
+	 * @return the isFavorite
+	 */
+	public boolean getIsFavorite() {
+		return isFavorite;
+	}
+	/**
+	 * @param isFavorite the isFavorite to set
+	 */
+	public void setIsFavorite(boolean isFavorite) {
+		this.isFavorite = isFavorite;
+	}
+	/**
+	 * @return the suggestionCriteria
+	 */
+	public String getSuggestionCriteria() {
+		return suggestionCriteria;
+	}
+	/**
+	 * @param suggestionCriteria the suggestionCriteria to set
+	 */
+	public void setSuggestionCriteria(String suggestionCriteria) {
+		this.suggestionCriteria = suggestionCriteria;
+	}
+	/**
+	 * @return the suggestingUser
+	 */
+	public UserModel getSuggestingUser() {
+		return suggestingUser;
+	}
+	/**
+	 * @param suggestingUser the suggestingUser to set
+	 */
+	public void setSuggestingUser(UserModel suggestingUser) {
+		this.suggestingUser = suggestingUser;
+	}
+	/**
+	 * @return the isBooked
+	 */
+	public boolean getIsBooked() {
+		return isBooked;
+	}
+	/**
+	 * @param isBooked the isBooked to set
+	 */
+	public void setIsBooked(boolean isBooked) {
+		this.isBooked = isBooked;
 	}
 	
 }

@@ -2,6 +2,7 @@ package com.jeeyoh.model.search;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -26,6 +27,8 @@ public class DirectSuggestionModel implements Serializable{
 	private String suggestionType;
 	@JsonProperty
 	private ArrayList<Integer> friendsIdList;
+	@JsonProperty
+	private List<Integer> groups;
 	@JsonProperty
 	private String suggestedTime;
 	
@@ -58,6 +61,18 @@ public class DirectSuggestionModel implements Serializable{
 	}
 	public void setFriendsIdList(ArrayList<Integer> friendsIdList) {
 		this.friendsIdList = friendsIdList;
+	}
+	/**
+	 * @return the groups
+	 */
+	public List<Integer> getGroups() {
+		return groups;
+	}
+	/**
+	 * @param groups the groups to set
+	 */
+	public void setGroups(List<Integer> groups) {
+		this.groups = groups;
 	}
 	/**
 	 * @return the suggestedTime

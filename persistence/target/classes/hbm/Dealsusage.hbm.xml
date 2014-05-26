@@ -38,5 +38,8 @@
         <property name="updatedtime" type="timestamp">
             <column name="updatedtime" length="19" not-null="true" />
         </property>
+        <property name="isBooked" type="java.lang.Boolean">
+			<column name="isBooked" default="false" not-null="false"/>
+		</property>
     </class>
 </hibernate-mapping>

@@ -36,7 +36,7 @@ public class EventsSuggestionSearchService implements IEventsSuggestionSearchSer
 			EventModel eventModel = new EventModel();
 			eventModel.setDescription(events.getDescription());
 			eventModel.setVenue_name(events.getVenue_name());
-			eventModel.setEvent_date(events.getEvent_date().toString());
+			eventModel.setEvent_date(events.getEvent_date_time_local().toString());
 			eventModel.setCity(events.getCity());
 			eventModel.setTitle(events.getTitle());
 			eventModel.setTotalTickets(events.getTotalTickets());

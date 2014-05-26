@@ -32,8 +32,39 @@ public class SearchResult implements Serializable{
 	private String endDate;
 	@JsonProperty
 	private String category;
+	@JsonProperty
+	private double rating;
+	@JsonProperty
+	private boolean isFavorite;
+	@JsonProperty
+	private String source;
+	@JsonProperty
+    private String price;
+	@JsonProperty
+    private String merhcantName;
+	@JsonProperty
+    private String timeLine;
+	@JsonProperty
+    private String address;
+	@JsonProperty
+	private int discount;
+	@JsonProperty
+	private String timeSlot;
+	@JsonProperty
+	private boolean isBooked;
 	
-	
+	/**
+	 * @return the discount
+	 */
+	public int getDiscount() {
+		return discount;
+	}
+	/**
+	 * @param discount the discount to set
+	 */
+	public void setDiscount(int discount) {
+		this.discount = discount;
+	}
 	/**
 	 * @param id the id to set
 	 */
@@ -141,6 +172,114 @@ public class SearchResult implements Serializable{
 	 */
 	public void setCategory(String category) {
 		this.category = category;
+	}
+	/**
+	 * @return the rating
+	 */
+	public double getRating() {
+		return rating;
+	}
+	/**
+	 * @param rating the rating to set
+	 */
+	public void setRating(double rating) {
+		this.rating = rating;
+	}
+	/**
+	 * @return the isFavorite
+	 */
+	public boolean getIsFavorite() {
+		return isFavorite;
+	}
+	/**
+	 * @param isFavorite the isFavorite to set
+	 */
+	public void setIsFavorite(boolean isFavorite) {
+		this.isFavorite = isFavorite;
+	}
+	/**
+	 * @return the source
+	 */
+	public String getSource() {
+		return source;
+	}
+	/**
+	 * @param source the source to set
+	 */
+	public void setSource(String source) {
+		this.source = source;
+	}
+	/**
+	 * @return the price
+	 */
+	public String getPrice() {
+		return price;
+	}
+	/**
+	 * @return the merhcantName
+	 */
+	public String getMerhcantName() {
+		return merhcantName;
+	}
+	/**
+	 * @return the timeLine
+	 */
+	public String getTimeLine() {
+		return timeLine;
+	}
+	/**
+	 * @param price the price to set
+	 */
+	public void setPrice(String price) {
+		this.price = price;
+	}
+	/**
+	 * @param merhcantName the merhcantName to set
+	 */
+	public void setMerhcantName(String merhcantName) {
+		this.merhcantName = merhcantName;
+	}
+	/**
+	 * @param timeLine the timeLine to set
+	 */
+	public void setTimeLine(String timeLine) {
+		this.timeLine = timeLine;
+	}
+	/**
+	 * @return the address
+	 */
+	public String getAddress() {
+		return address;
+	}
+	/**
+	 * @param address the address to set
+	 */
+	public void setAddress(String address) {
+		this.address = address;
+	}
+	/**
+	 * @return the timeSlot
+	 */
+	public String getTimeSlot() {
+		return timeSlot;
+	}
+	/**
+	 * @param timeSlot the timeSlot to set
+	 */
+	public void setTimeSlot(String timeSlot) {
+		this.timeSlot = timeSlot;
+	}
+	/**
+	 * @return the isBooked
+	 */
+	public boolean getIsBooked() {
+		return isBooked;
+	}
+	/**
+	 * @param isBooked the isBooked to set
+	 */
+	public void setIsBooked(boolean isBooked) {
+		this.isBooked = isBooked;
 	}
 
 }

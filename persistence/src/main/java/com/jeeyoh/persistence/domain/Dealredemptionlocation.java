@@ -9,115 +9,119 @@ package com.jeeyoh.persistence.domain;
 public class Dealredemptionlocation  implements java.io.Serializable {
 
 
-     private Integer id;
-     private Dealoption dealoption;
-     private String streetAddress1;
-     private String streetAddress2;
-     private String city;
-     private String state;
-     private String postalCode;
-     private String name;
-     private String lattitude;
-     private String longitude;
-     private String phoneNumber;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private Integer id;
+	private Dealoption dealoption;
+	private String streetAddress1;
+	private String streetAddress2;
+	private String city;
+	private String state;
+	private String postalCode;
+	private String name;
+	private String lattitude;
+	private String longitude;
+	private String phoneNumber;
 
-    public Dealredemptionlocation() {
-    }
+	public Dealredemptionlocation() {
+	}
 
-	
-    public Dealredemptionlocation(Dealoption dealoption) {
-        this.dealoption = dealoption;
-    }
-    public Dealredemptionlocation(Dealoption dealoption, String streetAddress1, String streetAddress2, String city, String state, String postalCode, String name, String lattitude, String longitude, String phoneNumber) {
-       this.dealoption = dealoption;
-       this.streetAddress1 = streetAddress1;
-       this.streetAddress2 = streetAddress2;
-       this.city = city;
-       this.state = state;
-       this.postalCode = postalCode;
-       this.name = name;
-       this.lattitude = lattitude;
-       this.longitude = longitude;
-       this.phoneNumber = phoneNumber;
-    }
-   
-    public Integer getId() {
-        return this.id;
-    }
-    
-    public void setId(Integer id) {
-        this.id = id;
-    }
-    public Dealoption getDealoption() {
-        return this.dealoption;
-    }
-    
-    public void setDealoption(Dealoption dealoption) {
-        this.dealoption = dealoption;
-    }
-    public String getStreetAddress1() {
-        return this.streetAddress1;
-    }
-    
-    public void setStreetAddress1(String streetAddress1) {
-        this.streetAddress1 = streetAddress1;
-    }
-    public String getStreetAddress2() {
-        return this.streetAddress2;
-    }
-    
-    public void setStreetAddress2(String streetAddress2) {
-        this.streetAddress2 = streetAddress2;
-    }
-    public String getCity() {
-        return this.city;
-    }
-    
-    public void setCity(String city) {
-        this.city = city;
-    }
-    public String getState() {
-        return this.state;
-    }
-    
-    public void setState(String state) {
-        this.state = state;
-    }
-    public String getPostalCode() {
-        return this.postalCode;
-    }
-    
-    public void setPostalCode(String postalCode) {
-        this.postalCode = postalCode;
-    }
-    public String getName() {
-        return this.name;
-    }
-    
-    public void setName(String name) {
-        this.name = name;
-    }
-    public String getLattitude() {
-        return this.lattitude;
-    }
-    
-    public void setLattitude(String lattitude) {
-        this.lattitude = lattitude;
-    }
-    public String getLongitude() {
-        return this.longitude;
-    }
-    
-    public void setLongitude(String longitude) {
-        this.longitude = longitude;
-    }
-    public String getPhoneNumber() {
-        return this.phoneNumber;
-    }
-    
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
+
+	public Dealredemptionlocation(Dealoption dealoption) {
+		this.dealoption = dealoption;
+	}
+	public Dealredemptionlocation(Dealoption dealoption, String streetAddress1, String streetAddress2, String city, String state, String postalCode, String name, String lattitude, String longitude, String phoneNumber) {
+		this.dealoption = dealoption;
+		this.streetAddress1 = streetAddress1;
+		this.streetAddress2 = streetAddress2;
+		this.city = city;
+		this.state = state;
+		this.postalCode = postalCode;
+		this.name = name;
+		this.lattitude = lattitude;
+		this.longitude = longitude;
+		this.phoneNumber = phoneNumber;
+	}
+
+	public Integer getId() {
+		return this.id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	public Dealoption getDealoption() {
+		return this.dealoption;
+	}
+
+	public void setDealoption(Dealoption dealoption) {
+		this.dealoption = dealoption;
+	}
+	public String getStreetAddress1() {
+		return this.streetAddress1;
+	}
+
+	public void setStreetAddress1(String streetAddress1) {
+		this.streetAddress1 = streetAddress1;
+	}
+	public String getStreetAddress2() {
+		return this.streetAddress2;
+	}
+
+	public void setStreetAddress2(String streetAddress2) {
+		this.streetAddress2 = streetAddress2;
+	}
+	public String getCity() {
+		return this.city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+	public String getState() {
+		return this.state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
+	public String getPostalCode() {
+		return this.postalCode;
+	}
+
+	public void setPostalCode(String postalCode) {
+		this.postalCode = postalCode;
+	}
+	public String getName() {
+		return this.name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getLattitude() {
+		return this.lattitude;
+	}
+
+	public void setLattitude(String lattitude) {
+		this.lattitude = lattitude;
+	}
+	public String getLongitude() {
+		return this.longitude;
+	}
+
+	public void setLongitude(String longitude) {
+		this.longitude = longitude;
+	}
+	public String getPhoneNumber() {
+		return this.phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
 
 
 

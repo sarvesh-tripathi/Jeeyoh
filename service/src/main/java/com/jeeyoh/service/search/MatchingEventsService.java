@@ -2,7 +2,6 @@ package com.jeeyoh.service.search;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -31,7 +30,7 @@ import com.jeeyoh.utils.Utils;
 public class MatchingEventsService implements IMatchingEventsService{
 
 	static final Logger logger = LoggerFactory.getLogger("debugLogger");
-	String[] categoryList = {"RESTAURANT","Movies","Sport","THEATER","CONCERT","SPA","NIGHT_LIFE"};
+	String[] categoryList = {"RESTAURANT","MOVIE","SPORT","THEATER","CONCERT","SPA","NIGHTLIFE"};
 	@Autowired
 	private IEventsDAO eventsDAO;
 
@@ -50,7 +49,8 @@ public class MatchingEventsService implements IMatchingEventsService{
 
 		List<User> userList = userDAO.getUsers();
 		logger.debug("searchMatchingEvents ==> search ==> ");
-		//Date weekendDate = Utils.getNearestWeekend(null);
+		Date weekendDate = Utils.getNearestWeekend(null);
+		boolean isExists = false;
 		if(userList != null) {
 			for(User user : userList) {
 				logger.debug("caculateTopSuggestions ==> search ==> userID ==> " + user.getEmailId());
@@ -59,9 +59,6 @@ public class MatchingEventsService implements IMatchingEventsService{
 				List<UserCategory> userCategoryList = null;
 
 				double[] array = null;
-				//if(userList!=null)
-				//{
-				//User user = userList.get(0);
 				if(user.getLattitude()==null && user.getLongitude()==null || user.getLattitude().trim().equals("") && user.getLongitude().trim().equals("")){
 					array = Utils.getLatLong(user.getZipcode());
 					user.setLattitude(Double.toString(array[0]));
@@ -69,46 +66,67 @@ public class MatchingEventsService implements IMatchingEventsService{
 					user.setCreatedtime(userList.get(0).getCreatedtime());
 
 				}
+				List<User> getStarFiftyMilesUserList = userDAO.getStarFriends(userId, Double.parseDouble(user.getLattitude()), Double.parseDouble(user.getLongitude()));
+				logger.debug("getStarFiftyMilesUserList=>"+getStarFiftyMilesUserList);
 				for(int i = 0; i < categoryList.length; i++)
 				{
 					String category = categoryList[i];
 					userCategoryList = userDAO.getUserCategoryLikesByType(userId,category);
 					logger.debug("category::  "+category);
 					logger.debug("userCategoryList=>"+userCategoryList);
-					List<Events> userFriendsCommonLikeEvents = new ArrayList<Events>();
-					List<Deals> userFriendsCommonLikeDeals = new ArrayList<Deals>();
-					List<Business> userFriendsCommonLikeBusiness = new ArrayList<Business>();
+					List<MatchinEventModel> userFriendsCommonLikeEvents = new ArrayList<MatchinEventModel>();
+					//List<Events> userFriendsCommonLikeEvents = new ArrayList<Events>();
+					//List<Deals> userFriendsCommonLikeDeals = new ArrayList<Deals>();
+					//List<Business> userFriendsCommonLikeBusiness = new ArrayList<Business>();
+					List<MatchinEventModel> userFriendsCommonLikeDeals = new ArrayList<MatchinEventModel>();
+					List<MatchinEventModel> userFriendsCommonLikeBusiness = new ArrayList<MatchinEventModel>();
 					//List<Events> getUserFavLikeEventsList = userDAO.getUserLikesEvents(userId,Double.parseDouble(user.getLattitude()),Double.parseDouble(user.getLongitude()));
-					List<User> getStarFiftyMilesUserList = userDAO.getStarFriends(userId, Double.parseDouble(user.getLattitude()), Double.parseDouble(user.getLongitude()));
-					logger.debug("getStarFiftyMilesUserList=>"+getStarFiftyMilesUserList);
+
 
 					if(userCategoryList != null)
 					{
-						for(UserCategory userCategory : userCategoryList) {
-							logger.debug("userCategoryList"+userCategory.getItemType());
-							//UserCategoryLikes userCategoryLikes = (UserCategoryLikes)userCategory.getUserCategoryLikes().iterator().next();
+						for(User starFiftyMilesUser: getStarFiftyMilesUserList)
+						{
+							logger.debug("starFiftyMilesUser userId =>"+starFiftyMilesUser.getUserId());
+							List<UserCategory> friendCategoryList = userDAO.getUserCategoryLikesByType(starFiftyMilesUser.getUserId(),category);
+							logger.debug("friendCategoryList =>"+friendCategoryList);
+							for(UserCategory userCategory : userCategoryList) {
+								logger.debug("userCategoryList"+userCategory.getItemType());
+								//UserCategoryLikes userCategoryLikes = (UserCategoryLikes)userCategory.getUserCategoryLikes().iterator().next();
 
-							UserCategoryLikes userCategoryLikes = userDAO.getUserCategoryLikes(userId, userCategory.getUserCategoryId());
+								UserCategoryLikes userCategoryLikes = userDAO.getUserCategoryLikes(userId, userCategory.getUserCategoryId());
 
-							//Get nearest weekend date for UserLike
-							Date userLikeWeekend =  userCategoryLikes.getCreatedTime();
-							try{
-								if(userLikeWeekend.compareTo(Utils.getNearestFriday()) <= 0)
-								{
-									// User Event List
-									List<Events> eventList = eventsDAO.getEventsByuserLikes(userCategory.getItemType().trim(),userCategory.getItemCategory().trim(),userCategory.getProviderName(),Double.parseDouble(user.getLattitude()), Double.parseDouble(user.getLongitude()));
-
-									// User deal list
-									List<Deals> dealList = dealsDAO.getDealsByUserCategory(userCategory.getItemCategory(),userCategory.getItemType(),userCategory.getProviderName(),Double.parseDouble(user.getLattitude()), Double.parseDouble(user.getLongitude()));
-
-									// User business list
-									List<Business> businessList = businessDAO.getBusinessByuserLikes(userCategory.getItemType().trim(),userCategory.getItemCategory().trim(),userCategory.getProviderName(), Double.parseDouble(user.getLattitude()), Double.parseDouble(user.getLongitude()));
-
-
-									for(User starFiftyMilesUser: getStarFiftyMilesUserList)
+								//Get nearest weekend date for UserLike
+								Date userLikeWeekend =  userCategoryLikes.getCreatedTime();
+								//Get nearest weekend date for UserLike
+								//Date userLikeWeekend = Utils.getNearestWeekend(userCategoryLikes.getCreatedTime());
+								try{
+									if(userLikeWeekend.compareTo(weekendDate) <= 0)
 									{
-										List<UserCategory> friendCategoryList = userDAO.getUserCategoryLikesByType(starFiftyMilesUser.getUserId(),category);
-										logger.debug("friendCategoryList =>"+friendCategoryList);
+
+										List<Events> getBookedEvents = eventsDAO.getBookedEvents(userId,category);
+										List<Deals> getBookedDeals = dealsDAO.getBookedDealList(userId, category);
+
+										// User Event List
+										List<Events> eventList = eventsDAO.getEventsByuserLikesForCurrentWeekend(userCategory.getItemType().trim(),userCategory.getItemCategory().trim(),userCategory.getProviderName(),Double.parseDouble(user.getLattitude()), Double.parseDouble(user.getLongitude()));
+										if(eventList == null)
+											eventList = new ArrayList<Events>();
+										if(getBookedEvents != null)
+											eventList.addAll(getBookedEvents);
+										// User deal list
+										List<Deals> dealList = dealsDAO.getDealsByuserLikesForCurrentWeekend(userCategory.getItemCategory(),userCategory.getItemType(),userCategory.getProviderName(),Double.parseDouble(user.getLattitude()), Double.parseDouble(user.getLongitude()));
+										if(dealList == null)
+											dealList = new ArrayList<Deals>();
+										if(getBookedDeals != null)
+											dealList.addAll(getBookedDeals);
+										// User business list
+										List<Business> businessList = businessDAO.getBusinessByuserLikes(userCategory.getItemType().trim(),userCategory.getItemCategory().trim(),userCategory.getProviderName(), Double.parseDouble(user.getLattitude()), Double.parseDouble(user.getLongitude()));
+
+
+										//for(User starFiftyMilesUser: getStarFiftyMilesUserList)
+										//{
+										//List<UserCategory> friendCategoryList = userDAO.getUserCategoryLikesByType(starFiftyMilesUser.getUserId(),category);
+										//logger.debug("friendCategoryList =>"+friendCategoryList);
 										if(friendCategoryList!=null)
 										{
 											for(UserCategory friendCategory : friendCategoryList){
@@ -119,10 +137,22 @@ public class MatchingEventsService implements IMatchingEventsService{
 													UserCategoryLikes friendCategoryLikes = userDAO.getUserCategoryLikes(starFiftyMilesUser.getUserId(), friendCategory.getUserCategoryId());
 
 													Date friendLikeWeekend =  friendCategoryLikes.getCreatedTime();
-													if(friendLikeWeekend.compareTo(Utils.getNearestFriday()) <= 0)
+													//Get nearest weekend date for UserLike
+													//Date friendLikeWeekend = Utils.getNearestWeekend(friendCategoryLikes.getCreatedTime());
+													if(friendLikeWeekend.compareTo(weekendDate) <= 0)
 													{
-														List<Events> friendEventList = eventsDAO.getEventsByuserLikes(friendCategory.getItemType().trim(),friendCategory.getItemCategory().trim(),friendCategory.getProviderName(), Double.parseDouble(starFiftyMilesUser.getLattitude()), Double.parseDouble(starFiftyMilesUser.getLongitude()));
-														List<Deals> friendDealList =  dealsDAO.getDealsByUserCategory(userCategory.getItemCategory(),userCategory.getItemType(),userCategory.getProviderName(),Double.parseDouble(starFiftyMilesUser.getLattitude()), Double.parseDouble(starFiftyMilesUser.getLongitude()));
+														List<Events> friendEventList = eventsDAO.getEventsByuserLikesForCurrentWeekend(friendCategory.getItemType().trim(),friendCategory.getItemCategory().trim(),friendCategory.getProviderName(), Double.parseDouble(starFiftyMilesUser.getLattitude()), Double.parseDouble(starFiftyMilesUser.getLongitude()));
+														List<Events> getBookedEventsList = eventsDAO.getBookedEvents(starFiftyMilesUser.getUserId(),category);
+														if(friendEventList == null)
+															friendEventList = new ArrayList<Events>();
+														if(getBookedEventsList != null)
+															friendEventList.addAll(getBookedEventsList);
+														List<Deals> friendDealList =  dealsDAO.getDealsByuserLikesForCurrentWeekend(userCategory.getItemCategory(),userCategory.getItemType(),userCategory.getProviderName(),Double.parseDouble(starFiftyMilesUser.getLattitude()), Double.parseDouble(starFiftyMilesUser.getLongitude()));
+														List<Deals> getBookedDealList = dealsDAO.getBookedDealList(starFiftyMilesUser.getUserId(),category);
+														if(friendDealList == null)
+															friendDealList = new ArrayList<Deals>();
+														if(getBookedDealList != null)
+															friendDealList.addAll(getBookedDealList);
 														List<Business> friendBusinessList = businessDAO.getBusinessByuserLikes(userCategory.getItemType().trim(),userCategory.getItemCategory().trim(),userCategory.getProviderName(), Double.parseDouble(starFiftyMilesUser.getLattitude()), Double.parseDouble(starFiftyMilesUser.getLongitude()));
 														if(eventList!=null)
 														{
@@ -130,14 +160,28 @@ public class MatchingEventsService implements IMatchingEventsService{
 															logger.debug("friendEventList size =>"+friendEventList.size());
 															for(Events event:eventList)
 															{
-
 																logger.debug("eventList =>"+event);
 																for(Events friendEvent: friendEventList)
 																{
-																	logger.debug("friendEvent =>"+friendEvent);
 																	if(event.getEventId()==friendEvent.getEventId())
 																	{
-																		userFriendsCommonLikeEvents.add(event);
+																		isExists = false;
+																		for(MatchinEventModel matchinEventModel :userFriendsCommonLikeEvents)
+																		{
+																			if(matchinEventModel.getEvents().getEventId() == event.getEventId())
+																			{
+																				isExists = true;
+																				break;
+																			}
+																		}
+																		if(!isExists)
+																		{
+																			logger.debug("friendEvent =>"+friendEvent.getEventId());
+																			MatchinEventModel matchinEventModel = new MatchinEventModel();
+																			matchinEventModel.setUser(starFiftyMilesUser);
+																			matchinEventModel.setEvents(friendEvent);
+																			userFriendsCommonLikeEvents.add(matchinEventModel);
+																		}
 																	}
 																}
 															}
@@ -151,10 +195,25 @@ public class MatchingEventsService implements IMatchingEventsService{
 																logger.debug("deal =>"+deal);
 																for(Deals friendDeal: friendDealList)
 																{
-																	logger.debug("friendDeal =>"+friendDeal);
 																	if(deal.getId()==friendDeal.getId())
 																	{
-																		userFriendsCommonLikeDeals.add(deal);
+																		isExists = false;
+																		for(MatchinEventModel matchinEventModel : userFriendsCommonLikeDeals)
+																		{
+																			if(matchinEventModel.getDeals().getId() == deal.getId())
+																			{
+																				isExists = true;
+																				break;
+																			}
+																		}
+																		if(!isExists)
+																		{
+																			logger.debug("friendDeal =>"+friendDeal.getId());
+																			MatchinEventModel matchinEventModel = new MatchinEventModel();
+																			matchinEventModel.setUser(starFiftyMilesUser);
+																			matchinEventModel.setDeals(friendDeal);
+																			userFriendsCommonLikeDeals.add(matchinEventModel);
+																		}
 																	}
 																}
 															}
@@ -168,10 +227,25 @@ public class MatchingEventsService implements IMatchingEventsService{
 																logger.debug("businessList =>"+business);
 																for(Business friendBusiness: friendBusinessList)
 																{
-																	logger.debug("friendBusiness =>"+friendBusiness);
 																	if(business.getId()==friendBusiness.getId())
 																	{
-																		userFriendsCommonLikeBusiness.add(business);
+																		isExists = false;
+																		for(MatchinEventModel matchinEventModel : userFriendsCommonLikeBusiness)
+																		{
+																			if(matchinEventModel.getBusiness().getId() == business.getId())
+																			{
+																				isExists = true;
+																				break;
+																			}
+																		}
+																		if(!isExists)
+																		{
+																			logger.debug("friendBusiness =>"+friendBusiness.getId());
+																			MatchinEventModel matchinEventModel = new MatchinEventModel();
+																			matchinEventModel.setUser(starFiftyMilesUser);
+																			matchinEventModel.setBusiness(friendBusiness);
+																			userFriendsCommonLikeBusiness.add(matchinEventModel);
+																		}
 																	}
 																}
 															}
@@ -181,23 +255,23 @@ public class MatchingEventsService implements IMatchingEventsService{
 												}
 											}
 										}
+										//}
 									}
 								}
+								catch(NumberFormatException e){
 
-							}
-							catch(NumberFormatException e){
-
-								e.printStackTrace();
+									e.printStackTrace();
+								}
 							}
 						}
+
 					}
 
-					List<Events> getBookedEventsList = eventsDAO.getBookedEvents(userId);
-					List<Events> finalMatchingEventList = new ArrayList<Events>(userFriendsCommonLikeEvents);
-					finalMatchingEventList.addAll(getBookedEventsList);
 
-					logger.debug("finalMatchingEventList.size()==,userFriendsCommonLikeDeals.size()==,userFriendsCommonLikeBusiness.size()=="+finalMatchingEventList.size() +" : "+userFriendsCommonLikeDeals.size() +" : "+userFriendsCommonLikeBusiness.size());
-					int a =finalMatchingEventList.size(),b=userFriendsCommonLikeDeals.size(),c=userFriendsCommonLikeBusiness.size();
+
+					logger.debug("finalMatchingEventList.size()==,userFriendsCommonLikeDeals.size()==,userFriendsCommonLikeBusiness.size()=="+userFriendsCommonLikeEvents.size() +" : "+userFriendsCommonLikeDeals.size() +" : "+userFriendsCommonLikeBusiness.size());
+					int a =userFriendsCommonLikeEvents.size(),b=userFriendsCommonLikeDeals.size(),c=userFriendsCommonLikeBusiness.size();
+					//int a =eventsMap.size(),b=dealsMap.size(),c=businessMap.size();
 
 					int n1=0,n2=0,n3=0,k=0;
 
@@ -236,51 +310,12 @@ public class MatchingEventsService implements IMatchingEventsService{
 					}
 					logger.debug("n1==,n2==,n3=="+n1 +" : "+n2 +" : "+n3);
 
-					if(finalMatchingEventList!=null)
-						saveTopEventMatchLists(user,category,finalMatchingEventList, true, n1);
+					if(userFriendsCommonLikeEvents!=null)
+						saveTopEventMatchLists(user,category,userFriendsCommonLikeEvents, true, n1);
 					if(userFriendsCommonLikeDeals!=null)
 						saveTopDealMatchLists(user, category, userFriendsCommonLikeDeals, true, n2);
 					if(userFriendsCommonLikeBusiness!=null)
 						saveTopNonDealMatchLists(user, category, userFriendsCommonLikeBusiness, true, n3);
-
-					/*List<EventModel> getMatchingEventsModelList = new ArrayList<EventModel>();
-				if(finalMatchingEventList!=null)
-				{
-					for(Events event:finalMatchingEventList)
-					{
-						EventModel getMatchingEventsModel = new EventModel();
-						getMatchingEventsModel.setAncestorGenreDescriptions(event.getAncestorGenreDescriptions());
-						getMatchingEventsModel.setChannel(event.getChannel());
-						getMatchingEventsModel.setCity(event.getCity());
-						getMatchingEventsModel.setCurrency_code(event.getCurrency_code());
-						getMatchingEventsModel.setDescription(event.getDescription());
-						getMatchingEventsModel.setEvent_date(event.getEvent_date());
-						getMatchingEventsModel.setGenreUrlPath(event.getGenreUrlPath());
-						getMatchingEventsModel.setGeography_parent(event.getGeography_parent());
-						getMatchingEventsModel.setLatitude(event.getLatitude());
-						getMatchingEventsModel.setLongitude(event.getLongitude());
-						getMatchingEventsModel.setMaxPrice(event.getMaxPrice());
-						getMatchingEventsModel.setMinPrice(event.getMinPrice());
-						getMatchingEventsModel.setMaxSeatsTogether(event.getMaxSeatsTogether());
-						getMatchingEventsModel.setMinSeatsTogether(event.getMinSeatsTogether());
-						getMatchingEventsModel.setState(event.getState());
-						getMatchingEventsModel.setTitle(event.getTitle());
-						getMatchingEventsModel.setTotalTickets(event.getTotalTickets());
-						getMatchingEventsModel.setUrlpath(event.getUrlpath());
-						getMatchingEventsModel.setVenue_config_name(event.getVenue_config_name());
-						getMatchingEventsModel.setVenue_name(event.getVenue_name());
-						getMatchingEventsModel.setZip(event.getZip());
-						getMatchingEventsModelList.add(getMatchingEventsModel);
-					}
-				}for(int i = 0; i < categoryList.length; i++)
-				{
-					String category = categoryList[i];
-
-				matchingEventsResponse.setMatchingevents(getMatchingEventsModelList);
-				}*/
-					//return matchingEventsResponse;
-					//	}
-
 				}
 			}
 		}
@@ -293,7 +328,7 @@ public class MatchingEventsService implements IMatchingEventsService{
 	 * @param userId
 	 * @param contactId
 	 */
-	private void saveTopEventMatchLists(User user, String category, List<Events> eventList, boolean forMatchList, int totalCount)
+	private void saveTopEventMatchLists(User user, String category, List<MatchinEventModel> eventList, boolean forMatchList, int totalCount)
 	{
 		String idsStr = "";
 
@@ -301,9 +336,20 @@ public class MatchingEventsService implements IMatchingEventsService{
 
 		if(eventList != null && !eventList.isEmpty())
 		{
+			/*int index = 0;
+			for (Map.Entry<User,Events> entry : eventList.entrySet()) {
+				Events events =entry.getValue();
+				idsStr +="'"+events.getEventId()+"'";
+				if(index < eventList.size() - 1)
+				{
+					idsStr+=",";
+				}
+				index++;
+			}*/
 			for(int i = 0; i < eventList.size(); i++)
 			{
-				idsStr +="'"+eventList.get(i).getEventId()+"'";
+				Events events = eventList.get(i).getEvents();
+				idsStr +="'"+events.getEventId()+"'";
 
 
 				if(i < eventList.size() - 1)
@@ -404,7 +450,7 @@ public class MatchingEventsService implements IMatchingEventsService{
 	 * @param userId
 	 * @param contactId
 	 */
-	private void saveTopDealMatchLists(User user, String category, List<Deals> dealList, boolean forMatchList, int totalCount)
+	private void saveTopDealMatchLists(User user, String category, List<MatchinEventModel> dealList, boolean forMatchList, int totalCount)
 	{
 		String idsStr = "";
 
@@ -412,9 +458,20 @@ public class MatchingEventsService implements IMatchingEventsService{
 
 		if(dealList != null && !dealList.isEmpty())
 		{
+			/*int index = 0;
+			for (Map.Entry<User,Deals> entry : dealList.entrySet()) {
+				Deals deal =entry.getValue();
+				idsStr +="'"+deal.getId()+"'";
+				if(index < dealList.size() - 1)
+				{
+					idsStr+=",";
+				}
+				index++;
+			}*/
 			for(int i = 0; i < dealList.size(); i++)
 			{
-				idsStr +="'"+dealList.get(i).getId()+"'";
+				Deals deals = dealList.get(i).getDeals();
+				idsStr +="'"+deals.getId()+"'";
 
 
 				if(i < dealList.size() - 1)
@@ -550,7 +607,7 @@ public class MatchingEventsService implements IMatchingEventsService{
 	 * @param userId
 	 * @param contactId
 	 */
-	private void saveTopNonDealMatchLists(User user, String category, List<Business> businessList, boolean forMatchList, int totalCount)
+	private void saveTopNonDealMatchLists(User user, String category, List<MatchinEventModel> businessList, boolean forMatchList, int totalCount)
 	{
 		String idsStr = "";
 
@@ -558,9 +615,20 @@ public class MatchingEventsService implements IMatchingEventsService{
 
 		if(businessList != null && !businessList.isEmpty())
 		{
+			/*int index = 0;
+			for (Map.Entry<User,Business> entry : businessList.entrySet()) {
+				Business business =entry.getValue();
+				idsStr +="'"+business.getId()+"'";
+				if(index < businessList.size() - 1)
+				{
+					idsStr+=",";
+				}
+				index++;
+			}*/
 			for(int i = 0; i < businessList.size(); i++)
 			{
-				idsStr +="'"+businessList.get(i).getId()+"'";
+				Business business = businessList.get(i).getBusiness();
+				idsStr +="'"+business.getId()+"'";
 
 
 				if(i < businessList.size() - 1)
@@ -622,11 +690,43 @@ public class MatchingEventsService implements IMatchingEventsService{
 		}
 	}
 
-	private boolean saveTopEventMatchList(List<Events> eventList, User user, int eventId, int totalLikes, String category, boolean forMatchList, int count)
+	private boolean saveTopEventMatchList(List<MatchinEventModel> eventList, User user, int eventId, int totalLikes, String category, boolean forMatchList, int count)
 	{
 		boolean isSaved = false;
+		/*for (Map.Entry<User,Events> entry : eventList.entrySet()) {
+			User user2 = entry.getKey();
+			Events event =entry.getValue();*/
+		for (MatchinEventModel matchinEventModel : eventList) {
 
-		for(Events event : eventList)
+			User user2 = matchinEventModel.getUser();
+			Events event =matchinEventModel.getEvents();
+			logger.debug("saveTopEventMatchList =>"+event.getEventId() + " : "+eventId);
+
+			if(event.getEventId() == eventId)
+			{
+				//Checking if the suggestions is already exists or not
+				List<Topeventsuggestion> topeventsuggestions = userDAO.isTopEventSuggestionExists(user.getUserId(), event.getEventId(),"Match List");
+				if(topeventsuggestions == null || topeventsuggestions.size() == 0)
+				{
+					Topeventsuggestion topeventsuggestion = new Topeventsuggestion();
+					topeventsuggestion.setCategoryType(category);
+					Date date = new Date();
+					topeventsuggestion.setCreatedTime(date);
+					topeventsuggestion.setEvents(event);
+					topeventsuggestion.setRank((long)count);
+					if(forMatchList)
+						topeventsuggestion.setSuggestionType("Match List");
+					topeventsuggestion.setTotalLikes(totalLikes);
+					topeventsuggestion.setUpdatedTime(date);
+					topeventsuggestion.setUser(user);
+					topeventsuggestion.setUserContact(user2);
+					userDAO.saveTopEventSuggestions(topeventsuggestion);
+					isSaved = true;
+				}
+				break;
+			}
+		}
+		/*for(Events event : eventList)
 		{
 			logger.debug("saveTopEventMatchList =>"+event.getEventId() + " : "+eventId);
 			if(event.getEventId() == eventId)
@@ -646,22 +746,54 @@ public class MatchingEventsService implements IMatchingEventsService{
 				isSaved = true;
 				break;
 			}
-		}
+		}*/
 
 		return isSaved;
 	}
-	private boolean saveTopDealMatchList(List<Deals> dealList, User user, int dealId, int totalLikes, String category, boolean forMatchList, int count)
+	private boolean saveTopDealMatchList(List<MatchinEventModel> dealList, User user, int dealId, int totalLikes, String category, boolean forMatchList, int count)
 	{
 		boolean isSaved = false;
 
 		Deals dealDetail = dealsDAO.getDealById(dealId);
-		for(Deals deal : dealList)
+		/*for (Map.Entry<User,Deals> entry : dealList.entrySet()) {
+			User user2 = entry.getKey();
+			Deals deal =entry.getValue();*/
+		for (MatchinEventModel matchinEventModel : dealList) {
+
+			User user2 = matchinEventModel.getUser();
+			Deals deal =matchinEventModel.getDeals();
+			logger.debug("saveTopDealMatchList =>"+deal.getId() + " : "+dealId);
+			if(deal.getId() == dealId)
+			{
+				//Checking if the suggestions is already exists or not
+				List<Topdealssuggestion> topdealsuggestions = userDAO.isTopDealSuggestionExists(user.getUserId(), deal.getId(),"Match List");
+				if(topdealsuggestions == null || topdealsuggestions.size() == 0)
+				{
+					Topdealssuggestion topdealsuggestion = new Topdealssuggestion();
+					topdealsuggestion.setCategoryType(category);
+					Date date = new Date();
+					topdealsuggestion.setCreatedTime(date);
+					topdealsuggestion.setDeals(dealDetail);
+					topdealsuggestion.setRank((long)count);
+					if(forMatchList)
+						topdealsuggestion.setSuggestionType("Match List");
+					topdealsuggestion.setTotalLikes(totalLikes);
+					topdealsuggestion.setUpdatedTime(date);
+					topdealsuggestion.setUser(user);
+					topdealsuggestion.setUserContact(user2);
+					userDAO.saveTopDealSuggestions(topdealsuggestion);
+					isSaved = true;
+				}
+				break;
+			}
+		};
+		/*for(Deals deal : dealList)
 		{
 			logger.debug("saveTopDealMatchList =>"+deal.getId() + " : "+dealId);
 			if(deal.getId() == dealId)
 			{
-				/*//Checking if the suggestions is already exists or not
-				List<Topdealssuggestion> topdealsuggestions = userDAO.isTopDealSuggestionExists(user.getUserId(), deal.getId());*/
+				//Checking if the suggestions is already exists or not
+				List<Topdealssuggestion> topdealsuggestions = userDAO.isTopDealSuggestionExists(user.getUserId(), deal.getId());
 				Topdealssuggestion topdealsuggestion = new Topdealssuggestion();
 				topdealsuggestion.setCategoryType(category);
 				Date date = new Date();
@@ -677,20 +809,54 @@ public class MatchingEventsService implements IMatchingEventsService{
 				isSaved = true;
 				break;
 			}
-			
-		}
+
+		}*/
 
 		return isSaved;
 	}
 
 
-	private boolean saveTopNonDealMatchList(List<Business> businessList, User user, int businessId, int totalLikes, String category, boolean forMatchList, int count)
+	private boolean saveTopNonDealMatchList(List<MatchinEventModel> businessList,User user, int businessId, int totalLikes, String category, boolean forMatchList, int count)
 	{
 		boolean isSaved = false;
 
 		Business businessDetail = businessDAO.getBusinessById(businessId);
 
-		for(Business business : businessList)
+		/*for (Map.Entry<User,Business> entry : businessList.entrySet()) {
+			User user2 = entry.getKey();
+			Business business =entry.getValue();*/
+		for (MatchinEventModel matchinEventModel : businessList) {
+
+			User user2 = matchinEventModel.getUser();
+			Business business =matchinEventModel.getBusiness();
+
+			logger.debug("saveTopNonDealMatchList =>"+business.getId() + " : "+businessId);
+			if(business.getId() == businessId)
+			{
+				//Checking if the suggestions is already exists or not
+				List<Topnondealsuggestion> topnondealsuggestions = userDAO.isTopNonDealSuggestionExists(user.getUserId(), business.getId(),"Match List");
+				if(topnondealsuggestions == null || topnondealsuggestions.size() == 0)
+				{
+					Topnondealsuggestion topnondealsuggestion =  new Topnondealsuggestion();
+
+					topnondealsuggestion.setCategoryType(category);
+					Date date = new Date();
+					topnondealsuggestion.setCreatedTime(date);
+					topnondealsuggestion.setBusiness(businessDetail);
+					topnondealsuggestion.setRank((long)count);
+					if(forMatchList)
+						topnondealsuggestion.setSuggestionType("Match List");
+					topnondealsuggestion.setTotalLikes(totalLikes);
+					topnondealsuggestion.setUpdatedTime(date);
+					topnondealsuggestion.setUser(user);
+					topnondealsuggestion.setUserContact(user2);
+					userDAO.saveTopNonDealSuggestions(topnondealsuggestion);
+					isSaved = true;
+				}
+				break;
+			}
+		}
+		/*for(Business business : businessList)
 		{
 			logger.debug("saveTopNonDealMatchList =>"+business.getId() + " : "+businessId);
 			if(business.getId() == businessId)
@@ -712,7 +878,7 @@ public class MatchingEventsService implements IMatchingEventsService{
 				isSaved = true;
 				break;
 			}
-		}
+		}*/
 
 		return isSaved;
 	}

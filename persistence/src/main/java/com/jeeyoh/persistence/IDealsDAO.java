@@ -2,6 +2,8 @@ package com.jeeyoh.persistence;
 
 import java.util.List;
 
+import com.jeeyoh.persistence.domain.Dealoption;
+import com.jeeyoh.persistence.domain.Dealredemptionlocation;
 import com.jeeyoh.persistence.domain.Deals;
 import com.jeeyoh.persistence.domain.Dealsusage;
 import com.jeeyoh.persistence.domain.Userdealssuggestion;
@@ -41,5 +43,11 @@ public interface IDealsDAO {
 			String itemType, String providerName);
 	public boolean saveDealUserLikes(Dealsusage dealsusage);
 	public boolean updateDealUserLikes(Dealsusage dealsusage);
+	public Dealoption getDealOptionByDealId(int dealId);
+	public Dealredemptionlocation getRedemptionLocationByDealOption(int dealOptionId);
+	public List<Deals> getBookedDealList(int userId, String category);
+	public List<Deals> getDealsByuserLikesForCurrentWeekend(String itemCategory,
+			String itemType,String providerName, double latitude, double longitude);
+	public void updateDeal(Deals deals);
 	
 }

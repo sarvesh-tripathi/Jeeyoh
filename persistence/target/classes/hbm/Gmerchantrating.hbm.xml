@@ -11,7 +11,7 @@
 		</id>
 		
 		<property name="ratingId" type="string">
-			<column name="ratingId" length="250" />
+			<column name="ratingId"/>
 		</property>
 		<property name="reviewsCount" type="java.lang.Integer">
 			<column name="reviewsCount"/>
@@ -23,7 +23,7 @@
 			<column name="url" length="250" />
 		</property>
 		<property name="linkText" type="string">
-			<column name="linkText" length="250" />
+			<column name="linkText" length="100" />
 		</property>
 		<set name="gmerchantByRatingId" inverse="true" cascade="all">
             <key>

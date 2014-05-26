@@ -71,7 +71,7 @@
         <property name="description" type="string">
             <column name="description" length="65535" />
         </property>
-        <set name="dealredemptionlocations" inverse="true">
+        <set name="dealredemptionlocations" inverse="true" cascade="all">
             <key>
                 <column name="dealOptionId" not-null="true" />
             </key>

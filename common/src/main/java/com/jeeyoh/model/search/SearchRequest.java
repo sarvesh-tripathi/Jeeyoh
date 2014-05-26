@@ -14,7 +14,9 @@ public class SearchRequest implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	@JsonProperty
-	private String userEmail;
+	private int userId;
+	@JsonProperty
+	private String emailId;
 	@JsonProperty
 	private String searchText;
 	@JsonProperty
@@ -43,17 +45,33 @@ public class SearchRequest implements Serializable{
 	private int exactMatchCommunityCount;
 	@JsonProperty
 	private int likeMatchCommunityCount;
+	@JsonProperty
+	private int exactMatchEventCommunityCount;
+	@JsonProperty
+	private int likeMatchEventCommunityCount;
+	/**
+	 * @return the userId
+	 */
+	public int getUserId() {
+		return userId;
+	}
+	/**
+	 * @param userId the userId to set
+	 */
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
 	/**
 	 * @return the userEmail
 	 */
-	public String getUserEmail() {
-		return userEmail;
+	public String getEmailId() {
+		return emailId;
 	}
 	/**
 	 * @param userEmail the userEmail to set
 	 */
-	public void setUserEmail(String userEmail) {
-		this.userEmail = userEmail;
+	public void setEmailId(String emailId) {
+		this.emailId = emailId;
 	}
 	/**
 	 * @return the searchText
@@ -223,6 +241,29 @@ public class SearchRequest implements Serializable{
 	public void setLikeMatchCommunityCount(int likeMatchCommunityCount) {
 		this.likeMatchCommunityCount = likeMatchCommunityCount;
 	}
-	
+	/**
+	 * @return the likeMatchEventCommunityCount
+	 */
+	public int getLikeMatchEventCommunityCount() {
+		return likeMatchEventCommunityCount;
+	}
+	/**
+	 * @param likeMatchEventCommunityCount the likeMatchEventCommunityCount to set
+	 */
+	public void setLikeMatchEventCommunityCount(int likeMatchEventCommunityCount) {
+		this.likeMatchEventCommunityCount = likeMatchEventCommunityCount;
+	}
+	/**
+	 * @return the exactMatchEventCommunityCount
+	 */
+	public int getExactMatchEventCommunityCount() {
+		return exactMatchEventCommunityCount;
+	}
+	/**
+	 * @param exactMatchEventCommunityCount the exactMatchEventCommunityCount to set
+	 */
+	public void setExactMatchEventCommunityCount(int exactMatchEventCommunityCount) {
+		this.exactMatchEventCommunityCount = exactMatchEventCommunityCount;
+	}
 
 }

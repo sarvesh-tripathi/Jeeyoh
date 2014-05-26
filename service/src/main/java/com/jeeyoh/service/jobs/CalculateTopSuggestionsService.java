@@ -26,7 +26,6 @@ import com.jeeyoh.persistence.domain.Topdealssuggestion;
 import com.jeeyoh.persistence.domain.Topeventsuggestion;
 import com.jeeyoh.persistence.domain.Topnondealsuggestion;
 import com.jeeyoh.persistence.domain.User;
-import com.jeeyoh.persistence.domain.Usercontacts;
 import com.jeeyoh.persistence.domain.Userdealssuggestion;
 import com.jeeyoh.persistence.domain.Usereventsuggestion;
 import com.jeeyoh.persistence.domain.Usernondealsuggestion;
@@ -73,22 +72,15 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 						List<Usereventsuggestion> usereventsuggestions = new ArrayList<Usereventsuggestion>();
 						String category = categoryList[i];
 						logger.debug("Category: "+category);
-						//for(Usercontacts usercontacts:userContactsList)
-						//{
-							//User contact = usercontacts.getUserByContactId();
-							//logger.debug("Friend Name ::"+contact.getFirstName());
-							//int contactId = contact.getUserId();
-							// Get Non Deal Suggestions
-							usernondealsuggestions = getFriendsNonDealSuggestionList(userId, 0, category, usernondealsuggestions, true,false);
-							// Get Deal Suggestions
-							userdealsuggestions = getFriendsDealSuggestionList(userId, 0, category, userdealsuggestions, true,false,false,false);
-							//userdealsuggestions = getFriendsDealSuggestionList(userId, contactId, category, userdealsuggestions, false,true,false,false);
-							// Get Event Suggestions
-							usereventsuggestions = getFriendsEventSuggestionList(userId, 0, category, usereventsuggestions, true,false,false,false);
-							//usereventsuggestions = getFriendsEventSuggestionList(userId, contactId, category, usereventsuggestions, false,true,false,false);
-						//}
 
-						//int totalCountForNonDeals = 0, totalCountForEvents = 0,totalCountForDeals = 0;
+						// Get Non Deal Suggestions
+						usernondealsuggestions = getFriendsNonDealSuggestionList(userId, 0, category, usernondealsuggestions, true,false);
+						// Get Deal Suggestions
+						userdealsuggestions = getFriendsDealSuggestionList(userId, 0, category, userdealsuggestions, true,false,false,false);
+						//userdealsuggestions = getFriendsDealSuggestionList(userId, contactId, category, userdealsuggestions, false,true,false,false);
+						// Get Event Suggestions
+						usereventsuggestions = getFriendsEventSuggestionList(userId, 0, category, usereventsuggestions, true,false,false,false);
+						//usereventsuggestions = getFriendsEventSuggestionList(userId, contactId, category, usereventsuggestions, false,true,false,false);
 
 						int a =usereventsuggestions.size(),b=userdealsuggestions.size(),c=usernondealsuggestions.size();
 
@@ -193,8 +185,8 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 	@Override 
 	public void calculateTopJeyoohSuggestions() {
 		List<User> userList = userDAO.getUsers();
-		logger.debug("caculateTopSuggestions ==> search ==> ");
-		//Date weekendDate = Utils.getNearestWeekend(null);
+		logger.debug("calculateTopJeyoohSuggestions ==> search ==> ");
+		
 		if(userList != null) {
 			for(User user : userList) {
 				logger.debug("caculateTopSuggestions ==> search ==> userID ==> " + user.getEmailId());
@@ -215,7 +207,7 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 					// Get Event Suggestions
 					usereventsuggestions = getFriendsEventSuggestionList(userId, 0, category, usereventsuggestions, false,false,true,false);
 					//usereventsuggestions = getFriendsEventSuggestionList(userId, 0, category, usereventsuggestions, false,false,false,true);
-					
+
 
 					int a =usereventsuggestions.size(),b=userdealsuggestions.size(),c=usernondealsuggestions.size();
 
@@ -622,9 +614,9 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 						}
 					}
 				}
-				
+
 			}
-			
+
 		}
 	}
 
@@ -840,11 +832,9 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 			if(events.getEventId() == eventId)
 			{
 				//Checking if the suggestions is already exists or not
-				List<Topeventsuggestion> topeventsuggestions = userDAO.isTopEventSuggestionExists(userId, events.getEventId());
+				List<Topeventsuggestion> topeventsuggestions = userDAO.isTopEventSuggestionExists(userId, events.getEventId(),null);
 				if(topeventsuggestions == null || topeventsuggestions.size() == 0)
 				{
-					//Checking if the suggestions is already exists or not
-
 					Topeventsuggestion topeventsuggestion = new Topeventsuggestion();
 					if(usereventsuggestion.getUserContact() != null)
 						topeventsuggestion.setUserContact(usereventsuggestion.getUserContact());
@@ -854,8 +844,15 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 					if(forJeeyohSuggestion)
 						topeventsuggestion.setSuggestionType("Jeeyoh Suggestion");
 					else if(forFriendsSuggestion)
-						topeventsuggestion.setSuggestionType("Friend's Suggestion");
-
+					{
+						if(usereventsuggestion.getSuggestionType().equalsIgnoreCase("Wall Feed Suggestion") || usereventsuggestion.getSuggestionType().equalsIgnoreCase("Direct Suggestion"))
+						{
+							topeventsuggestion.setSuggestionType("Friend's Direct Suggestion");
+						}
+						else
+							topeventsuggestion.setSuggestionType("Friend's Suggestion");
+					}
+						
 					topeventsuggestion.setRank((long)count);
 					topeventsuggestion.setTotalLikes(totalLikes);
 					topeventsuggestion.setCategoryType(category);
@@ -885,7 +882,7 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 			{
 				Business business = usernondealsuggestion.getBusiness();
 				//Checking if the suggestions is already exists or not
-				List<Topnondealsuggestion> topnondealsuggestions = userDAO.isTopNonDealSuggestionExists(userId, business.getId());
+				List<Topnondealsuggestion> topnondealsuggestions = userDAO.isTopNonDealSuggestionExists(userId, business.getId(),null);
 				if(topnondealsuggestions == null || topnondealsuggestions.size() == 0)
 				{
 					Topnondealsuggestion topnondealsuggestion = new Topnondealsuggestion();
@@ -894,7 +891,14 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 					topnondealsuggestion.setBusiness(business);
 					topnondealsuggestion.setUser(usernondealsuggestion.getUser());
 					if(forFriendsSuggestion)
-						topnondealsuggestion.setSuggestionType("Friend's Suggestion");
+					{
+						if(usernondealsuggestion.getSuggestionType().equalsIgnoreCase("Wall Feed Suggestion") || usernondealsuggestion.getSuggestionType().equalsIgnoreCase("Direct Suggestion"))
+						{
+							topnondealsuggestion.setSuggestionType("Friend's Direct Suggestion");
+						}
+						else
+							topnondealsuggestion.setSuggestionType("Friend's Suggestion");
+					}
 					else if(forJeeyohSuggestion)
 						topnondealsuggestion.setSuggestionType("Jeeyoh Suggestion");
 					topnondealsuggestion.setRank((long)count);
@@ -921,22 +925,30 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 		{
 			Deals deal = userdealsuggestion.getDeals();
 
-
 			if(deal.getId() == dealId)
 			{
 				//Checking if the suggestions is already exists or not
-				List<Topdealssuggestion> topdealsuggestions = userDAO.isTopDealSuggestionExists(userId, deal.getId());
+				List<Topdealssuggestion> topdealsuggestions = userDAO.isTopDealSuggestionExists(userId, deal.getId(),null);
 				if(topdealsuggestions == null || topdealsuggestions.size() == 0)
 				{
 					Topdealssuggestion topdealsuggestion = new Topdealssuggestion();
 					if(userdealsuggestion.getUserContact() != null)
 						topdealsuggestion.setUserContact(userdealsuggestion.getUserContact());
+					
 					topdealsuggestion.setDeals(deal);
 					topdealsuggestion.setUser(userdealsuggestion.getUser());
 					if(forJeeyohSuggestion)
 						topdealsuggestion.setSuggestionType("Jeeyoh Suggestion");
 					else if(forFriendsSuggestion)
-						topdealsuggestion.setSuggestionType("Friend's Suggestion");
+					{
+						if(userdealsuggestion.getSuggestionType().equalsIgnoreCase("Wall Feed Suggestion") || userdealsuggestion.getSuggestionType().equalsIgnoreCase("Direct Suggestion"))
+						{
+							topdealsuggestion.setSuggestionType("Friend's Direct Suggestion");
+						}
+						else
+							topdealsuggestion.setSuggestionType("Friend's Suggestion");
+					}
+						
 					topdealsuggestion.setRank((long)count);
 					topdealsuggestion.setTotalLikes(totalLikes);
 					topdealsuggestion.setCategoryType(category);

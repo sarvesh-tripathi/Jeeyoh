@@ -15,11 +15,13 @@ import com.jeeyoh.model.enums.ServiceAPIStatus;
 import com.jeeyoh.model.funboard.CommentModel;
 import com.jeeyoh.model.response.BaseResponse;
 import com.jeeyoh.model.response.CommentResponse;
+import com.jeeyoh.model.response.CommunityListResponse;
 import com.jeeyoh.model.response.CommunityPaginationResponse;
 import com.jeeyoh.model.response.CommunityResponse;
 import com.jeeyoh.model.search.CommunityReviewModel;
 import com.jeeyoh.model.search.EventModel;
 import com.jeeyoh.model.search.PageModel;
+import com.jeeyoh.model.search.SearchRequest;
 import com.jeeyoh.persistence.IEventsDAO;
 import com.jeeyoh.persistence.IUserDAO;
 import com.jeeyoh.persistence.domain.CommunityComments;
@@ -40,19 +42,22 @@ public class CommunitySearchService implements ICommunitySearchService{
 
 	@Value("${app.jeeyoh.favorite.success}")
 	private String favSuccess;
-	
+
 	@Value("${app.jeeyoh.favorite.already.exist}")
 	private String alreadyExists;
-	
+
 	@Value("${app.jeeyoh.follow.success}")
 	private String followSuccess;
-	
+
 	@Value("${app.jeeyoh.follow.already.exists}")
 	private String alreadyFollowed;
 
 	@Value("${app.jeeyoh.failed}")
 	private String errorMessage;
-	
+
+	@Value("${host.path}")
+	private String hostPath;
+
 	@Autowired
 	private IUserDAO userDAO;
 
@@ -90,12 +95,21 @@ public class CommunitySearchService implements ICommunitySearchService{
 		PageModel pageModel = new PageModel();
 		if(!page.equals(null))
 		{
+			// Check if community is already favorite or not
+			Pageuserlikes pageuserlikes = userDAO.getUserPageProperties(userId, page.getPageId());
+			if(pageuserlikes != null)
+			{
+				pageModel.setIsFavorite(pageuserlikes.getIsFavorite());
+				pageModel.setIsFollowed(pageuserlikes.getIsFollowing());
+			}
+
 			pageModel.setAbout(page.getAbout());
 			pageModel.setPageUrl(page.getPageUrl());
 			pageModel.setOwner(page.getUserByOwnerId().getFirstName());
 			pageModel.setPageType(page.getPagetype().getPageType());
 			pageModel.setCreatedDate(page.getCreatedtime().toString());
 			pageModel.setProfilePicture(page.getProfilePicture());
+			pageModel.setSource(page.getSource());
 			communityResponse.setCommunityDetails(pageModel);
 		}
 		else
@@ -117,11 +131,11 @@ public class CommunitySearchService implements ICommunitySearchService{
 			currentEventModel.setCity(event.getCity());
 			currentEventModel.setCurrency_code(event.getCurrency_code());
 			currentEventModel.setDescription(event.getDescription());
-			currentEventModel.setEvent_date(event.getEvent_date().toString());
+			currentEventModel.setEvent_date(event.getEvent_date_local().toString());
 			currentEventModel.setGenreUrlPath(event.getGenreUrlPath());
 			currentEventModel.setGeography_parent(event.getGeography_parent());
-			currentEventModel.setLatitude(event.getLatitude());
-			currentEventModel.setLongitude(event.getLongitude());
+			currentEventModel.setLatitude(Double.parseDouble(event.getLatitude()));
+			currentEventModel.setLongitude(Double.parseDouble(event.getLongitude()));
 			currentEventModel.setMaxPrice(event.getMaxPrice());
 			currentEventModel.setMinPrice(event.getMinPrice());
 			currentEventModel.setMaxSeatsTogether(event.getMaxSeatsTogether());
@@ -133,10 +147,13 @@ public class CommunitySearchService implements ICommunitySearchService{
 			currentEventModel.setVenue_config_name(event.getVenue_config_name());
 			currentEventModel.setVenue_name(event.getVenue_name());
 			currentEventModel.setZip(event.getZip());
-			currentEventModelList.add(currentEventModel);
 			currentEventModel.setSource(event.getEventSource());
 			currentEventModel.setItemType("Event");
+			String address = event.getVenue_name()+"\n"+event.getCity()+","+event.getState()+" "+event.getZip();
+			currentEventModel.setAddress(address);
 			currentEventModel.setCategory(pageModel.getPageType());
+			currentEventModel.setTimeSlot(event.getEvent_time_local());
+			currentEventModelList.add(currentEventModel);
 		}
 		communityResponse.setCurrentEvents(currentEventModelList);
 
@@ -152,11 +169,11 @@ public class CommunitySearchService implements ICommunitySearchService{
 			upcomingEventModel.setCity(event.getCity());
 			upcomingEventModel.setCurrency_code(event.getCurrency_code());
 			upcomingEventModel.setDescription(event.getDescription());
-			upcomingEventModel.setEvent_date(event.getEvent_date().toString());
+			upcomingEventModel.setEvent_date(event.getEvent_date_local().toString());
 			upcomingEventModel.setGenreUrlPath(event.getGenreUrlPath());
 			upcomingEventModel.setGeography_parent(event.getGeography_parent());
-			upcomingEventModel.setLatitude(event.getLatitude());
-			upcomingEventModel.setLongitude(event.getLongitude());
+			upcomingEventModel.setLatitude(Double.parseDouble(event.getLatitude()));
+			upcomingEventModel.setLongitude(Double.parseDouble(event.getLongitude()));
 			upcomingEventModel.setMaxPrice(event.getMaxPrice());
 			upcomingEventModel.setMinPrice(event.getMinPrice());
 			upcomingEventModel.setMaxSeatsTogether(event.getMaxSeatsTogether());
@@ -168,10 +185,13 @@ public class CommunitySearchService implements ICommunitySearchService{
 			upcomingEventModel.setVenue_config_name(event.getVenue_config_name());
 			upcomingEventModel.setVenue_name(event.getVenue_name());
 			upcomingEventModel.setZip(event.getZip());
-			upcomingEventModelList.add(upcomingEventModel);
 			upcomingEventModel.setSource(event.getEventSource());
 			upcomingEventModel.setItemType("Event");
+			String address = event.getVenue_name()+"\n"+event.getCity()+","+event.getState()+" "+event.getZip();
+			upcomingEventModel.setAddress(address);
 			upcomingEventModel.setCategory(pageModel.getPageType());
+			upcomingEventModel.setTimeSlot(event.getEvent_time_local());
+			upcomingEventModelList.add(upcomingEventModel);
 		}
 		communityResponse.setUpcomingEvents(upcomingEventModelList);
 
@@ -187,11 +207,11 @@ public class CommunitySearchService implements ICommunitySearchService{
 			pastEventModel.setCity(event.getCity());
 			pastEventModel.setCurrency_code(event.getCurrency_code());
 			pastEventModel.setDescription(event.getDescription());
-			pastEventModel.setEvent_date(event.getEvent_date().toString());
+			pastEventModel.setEvent_date(event.getEvent_date_local().toString());
 			pastEventModel.setGenreUrlPath(event.getGenreUrlPath());
 			pastEventModel.setGeography_parent(event.getGeography_parent());
-			pastEventModel.setLatitude(event.getLatitude());
-			pastEventModel.setLongitude(event.getLongitude());
+			pastEventModel.setLatitude(Double.parseDouble(event.getLatitude()));
+			pastEventModel.setLongitude(Double.parseDouble(event.getLongitude()));
 			pastEventModel.setMaxPrice(event.getMaxPrice());
 			pastEventModel.setMinPrice(event.getMinPrice());
 			pastEventModel.setMaxSeatsTogether(event.getMaxSeatsTogether());
@@ -203,10 +223,13 @@ public class CommunitySearchService implements ICommunitySearchService{
 			pastEventModel.setVenue_config_name(event.getVenue_config_name());
 			pastEventModel.setVenue_name(event.getVenue_name());
 			pastEventModel.setZip(event.getZip());
-			pastEventModelList.add(pastEventModel);
 			pastEventModel.setSource(event.getEventSource());
 			pastEventModel.setItemType("Event");
+			String address = event.getVenue_name()+"\n"+event.getCity()+","+event.getState()+" "+event.getZip();
+			pastEventModel.setAddress(address);
 			pastEventModel.setCategory(pageModel.getPageType());
+			pastEventModel.setTimeSlot(event.getEvent_time_local());
+			pastEventModelList.add(pastEventModel);
 		}
 		logger.debug("end of comunity response");
 		communityResponse.setPastEvents(pastEventModelList);
@@ -219,25 +242,27 @@ public class CommunitySearchService implements ICommunitySearchService{
 			List<CommentModel> commentModelList = new ArrayList<CommentModel>();
 			for(CommunityComments communityComment:communityCommentsList)
 			{
+				User user = communityComment.getUser();
 				CommentModel commentModel = new CommentModel();
 				commentModel.setComment(communityComment.getComment());
 				commentModel.setCreatedTime(Utils.getTime(communityComment.getCreatedTime()));
 				commentModel.setItemId(communityComment.getPage().getPageId());
-				commentModel.setUserId(communityComment.getUser().getUserId());
-				commentModel.setImageUrl(communityComment.getUser().getImageUrl());
+				commentModel.setUserId(user.getUserId());
+				if(user.getImageUrl() != null)
+					commentModel.setImageUrl(hostPath + user.getImageUrl());
 				commentModel.setUserName(communityComment.getUser().getFirstName()+" "+communityComment.getUser().getLastName());
 				commentModelList.add(commentModel);
 			}
 			logger.debug("add community comments in response");
 			communityResponse.setCommunityComments(commentModelList);
 		}
-		
+
 		if(pageId!=0)
 		{
-			List<CommunityReview> communityReviewList = eventsDAO.getCommunityReviewByPageId(pageId);
-			int rating = 0;
+			//List<CommunityReview> communityReviewList = eventsDAO.getCommunityReviewByPageId(pageId);
+			/*int rating = 0;
 			int count = 0;
-			if(communityReviewList != null)
+			if(communityReviewList != null && !communityReviewList.isEmpty())
 			{
 				for(CommunityReview communityReview:communityReviewList)
 				{
@@ -249,7 +274,12 @@ public class CommunitySearchService implements ICommunitySearchService{
 				communityResponse.setRating(avg);
 			}
 			else
-				communityResponse.setRating(0);
+				communityResponse.setRating(0);*/
+
+			double avgRating = eventsDAO.getCommunityReviewByPageId(page.getPageId());
+
+			logger.debug("avg rating =>"+avgRating);
+			communityResponse.setRating(avgRating);
 			logger.debug("CommunityReview rating =>"+communityResponse.getRating());
 		}
 
@@ -291,11 +321,11 @@ public class CommunitySearchService implements ICommunitySearchService{
 			eventModel.setCity(event.getCity());
 			eventModel.setCurrency_code(event.getCurrency_code());
 			eventModel.setDescription(event.getDescription());
-			eventModel.setEvent_date(event.getEvent_date().toString());
+			eventModel.setEvent_date(event.getEvent_date_local().toString());
 			eventModel.setGenreUrlPath(event.getGenreUrlPath());
 			eventModel.setGeography_parent(event.getGeography_parent());
-			eventModel.setLatitude(event.getLatitude());
-			eventModel.setLongitude(event.getLongitude());
+			eventModel.setLatitude(Double.parseDouble(event.getLatitude()));
+			eventModel.setLongitude(Double.parseDouble(event.getLongitude()));
 			eventModel.setMaxPrice(event.getMaxPrice());
 			eventModel.setMinPrice(event.getMinPrice());
 			eventModel.setMaxSeatsTogether(event.getMaxSeatsTogether());
@@ -309,7 +339,10 @@ public class CommunitySearchService implements ICommunitySearchService{
 			eventModel.setZip(event.getZip());
 			eventModel.setSource(event.getEventSource());
 			eventModel.setItemType("Event");
+			String address = event.getVenue_name()+"\n"+event.getCity()+","+event.getState()+" "+event.getZip();
+			eventModel.setAddress(address);
 			eventModel.setCategory(event.getChannel().split(" ")[0]);
+			eventModel.setTimeSlot(event.getEvent_time_local());
 			eventModelList.add(eventModel);
 		}
 		communityResponse.setEvents(eventModelList);
@@ -348,7 +381,8 @@ public class CommunitySearchService implements ICommunitySearchService{
 		{
 			commentModel.setCreatedTime(Utils.getTime(date));
 			commentModel.setUserName(user.getFirstName());
-			commentModel.setImageUrl(user.getImageUrl());
+			if(user.getImageUrl() != null)
+				commentModel.setImageUrl(hostPath + user.getImageUrl());
 			response.setComment(commentModel);
 			response.setStatus(ServiceAPIStatus.OK.getStatus());
 		}
@@ -405,12 +439,12 @@ public class CommunitySearchService implements ICommunitySearchService{
 		{
 			pageuserlikes.setIsFollowing(isFollow);
 			pageuserlikes.setIsFavorite(false);
-			pageuserlikes.setIsFollowing(false);
 			pageuserlikes.setIsLike(false);
 			pageuserlikes.setIsVisited(false);
 			pageuserlikes.setIsProfileDetailsHidden(false);
 			pageuserlikes.setIsProfileHidden(false);
 			pageuserlikes.setIsSuggested(false);
+			pageuserlikes.setIsBooked(false);
 			pageuserlikes.setUser(user);
 			pageuserlikes.setPage(page);
 			pageuserlikes.setNotificationpermission(notificationPermission);
@@ -502,7 +536,7 @@ public class CommunitySearchService implements ICommunitySearchService{
 		Pageuserlikes pageuserlikes = null;
 
 		Notificationpermission notificationPermission = userDAO.getDafaultNotification();
-		
+
 		// Check if entry already exists in table
 		pageuserlikes = userDAO.getUserPageProperties(userId, pageId);
 		logger.debug("existingEventUserLikes =>"+pageuserlikes);
@@ -536,6 +570,7 @@ public class CommunitySearchService implements ICommunitySearchService{
 			pageuserlikes.setIsProfileDetailsHidden(false);
 			pageuserlikes.setIsProfileHidden(false);
 			pageuserlikes.setIsSuggested(false);
+			pageuserlikes.setIsBooked(false);
 			pageuserlikes.setUser(user);
 			pageuserlikes.setPage(page);
 			pageuserlikes.setNotificationpermission(notificationPermission);
@@ -557,8 +592,8 @@ public class CommunitySearchService implements ICommunitySearchService{
 		}
 		return baseResponse;
 	}
-	
-	
+
+
 	@Transactional
 	@Override
 	public BaseResponse saveCommunityReview(CommunityReviewModel communityReviewModel) {
@@ -589,5 +624,76 @@ public class CommunitySearchService implements ICommunitySearchService{
 			baseResponse.setError("Invalid Parameter");
 		}
 		return baseResponse;
+	}
+
+	@Transactional
+	@Override
+	public CommunityListResponse serachCommunity(SearchRequest searchRequest) 
+	{
+		int totalCount = 0;
+		//Getting total number of results
+		if(searchRequest.getExactMatchCommunityCount() == 0)
+		{
+			totalCount = eventsDAO.getTotalCommunityBySearchKeyWordForBusiness(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation());
+		}
+		List<Page> pageList = eventsDAO.getCommunityBySearchKeyword(searchRequest.getSearchText(), searchRequest.getCategory(), searchRequest.getExactMatchCommunityCount(), searchRequest.getLimit());
+		List<PageModel> pageModels = new ArrayList<PageModel>();
+		int count1 = 0;
+		for(Page page : pageList)
+		{
+			logger.debug("count1 =>"+count1++);
+			PageModel pageModel = new PageModel();
+			//Get recent event date for community
+			Object[] event_date = eventsDAO.getRecentEventDate(page.getPageId());
+			if(event_date != null)
+			{
+				Date date = (Date)event_date[0];
+				pageModel.setStartDate(date.toString());
+				pageModel.setEndDate(date.toString());
+				pageModel.setTimeLine(Utils.getTimeLineForEvent(date,event_date[1].toString()));
+			}
+
+			pageModel.setPageId(page.getPageId());
+			pageModel.setAbout(page.getAbout());
+			pageModel.setPageUrl(page.getPageUrl());
+			pageModel.setImageUrl(page.getProfilePicture());
+			pageModel.setPageType(searchRequest.getCategory());
+			pageModel.setItemType("Community");
+			pageModel.setSource(page.getSource());
+			//List<CommunityReview> communityReviewList = eventsDAO.getCommunityReviewByPageId(page.getPageId());
+			/*int rating = 0;
+			int count = 0;
+			if(communityReviewList != null && !communityReviewList.isEmpty())
+			{
+				for(CommunityReview communityReview:communityReviewList)
+				{
+					rating = rating + communityReview.getRating();
+					count++;
+				}
+				double avg = (double)rating/count;
+				logger.debug("avg rating =>"+avg);
+				pageModel.setRating(avg);
+			}*/
+			double avgRating = eventsDAO.getCommunityReviewByPageId(page.getPageId());
+
+			logger.debug("avg rating =>"+avgRating);
+			pageModel.setRating(avgRating);
+			pageModels.add(pageModel);
+		}
+
+		CommunityListResponse communityListResponse = new CommunityListResponse();
+		communityListResponse.setTotalCount(totalCount);
+		communityListResponse.setExactMatchCommunityCount(searchRequest.getExactMatchCommunityCount() + pageList.size());
+		communityListResponse.setCommunityList(pageModels);
+		communityListResponse.setStatus(ServiceAPIStatus.OK.getStatus());
+		communityListResponse.setError("");
+		return communityListResponse;
+	}
+
+	@Transactional
+	@Override
+	public CommunityListResponse getCommunityList() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -29,6 +29,9 @@ public class TopMatchListSuggestionModel implements Serializable{
 	@JsonProperty
 	private List<SuggestionModel> topConcertSuggestions;
 	
+	@JsonProperty
+	private List<SuggestionModel> topNightLifeSuggestions;
+	
 	/**
 	 * @return the topSportsSuggestions
 	 */
@@ -99,5 +102,20 @@ public class TopMatchListSuggestionModel implements Serializable{
 	public List<SuggestionModel> getTopConcertSuggestions() {
 		return topConcertSuggestions;
 	
+	}
+
+	/**
+	 * @return the topNightLifeSuggestions
+	 */
+	public List<SuggestionModel> getTopNightLifeSuggestions() {
+		return topNightLifeSuggestions;
+	}
+
+	/**
+	 * @param topNightLifeSuggestions the topNightLifeSuggestions to set
+	 */
+	public void setTopNightLifeSuggestions(
+			List<SuggestionModel> topNightLifeSuggestions) {
+		this.topNightLifeSuggestions = topNightLifeSuggestions;
 	}
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.CriteriaSpecification;
@@ -20,8 +21,6 @@ import com.jeeyoh.model.user.UserModel;
 import com.jeeyoh.persistence.domain.Dealsusage;
 import com.jeeyoh.persistence.domain.Events;
 import com.jeeyoh.persistence.domain.Eventuserlikes;
-import com.jeeyoh.persistence.domain.Groupusermap;
-import com.jeeyoh.persistence.domain.Jeeyohgroup;
 import com.jeeyoh.persistence.domain.Notificationpermission;
 import com.jeeyoh.persistence.domain.Page;
 import com.jeeyoh.persistence.domain.Pagetype;
@@ -50,7 +49,6 @@ public class UserDAO implements IUserDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<User> getUsers() {
-		System.out.println("inside getUsers");
 		logger.debug("userList => ");
 		List<User> userList = null;
 		String hqlQuery = "from User";
@@ -153,28 +151,6 @@ public class UserDAO implements IUserDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Jeeyohgroup> getUserGroups(int userId) {
-		List<Jeeyohgroup> groupList = null;
-		String hqlQuery = "select b from User a, Jeeyohgroup b, Groupusermap c where a.userId = :userId and c.user.userId = a.userId and b.groupId = c.jeeyohgroup.groupId";
-		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(
-					hqlQuery);
-			query.setParameter("userId", userId);
-			groupList = (List<Jeeyohgroup>) query.list();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return groupList;
-	}
-
-	@Override
-	public List<Jeeyohgroup> getUserContactGroups(int contactId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
 	public Pageuserlikes getUserPageProperties(int userId, int pageId) {
 		List<Pageuserlikes> pageProperties = null;
 		String hqlQuery = "select c from User a, Page b, Pageuserlikes c where a.userId = :userId and b.pageId = :pageId and c.user.userId = a.userId and b.pageId = c.page.pageId";
@@ -220,7 +196,6 @@ public class UserDAO implements IUserDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public User getUserById(int userId) {
-		System.out.println("inside getUsers");
 		logger.debug("userList => ");
 		List<User> userList = null;
 		String hqlQuery = "from User a where a.userId = :userId";
@@ -290,7 +265,7 @@ public class UserDAO implements IUserDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Eventuserlikes> getUserEventProperties(int userId, int eventId) {
+	public Eventuserlikes getUserEventProperties(int userId, int eventId) {
 		List<Eventuserlikes> eventProperties = null;
 		String hqlQuery = "select c from User a, Events b, Eventuserlikes c where a.userId = :userId and c.event.eventId = :eventId and c.user.userId = a.userId and b.eventId = c.event.eventId";
 		try {
@@ -302,7 +277,7 @@ public class UserDAO implements IUserDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return eventProperties;
+		return eventProperties != null && !eventProperties.isEmpty() ? eventProperties.get(0) : null;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -475,7 +450,7 @@ public class UserDAO implements IUserDAO {
 	public List<Events> getUserLikesEvents(int userId, double latitud, double longitude) {
 		logger.debug("getUserLikesEvents => ");
 		List<Events> eventsList = null;
-		String hqlQuery = "select b from User a, Events b, Eventuserlikes c where a.userId = :userId and c.user.userId = a.userId and b.eventId = c.event.eventId and b.event_date >= :currentDate and (((acos(sin(((:latitude)*pi()/180)) * sin((b.latitude*pi()/180))+cos(((:latitude)*pi()/180)) * cos((b.latitude*pi()/180)) * cos((((:longitude)- b.longitude)*pi()/180))))*180/pi())*60*1.1515) <=50";
+		String hqlQuery = "select b from User a, Events b, Eventuserlikes c where a.userId = :userId and c.user.userId = a.userId and b.eventId = c.event.eventId and b.event_date_time_local >= :currentDate and (((acos(sin(((:latitude)*pi()/180)) * sin((b.latitude*pi()/180))+cos(((:latitude)*pi()/180)) * cos((b.latitude*pi()/180)) * cos((((:longitude)- b.longitude)*pi()/180))))*180/pi())*60*1.1515) <=50";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
@@ -505,7 +480,7 @@ public class UserDAO implements IUserDAO {
 		return criteria.list();*/
 
 		List<Events> eventsList = null;
-		String hqlQuery = "select b from User a, Events b, Eventuserlikes c where a.userId = :userId and c.user.userId = a.userId and b.page.pagetype.pageType = :pageType and b.eventId = c.event.eventId and b.event_date >= :currentDate and (((acos(sin(((:latitude)*pi()/180)) * sin((b.latitude*pi()/180))+cos(((:latitude)*pi()/180)) * cos((b.latitude*pi()/180)) * cos((((:longitude)- b.longitude)*pi()/180))))*180/pi())*60*1.1515) <=50";
+		String hqlQuery = "select b from User a, Events b, Eventuserlikes c where a.userId = :userId and c.user.userId = a.userId and b.page.pagetype.pageType = :pageType and b.eventId = c.event.eventId and b.event_date_time_local >= :currentDate and (((acos(sin(((:latitude)*pi()/180)) * sin((b.latitude*pi()/180))+cos(((:latitude)*pi()/180)) * cos((b.latitude*pi()/180)) * cos((((:longitude)- b.longitude)*pi()/180))))*180/pi())*60*1.1515) <=50";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
@@ -628,7 +603,7 @@ public class UserDAO implements IUserDAO {
 		logger.debug("getUserCommunityEvents => ");
 		List<Events> eventsList = null;
 		//String hqlQuery = "select a from Events a where a.page.pageId = :pageId and a.event_date >= :currentDate";
-		String hqlQuery = "select a from Events a where a.page.pageId = :pageId and a.event_date >= :currentDate and (((acos(sin(((:latitude)*pi()/180)) * sin((a.latitude*pi()/180))+cos(((:latitude)*pi()/180)) * cos((a.latitude*pi()/180)) * cos((((:longitude)- a.longitude)*pi()/180))))*180/pi())*60*1.1515) <=50 ";
+		String hqlQuery = "select a from Events a where a.page.pageId = :pageId and a.event_date_time_local >= :currentDate and (((acos(sin(((:latitude)*pi()/180)) * sin((a.latitude*pi()/180))+cos(((:latitude)*pi()/180)) * cos((a.latitude*pi()/180)) * cos((((:longitude)- a.longitude)*pi()/180))))*180/pi())*60*1.1515) <=50 ";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
@@ -683,7 +658,6 @@ public class UserDAO implements IUserDAO {
 
 	@Override
 	public void updateUser(User user) {
-		// TODO Auto-generated method stub
 		sessionFactory.getCurrentSession().update(user);
 
 	}
@@ -945,7 +919,7 @@ public class UserDAO implements IUserDAO {
 	public List<Usereventsuggestion> getUserEventsSuggestionByUserIdForCommunity(
 			int userId, String category) {
 		List<Usereventsuggestion> usereventsuggestions = null;
-		String hqlQuery = "select a from Usereventsuggestion a, Page b, Pageuserlikes c, User d, Events e where d.userId = :userId and e.channel like '%"+category+"%' and a.user.userId = d.userId and e.eventId = a.events.eventId and e.page.id = b.pageId and c.page.id = b.pageId and c.user.userId = d.userId and a.events.event_date > :currentDate";
+		String hqlQuery = "select a from Usereventsuggestion a, Page b, Pageuserlikes c, User d, Events e where d.userId = :userId and e.channel like '%"+category+"%' and a.user.userId = d.userId and e.eventId = a.events.eventId and e.page.id = b.pageId and c.page.id = b.pageId and c.user.userId = d.userId and a.events.event_date_time_local > :currentDate";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
@@ -1129,13 +1103,14 @@ public class UserDAO implements IUserDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Topdealssuggestion> isTopDealSuggestionExists(int userId,
-			int dealId) {
+			int dealId,String suggestionType) {
 		logger.debug("UserId ==> "+userId +" businessid ==> "+dealId);
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Topdealssuggestion.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
 		criteria.add(Restrictions.eq("user.userId", userId));
 		criteria.add(Restrictions.eq("deals.id", dealId));
-
+		if(suggestionType != null)
+			criteria.add(Restrictions.eq("suggestionType", suggestionType));
 		List<Topdealssuggestion> topdealsuggestions = criteria.list();
 		return topdealsuggestions;
 	}
@@ -1143,13 +1118,14 @@ public class UserDAO implements IUserDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Topeventsuggestion> isTopEventSuggestionExists(int userId,
-			int eventId) {
+			int eventId,String suggestionType) {
 		logger.debug("UserId ==> "+userId +" businessid ==> "+eventId);
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Topeventsuggestion.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
 		criteria.add(Restrictions.eq("user.userId", userId));
 		criteria.add(Restrictions.eq("events.eventId", eventId));
-
+		if(suggestionType != null)
+			criteria.add(Restrictions.eq("suggestionType", suggestionType));
 		List<Topeventsuggestion> topeventsuggestions = criteria.list();
 		return topeventsuggestions;
 	}
@@ -1157,16 +1133,18 @@ public class UserDAO implements IUserDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Topnondealsuggestion> isTopNonDealSuggestionExists(int userId,
-			int businessId) {
+			int businessId,String suggestionType) {
 		logger.debug("UserId ==> "+userId +" businessid ==> "+businessId);
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Topnondealsuggestion.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
 		criteria.add(Restrictions.eq("user.userId", userId));
 		criteria.add(Restrictions.eq("business.id", businessId));
-
+		if(suggestionType != null)
+			criteria.add(Restrictions.eq("suggestionType", suggestionType));
 		List<Topnondealsuggestion> topnondealsuggestions = criteria.list();
 		return topnondealsuggestions;
 	}
+	
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -1237,7 +1215,7 @@ public class UserDAO implements IUserDAO {
 	public List<Usereventsuggestion> getUserEventsSuggestionByUserIdForFriendsCommunity(
 			int userId, int contactId, String category) {
 		List<Usereventsuggestion> usereventsuggestions = null;
-		String hqlQuery = "select a from Usereventsuggestion a, Page b, Pageuserlikes c, User d, Events e where d.userId = :userId  and e.channel like '%"+category+"%' and a.user.userId = d.userId and (a.suggestionType like '%Friend%' or a.suggestionType like '%Group%') and e.eventId = a.events.eventId and e.page.id = b.pageId and c.page.id = b.pageId and c.user.userId = :contactId and a.events.event_date > :currentDate";
+		String hqlQuery = "select a from Usereventsuggestion a, Page b, Pageuserlikes c, User d, Events e where d.userId = :userId  and e.channel like '%"+category+"%' and a.user.userId = d.userId and (a.suggestionType like '%Friend%' or a.suggestionType like '%Group%') and e.eventId = a.events.eventId and e.page.id = b.pageId and c.page.id = b.pageId and c.user.userId = :contactId and a.events.event_date_time_local > :currentDate";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
@@ -1399,7 +1377,38 @@ public class UserDAO implements IUserDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
+	public List<Object[]> getTopCommunitySuggestions(int userId) {
+		logger.debug("getTopCommunitySuggestions ==> "+userId);
+		List<Object[]> rows = null;
+		
+		String hqlQuery = "select avg(d.rating) as rating, c from Topcommunitysuggestion c left join c.page b left Join b.communityReviewMap a left join a.communityReview d where c.user.userId = :userId group by b.pageId order by suggestionId asc";
+		//String hqlQuery = "select avg(d.rating) as rating, c.* from topcommunitysuggestion c left join page b on c.pageId = b.pageId left Join communityReviewMap a on b.pageId = a.pageId left join communityReview d on d.reviewId=a.reviewId where c.userId = :userId group by b.pageId order by suggestionId asc";
+		//String hqlQuery = "select avg(d.rating) as rating, b.pageId from Page b left Join b.communityReviewMap a left join a.communityReview d group by b.pageId";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(hqlQuery);
+			//query.addEntity(Topcommunitysuggestion.class);
+			query.setParameter("userId", userId);
+			rows = (List<Object[]>) query.list();
+			logger.debug("rows:  "+rows.size());
+		} catch (Exception e) {
+			logger.debug("Error: "+e.getMessage());
+			e.printStackTrace();
+		}
+		/*logger.debug("getTopCommunitySuggestions ==> "+userEmail);
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Topcommunitysuggestion.class,"topcommunitysuggestion");
+		criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+		criteria.createAlias("topcommunitysuggestion.user", "user");
+		criteria.add(Restrictions.eq("user.emailId", userEmail));
+
+		List<Topcommunitysuggestion> pageList = criteria.list();*/
+		return rows;
+
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
 	public List<Topcommunitysuggestion> getTopCommunitySuggestions(String userEmail) {
+		
 		logger.debug("getTopCommunitySuggestions ==> "+userEmail);
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Topcommunitysuggestion.class,"topcommunitysuggestion");
 		criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
@@ -1418,7 +1427,7 @@ public class UserDAO implements IUserDAO {
 
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Topdealssuggestion.class,"topdealssuggestion");
 		criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-		criteria.add(Restrictions.eq("topdealssuggestion.suggestionType", suggestionType));
+		criteria.add(Restrictions.like("topdealssuggestion.suggestionType", "%" + suggestionType + "%"));
 		criteria.createAlias("topdealssuggestion.user", "user");
 		criteria.add(Restrictions.eq("user.emailId", userEmail));
 		criteria.createAlias("topdealssuggestion.deals", "deals");
@@ -1434,11 +1443,11 @@ public class UserDAO implements IUserDAO {
 		logger.debug("getTopEventSuggestions ==> "+userEmail);
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Topeventsuggestion.class,"topeventsuggestion");
 		criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-		criteria.add(Restrictions.eq("topeventsuggestion.suggestionType", suggestionType));
+		criteria.add(Restrictions.like("topeventsuggestion.suggestionType", "%" + suggestionType + "%"));
 		criteria.createAlias("topeventsuggestion.user", "user");
 		criteria.add(Restrictions.eq("user.emailId", userEmail));
 		criteria.createAlias("topeventsuggestion.events", "events");
-		criteria.add(Restrictions.ge("events.event_date", Utils.getCurrentDate()));
+		criteria.add(Restrictions.ge("events.event_date_time_local", Utils.getCurrentDate()));
 		List<Topeventsuggestion> eventsList = criteria.list();
 		return eventsList;
 	}
@@ -1450,7 +1459,7 @@ public class UserDAO implements IUserDAO {
 
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Topnondealsuggestion.class,"topnondealsuggestion");
 		criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-		criteria.add(Restrictions.eq("topnondealsuggestion.suggestionType", suggestionType));
+		criteria.add(Restrictions.like("topnondealsuggestion.suggestionType", "%" + suggestionType + "%"));
 		criteria.createAlias("topnondealsuggestion.user", "user");
 		criteria.add(Restrictions.eq("user.emailId", userEmail));
 
@@ -1669,7 +1678,7 @@ public class UserDAO implements IUserDAO {
 	public int getTotalUserEventSuggestions(Integer userId) {
 		logger.debug("getTotalUserEventSuggestions => ");
 		int rowCount = 0;
-		String hqlQuery = "select count(a.userEventMapId) from Usereventsuggestion a where a.user.userId = :userId and a.events.event_date >= :currentDate and a.suggestedTime = :currentWeekend";
+		String hqlQuery = "select count(a.userEventMapId) from Usereventsuggestion a where a.user.userId = :userId and a.events.event_date_time_local >= :currentDate and a.suggestedTime = :currentWeekend";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
@@ -1686,38 +1695,7 @@ public class UserDAO implements IUserDAO {
 		return rowCount;
 	}
 
-	@Override
-	public void saveJeeyohGroup(Jeeyohgroup jeeyohGroup) {
-		logger.debug("saveJeeyohGroup => ");
-		Session session =  sessionFactory.getCurrentSession();
-		try
-		{
-			session.save(jeeyohGroup);
-		}
-		catch(HibernateException e)
-		{
-			e.printStackTrace();
-			logger.error("ERROR IN DAO :: = > "+e);
-		}
-
-	}
-
-	@Override
-	public void saveGroupUserMap(Groupusermap groupUserMap) {
-		logger.debug("saveGroupUserMap => ");
-		Session session =  sessionFactory.getCurrentSession();
-		try
-		{
-			session.save(groupUserMap);
-		}
-		catch(HibernateException e)
-		{
-			e.printStackTrace();
-			logger.error("ERROR IN DAO :: = > "+e);
-		}
-
-	}
-
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Page> getUserCommunitiesByPageType(int userId, String pageType) {
@@ -1763,7 +1741,6 @@ public class UserDAO implements IUserDAO {
 			double longitude) {
 		logger.debug("getUseDealUsage::::");
 		List<Dealsusage> dealUsageList = null;
-		//String hqlQuery = "select a from Events a where a.page.pageId = :pageId and a.event_date >= :currentDate";
 		String hqlQuery = "select a from Dealsusage a, Deals b, Business c where a.user.userId = :userId and b.endAt >= :currentDate and a.deals.id = b.id and b.business.id = c.id and (((acos(sin(((:latitude)*pi()/180)) * sin((c.lattitude*pi()/180))+cos(((:latitude)*pi()/180)) * cos((c.lattitude*pi()/180)) * cos((((:longitude)- c.longitude)*pi()/180))))*180/pi())*60*1.1515) <=50";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
@@ -1805,9 +1782,9 @@ public class UserDAO implements IUserDAO {
 	}
 
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Dealsusage getUserLikeDeal(Integer userId,Integer itemId) {
-		// TODO Auto-generated method stub
 		logger.debug("funboard :: "+itemId+"userId :::"+userId);
 		List<Dealsusage>  deals = null;
 		String hqlQuery = "from Dealsusage where user.userId=:userId and deals.id=:itemId";
@@ -1828,7 +1805,6 @@ public class UserDAO implements IUserDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Eventuserlikes getUserLikeEvent(Integer userId,Integer itemId) {
-		// TODO Auto-generated method stub
 		List<Eventuserlikes>  events = null;
 		String hqlQuery = "from Eventuserlikes a where a.user.userId =:userId and event.eventId=:itemId";
 
@@ -2026,22 +2002,6 @@ public class UserDAO implements IUserDAO {
 		return contactList;
 	}
 
-	@Override
-	public Jeeyohgroup getGroupByGroupId(Integer groupId) {
-		List<Jeeyohgroup> Jeeyohgroups = null;
-		String hqlQuery = "from Jeeyohgroup a where a.groupId =:groupId";
-		try {
-			Query query = sessionFactory.getCurrentSession().createQuery(
-					hqlQuery);	
-			query.setParameter("groupId", groupId);
-			Jeeyohgroups = (List<Jeeyohgroup>) query.list();
-			logger.debug("userList => " + Jeeyohgroups);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return Jeeyohgroups.get(0);
-	}
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public Usereventsuggestion isEventSuggestionExistsForDirectSuggestion(int userId,
@@ -2139,6 +2099,24 @@ public class UserDAO implements IUserDAO {
 		{
 			logger.error(e.toString());
 		}
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Dealsusage getUserDealProperties(int userId, int dealId) {
+		List<Dealsusage> dealProperties = null;
+		String hqlQuery = "select b from Dealsusage b where b.user.userId = :userId and b.deals.id = :dealId";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("userId", userId);
+			query.setParameter("dealId", dealId);
+			dealProperties = (List<Dealsusage>) query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return dealProperties != null && !dealProperties.isEmpty() ? dealProperties.get(0) : null;
 	}
 	
 }

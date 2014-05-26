@@ -76,14 +76,14 @@ public class FunBoardDAO implements IFunBoardDAO{
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Funboard> getUserFunBoardItems(int userId) {
+		logger.debug("getUserFunBoardItems:  ");
 		List<Funboard>  funBoardList = null;
-	    String hqlQuery = "from Funboard where user.userId =:userId order by createdTime asc";
+	    String hqlQuery = "from Funboard where user.userId =:userId order by createdTime desc";
 	    
 	    try{
 	    	Query query = sessionFactory.getCurrentSession().createQuery(hqlQuery);
 	    	query.setParameter("userId",userId);
 	    	funBoardList = query.list();
-	    	logger.debug("funBoardList:  "+funBoardList);
 	    }
 	    catch(HibernateException e)
 	    {

@@ -54,6 +54,18 @@ public class FunBoardModel implements Serializable{
 	private String source;
 	@JsonProperty
 	private String scheduledDate;
+	@JsonProperty
+    private String price;
+	@JsonProperty
+    private String merhcantName;
+	@JsonProperty
+    private String address;
+	@JsonProperty
+	private int discount;
+	@JsonProperty
+	private double latitude;
+	@JsonProperty
+	private double longitude;
 	
 	/**
 	 * @return the funBoardId
@@ -270,6 +282,78 @@ public class FunBoardModel implements Serializable{
 	 */
 	public void setScheduledDate(String scheduledDate) {
 		this.scheduledDate = scheduledDate;
+	}
+	/**
+	 * @return the price
+	 */
+	public String getPrice() {
+		return price;
+	}
+	/**
+	 * @return the merhcantName
+	 */
+	public String getMerhcantName() {
+		return merhcantName;
+	}
+	/**
+	 * @return the address
+	 */
+	public String getAddress() {
+		return address;
+	}
+	/**
+	 * @return the discount
+	 */
+	public int getDiscount() {
+		return discount;
+	}
+	/**
+	 * @param price the price to set
+	 */
+	public void setPrice(String price) {
+		this.price = price;
+	}
+	/**
+	 * @param merhcantName the merhcantName to set
+	 */
+	public void setMerhcantName(String merhcantName) {
+		this.merhcantName = merhcantName;
+	}
+	/**
+	 * @param address the address to set
+	 */
+	public void setAddress(String address) {
+		this.address = address;
+	}
+	/**
+	 * @param discount the discount to set
+	 */
+	public void setDiscount(int discount) {
+		this.discount = discount;
+	}
+	/**
+	 * @return the latitude
+	 */
+	public double getLatitude() {
+		return latitude;
+	}
+	/**
+	 * @return the longitude
+	 */
+	public double getLongitude() {
+		return longitude;
+	}
+	/**
+	 * @param latitude the latitude to set
+	 */
+	public void setLatitude(double latitude) {
+		this.latitude = latitude;
+	}
+	/**
+	 * @param longitude the longitude to set
+	 */
+	public void setLongitude(double longitude) {
+		this.longitude = longitude;
 	}
 
 }

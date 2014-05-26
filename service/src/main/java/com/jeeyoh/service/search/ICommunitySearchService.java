@@ -5,10 +5,12 @@ import java.util.List;
 import com.jeeyoh.model.funboard.CommentModel;
 import com.jeeyoh.model.response.BaseResponse;
 import com.jeeyoh.model.response.CommentResponse;
+import com.jeeyoh.model.response.CommunityListResponse;
 import com.jeeyoh.model.response.CommunityPaginationResponse;
 import com.jeeyoh.model.response.CommunityResponse;
 import com.jeeyoh.model.search.CommunityReviewModel;
 import com.jeeyoh.model.search.PageModel;
+import com.jeeyoh.model.search.SearchRequest;
 
 public interface ICommunitySearchService {
 	
@@ -20,4 +22,6 @@ public interface ICommunitySearchService {
 	public BaseResponse saveIsFollowingEvent(int userId, int eventId, boolean isFollow);
 	public BaseResponse saveFavoritePage(int userId, int eventId, boolean isFav);
 	public BaseResponse saveCommunityReview(CommunityReviewModel communityReviewModel);
+	public CommunityListResponse serachCommunity(SearchRequest searchRequest);
+	public CommunityListResponse getCommunityList();
 }

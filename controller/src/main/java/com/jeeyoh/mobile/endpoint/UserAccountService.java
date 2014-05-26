@@ -24,7 +24,6 @@ import com.jeeyoh.model.funboard.MediaContenModel;
 import com.jeeyoh.model.funboard.SaveShareWallRequest;
 import com.jeeyoh.model.funboard.WallFeedRequest;
 import com.jeeyoh.model.response.AddGroupButtonResponse;
-import com.jeeyoh.model.response.AddGroupResponse;
 import com.jeeyoh.model.response.BaseResponse;
 import com.jeeyoh.model.response.CategoryLikesResponse;
 import com.jeeyoh.model.response.CategoryResponse;
@@ -32,6 +31,8 @@ import com.jeeyoh.model.response.CommentResponse;
 import com.jeeyoh.model.response.FriendListResponse;
 import com.jeeyoh.model.response.FunBoardDetailResponse;
 import com.jeeyoh.model.response.FunBoardResponse;
+import com.jeeyoh.model.response.GroupDetailResponse;
+import com.jeeyoh.model.response.GroupListResponse;
 import com.jeeyoh.model.response.LoginResponse;
 import com.jeeyoh.model.response.SuggestionResponse;
 import com.jeeyoh.model.response.TopSuggestionResponse;
@@ -158,7 +159,6 @@ public class UserAccountService {
 	{
 		BaseResponse  baseResponce = userService.logoutUser(user);
 		return baseResponce;
-
 	}
 
 	/*
@@ -209,15 +209,16 @@ public class UserAccountService {
 
 	@GET
 	@Path("/addFavourites")
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public CategoryResponse addFavourites(@QueryParam("category") String category,@QueryParam("userId") String userId)
+	public CategoryResponse addFavourites(@QueryParam("category") String category,@QueryParam("userId") int userId)
 	{
 		logger.debug("Category Respose category ::: "+category);
 		logger.debug("Category Respose userId   ::: "+userId);
 		CategoryResponse categoryResponse = null;
-		if(category != null && userId != null )
+		if(category != null && userId != 0 )
 		{
-			categoryResponse = userService.addFavourite(category, Integer.parseInt(userId));
+			categoryResponse = userService.addFavourite(category, userId);
 		}
 		else
 		{
@@ -233,6 +234,7 @@ public class UserAccountService {
 	@POST
 	@Path("/saveFavourite")
 	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 	public BaseResponse saveFavourite(PageModel page)
 	{
 		BaseResponse baseResponse = new BaseResponse();
@@ -245,7 +247,7 @@ public class UserAccountService {
 		else
 		{
 			baseResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
-			baseResponse.setError("Already added ten favourite in this category");
+			baseResponse.setError("Already added 10 favourite in this category");
 		}
 		return baseResponse;
 
@@ -312,6 +314,7 @@ public class UserAccountService {
 	public TopSuggestionResponse getUserTopSuggestions(UserModel user)
 	{
 		TopSuggestionResponse response = userService.getUserTopSuggestions(user);
+		logger.debug("response: "+response.getStatus());
 		return response;
 	}
 
@@ -420,28 +423,54 @@ public class UserAccountService {
 		return response;
 	}
 
-	// For Testing purpose
+	
 	@POST
-	@Path("/upload")
+	@Path("/uploadProfileImage")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	public Response uploadFile(@FormDataParam("file") InputStream uploadedInputStream,
-			@FormDataParam("file") FormDataContentDisposition fileDetail)
+	public UploadMediaServerResponse uploadProfileImage(@FormDataParam("photoPath") InputStream photoInputStream,
+			@FormDataParam("photoPath") FormDataContentDisposition photoFileDetail,
+			@FormDataParam("userId") int userId)
 	{
-		// logger.debug("userId = " + userId);
-		// String randomNumber = Util.getRandomCode();
-		// String uploadedFileLocation = "d://uploaded/" +
-		// fileDetail.getFileName();
-		String fileName = fileDetail.getFileName();
-		logger.debug("uploadedMediaServerPATH = " + fileName);
+		MediaContenModel mediaContenModel = new MediaContenModel();
+		mediaContenModel.setUserId(userId);
+		
 		UploadMediaServerResponse uploadMediaServerResponse = new UploadMediaServerResponse();
+		boolean isMediaProcessedAndUploaded = true;
+		String mediaProcessingError = "";
 
-		// File mediaFileObject = new File(uploadedMediaServerPATH + "34_" +
-		// randomNumber + "_" + fileDetail.getFileName());
-		// save it
-		uploadMediaServerResponse = mediaService.uploadOnServer(uploadedInputStream, fileName, "34");
-		String output = "File uploaded to : " + uploadMediaServerResponse.getMediaUrl();
+		if (photoInputStream != null && photoFileDetail != null)
+		{
+			uploadMediaServerResponse = mediaService.uploadOnServer(photoInputStream,
+					photoFileDetail.getFileName(), userId+"");
+			if (uploadMediaServerResponse != null
+					&& !uploadMediaServerResponse.getMediaUrl().equalsIgnoreCase("ERROR"))
+			{
+				mediaContenModel.setImageUrl(uploadMediaServerResponse.getMediaUrl());
+				logger.debug("ContentService --> uploadImage --> fearture Image url ::"
+						+ uploadMediaServerResponse.getMediaUrl());
+			}
+			else
+			{
+				isMediaProcessedAndUploaded = false;
+				mediaProcessingError = uploadMediaServerResponse.getMediaUrl();
+				logger.debug("ContentService --> uploadImage -->  mediaProcessingError ::"
+						+ mediaProcessingError);
+			}
+		}
 
-		return Response.status(200).entity(output).build();
+		if (isMediaProcessedAndUploaded)
+		{
+			UploadMediaServerResponse response = userService.uploadProfileImage(mediaContenModel);
+			uploadMediaServerResponse.setMediaUrl(response.getMediaUrl());
+		}
+		else
+		{
+			uploadMediaServerResponse.setError("Task Failed");
+			uploadMediaServerResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
+		}
+
+		logger.debug("Response: "+uploadMediaServerResponse.getMediaUrl());
+		return uploadMediaServerResponse;
 
 	}
 
@@ -449,11 +478,11 @@ public class UserAccountService {
 	@Path("/addGroup")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public AddGroupResponse addGroup(AddGroupModel addGroupModel)
+	public BaseResponse addGroup(AddGroupModel addGroupModel)
 	{
 		logger.debug("Enter in categoey mobile api :: "+addGroupModel.getGroupName());
-		AddGroupResponse addGroupResponse = addGroupService.addGroup(addGroupModel);
-		return addGroupResponse;
+		BaseResponse baseResponse = addGroupService.addGroup(addGroupModel);
+		return baseResponse;
 
 	}
 
@@ -472,10 +501,10 @@ public class UserAccountService {
 	@Path("/addEventSuggestion")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public BaseResponse addEventSuggestion(DirectSuggestionModel eventSuggestionModel)
+	public BaseResponse addEventSuggestion(DirectSuggestionModel directSuggestionModel)
 	{
-		logger.debug("addEventSuggestion => userid => "+eventSuggestionModel.getUserId()+" ;friend list => "+eventSuggestionModel.getFriendsIdList()+" ;category => "+eventSuggestionModel.getCategory()+" ;suggestion id => "+eventSuggestionModel.getSuggestionId()+" ;suggestion type =>"+eventSuggestionModel.getSuggestionType());
-		BaseResponse response = addDirectSuggestionService.addSuggestions(eventSuggestionModel.getUserId(), eventSuggestionModel.getFriendsIdList(), eventSuggestionModel.getSuggestionId(), eventSuggestionModel.getCategory(), eventSuggestionModel.getSuggestionType(), eventSuggestionModel.getSuggestedTime());
+		//logger.debug("addEventSuggestion => userid => "+eventSuggestionModel.getUserId()+" ;friend list => "+eventSuggestionModel.getFriendsIdList()+" ;category => "+eventSuggestionModel.getCategory()+" ;suggestion id => "+eventSuggestionModel.getSuggestionId()+" ;suggestion type =>"+eventSuggestionModel.getSuggestionType());
+		BaseResponse response = addDirectSuggestionService.addSuggestions(directSuggestionModel.getUserId(), directSuggestionModel.getFriendsIdList(), directSuggestionModel.getGroups(), directSuggestionModel.getSuggestionId(), directSuggestionModel.getCategory(), directSuggestionModel.getSuggestionType(), directSuggestionModel.getSuggestedTime());
 		return response;
 	}
 
@@ -483,7 +512,7 @@ public class UserAccountService {
 	@Path("/updateProfile")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	public UserResponse editProfile(@FormDataParam("photoPath") InputStream photoInputStream,
+	public UserResponse updateProfile(@FormDataParam("photoPath") InputStream photoInputStream,
 			@FormDataParam("photoPath") FormDataContentDisposition photoFileDetail,
 			@FormDataParam("userId") String userId, @FormDataParam("mediaType") String mediaType,
 			@FormDataParam("firstName") String firstName,@FormDataParam("lastName") String lastName,@FormDataParam("dateOfBirth") Date dateOfBirth,@FormDataParam("address") String address)
@@ -533,6 +562,18 @@ public class UserAccountService {
 			userResponse.setError("Task Failed");
 			userResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
 		}
+		return userResponse;
+	}
+
+	
+	@POST
+	@Path("/editProfile")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public UserResponse editProfile(UserModel user)
+	{
+		UserResponse userResponse = new UserResponse();
+		userResponse = userService.editUserProfile(user);
 		return userResponse;
 	}
 
@@ -592,7 +633,6 @@ public class UserAccountService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public UserResponse getPrivacySetting(@QueryParam("userId") int userId)
 	{
-		logger.debug("getPrivacySetting => userid => "+userId);
 		UserResponse response = userService.getPrivacySetting(userId);
 		return response;
 	}
@@ -602,9 +642,7 @@ public class UserAccountService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public UserFriendsGroupResponse shareWith(@QueryParam("userId") int userId)
 	{
-		logger.debug("Category Respose ::: "+userId);
 		UserFriendsGroupResponse userFriendsGroupResponse = userService.getUserFriendsAndGroup(userId);
-		logger.debug("Responce ::::: "+userFriendsGroupResponse.getStatus());
 		return userFriendsGroupResponse;
 
 	}
@@ -673,6 +711,43 @@ public class UserAccountService {
 	{
 		BaseResponse response = funBoardService.updateTimeLine(funBoardModel);
 		return response;
+	}
+	
+	
+	@GET
+	@Path("/getGroupDetail")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public GroupDetailResponse getGroupDetail(@QueryParam("groupId") int groupId)
+	{
+		GroupDetailResponse response = addGroupService.getGroupDetails(groupId);
+		return response;
+	}
+	
+	
+	@POST
+	@Path("/getGroupList")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public GroupListResponse getGroupList(UserModel user)
+	{
+		GroupListResponse response = new GroupListResponse();
+		if(user.getUserId() != null && user.getUserId() !=0)
+		{
+			response = addGroupService.getGroupList(user.getUserId());
+		}
+		return response;
+	}
+	
+	@POST
+	@Path("/editGroup")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public BaseResponse editGroup(AddGroupModel addGroupModel)
+	{
+		logger.debug("Enter in editGroup :: "+addGroupModel.getGroupName());
+		BaseResponse baseResponse = addGroupService.editGroup(addGroupModel);
+		return baseResponse;
 	}
 
 }

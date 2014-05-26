@@ -1,8 +1,5 @@
 package com.jeeyoh.service.groupon;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -20,6 +17,7 @@ import com.jeeyoh.persistence.dao.groupon.IGDealsDAO;
 import com.jeeyoh.persistence.domain.Business;
 import com.jeeyoh.persistence.domain.Businesstype;
 import com.jeeyoh.persistence.domain.Dealoption;
+import com.jeeyoh.persistence.domain.Dealredemptionlocation;
 import com.jeeyoh.persistence.domain.Deals;
 import com.jeeyoh.persistence.domain.Gcategory;
 import com.jeeyoh.persistence.domain.Gdeal;
@@ -28,8 +26,9 @@ import com.jeeyoh.persistence.domain.Gdealprice;
 import com.jeeyoh.persistence.domain.Gdivision;
 import com.jeeyoh.persistence.domain.Gmerchant;
 import com.jeeyoh.persistence.domain.Gmerchantrating;
+import com.jeeyoh.persistence.domain.Goptiondetail;
+import com.jeeyoh.persistence.domain.Gredemptionlocation;
 import com.jeeyoh.persistence.domain.Gtags;
-import com.jeeyoh.utils.Utils;
 
 @Component("grouponFilterEngine")
 public class GrouponFilterEngineService implements IGrouponFilterEngineService {
@@ -49,7 +48,208 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 	@Override
 	@Transactional
 	public void filter() {
-		List<Gdealoption> rows = gDealsDAO.getDeals();
+
+		List<Gdeal> rows = gDealsDAO.getGDeals();
+		List<Gdealoption> gdealOptions = null;
+
+		if(rows != null)
+		{
+			int batch_size = 0;
+			//List<Date>weekendList =  Utils.findWeekends();
+			//logger.debug("loadDeals => weekendList size " + weekendList.size());
+			for(Gdeal gdeal : rows)
+			{
+				//for(int j = 0; j < weekendList.size(); j++){
+				try {
+					//logger.debug("Date::  "+ ldeal.getEndAt() +"  :  "+ sdf.parse(sdf.format((Date)weekendList.get(j))));
+					//if(ldeal.getEndAt().before(weekendList.get(j))){
+					Deals deal = dealsDAO.isDealExists(gdeal.getDealId().toString());
+					if(deal == null)
+					{
+						logger.debug("ldeal id ===>"+ gdeal.getId());
+						Deals deals =new Deals();
+						deals.setDealId(gdeal.getDealId());
+						deals.setDealUrl(gdeal.getDealUrl());
+						deals.setEndAt(gdeal.getEndAt());
+						deals.setStartAt(gdeal.getStartAt());
+						deals.setIsTipped(gdeal.getIsTipped());
+						deals.setIsSoldOut(gdeal.getIsSoldOut());
+						deals.setIsNowDeal(gdeal.getIsNowDeal());
+						deals.setDealType(gdeal.getDealType());
+						deals.setLargeImageUrl(gdeal.getLargeImageUrl());
+						deals.setSmallImageUrl(gdeal.getSmallImageUrl());
+						deals.setHighlightsHtml(gdeal.getHighlightsHtml());
+						deals.setSoldQuantity(gdeal.getSoldQuantity());
+						deals.setAnnouncementTitle(gdeal.getAnnouncementTitle());
+						deals.setTippedAt(gdeal.getTippedAt());
+						deals.setTippingPoint(gdeal.getTippingPoint());
+						deals.setShippingAddressRequired(gdeal.getShippingAddressRequired());
+						deals.setPitchHtml(gdeal.getPitchHtml());
+						deals.setHighlightsHtml(gdeal.getHighlightsHtml());
+						deals.setPlacementPriority(gdeal.getPlacementPriority());
+						deals.setTitle(gdeal.getTitle());
+						deals.setStatus(gdeal.getStatus());
+						deals.setSidebarImageUrl(gdeal.getSidebarImageUrl());
+						deals.setDealSource("Groupon");
+
+						Gmerchant gmerchant = gdeal.getGmerchant();
+						Gmerchantrating gmerchantrating = gmerchant.getGmerchantByRatingId();
+						List<Business> businessList = businessDAO.getBusinessByIdForGroupon(gmerchant.getMerchantId());
+						logger.debug("loadDeals => businessList " + businessList);
+						if(businessList != null)
+						{
+							if(businessList.isEmpty())
+							{
+								Set<Gtags> tags = gdeal.getGtagses();
+								Businesstype businesstype = null;
+
+								for(Gtags gtag :tags)
+								{
+									String name = gtag.getName();
+									logger.debug("Check Tag Name ::: "+name);
+
+									Gcategory gcategory = businessDAO.getBusinessCategory(name);
+									if(gcategory != null)
+									{
+										String category = gcategory.getGcategory().getCategory();
+										logger.debug("category ::: "+category);
+										if(category.equalsIgnoreCase("Arts and Entertainment"))
+										{
+											businesstype = businessDAO.getBusinesstypeByType("SPORT");
+											break;
+										}
+										else if(category.equalsIgnoreCase("Restaurants"))
+										{
+											businesstype = businessDAO.getBusinesstypeByType("RESTAURANT");
+											break;
+										}
+										else if(category.equalsIgnoreCase("Beauty & Spas"))
+										{
+											businesstype = businessDAO.getBusinesstypeByType("SPA");
+											break;
+										}
+										else if(category.equalsIgnoreCase("Nightlife") || category.equalsIgnoreCase("Bars") || category.equalsIgnoreCase("Clubs") || category.equalsIgnoreCase("Lounges"))
+										{
+											businesstype = businessDAO.getBusinesstypeByType("NIGHTLIFE");
+											break;
+										}
+										else if(category.equalsIgnoreCase("Health & Fitness"))
+										{
+											businesstype = businessDAO.getBusinesstypeByType("YOGA");
+											break;
+										}
+									}
+								}
+
+								Gdivision gdivision = gdeal.getGdivision();
+
+								Business business = new Business();
+								business.setName(gmerchant.getName());
+								business.setBusinessId(gmerchant.getMerchantId());
+								business.setWebsiteUrl(gmerchant.getWebsiteUrl());
+								business.setLattitude(gdivision.getLattitude());
+								business.setLongitude(gdivision.getLongitude());
+								business.setPostalCode(gdivision.getZipCode());
+								business.setCity(gdivision.getCity());
+								business.setDisplayAddress(gdivision.getAddress());
+								business.setAddress(gdivision.getAddress());
+								business.setStateCode(gdivision.getStateCode());
+								business.setState(gdivision.getState());
+								business.setBusinesstype(businesstype);
+								business.setRating(gmerchantrating.getRating());
+								business.setRatingImgUrl(gmerchantrating.getUrl());
+								business.setSource("Groupon");
+
+								//businessDAO.saveBusiness(business);
+								//businessList = businessDAO.getBusinessByIdForGroupon(business.getBusinessId());
+								deals.setBusiness(business);
+							}
+							else
+							{
+								deals.setBusiness(businessList.get(0));
+							}
+						}
+
+						gdealOptions = gDealsDAO.getDealOptions(gdeal.getId());
+
+						logger.debug("gdealOptions::  "+gdealOptions);
+						if(gdealOptions!=null && !gdealOptions.isEmpty())
+						{
+							logger.debug("gdealOptions.size()::  "+gdealOptions.size());
+							Set<Dealoption> dealOptions = new HashSet<Dealoption>();
+							Dealoption dealOption = null;
+							for(Gdealoption option : gdealOptions)
+							{
+								dealOption = new Dealoption();
+								dealOption.setTitle(option.getTitle());
+								dealOption.setSoldQuantity(option.getSoldQuantity());
+								dealOption.setOptionId(option.getOptionId());										
+								dealOption.setDiscountPercent(option.getDiscountPercent());
+								dealOption.setInitialQuantity(option.getInitialQuantity());
+								dealOption.setRemainingQuantity(option.getRemainingQuantity());
+								dealOption.setMaximumPurchaseQuantity(option.getMaximumPurchaseQuantity());
+								dealOption.setMinimumPurchaseQuantity(option.getMinimumPurchaseQuantity());
+								dealOption.setExternalUrl(option.getExternalUrl());
+								dealOption.setBuyUrl(option.getBuyUrl());
+								dealOption.setExpiresAt(new DateTime(option.getExpiresAt()).toDate());
+
+								Gdealprice gdealprice = option.getGdealpriceByPriceId();
+								dealOption.setPrice(Long.parseLong(Integer.toString(gdealprice.getAmount())));
+								dealOption.setFormattedPrice(gdealprice.getFormattedAmount());
+
+								gdealprice = option.getGdealpriceByDiscountId();
+								dealOption.setDiscountPrice(Long.parseLong(Integer.toString(gdealprice.getAmount())));
+								dealOption.setFormattedDiscountPrice(gdealprice.getFormattedAmount());
+
+								gdealprice = option.getGdealpriceByValueId();
+								dealOption.setOriginalPrice(Long.parseLong(Integer.toString(gdealprice.getAmount())));
+								dealOption.setFormattedOriginalPrice(gdealprice.getFormattedAmount());
+
+								Goptiondetail goptiondetail = gDealsDAO.getOptionDeatils(option.getId());
+								dealOption.setDescription(goptiondetail.getDescription());
+								
+								Set<Gredemptionlocation> redemptionLocations = option.getGredemptionlocations();
+								logger.debug("redemptionLocations:::  "+redemptionLocations);
+								if(redemptionLocations != null) {
+									Set<Dealredemptionlocation> dealRedemptionLocations = new HashSet<Dealredemptionlocation>();
+									for(Gredemptionlocation redemptionLocation : redemptionLocations) {
+										Dealredemptionlocation dealRedemptionLocation = new Dealredemptionlocation();
+										dealRedemptionLocation.setStreetAddress1(redemptionLocation.getStreetAddress1());
+										dealRedemptionLocation.setStreetAddress2(redemptionLocation.getStreetAddress2());
+										dealRedemptionLocation.setCity(redemptionLocation.getCity());
+										dealRedemptionLocation.setState(redemptionLocation.getState());
+										dealRedemptionLocation.setPostalCode(redemptionLocation.getPostalCode());
+										dealRedemptionLocation.setName(redemptionLocation.getName());
+										dealRedemptionLocation.setLattitude(redemptionLocation.getLattitude());
+										dealRedemptionLocation.setLongitude(redemptionLocation.getLongitude());
+										dealRedemptionLocation.setPhoneNumber(redemptionLocation.getPhoneNumber());
+										dealRedemptionLocation.setDealoption(dealOption);												
+										dealRedemptionLocations.add(dealRedemptionLocation);
+									}											
+									dealOption.setDealredemptionlocations(dealRedemptionLocations);
+								}
+								dealOption.setDeals(deals);
+								dealOptions.add(dealOption);
+							}
+							deals.setDealoptions(dealOptions);
+
+							batch_size++;
+							logger.debug("loadDeals => count " + batch_size);
+							dealsDAO.saveDeal(deals,batch_size);
+						}
+
+						//}
+						//break;
+					}
+
+				}
+				catch(Exception e){
+					e.printStackTrace();
+				}
+			}
+		}
+
+		/*List<Gdealoption> rows = gDealsDAO.getDeals();
 		logger.debug("loadDeals => row size " + rows.size());
 
 		//Get current date
@@ -64,13 +264,13 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 		{
 			int batch_size = 0;
 			for(int i = 0; i < rows.size();i++){
-				
+
 				Gdealoption row = (Gdealoption) rows.get(i);
-				/*gdeal = row.getGdeal();
+				gdeal = row.getGdeal();
 				gdealoption.clear();
-				gdealoption.add(row);*/
-				
-				/*for(int j = i+1; j < rows.size(); j++)
+				gdealoption.add(row);
+
+				for(int j = i+1; j < rows.size(); j++)
 				{
 					if(row.getGdeal().getId() == rows.get(j).getGdeal().getId())
 					{
@@ -79,8 +279,8 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 						j--;
 					}
 				}
-				*/
-				
+
+
 				Integer gdealId = row.getGdeal().getId();
 				if (i == 0) {
 
@@ -257,6 +457,6 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 					} 
 				}		
 			}
-		}
+		}*/
 	}
 }

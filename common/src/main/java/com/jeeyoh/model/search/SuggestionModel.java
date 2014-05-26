@@ -30,9 +30,9 @@ public class SuggestionModel implements Serializable{
 	@JsonProperty
 	private String reviewCount;
 	@JsonProperty
-	private Long distance;
+	private double distance;
 	@JsonProperty
-	private Long rating;
+	private double rating;
 	@JsonProperty
 	private String ratingImgUrl;
 	@JsonProperty
@@ -87,7 +87,71 @@ public class SuggestionModel implements Serializable{
     private int likeCount;
 	@JsonProperty
     private UserModel suggestingUser;
+	@JsonProperty
+	private boolean isFavorite;
+	@JsonProperty
+    private String suggestionCriteria;
+	@JsonProperty
+	private String suggestedBy;
+	@JsonProperty
+    private String price;
+	@JsonProperty
+    private String merhcantName;
+	@JsonProperty
+    private String timeLine;
+	@JsonProperty
+    private int discount;
+	@JsonProperty
+	private boolean isBooked;
 	
+	/**
+	 * @return the timeLine
+	 */
+	public String getTimeLine() {
+		return timeLine;
+	}
+	/**
+	 * @param timeLine the timeLine to set
+	 */
+	public void setTimeLine(String timeLine) {
+		this.timeLine = timeLine;
+	}
+	/**
+	 * @return the price
+	 */
+	public String getPrice() {
+		return price;
+	}
+	/**
+	 * @return the merhcantName
+	 */
+	public String getMerhcantName() {
+		return merhcantName;
+	}
+	/**
+	 * @param price the price to set
+	 */
+	public void setPrice(String price) {
+		this.price = price;
+	}
+	/**
+	 * @param merhcantName the merhcantName to set
+	 */
+	public void setMerhcantName(String merhcantName) {
+		this.merhcantName = merhcantName;
+	}
+	/**
+	 * @return the suggestedBy
+	 */
+	public String getSuggestedBy() {
+		return suggestedBy;
+	}
+	/**
+	 * @param suggestedBy the suggestedBy to set
+	 */
+	public void setSuggestedBy(String suggestedBy) {
+		this.suggestedBy = suggestedBy;
+	}
 	/**
 	 * @param itemId the itemId to set
 	 */
@@ -187,25 +251,25 @@ public class SuggestionModel implements Serializable{
 	/**
 	 * @return the distance
 	 */
-	public Long getDistance() {
+	public double getDistance() {
 		return distance;
 	}
 	/**
 	 * @param distance the distance to set
 	 */
-	public void setDistance(Long distance) {
+	public void setDistance(double distance) {
 		this.distance = distance;
 	}
 	/**
 	 * @return the rating
 	 */
-	public Long getRating() {
+	public double getRating() {
 		return rating;
 	}
 	/**
 	 * @param rating the rating to set
 	 */
-	public void setRating(Long rating) {
+	public void setRating(double rating) {
 		this.rating = rating;
 	}
 	/**
@@ -431,6 +495,18 @@ public class SuggestionModel implements Serializable{
 		return profilePicture;
 	}
 	/**
+	 * @return the discount
+	 */
+	public int getDiscount() {
+		return discount;
+	}
+	/**
+	 * @param discount the discount to set
+	 */
+	public void setDiscount(int discount) {
+		this.discount = discount;
+	}
+	/**
 	 * @param profilePicture the profilePicture to set
 	 */
 	public void setProfilePicture(String profilePicture) {
@@ -531,6 +607,42 @@ public class SuggestionModel implements Serializable{
 	 */
 	public void setSuggestingUser(UserModel suggestingUser) {
 		this.suggestingUser = suggestingUser;
+	}
+	/**
+	 * @return the isFavorite
+	 */
+	public boolean getIsFavorite() {
+		return isFavorite;
+	}
+	/**
+	 * @param isFavorite the isFavorite to set
+	 */
+	public void setIsFavorite(boolean isFavorite) {
+		this.isFavorite = isFavorite;
+	}
+	/**
+	 * @return the suggestionCriteria
+	 */
+	public String getSuggestionCriteria() {
+		return suggestionCriteria;
+	}
+	/**
+	 * @param suggestionCriteria the suggestionCriteria to set
+	 */
+	public void setSuggestionCriteria(String suggestionCriteria) {
+		this.suggestionCriteria = suggestionCriteria;
+	}
+	/**
+	 * @return the isBooked
+	 */
+	public boolean getIsBooked() {
+		return isBooked;
+	}
+	/**
+	 * @param isBooked the isBooked to set
+	 */
+	public void setIsBooked(boolean isBooked) {
+		this.isBooked = isBooked;
 	}
 
 }

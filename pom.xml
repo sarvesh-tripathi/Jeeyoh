@@ -267,8 +267,9 @@
 			<id>default</id>
 			<properties>
 				<!-- DB Connection -->
-				<db.jdbc.url>jdbc:mysql://localhost:3306/Jeeyoh?zeroDateTimeBehavior=convertToNull</db.jdbc.url>
+				<db.jdbc.url>jdbc:mysql://localhost:3306/jeeyoh?zeroDateTimeBehavior=convertToNull</db.jdbc.url>
 				<db.jdbc.username>root</db.jdbc.username>
+				<!-- <db.jdbc.password>Gaurav@123</db.jdbc.password> -->
 				<db.jdbc.password></db.jdbc.password>
 
 				<!-- Groupon configuration -->
@@ -293,10 +294,11 @@
 
 				<!-- Upload File -->
 				<host.name>http://192.168.1.217</host.name>
+				<!-- <host.name>http://54.243.29.6</host.name> -->
 				<port.number>8080</port.number>
 				<host.path>${host.name}:${port.number}/</host.path>
 				<app.media.uploaded.folder>UploadedImages</app.media.uploaded.folder>
-				<app.uploaded.media.server.path>/var/lib/tomcat7/webapps/${app.media.uploaded.folder}/</app.uploaded.media.server.path>
+				<app.uploaded.media.server.path>../webapps/${app.media.uploaded.folder}/</app.uploaded.media.server.path>
 
 				<!-- Stubhub configuration -->
 				<stubhub.base.url>http://www.stubhub.com/</stubhub.base.url>

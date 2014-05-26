@@ -8,10 +8,10 @@
             <column name="groupUserMapId" />
             <generator class="identity" />
         </id>
-        <many-to-one name="jeeyohgroup" class="com.jeeyoh.persistence.domain.Jeeyohgroup" fetch="select" lazy="false">
+        <many-to-one name="jeeyohgroup" class="com.jeeyoh.persistence.domain.Jeeyohgroup" fetch="select" cascade="all">
             <column name="groupId" not-null="true" />
         </many-to-one>
-        <many-to-one name="user" class="com.jeeyoh.persistence.domain.User" fetch="select" lazy="false">
+        <many-to-one name="user" class="com.jeeyoh.persistence.domain.User" fetch="select">
             <column name="userId" not-null="true" />
         </many-to-one>
         <many-to-one name="notificationpermission" class="com.jeeyoh.persistence.domain.Notificationpermission" fetch="select">

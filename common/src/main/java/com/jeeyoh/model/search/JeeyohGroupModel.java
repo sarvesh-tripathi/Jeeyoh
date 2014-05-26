@@ -2,10 +2,13 @@ package com.jeeyoh.model.search;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
+
+import com.jeeyoh.model.user.UserModel;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -18,7 +21,9 @@ public class JeeyohGroupModel implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	@JsonProperty
-	private int userByOwnerId;
+	private int groupId;
+	@JsonProperty
+	private int userId;
 	@JsonProperty
 	private String privacy;
 	@JsonProperty
@@ -33,11 +38,28 @@ public class JeeyohGroupModel implements Serializable{
 	private Date createdtime;
 	@JsonProperty
 	private Date updatedtime;
-	public int getUserByOwnerId() {
-		return userByOwnerId;
+	@JsonProperty
+	private List<UserModel> groupMembers;
+	@JsonProperty
+	private int totalMembers;
+	
+	/**
+	 * @return the groupId
+	 */
+	public int getGroupId() {
+		return groupId;
 	}
-	public void setUserByOwnerId(int userByOwnerId) {
-		this.userByOwnerId = userByOwnerId;
+	/**
+	 * @param groupId the groupId to set
+	 */
+	public void setGroupId(int groupId) {
+		this.groupId = groupId;
+	}
+	public int getUserId() {
+		return userId;
+	}
+	public void setUserId(int userId) {
+		this.userId = userId;
 	}
 	public String getPrivacy() {
 		return privacy;
@@ -80,6 +102,30 @@ public class JeeyohGroupModel implements Serializable{
 	}
 	public void setUpdatedtime(Date updatedtime) {
 		this.updatedtime = updatedtime;
+	}
+	/**
+	 * @return the groupMembers
+	 */
+	public List<UserModel> getGroupMembers() {
+		return groupMembers;
+	}
+	/**
+	 * @return the totalMembers
+	 */
+	public int getTotalMembers() {
+		return totalMembers;
+	}
+	/**
+	 * @param groupMembers the groupMembers to set
+	 */
+	public void setGroupMembers(List<UserModel> groupMembers) {
+		this.groupMembers = groupMembers;
+	}
+	/**
+	 * @param totalMembers the totalMembers to set
+	 */
+	public void setTotalMembers(int totalMembers) {
+		this.totalMembers = totalMembers;
 	}    
 
 }

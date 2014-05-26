@@ -18,7 +18,6 @@ import com.jeeyoh.persistence.domain.Eventuserlikes;
 import com.jeeyoh.persistence.domain.Page;
 import com.jeeyoh.persistence.domain.Pageuserlikes;
 import com.jeeyoh.persistence.domain.User;
-import com.jeeyoh.persistence.domain.Usercontacts;
 import com.jeeyoh.persistence.domain.WallFeed;
 import com.jeeyoh.persistence.domain.WallFeedItems;
 
@@ -59,6 +58,7 @@ public class WallService implements IWallService {
 				//int preWeightContent = feedSharing.getPackageRank();
 				if(userContactsList != null)
 				{
+					int count = 0;
 					for(User contact:userContactsList)
 					{
 						
@@ -75,20 +75,25 @@ public class WallService implements IWallService {
 								logger.debug("dealUsage3 :::"+dealsusage.getIsFavorite());
 								logger.debug("dealUsage4 :::"+dealsusage.getIsSuggested());
 								logger.debug("dealUsage 5:::"+dealsusage.getIsVisited());
-								int count = calculateWieght(dealsusage.getIsLike(), dealsusage.getIsFavorite(), dealsusage.getIsSuggested(), dealsusage.getIsVisited());
-								updateWallFeedSharing(feedSharing,count);
+								count += calculateWieght(dealsusage.getIsLike(), dealsusage.getIsFavorite(), dealsusage.getIsSuggested(), dealsusage.getIsVisited());
+								//updateWallFeedSharing(feedSharing,count);
 							}
 							//break;
 										
 						}
 						else if(itemType.equalsIgnoreCase("event"))
 						{
-							
+							logger.debug("Contact Userid "+contact.getUserId()+" : " + feedSharing.getItemId());
 							Eventuserlikes eventuserlikes = userDAO.getUserLikeEvent(contact.getUserId(), feedSharing.getItemId());
 							if(eventuserlikes != null)
 							{
-								int count = calculateWieght(eventuserlikes.getIsLike(), eventuserlikes.getIsFavorite(), eventuserlikes.getIsSuggested(), eventuserlikes.getIsVisited());
-								updateWallFeedSharing(feedSharing,count);
+								logger.debug("eventuserlikes1"+eventuserlikes);
+								logger.debug("eventuserlikes2 :::"+eventuserlikes.getIsLike());
+								logger.debug("eventuserlikes3 :::"+eventuserlikes.getIsFavorite());
+								logger.debug("eventuserlikes4 :::"+eventuserlikes.getIsSuggested());
+								logger.debug("eventuserlikes 5:::"+eventuserlikes.getIsVisited());
+								count += calculateWieght(eventuserlikes.getIsLike(), eventuserlikes.getIsFavorite(), eventuserlikes.getIsSuggested(), eventuserlikes.getIsVisited());
+								//updateWallFeedSharing(feedSharing,count);
 							}
 							//break;
 						}
@@ -98,8 +103,8 @@ public class WallService implements IWallService {
 							if(page != null)
 							{
 								Pageuserlikes pageuserlikes = userDAO.getUserLikeCommunity(contact.getUserId(), feedSharing.getItemId());
-								int count = calculateWieght(pageuserlikes.getIsLike(), pageuserlikes.getIsFavorite(), false, pageuserlikes.getIsVisited());
-								updateWallFeedSharing(feedSharing,count);
+								count += calculateWieght(pageuserlikes.getIsLike(), pageuserlikes.getIsFavorite(), false, pageuserlikes.getIsVisited());
+								//updateWallFeedSharing(feedSharing,count);
 							}
 							
 							//break;
@@ -110,12 +115,15 @@ public class WallService implements IWallService {
 							Pageuserlikes pageuserlikes = userDAO.getUserLikeCommunity(contact.getUserId(), feedSharing.getItemId());
 							if(pageuserlikes != null)
 							{
-								int count = calculateWieght(pageuserlikes.getIsLike(), pageuserlikes.getIsFavorite(), false, pageuserlikes.getIsVisited());
-								updateWallFeedSharing(feedSharing,count);
+								count += calculateWieght(pageuserlikes.getIsLike(), pageuserlikes.getIsFavorite(), false, pageuserlikes.getIsVisited());
+								//updateWallFeedSharing(feedSharing,count);
 							}
 							//break;
 						}
 					}
+					
+					logger.debug("count: "+count);
+					updateWallFeedSharing(feedSharing,count);
 						
 
 					}

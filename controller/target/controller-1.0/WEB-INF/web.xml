@@ -50,7 +50,7 @@
 	
 	<!--Mobile Rest Full Services-->
 	<servlet>
-		<servlet-name>Storistic Mobile REST Service</servlet-name>
+		<servlet-name>Jeeyoh Mobile REST Service</servlet-name>
 		<servlet-class>
 			com.sun.jersey.spi.spring.container.servlet.SpringServlet			
 		</servlet-class>
@@ -65,7 +65,7 @@
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>Storistic Mobile REST Service</servlet-name>
+		<servlet-name>Jeeyoh Mobile REST Service</servlet-name>
 		<url-pattern>/mobile/*</url-pattern>
 	</servlet-mapping>
 	<!--Mobile Rest Full Services-->

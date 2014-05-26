@@ -69,8 +69,6 @@ public class GrouponClient implements IGrouponClient {
 				grouponDealsAPIUrl, HttpMethod.GET, requestEntity,
 				ResponseModel.class, uriVariables);
 		if (response != null) {
-			// System.out.println("GrouponClient ==> getDeals ==>  not null = "
-			// + response);
 			return response.getBody();
 		}
 		return null;
@@ -111,8 +109,6 @@ public class GrouponClient implements IGrouponClient {
 	}
 
 	public ResponseModel getDealsByDivision(String longitude, String lattitude) {
-		logger.debug("UR L ::: "+grouponDealsByLatlngAPIUrl);
-		logger.debug("LAt :: "+lattitude+" longi :: "+longitude+" client id :::"+grouponClientId);
 		Map<String, String> uriVariables = new HashMap<String, String>();
 		uriVariables.put("clientId", grouponClientId);
 		uriVariables.put("longitude", longitude);

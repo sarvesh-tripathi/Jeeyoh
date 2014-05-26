@@ -29,6 +29,9 @@
         <property name="isVisited" type="java.lang.Boolean">
             <column name="isVisited" default="false" not-null="false"/>
         </property>
+        <property name="isBooked" type="java.lang.Boolean">
+			<column name="isBooked" default="false" not-null="false"/>
+		</property>
         <property name="isProfileHidden" type="java.lang.Boolean">
             <column name="isProfileHidden" default="false" not-null="false"/>
         </property>

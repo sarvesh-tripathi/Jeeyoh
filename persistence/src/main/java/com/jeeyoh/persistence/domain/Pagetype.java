@@ -11,43 +11,47 @@ import java.util.Set;
 public class Pagetype  implements java.io.Serializable {
 
 
-     private Integer pageTypeId;
-     private String pageType;
-     private Set pages = new HashSet(0);
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private Integer pageTypeId;
+	private String pageType;
+	private Set pages = new HashSet(0);
 
-    public Pagetype() {
-    }
+	public Pagetype() {
+	}
 
-	
-    public Pagetype(String pageType) {
-        this.pageType = pageType;
-    }
-    public Pagetype(String pageType, Set pages) {
-       this.pageType = pageType;
-       this.pages = pages;
-    }
-   
-    public Integer getPageTypeId() {
-        return this.pageTypeId;
-    }
-    
-    public void setPageTypeId(Integer pageTypeId) {
-        this.pageTypeId = pageTypeId;
-    }
-    public String getPageType() {
-        return this.pageType;
-    }
-    
-    public void setPageType(String pageType) {
-        this.pageType = pageType;
-    }
-    public Set getPages() {
-        return this.pages;
-    }
-    
-    public void setPages(Set pages) {
-        this.pages = pages;
-    }
+
+	public Pagetype(String pageType) {
+		this.pageType = pageType;
+	}
+	public Pagetype(String pageType, Set pages) {
+		this.pageType = pageType;
+		this.pages = pages;
+	}
+
+	public Integer getPageTypeId() {
+		return this.pageTypeId;
+	}
+
+	public void setPageTypeId(Integer pageTypeId) {
+		this.pageTypeId = pageTypeId;
+	}
+	public String getPageType() {
+		return this.pageType;
+	}
+
+	public void setPageType(String pageType) {
+		this.pageType = pageType;
+	}
+	public Set getPages() {
+		return this.pages;
+	}
+
+	public void setPages(Set pages) {
+		this.pages = pages;
+	}
 
 
 

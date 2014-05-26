@@ -17,6 +17,9 @@
         <property name="event_date_local" type="timestamp">
             <column name="event_date_local"/>
         </property>
+         <property name="event_date_time_local" type="timestamp">
+            <column name="event_date_time_local"/>
+        </property>
         <property name="event_time_local" type="string">
             <column name="event_time_local" />
         </property>

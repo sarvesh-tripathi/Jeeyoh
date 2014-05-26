@@ -1,11 +1,12 @@
 package com.jeeyoh.model.search;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
+
+import com.jeeyoh.model.user.UserModel;
 
 
 
@@ -42,9 +43,9 @@ public class EventModel implements Serializable{
 	@JsonProperty
 	private String zip;
 	@JsonProperty
-	private String latitude;
+	private double latitude;
 	@JsonProperty
-	private String longitude;	                         
+	private double longitude;	                         
 	@JsonProperty
 	private String	venue_config_name;
 	@JsonProperty
@@ -69,6 +70,64 @@ public class EventModel implements Serializable{
 	private String category;
 	@JsonProperty
 	private String source;
+	@JsonProperty
+	private double rating;
+	@JsonProperty
+	private boolean isFavorite;
+	@JsonProperty
+	private String suggestionCriteria;
+	@JsonProperty
+	private String suggestedBy;
+	@JsonProperty
+    private UserModel suggestingUser;
+	@JsonProperty
+	private String timeLine;
+	@JsonProperty
+	private String startDate;
+	@JsonProperty
+	private String endDate;
+	@JsonProperty
+    private String address;
+	@JsonProperty
+	private String timeSlot;
+	@JsonProperty
+	private boolean isBooked;
+	/**
+	 * @return the timeLine
+	 */
+	public String getTimeLine() {
+		return timeLine;
+	}
+	/**
+	 * @param timeLine the timeLine to set
+	 */
+	public void setTimeLine(String timeLine) {
+		this.timeLine = timeLine;
+	}
+	/**
+	 * @return the suggestedBy
+	 */
+	public String getSuggestedBy() {
+		return suggestedBy;
+	}
+	/**
+	 * @param suggestedBy the suggestedBy to set
+	 */
+	public void setSuggestedBy(String suggestedBy) {
+		this.suggestedBy = suggestedBy;
+	}
+	/**
+	 * @return the suggestionCriteria
+	 */
+	public String getSuggestionCriteria() {
+		return suggestionCriteria;
+	}
+	/**
+	 * @param suggestionCriteria the suggestionCriteria to set
+	 */
+	public void setSuggestionCriteria(String suggestionCriteria) {
+		this.suggestionCriteria = suggestionCriteria;
+	}
 	/**
 	 * @param eventId the eventId to set
 	 */
@@ -216,25 +275,25 @@ public class EventModel implements Serializable{
 	/**
 	 * @return the latitude
 	 */
-	public String getLatitude() {
+	public double getLatitude() {
 		return latitude;
 	}
 	/**
 	 * @param latitude the latitude to set
 	 */
-	public void setLatitude(String latitude) {
+	public void setLatitude(double latitude) {
 		this.latitude = latitude;
 	}
 	/**
 	 * @return the longitude
 	 */
-	public String getLongitude() {
+	public double getLongitude() {
 		return longitude;
 	}
 	/**
 	 * @param longitude the longitude to set
 	 */
-	public void setLongitude(String longitude) {
+	public void setLongitude(double longitude) {
 		this.longitude = longitude;
 	}
 	/**
@@ -380,6 +439,102 @@ public class EventModel implements Serializable{
 	 */
 	public void setSource(String source) {
 		this.source = source;
+	}
+	/**
+	 * @return the rating
+	 */
+	public double getRating() {
+		return rating;
+	}
+	/**
+	 * @param rating the rating to set
+	 */
+	public void setRating(double rating) {
+		this.rating = rating;
+	}
+	/**
+	 * @return the isFavorite
+	 */
+	public boolean getIsFavorite() {
+		return isFavorite;
+	}
+	/**
+	 * @param isFavorite the isFavorite to set
+	 */
+	public void setIsFavorite(boolean isFavorite) {
+		this.isFavorite = isFavorite;
+	}
+	/**
+	 * @return the suggestingUser
+	 */
+	public UserModel getSuggestingUser() {
+		return suggestingUser;
+	}
+	/**
+	 * @param suggestingUser the suggestingUser to set
+	 */
+	public void setSuggestingUser(UserModel suggestingUser) {
+		this.suggestingUser = suggestingUser;
+	}
+	/**
+	 * @return the startDate
+	 */
+	public String getStartDate() {
+		return startDate;
+	}
+	/**
+	 * @return the endDate
+	 */
+	public String getEndDate() {
+		return endDate;
+	}
+	/**
+	 * @param startDate the startDate to set
+	 */
+	public void setStartDate(String startDate) {
+		this.startDate = startDate;
+	}
+	/**
+	 * @param endDate the endDate to set
+	 */
+	public void setEndDate(String endDate) {
+		this.endDate = endDate;
+	}
+	/**
+	 * @return the address
+	 */
+	public String getAddress() {
+		return address;
+	}
+	/**
+	 * @param address the address to set
+	 */
+	public void setAddress(String address) {
+		this.address = address;
+	}
+	/**
+	 * @return the timeSlot
+	 */
+	public String getTimeSlot() {
+		return timeSlot;
+	}
+	/**
+	 * @param timeSlot the timeSlot to set
+	 */
+	public void setTimeSlot(String timeSlot) {
+		this.timeSlot = timeSlot;
+	}
+	/**
+	 * @return the isBooked
+	 */
+	public boolean getIsBooked() {
+		return isBooked;
+	}
+	/**
+	 * @param isBooked the isBooked to set
+	 */
+	public void setIsBooked(boolean isBooked) {
+		this.isBooked = isBooked;
 	}
 	
 }

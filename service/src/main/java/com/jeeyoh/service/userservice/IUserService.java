@@ -1,5 +1,6 @@
 package com.jeeyoh.service.userservice;
 
+import com.jeeyoh.model.funboard.MediaContenModel;
 import com.jeeyoh.model.response.BaseResponse;
 import com.jeeyoh.model.response.CategoryLikesResponse;
 import com.jeeyoh.model.response.CategoryResponse;
@@ -7,11 +8,13 @@ import com.jeeyoh.model.response.FriendListResponse;
 import com.jeeyoh.model.response.LoginResponse;
 import com.jeeyoh.model.response.SuggestionResponse;
 import com.jeeyoh.model.response.TopSuggestionResponse;
+import com.jeeyoh.model.response.UploadMediaServerResponse;
 import com.jeeyoh.model.response.UserFriendsGroupResponse;
 import com.jeeyoh.model.response.UserRegistrationResponse;
 import com.jeeyoh.model.response.UserResponse;
 import com.jeeyoh.model.search.CategoryModel;
 import com.jeeyoh.model.search.PageModel;
+import com.jeeyoh.model.search.SearchRequest;
 import com.jeeyoh.model.user.UserModel;
 
 public interface IUserService {
@@ -39,5 +42,7 @@ public interface IUserService {
 	public FriendListResponse getFriendsOfUser(int userId);
 	public UserResponse getPrivacySetting(int userId);
 	public UserFriendsGroupResponse getUserFriendsAndGroup(int userId);
+	public UploadMediaServerResponse uploadProfileImage(MediaContenModel mediaContenModel);
+	public SuggestionResponse getuserSuggestionByCategory(SearchRequest searchRequest);
 
 }

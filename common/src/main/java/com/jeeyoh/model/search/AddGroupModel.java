@@ -72,5 +72,4 @@ public class AddGroupModel implements Serializable{
 	public void setMember(ArrayList<Integer> member) {
 		this.member = member;
 	}
-	
 }

@@ -63,7 +63,6 @@ public class LivingSocialClient implements ILivingSocialClient{
 			for(CitiesModel cityModel:response)
 			{
 				logger.debug("LivingSocialClient ==> getCities ==>  not null = "+ cityModel);
-				System.out.println("LivingSocialClient ==> getCities ==>  not null = "+ cityModel);
 				return response;
 			}		
 		}

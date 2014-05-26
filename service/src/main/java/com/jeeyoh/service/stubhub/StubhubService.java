@@ -1,8 +1,16 @@
 package com.jeeyoh.service.stubhub;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +36,11 @@ public class StubhubService implements IStubhubService {
 	public void stubhubEvents() {
 		logger.debug("Service of Stubhub ");
 		StubHubEvents stubHubEvents = stubhubClient.getStubHubEvents();
+		
+		SimpleDateFormat simple=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZ");
+		simple.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+		
 		//logger.debug("Get responce here ::: "+stubHubEvents.getResponce().getNumFound());
 		logger.debug("Description  ::: "+stubHubEvents.getResponce().getDocs().get(0).getDescription());
 		List<Description> description = stubHubEvents.getResponce().getDocs();
@@ -35,9 +48,13 @@ public class StubhubService implements IStubhubService {
 		if(description != null)
 		{
 			int count = 0;
+			int count1 = 0;
 			for(Description stubhubList:description)
 			{
+				
 				if(stubhubList != null)
+				{count1++;
+				if(count1 <= 2)
 				{
 					logger.debug("TOTAL Count == >"+count);
 					logger.debug("Title == >"+stubhubList.getTitle());
@@ -57,6 +74,38 @@ public class StubhubService implements IStubhubService {
 					{
 						stubhub.setEvent_date_local(new DateTime(stubhubList.getEvent_date_local()).toDate());
 					}
+					if(stubhubList.getEvent_date_time_local() != null)
+					{
+						
+						logger.debug("getEvent_date_time_local::  "+new DateTime(stubhubList.getEvent_date_time_local(),DateTimeZone.forID("EST")).toDate() + " : "+stubhubList.getEvent_date_time_local());
+						
+						DateTime dateTime = new DateTime(stubhubList.getEvent_date_time_local(),DateTimeZone.forID("EST"));
+						Calendar cal = Calendar.getInstance();
+						//cal.setTimeZone(TimeZone.getTimeZone("EST"));
+						logger.debug("cal current time::  "+ cal +" "+cal.getTime());
+						cal.setTime(dateTime.toDate());
+						logger.debug("cal current time::  after setTime "+ cal +" "+cal.getTime());
+						cal.setTimeZone(TimeZone.getTimeZone("EST"));
+						logger.debug("cal current time::  after setTimeZone "+ cal +" "+cal.getTime());
+						cal.set(Calendar.ZONE_OFFSET, -18000000);
+						logger.debug("cal current time::  after set offset "+ cal +" "+cal.getTime());
+						//logger.debug("cal time::  "+cal.getTime());
+						DateTime dateTimeUtc = dateTime.toDateTime( DateTimeZone.UTC );
+						LocalDateTime ldt = new LocalDateTime(stubhubList.getEvent_date_time_local());
+						
+						Date eventDate = null;
+						try {
+							eventDate = simple.parse(stubhubList.getEvent_date_time_local());
+						} catch (ParseException e) {
+							logger.debug("Error: "+e.getMessage());
+							e.printStackTrace();
+						}
+						logger.debug("getEvent_date_time_local::  "+eventDate);
+						logger.debug("getEvent_date_time_local111::  "+dateTimeUtc.toDate());
+						stubhub.setEvent_date_time_local(eventDate);
+					}
+						
+					
 					stubhub.setEvent_time_local(stubhubList.getEvent_time_local());
 					stubhub.setGenreUrlPath(stubhubList.getGenreUrlPath());
 					stubhub.setGeography_parent(stubhubList.getGeography_parent());
@@ -86,6 +135,8 @@ public class StubhubService implements IStubhubService {
 					stubhub.setGenre_parent_name(stubhubList.getGenre_parent_name());
 					stubhubDAO.save(stubhub,count);
 					count++;
+					break;
+				}
 				}
 			}
 		}

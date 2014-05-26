@@ -70,43 +70,35 @@ public class YelpClient {
                         consumer.setSigningStrategy(new QueryStringSigningStrategy());                       
                         String signedQuery = consumer.sign(query);
                         consumer.setMessageSigner(new HmacSha1MessageSigner()); 
-                        System.out.println(getClass().getName() + ">> " + "Signed query: " 
-                                        + signedQuery); 
+                       
                         HttpGet request = new HttpGet(signedQuery); 
                         HttpClient httpClient = new DefaultHttpClient(); 
                         HttpResponse response = (HttpResponse) httpClient.execute(request); 
 
                         HttpEntity entity = response.getEntity(); 
                         String result = EntityUtils.toString(entity); 
-                        System.out.println(getClass().getName() + ">> " + "Result: " 
-                                        + result);
+                       
                         try {
                         	ObjectMapper mapper = new ObjectMapper();
                         	mapper.enable(DeserializationConfig.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
                         	YelpSearchResponse response1 = mapper.readValue(result, YelpSearchResponse.class);
-                        	System.out.println(response1.getTotal());
+                        	
                         	List<YelpBusiness> businesses = response1.getBusinesses();
-                        	System.out.println(businesses.get(0).getName());
+                        	
                         } catch(Exception e) {
                         	e.printStackTrace();
                         }
                 } catch (UnsupportedEncodingException e) { 
-                        // TODO Auto-generated catch block 
                         e.printStackTrace(); 
                 } catch (MalformedURLException e) { 
-                        // TODO Auto-generated catch block 
                         e.printStackTrace(); 
                 } catch (IOException e) { 
-                        // TODO Auto-generated catch block 
                         e.printStackTrace(); 
                 } catch (OAuthMessageSignerException e) { 
-                        // TODO Auto-generated catch block 
                         e.printStackTrace(); 
-                } catch (OAuthExpectationFailedException e) { 
-                        // TODO Auto-generated catch block 
+                } catch (OAuthExpectationFailedException e) {
                         e.printStackTrace(); 
                 } catch (OAuthCommunicationException e) { 
-                        // TODO Auto-generated catch block 
                         e.printStackTrace(); 
                 }
         }
@@ -124,21 +116,18 @@ public class YelpClient {
    	                consumer.setSigningStrategy(new QueryStringSigningStrategy());                       
    	                String signedQuery = consumer.sign(service);
    	                consumer.setMessageSigner(new HmacSha1MessageSigner()); 
-   	                System.out.println(getClass().getName() + ">> " + "Signed query: " 
-   	                                + signedQuery); 
+   	               
    	                HttpGet request = new HttpGet(signedQuery); 
    	                HttpClient httpClient = new DefaultHttpClient(); 
    	                HttpResponse response = (HttpResponse) httpClient.execute(request); 
 
    	                HttpEntity entity = response.getEntity(); 
    	                String result = EntityUtils.toString(entity); 
-   	             System.out.println(getClass().getName() + ">> " + "Result: " 
-                         + result);
+   	            
    	             try {
                  	ObjectMapper mapper = new ObjectMapper();
                  	mapper.enable(DeserializationConfig.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
                  	YelpBusinessResponse response1 = mapper.readValue(result, YelpBusinessResponse.class);
-                 	//System.out.println(response1.getBusinessId());
                  	
                  } catch(Exception e) {
                  	e.printStackTrace();
@@ -170,7 +159,6 @@ public class YelpClient {
     	 Calendar c = Calendar.getInstance();
     	 c.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
     	 c.getTime(); // => Date of this coming Saturd
-    	 System.out.println("DATE WILL BE :: "+c.getTime());
      }
 
         /** 

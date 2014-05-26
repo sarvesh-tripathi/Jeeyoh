@@ -125,8 +125,8 @@ public class LivingSocialDAO implements ILivingSocialDAO{
 	@Override
 	public List<LdealOption> getDealOptions(int dealId) {
 		List<LdealOption> gDealOptionsList = null;
-		logger.debug("loadDeals => getDeals... ");
-		String h = "select a from LdealOption a where b.ldeal.id = :dealId and a.discount > 20";
+		logger.debug("loadDeals => getDealOptions... ");
+		String h = "select a from LdealOption a where a.ldeal.id = :dealId and a.discount > 20";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					h);

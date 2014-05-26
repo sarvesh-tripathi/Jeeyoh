@@ -1,5 +1,6 @@
 package com.jeeyoh.persistence;
 
+import java.util.Date;
 import java.util.List;
 
 import com.jeeyoh.persistence.domain.CommunityComments;
@@ -21,8 +22,10 @@ public interface IEventsDAO {
 	public List<Events> getEventsByCommunityType(int pageId, int pageType);
 	public List<Events> getEventsByLikeSearchKeyword(String searchText,String category, String location, int offset, int limit);
 	public List<Events> getEventsBySearchKeyword(String searchText,String category, String location, int offset, int limit);
-	public List<Page> getCommunityByLikeSearchKeyword(String searchText,String category, String location, int offset, int limit);
-	public List<Page> getCommunityBySearchKeyword(String searchText,String category, String location, int offset, int limit);
+	public List<Page> getCommunityByLikeSearchKeywordForBusiness(String searchText,String category, String location, int offset, int limit);
+	public List<Page> getCommunityByLikeSearchKeywordForEvents(String searchText,String category, String location, int offset, int limit);
+	public List<Page> getCommunityBySearchKeywordForBusiness(String searchText,String category, String location, int offset, int limit);
+	public List<Page> getCommunityBySearchKeywordForEvents(String searchText,String category, String location, int offset, int limit);
 	public List<Page> getCommunityPageByCategoryType(String category, int userId);
 	public List<Page> getUserFavourites(Integer userId);
 	public Page getCommunityById(int pageId);
@@ -30,7 +33,7 @@ public interface IEventsDAO {
 	public List<Events> getCurrentEvents(int pageId, int offset, int limit);
 	public List<Events> getUpcomingEvents(int pageId, int offset, int limit);
 	public List<Events> getPastEvents(int pageId, int offset, int limit);
-	public List<Events> getBookedEvents(int userId);
+	public List<Events> getBookedEvents(int userId, String category);
 	public List<Events> getUserEventsSuggestions(String userEmail,
 			int offset, int limit);
 	public List<Object[]> getEventLikeCountByPage(String idsStr);
@@ -38,7 +41,8 @@ public interface IEventsDAO {
 			   String itemCategory, String providerName, double latitude, double longitude);
 	public Events getEventById(int eventId);
 	public int getTotalEventsBySearchKeyWord(String searchText,String category, String location);
-	public int getTotalCommunityBySearchKeyWord(String searchText,String category, String location);
+	public int getTotalCommunityBySearchKeyWordForBusiness(String searchText,String category, String location);
+	public int getTotalCommunityBySearchKeyWordForEvent(String searchText,String category, String location);
 	public Pagetype getPageTypeByName(String pageType);
 	public Page getPageByAbout(String genre_parent_name);
 	public void savePage(Page page, int batch_size);
@@ -51,6 +55,11 @@ public interface IEventsDAO {
 	public boolean updatePageUserLikes(Pageuserlikes pageuserlikes);
 	public boolean savePageUserLikes(Pageuserlikes pageuserlikes);
 	public void saveCommunityReview(CommunityReviewMap communityReviewMap);
-	public List<CommunityReview> getCommunityReviewByPageId(int pageId);
+	public double getCommunityReviewByPageId(int pageId);
+	public Object[] getRecentEventDate(int pageId);
+	public Object[] getRecentEventDetails(int pageId);
+	public List<Events> getEventsByuserLikesForCurrentWeekend(String likekeyword,
+			String itemCategory, String providerName, double latitude, double longitude);
+	public List<Page> getCommunityBySearchKeyword(String searchText, String category, int offset, int limit);
 
 }

@@ -17,6 +17,9 @@
         <property name="event_date_local" type="timestamp">
             <column name="event_date_local"/>
         </property>
+        <property name="event_date_time_local" type="timestamp">
+            <column name="event_date_time_local"/>
+        </property>
         <property name="event_time_local" type="string">
             <column name="event_time_local" />
         </property>
@@ -107,10 +110,10 @@
          <property name="stateCode" type="string">
             <column name="stateCode" length="50"/>
         </property>
-         <!-- <many-to-one name="page" class="com.jeeyoh.persistence.domain.Page" fetch="select">
+         <many-to-one name="page" class="com.jeeyoh.persistence.domain.Page" fetch="select" cascade="all">
             <column name="pageId" />
-        </many-to-one> -->
-        <many-to-one name="page" class="com.jeeyoh.persistence.domain.Page" column="pageId"/>
+        </many-to-one>
+        <!-- <many-to-one name="page" class="com.jeeyoh.persistence.domain.Page" column="pageId"/> -->
         <set name="eventuserlikes" inverse="true">
             <key>
                 <column name="eventId" not-null="true" />
