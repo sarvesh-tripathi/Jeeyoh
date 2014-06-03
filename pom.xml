@@ -267,10 +267,21 @@
 			<id>default</id>
 			<properties>
 				<!-- DB Connection -->
+				<db.jdbc.driverClassName>com.mysql.jdbc.Driver</db.jdbc.driverClassName>
 				<db.jdbc.url>jdbc:mysql://localhost:3306/jeeyoh?zeroDateTimeBehavior=convertToNull</db.jdbc.url>
 				<db.jdbc.username>root</db.jdbc.username>
 				<!-- <db.jdbc.password>Gaurav@123</db.jdbc.password> -->
 				<db.jdbc.password></db.jdbc.password>
+
+				<!-- Hibernate -->
+				<hibernate.show_sql>true</hibernate.show_sql>
+				<hibernate.dialect>org.hibernate.dialect.MySQLDialect</hibernate.dialect>
+
+				<!-- C3P0 -->
+				<c3p0.acquireIncrement>1</c3p0.acquireIncrement>
+				<c3p0.minPoolSize>10</c3p0.minPoolSize>
+				<c3p0.maxPoolSize>100</c3p0.maxPoolSize>
+				<c3p0.maxIdleTime>100</c3p0.maxIdleTime>
 
 				<!-- Groupon configuration -->
 				<groupon.client.id>93e9598d1ac2d5eca3017dee020980eb2ad8e87b</groupon.client.id>
@@ -298,21 +309,24 @@
 				<port.number>8080</port.number>
 				<host.path>${host.name}:${port.number}/</host.path>
 				<app.media.uploaded.folder>UploadedImages</app.media.uploaded.folder>
-				<app.uploaded.media.server.path>../webapps/${app.media.uploaded.folder}/</app.uploaded.media.server.path>
+				<!-- <app.uploaded.media.server.path>../webapps/${app.media.uploaded.folder}/</app.uploaded.media.server.path> -->
+				<app.uploaded.media.server.path>/var/lib/tomcat7/webapps/${app.media.uploaded.folder}/</app.uploaded.media.server.path>
 
 				<!-- Stubhub configuration -->
 				<stubhub.base.url>http://www.stubhub.com/</stubhub.base.url>
 				<stubhub.image.url>http://www.stubhub.com/data/venue_maps/</stubhub.image.url>
-				
+
 				<!-- Living Social Configuration -->
 				<livingsocial.api.key>646DACA59DAE4C4E92D9D8B6CA3E293D</livingsocial.api.key>
 				<livingsocial.deals.api.url>http://monocle.livingsocial.com/v2/deals?city={cityId}&amp;api-key={apiKey}</livingsocial.deals.api.url>
 				<livingsocial.cities.api.url>https://www.livingsocial.com/services/city/v2/cities</livingsocial.cities.api.url>
 
 				<!-- jobs configuration -->
-				<jobs.wallfeed.crontime>0 10 12 * * ?</jobs.wallfeed.crontime><!-- 0 0 10 ? * FRI,SAT -->
-				<jobs.suggestion.crontime>0 10 7 * * ?</jobs.suggestion.crontime><!-- 0 0 10 ? * FRI,SAT -->
-				<jobs.fetchfilter.crontime >0 10 12 * * ?</jobs.fetchfilter.crontime >
+				<jobs.wallfeed.crontime>0 10 12 * * ?</jobs.wallfeed.crontime><!-- 0 
+					0 10 ? * FRI,SAT -->
+				<jobs.suggestion.crontime>0 10 7 * * ?</jobs.suggestion.crontime><!-- 
+					0 0 10 ? * FRI,SAT -->
+				<jobs.fetchfilter.crontime>0 10 12 * * ?</jobs.fetchfilter.crontime>
 			</properties>
 		</profile>
 	</profiles>

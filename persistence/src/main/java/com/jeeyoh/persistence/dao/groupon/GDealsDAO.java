@@ -98,7 +98,6 @@ public class GDealsDAO implements IGDealsDAO {
 					h);
 			query.setParameter("dealId", dealId);
 			gDealOptionsList = (List<Gdealoption>) query.list();
-			logger.debug("loadDeals => query.list() size " + gDealOptionsList);
 
 		} catch (Exception e) {
 			logger.debug(e.getLocalizedMessage());
@@ -111,6 +110,7 @@ public class GDealsDAO implements IGDealsDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Goptiondetail getOptionDeatils(int optonId) {
+		logger.debug("getOptionDeatils query start... ");
 		List<Goptiondetail> gOptiondetailList = null;
 		
 		String h = "select a from Goptiondetail a where a.gdealoption.id = :optonId";
@@ -120,7 +120,7 @@ public class GDealsDAO implements IGDealsDAO {
 			query.setParameter("optonId", optonId);
 			
 			gOptiondetailList = (List<Goptiondetail>) query.list();
-			logger.debug("getOptionDeatils => query.list() size " + gOptiondetailList);
+			logger.debug("getOptionDeatils query start " + gOptiondetailList);
 
 		} catch (Exception e) {
 			logger.debug(e.getLocalizedMessage());

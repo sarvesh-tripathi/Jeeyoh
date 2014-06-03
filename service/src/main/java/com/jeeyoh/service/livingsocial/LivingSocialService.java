@@ -60,12 +60,10 @@ public class LivingSocialService implements ILivingSocialService{
 						String[] addressArray = Utils.getZipCodeAndAddress(Double.parseDouble(citiesModel[i].getLatitude()), Double.parseDouble(citiesModel[i].getLongitude()));
 						if(addressArray[0]!=null)
 						{
-							logger.debug("addressArray[0] ====>"+addressArray[0]);
 							lCities.setZipcode(addressArray[0]);
 						}
 						if(addressArray[1]!=null)
 						{
-							logger.debug("addressArray[1] ====>"+addressArray[1]);
 							lCities.setAddress(addressArray[1]);
 						}
 					}
@@ -76,7 +74,6 @@ public class LivingSocialService implements ILivingSocialService{
 					logger.debug("citiesModel[i].getStateCode() =====>"+citiesModel[i].getStateCode());
 					if(citiesModel[i].getStateCode()!=null)
 					{
-						logger.debug("citiesModel[i].getStateCode() =====>"+citiesModel[i].getStateCode());
 						lCities.setStateCode(citiesModel[i].getStateCode());
 						Countrylocation countryLoc = countryLocationDAO.getStateNameByStateCode(citiesModel[i].getStateCode());
 						logger.debug("countryLoc ====>"+countryLoc.getState()+";;;;;"+countryLoc.getCountry());
@@ -116,7 +113,7 @@ public class LivingSocialService implements ILivingSocialService{
 						Ldeal ldeal = new Ldeal();
 						ldeal.setCityName(lCity.getCityName());
 						ldeal.setCountryName(lCity.getCountryName());
-						ldeal.setDealId(ldealModel.getDealId());
+						ldeal.setDealId(ldealModel.getDealId()+"_"+lCity.getCityId());
 						ldeal.setDealType(ldealModel.getDealType());
 						ldeal.setDealUrl(ldealModel.getDealUrl());
 						ldeal.setDistance(ldealModel.getDistance());

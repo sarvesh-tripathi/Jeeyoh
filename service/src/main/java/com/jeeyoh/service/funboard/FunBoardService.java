@@ -598,7 +598,7 @@ public class FunBoardService implements IFunBoardService{
 			funBoardModel.setRating(avgRating);
 
 			//Get recent event date for community
-			Object[] event_date = eventsDAO.getRecentEventDate(page.getPageId());
+			Object[] event_date = eventsDAO.getRecentEventDetails(page.getPageId());
 			if(event_date != null)
 			{
 				funBoardModel.setTimeLine(Utils.getTimeLineForEvent((Date)event_date[0], event_date[1].toString()));

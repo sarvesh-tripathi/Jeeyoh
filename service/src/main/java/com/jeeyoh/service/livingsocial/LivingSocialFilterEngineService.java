@@ -60,13 +60,13 @@ public class LivingSocialFilterEngineService implements ILivingSocialFilterEngin
 				try {
 					//logger.debug("Date::  "+ ldeal.getEndAt() +"  :  "+ sdf.parse(sdf.format((Date)weekendList.get(j))));
 					//if(ldeal.getEndAt().before(weekendList.get(j))){
-					Deals deal = dealsDAO.isDealExists(ldeal.getDealId().toString());
-					if(deal == null)
+					int deal = dealsDAO.isDealExists("da-ff-fdsf-fdf");
+					logger.debug("after query::::  "+deal);
+					if(deal == 0)
 					{
 						batch_size++;
-						logger.debug("ldeal id ===>"+ ldeal.getId());
 						Deals deals =new Deals();
-						deals.setDealId(ldeal.getDealId().toString());
+						deals.setDealId(ldeal.getDealId());
 						deals.setDealUrl(ldeal.getDealUrl());
 						deals.setEndAt(ldeal.getEndAt());
 						deals.setStartAt(ldeal.getStartAt());
@@ -89,12 +89,11 @@ public class LivingSocialFilterEngineService implements ILivingSocialFilterEngin
 								for(LdealCategory ldealCategory : ldealCategories)
 								{
 									String name = ldealCategory.getCategoryName();
-									logger.debug("Check Name ::: "+name);
 									Lcategory lCategory = businessDAO.getLivingSocialBusinessCategory(name) ;
+									logger.debug("After Query::  "+lCategory);
 									if(lCategory!=null)
 									{
 										String category = lCategory.getLcategory().getCategory();
-										logger.debug("category ::: "+category);
 										if(category.equalsIgnoreCase("Fitness/Active"))
 										{
 											businesstype = businessDAO.getBusinesstypeByType("SPORT");
@@ -125,6 +124,7 @@ public class LivingSocialFilterEngineService implements ILivingSocialFilterEngin
 
 								Business business = new Business();
 								LCities lCity = lCitiesDAO.getCityByName(ldeal.getCityName());
+								logger.debug("After query::::  "+lCity);
 								if(lCity!=null)
 								{
 									business.setLattitude(lCity.getLatitude());
@@ -138,6 +138,7 @@ public class LivingSocialFilterEngineService implements ILivingSocialFilterEngin
 								}
 								business.setName(ldeal.getMerchantName());
 								business.setBusinesstype(businesstype);
+								business.setRating(0.0);
 								business.setSource("Living Social");
 
 								deals.setBusiness(business);
@@ -150,10 +151,8 @@ public class LivingSocialFilterEngineService implements ILivingSocialFilterEngin
 
 						ldealOptions = livingSocialDAO.getDealOptions(ldeal.getId());
 
-						logger.debug("ldealOptions::  "+ldealOptions);
 						if(ldealOptions!=null && !ldealOptions.isEmpty())
 						{
-							logger.debug("ldealOptions.size()::  "+ldealOptions.size());
 							Set<Dealoption> dealOptions = new HashSet<Dealoption>();
 							Dealoption dealOption = null;
 							for(LdealOption option : ldealOptions)
@@ -168,40 +167,13 @@ public class LivingSocialFilterEngineService implements ILivingSocialFilterEngin
 								dealOptions.add(dealOption);
 							}
 							deals.setDealoptions(dealOptions);
-							logger.debug("loadDeals => count ");
-							dealsDAO.saveDeal(deals,batch_size);
+							logger.debug("loadDeals => count "+batch_size);
+							//dealsDAO.saveDeal(deals,batch_size);
 						}
 
 						//}
 						//break;
 					}
-					/*else
-					{
-						ldealOptions = livingSocialDAO.getDealOptions(ldeal.getId());
-
-						logger.debug("ldealOptions::  "+ldealOptions);
-						if(ldealOptions!=null && !ldealOptions.isEmpty())
-						{
-							logger.debug("ldealOptions.size()::  "+ldealOptions.size());
-							Set<Dealoption> dealOptions = new HashSet<Dealoption>();
-							Dealoption dealOption = null;
-							for(LdealOption option : ldealOptions)
-							{
-								dealOption = new Dealoption();
-								dealOption.setDescription(option.getDescription());
-								dealOption.setPrice(option.getPrice());
-								dealOption.setOriginalPrice(option.getOriginalPrice());
-								dealOption.setDiscountPrice(option.getSavings());
-								dealOption.setDiscountPercent(option.getDiscount());
-								dealOption.setDeals(deal);
-								dealOptions.add(dealOption);
-							}
-							deal.setDealoptions(dealOptions);
-							logger.debug("loadDeals => count ");
-							dealsDAO.updateDeal(deal);
-						}
-					}*/
-
 				}
 				catch(Exception e){
 					e.printStackTrace();

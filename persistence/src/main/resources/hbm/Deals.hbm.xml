@@ -116,13 +116,13 @@
             </key>
             <one-to-many class="com.jeeyoh.persistence.domain.Tags" />
         </set>
-         <set name="userdealssuggestions" inverse="true" cascade="all">
+         <set name="userdealssuggestions" inverse="true">
             <key>
                 <column name="dealId" not-null="true" />
             </key>
             <one-to-many class="com.jeeyoh.persistence.domain.Userdealssuggestion" />
         </set>
-        <set name="topdealssuggestions" inverse="true" cascade="all">
+        <set name="topdealssuggestions" inverse="true">
             <key>
                 <column name="dealId" not-null="true" />
             </key>

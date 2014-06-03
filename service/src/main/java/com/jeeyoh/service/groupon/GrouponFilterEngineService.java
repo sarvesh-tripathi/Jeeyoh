@@ -63,10 +63,10 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 				try {
 					//logger.debug("Date::  "+ ldeal.getEndAt() +"  :  "+ sdf.parse(sdf.format((Date)weekendList.get(j))));
 					//if(ldeal.getEndAt().before(weekendList.get(j))){
-					Deals deal = dealsDAO.isDealExists(gdeal.getDealId().toString());
-					if(deal == null)
+					int deal = dealsDAO.isDealExists(gdeal.getDealId());
+					logger.debug("after query::::  "+deal);
+					if(deal == 0)
 					{
-						logger.debug("ldeal id ===>"+ gdeal.getId());
 						Deals deals =new Deals();
 						deals.setDealId(gdeal.getDealId());
 						deals.setDealUrl(gdeal.getDealUrl());
@@ -106,13 +106,12 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 								for(Gtags gtag :tags)
 								{
 									String name = gtag.getName();
-									logger.debug("Check Tag Name ::: "+name);
 
 									Gcategory gcategory = businessDAO.getBusinessCategory(name);
+									logger.debug("getBusinessCategory after query ::: "+gcategory);
 									if(gcategory != null)
 									{
 										String category = gcategory.getGcategory().getCategory();
-										logger.debug("category ::: "+category);
 										if(category.equalsIgnoreCase("Arts and Entertainment"))
 										{
 											businesstype = businessDAO.getBusinesstypeByType("SPORT");
@@ -172,10 +171,9 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 
 						gdealOptions = gDealsDAO.getDealOptions(gdeal.getId());
 
-						logger.debug("gdealOptions::  "+gdealOptions);
+						logger.debug("gdealOptions after query::  "+gdealOptions);
 						if(gdealOptions!=null && !gdealOptions.isEmpty())
 						{
-							logger.debug("gdealOptions.size()::  "+gdealOptions.size());
 							Set<Dealoption> dealOptions = new HashSet<Dealoption>();
 							Dealoption dealOption = null;
 							for(Gdealoption option : gdealOptions)
@@ -209,7 +207,6 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 								dealOption.setDescription(goptiondetail.getDescription());
 								
 								Set<Gredemptionlocation> redemptionLocations = option.getGredemptionlocations();
-								logger.debug("redemptionLocations:::  "+redemptionLocations);
 								if(redemptionLocations != null) {
 									Set<Dealredemptionlocation> dealRedemptionLocations = new HashSet<Dealredemptionlocation>();
 									for(Gredemptionlocation redemptionLocation : redemptionLocations) {
@@ -236,6 +233,7 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 							batch_size++;
 							logger.debug("loadDeals => count " + batch_size);
 							dealsDAO.saveDeal(deals,batch_size);
+							logger.debug("After Save ====> ");
 						}
 
 						//}

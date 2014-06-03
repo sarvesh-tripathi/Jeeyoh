@@ -10,4 +10,5 @@ public interface IAddFriendService
 	public BaseResponse acceptFriendRequest(int userId, int contactId);
 	public BaseResponse denyFriendRequest(int userId, int contactId);
 	public BaseResponse blockFriendRequest(int userId, int contactId);
+	
 }

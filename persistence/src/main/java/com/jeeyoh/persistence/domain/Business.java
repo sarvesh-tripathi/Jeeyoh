@@ -71,7 +71,7 @@ public class Business  implements java.io.Serializable {
 	public Business(Businesstype businesstype) {
 		this.businesstype = businesstype;
 	}
-	public Business(Businesstype businesstype, String businessId, String name, String websiteUrl, Boolean isClaimed, Boolean isClosed, String mobileUrl, String phone, String displayPhone, String reviewCount, Long distance, Double rating, String ratingImgUrl, String ratingSmallImgUrl, String ratingLargeImgUrl, String snippetText, String snippetImageUrl, String menuProvider, Long menuProviderDate, String crossStreets, String city, String displayAddress, String postalCode, String countryCode, String address, String stateCode, String neighborhoods, String lattitude, String longitude, String ambience, Boolean isParkingAvailable, String traffic, String serviceLevel, String noiseLevel, String likeCount, Boolean isActive, String imageUrl, String workingHours, String musicType, Set reviews, Set foodmenuitems, Set dealses, Set pages) {
+	public Business(Businesstype businesstype, String businessId, String name, String websiteUrl, Boolean isClaimed, Boolean isClosed, String mobileUrl, String phone, String displayPhone, String reviewCount, Long distance, Double rating, String ratingImgUrl, String ratingSmallImgUrl, String ratingLargeImgUrl, String snippetText, String snippetImageUrl, String menuProvider, Long menuProviderDate, String crossStreets, String city, String displayAddress, String postalCode, String countryCode, String address, String stateCode, String neighborhoods, String lattitude, String longitude, String ambience, Boolean isParkingAvailable, String traffic, String serviceLevel, String noiseLevel, String likeCount, Boolean isActive, String imageUrl, String workingHours, String musicType, Set reviews, Set foodmenuitems, Set dealses, Set pages, Set usernondealsuggestions, Set topnondealsuggestions) {
 		this.businesstype = businesstype;
 		this.businessId = businessId;
 		this.name = name;
@@ -115,6 +115,8 @@ public class Business  implements java.io.Serializable {
 		this.foodmenuitems = foodmenuitems;
 		this.dealses = dealses;
 		this.pages = pages;
+		this.usernondealsuggestions = usernondealsuggestions;
+		this.topnondealsuggestions = topnondealsuggestions;
 	}
 
 	public Integer getId() {

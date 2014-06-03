@@ -37,7 +37,7 @@ public interface IDealsDAO {
 	public List<Object[]> getTopDealsByRating(String idsStr);
 	public List<Object[]> getDealLikeCountByPage(String idsStr);
 	public Deals getDealById(int dealId);
-	public Deals isDealExists(String dealId);
+	public int isDealExists(String dealId);
 	public int getTotalDealsBySearchKeyWord(String searchText,String category, String location);
 	public List<Deals> getDealsByUserCategory(String itemCategory,
 			String itemType, String providerName);

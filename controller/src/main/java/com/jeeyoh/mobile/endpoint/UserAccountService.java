@@ -749,5 +749,19 @@ public class UserAccountService {
 		BaseResponse baseResponse = addGroupService.editGroup(addGroupModel);
 		return baseResponse;
 	}
+	
+	@POST
+	@Path("/getFriendRequestsList")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public FriendListResponse getFriendRequestsList(UserModel user)
+	{
+		FriendListResponse response = new FriendListResponse();
+		if(user.getUserId() != null && user.getUserId() !=0)
+		{
+			response = userService.getFriendRequestOfUser(user.getUserId());
+		}
+		return response;
+	}
 
 }

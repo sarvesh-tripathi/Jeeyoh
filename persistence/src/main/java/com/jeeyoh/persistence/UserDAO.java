@@ -450,12 +450,13 @@ public class UserDAO implements IUserDAO {
 	public List<Events> getUserLikesEvents(int userId, double latitud, double longitude) {
 		logger.debug("getUserLikesEvents => ");
 		List<Events> eventsList = null;
-		String hqlQuery = "select b from User a, Events b, Eventuserlikes c where a.userId = :userId and c.user.userId = a.userId and b.eventId = c.event.eventId and b.event_date_time_local >= :currentDate and (((acos(sin(((:latitude)*pi()/180)) * sin((b.latitude*pi()/180))+cos(((:latitude)*pi()/180)) * cos((b.latitude*pi()/180)) * cos((((:longitude)- b.longitude)*pi()/180))))*180/pi())*60*1.1515) <=50";
+		String hqlQuery = "select b from User a, Events b, Eventuserlikes c where a.userId = :userId and c.user.userId = a.userId and b.eventId = c.event.eventId and (b.event_date_time_local >= :currentDate and b.event_date_time_local <= :weekendDate) and (((acos(sin(((:latitude)*pi()/180)) * sin((b.latitude*pi()/180))+cos(((:latitude)*pi()/180)) * cos((b.latitude*pi()/180)) * cos((((:longitude)- b.longitude)*pi()/180))))*180/pi())*60*1.1515) <=50";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
 			query.setParameter("userId", userId);
 			query.setParameter("currentDate", Utils.getCurrentDate());
+			query.setParameter("weekendDate", Utils.getNearestWeekend(null));
 			query.setDouble("latitude", latitud);
 			query.setDouble("longitude", longitude);
 			eventsList = (List<Events>) query.list();
@@ -480,12 +481,13 @@ public class UserDAO implements IUserDAO {
 		return criteria.list();*/
 
 		List<Events> eventsList = null;
-		String hqlQuery = "select b from User a, Events b, Eventuserlikes c where a.userId = :userId and c.user.userId = a.userId and b.page.pagetype.pageType = :pageType and b.eventId = c.event.eventId and b.event_date_time_local >= :currentDate and (((acos(sin(((:latitude)*pi()/180)) * sin((b.latitude*pi()/180))+cos(((:latitude)*pi()/180)) * cos((b.latitude*pi()/180)) * cos((((:longitude)- b.longitude)*pi()/180))))*180/pi())*60*1.1515) <=50";
+		String hqlQuery = "select b from User a, Events b, Eventuserlikes c where a.userId = :userId and c.user.userId = a.userId and b.page.pagetype.pageType = :pageType and b.eventId = c.event.eventId and (b.event_date_time_local >= :currentDate and b.event_date_time_local <= :weekendDate) and (((acos(sin(((:latitude)*pi()/180)) * sin((b.latitude*pi()/180))+cos(((:latitude)*pi()/180)) * cos((b.latitude*pi()/180)) * cos((((:longitude)- b.longitude)*pi()/180))))*180/pi())*60*1.1515) <=50";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
 			query.setParameter("userId", userId);
 			query.setParameter("currentDate", Utils.getCurrentDate());
+			query.setParameter("weekendDate", Utils.getNearestWeekend(null));
 			query.setDouble("latitude", latitud);
 			query.setDouble("longitude", longitude);
 			query.setParameter("pageType", pageType);
@@ -603,12 +605,13 @@ public class UserDAO implements IUserDAO {
 		logger.debug("getUserCommunityEvents => ");
 		List<Events> eventsList = null;
 		//String hqlQuery = "select a from Events a where a.page.pageId = :pageId and a.event_date >= :currentDate";
-		String hqlQuery = "select a from Events a where a.page.pageId = :pageId and a.event_date_time_local >= :currentDate and (((acos(sin(((:latitude)*pi()/180)) * sin((a.latitude*pi()/180))+cos(((:latitude)*pi()/180)) * cos((a.latitude*pi()/180)) * cos((((:longitude)- a.longitude)*pi()/180))))*180/pi())*60*1.1515) <=50 ";
+		String hqlQuery = "select a from Events a where a.page.pageId = :pageId and (a.event_date_time_local >= :currentDate and a.event_date_time_local <= :weekendDate) and (((acos(sin(((:latitude)*pi()/180)) * sin((a.latitude*pi()/180))+cos(((:latitude)*pi()/180)) * cos((a.latitude*pi()/180)) * cos((((:longitude)- a.longitude)*pi()/180))))*180/pi())*60*1.1515) <=50 ";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
 			query.setParameter("pageId", pageId);
 			query.setParameter("currentDate", Utils.getCurrentDate());
+			query.setParameter("weekendDate", Utils.getNearestWeekend(null));
 			query.setDouble("latitude", latitud);
 			query.setDouble("longitude", longitude);
 			eventsList = (List<Events>) query.list();
@@ -1636,12 +1639,14 @@ public class UserDAO implements IUserDAO {
 	public int getTotalUserNonDealSuggestions(Integer userId) {
 		logger.debug("userNonDealSuggestionCount => ");
 		int rowCount = 0;
-		String hqlQuery = "select count(suggestionId) from Usernondealsuggestion where user.userId = :userId and suggestedTime = :currentWeekend";
+		//String hqlQuery = "select count(suggestionId) from Usernondealsuggestion where user.userId = :userId and suggestedTime = :currentWeekend";
+		String hqlQuery = "select count(suggestionId) from Usernondealsuggestion where user.userId = :userId and (suggestedTime is null or suggestedTime >= :currentDate)";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
 			query.setParameter("userId", userId);
-			query.setParameter("currentWeekend", Utils.getNearestWeekend(null));
+			//query.setParameter("currentWeekend", Utils.getNearestWeekend(null));
+			query.setParameter("currentDate", Utils.getCurrentDate());
 			rowCount = ((Number)query.uniqueResult()).intValue();
 
 		} catch (Exception e) {
@@ -1656,14 +1661,15 @@ public class UserDAO implements IUserDAO {
 	public int getTotalUserDealSuggestions(Integer userId) {
 		logger.debug("getTotalUserDealSuggestions => ");
 		int rowCount = 0;
-		String hqlQuery = "select count(a.userDealMapId) from Userdealssuggestion a where a.user.userId = :userId and (a.deals.endAt >= :currentDate and a.deals.endAt > :weekendDate) and a.suggestedTime = :currentWeekend";
+		//String hqlQuery = "select count(a.userDealMapId) from Userdealssuggestion a where a.user.userId = :userId and (a.deals.endAt >= :currentDate and a.deals.endAt > :weekendDate) and a.suggestedTime = :currentWeekend";
+		String hqlQuery = "select count(a.userDealMapId) from Userdealssuggestion a where a.user.userId = :userId and (a.deals.endAt >= :currentDate and a.deals.endAt > :weekendDate)  and (a.suggestedTime is null or a.suggestedTime >= :currentDate )";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
 			query.setParameter("userId", userId);
 			query.setParameter("currentDate", Utils.getCurrentDate());
 			query.setParameter("weekendDate", Utils.getNearestThursday());
-			query.setParameter("currentWeekend", Utils.getNearestWeekend(null));
+			/*query.setParameter("currentWeekend", Utils.getNearestWeekend(null));*/
 			rowCount = ((Number)query.uniqueResult()).intValue();
 
 		} catch (Exception e) {
@@ -1678,13 +1684,13 @@ public class UserDAO implements IUserDAO {
 	public int getTotalUserEventSuggestions(Integer userId) {
 		logger.debug("getTotalUserEventSuggestions => ");
 		int rowCount = 0;
-		String hqlQuery = "select count(a.userEventMapId) from Usereventsuggestion a where a.user.userId = :userId and a.events.event_date_time_local >= :currentDate and a.suggestedTime = :currentWeekend";
+		String hqlQuery = "select count(a.userEventMapId) from Usereventsuggestion a where a.user.userId = :userId and a.events.event_date_time_local >= :currentDate and a.suggestedTime >= :currentDate";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
 			query.setParameter("userId", userId);
 			query.setParameter("currentDate", Utils.getCurrentDate());
-			query.setParameter("currentWeekend", Utils.getNearestWeekend(null));
+			//query.setParameter("currentWeekend", Utils.getNearestWeekend(null));
 			rowCount = ((Number)query.uniqueResult()).intValue();
 
 		} catch (Exception e) {
@@ -1845,12 +1851,13 @@ public class UserDAO implements IUserDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<User> getUserByNameAndLocation(String location, String name, int userId, List<Integer> friendsIds) {
-		logger.debug("getUserByNameAndLocation location ::: ===>"+location + "name  :::: "+name);
+		logger.debug("getUserByNameAndLocation location ::: ===> "+location + " name  :::: "+name + " friendsIds: "+friendsIds);
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class, "user").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
 		if(location != null && !location.trim().equals(""))
 		{
-			criteria.add(Restrictions.disjunction().add(Restrictions.like("user.addressline1", "%" + location + "%"))
+			criteria.add(Restrictions.disjunction().add(Restrictions.like("user.zipcode", "%" + location + "%"))
+					.add(Restrictions.like("user.addressline1", "%" + location + "%"))
 					.add(Restrictions.like("user.street", "%" + location + "%"))
 					.add(Restrictions.like("user.city", "%" + location + "%"))
 					.add(Restrictions.like("user.state", "%" + location + "%"))
@@ -1903,7 +1910,7 @@ public class UserDAO implements IUserDAO {
 	{
 		logger.debug("findInMutualFriends ==> name : "+ name + " ; friendsIds : "+friendsIds + " ; alreadyExistingIds : " + alreadyExistingIds);
 		List<User> list = null;
-		String hqlQuery = "select b from Usercontacts a, User b where b.firstName like '%"+name+"%' and a.userByContactId.userId = b.userId and a.userByUserId.userId in("+friendsIds+") and a.userByContactId.userId not in ("+alreadyExistingIds+") group by b.userId";
+		String hqlQuery = "select b from Usercontacts a, User b where (b.firstName like '%"+name+"%' or b.middleName like '%"+name+"%' or b.lastName like '%"+name+"%' or b.emailId like '%"+name+"%') and ((a.userByContactId.userId = b.userId and a.userByUserId.userId in("+friendsIds+") and a.userByContactId.userId not in ("+alreadyExistingIds+")) or (a.userByUserId.userId = b.userId and a.userByContactId.userId in("+friendsIds+") and a.userByUserId.userId not in ("+alreadyExistingIds+"))) group by b.userId";
 		logger.debug("findInMutualFriends hqlQuery ===>"+hqlQuery);
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
@@ -2117,6 +2124,22 @@ public class UserDAO implements IUserDAO {
 			e.printStackTrace();
 		}
 		return dealProperties != null && !dealProperties.isEmpty() ? dealProperties.get(0) : null;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<User> getUserFriendRequests(int userId) {
+		List<User> contactList = null;
+		String hqlQuery = "select a from User a, Usercontacts b where (b.userByContactId.userId = :userId and a.userId = b.userByUserId.userId) and (b.isApproved is false and b.isDeny is false and isBlock is false) group by a.userId";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("userId", userId);
+			contactList = (List<User>) query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return contactList;
 	}
 	
 }

@@ -1,6 +1,5 @@
 package com.jeeyoh.persistence;
 
-import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -18,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.jeeyoh.persistence.domain.CommunityComments;
-import com.jeeyoh.persistence.domain.CommunityReview;
 import com.jeeyoh.persistence.domain.CommunityReviewMap;
 import com.jeeyoh.persistence.domain.Events;
 import com.jeeyoh.persistence.domain.Eventuserlikes;
@@ -654,7 +652,7 @@ public class EventsDAO implements IEventsDAO{
 			criteria.add(Restrictions.eq("user.emailId", userEmail));
 		}
 
-		criteria.add(Restrictions.ge("usereventsuggestions.suggestedTime", Utils.getNearestWeekend(null)));
+		criteria.add(Restrictions.ge("usereventsuggestions.suggestedTime", Utils.getCurrentDate()));
 		criteria.add(Restrictions.ge("events.event_date_time_local", Utils.getCurrentDate()));
 
 		criteria.setFirstResult(offset*10)
@@ -711,12 +709,13 @@ public class EventsDAO implements IEventsDAO{
 
 	  List<Events> eventList = criteria.list();*/
 		List<Events> eventList = null;
-		String hqlQuery = "select a from Events a, Page b, Pagetype c where c.pageType = :category and a.event_date_time_local >= :currentDate and a.page.pageId = b.pageId and b.pagetype.pageTypeId = c.pageTypeId and (a.description like '%" + likekeyword  +"%' or a.title like '%" + likekeyword  +"%' or a.ancestorGenreDescriptions like '%" + likekeyword  +"%' or a.urlpath like '%" + likekeyword  +"%') and (((acos(sin(((:latitude)*pi()/180)) * sin((a.latitude*pi()/180))+cos(((:latitude)*pi()/180)) * cos((a.latitude*pi()/180)) * cos((((:longitude)- a.longitude)*pi()/180))))*180/pi())*60*1.1515) <=50";
+		String hqlQuery = "select a from Events a, Page b, Pagetype c where c.pageType = :category and (a.event_date_time_local >= :currentDate and a.event_date_time_local <= :weekendDate) and a.page.pageId = b.pageId and b.pagetype.pageTypeId = c.pageTypeId and (a.description like '%" + likekeyword  +"%' or a.title like '%" + likekeyword  +"%' or a.ancestorGenreDescriptions like '%" + likekeyword  +"%' or a.urlpath like '%" + likekeyword  +"%') and (((acos(sin(((:latitude)*pi()/180)) * sin((a.latitude*pi()/180))+cos(((:latitude)*pi()/180)) * cos((a.latitude*pi()/180)) * cos((((:longitude)- a.longitude)*pi()/180))))*180/pi())*60*1.1515) <=50";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
 			query.setParameter("category", itemCategory);
 			query.setParameter("currentDate", Utils.getCurrentDate());
+			query.setParameter("weekendDate", Utils.getNearestWeekend(null));
 			query.setDouble("latitude", latitude);
 			query.setDouble("longitude", longitude);
 			eventList = (List<Events>) query.list();
@@ -1124,7 +1123,7 @@ public class EventsDAO implements IEventsDAO{
 	@Override
 	public Object[] getRecentEventDetails(int pageId) {
 		List<Object[]> eventList = null;
-		String hqlQuery = "select b.event_date_local,b.event_time_local,a.latitude,a.longitude from Page a, Events b where a.pageId = :pageId and a.pageId = b.page.pageId and b.event_date_time_local >= :currentDate order by b.event_date_time_local asc limit 1";
+		String hqlQuery = "select b.event_date_local,b.event_time_local,b.latitude,b.longitude from Page a, Events b where a.pageId = :pageId and a.pageId = b.page.pageId and b.event_date_time_local >= :currentDate order by b.event_date_time_local asc limit 1";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
@@ -1191,5 +1190,39 @@ public class EventsDAO implements IEventsDAO{
 		List<Page> pageList = criteria.list();
 		logger.debug("current event list => "+pageList.size());
 		return pageList;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public int getRecentEvent(int pageId) {
+		List<Integer> eventList = null;
+		String hqlQuery = "select b.eventId from Page a, Events b where a.pageId = :pageId and a.pageId = b.page.pageId and b.event_date_time_local >= :currentDate order by b.event_date_time_local asc limit 1";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("pageId", pageId);
+			query.setParameter("currentDate", Utils.getCurrentDate());
+			eventList = (List<Integer>) query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return eventList != null && !eventList.isEmpty() ? eventList.get(0) : 0;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Integer> getEventsByPgaeId(int pageId) {
+		List<Integer> eventList = null;
+		String hqlQuery = "select b.eventId from Page a, Events b where a.pageId = :pageId and a.pageId = b.page.pageId and b.event_date_time_local >= :currentDate";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("pageId", pageId);
+			query.setParameter("currentDate", Utils.getCurrentDate());
+			eventList = (List<Integer>) query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return eventList;
 	}
 }

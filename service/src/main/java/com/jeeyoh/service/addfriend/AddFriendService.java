@@ -10,9 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jeeyoh.model.enums.ServiceAPIStatus;
 import com.jeeyoh.model.response.BaseResponse;
 import com.jeeyoh.model.response.FriendListResponse;
-import com.jeeyoh.model.response.UserResponse;
 import com.jeeyoh.model.user.UserModel;
 import com.jeeyoh.persistence.IUserDAO;
 import com.jeeyoh.persistence.domain.User;
@@ -24,41 +24,90 @@ public class AddFriendService implements IAddFriendService{
 
 	@Autowired
 	private IUserDAO userDAO;
-	
+
 	@Override
 	@Transactional
 	public FriendListResponse searchFriend(String location, String name, int userId) {
-		logger.debug("in searchFriend ====> location :: "+location+" ; name :: "+name+ " ; userId :: "+userId);
 		FriendListResponse friendListResponse = new FriendListResponse();
-		List<UserModel> userModelList = new ArrayList<UserModel>();
-		List<Integer> friendsId = new ArrayList<Integer>();
-		List<Integer> addedIds = new ArrayList<Integer>();
-		StringBuilder friendIdsStr = new StringBuilder();
-		StringBuilder addedIdsStr = new StringBuilder();
-		// Get user contacts
-		List<User> allUserFriendsList =  userDAO.getUserContacts(userId);
-		addedIds.add(userId);
-		if(allUserFriendsList!=null)
+		try
 		{
-			for(User friends:allUserFriendsList)
+			logger.debug("in searchFriend ====> location :: "+location+" ; name :: "+name+ " ; userId :: "+userId);
+			List<UserModel> userModelList = new ArrayList<UserModel>();
+			List<Integer> friendsId = new ArrayList<Integer>();
+			List<Integer> addedIds = new ArrayList<Integer>();
+			StringBuilder friendIdsStr = new StringBuilder();
+			StringBuilder addedIdsStr = new StringBuilder();
+			// Get user contacts
+			List<User> allUserFriendsList =  userDAO.getUserContacts(userId);
+			logger.debug("Contact:::  "+allUserFriendsList);
+			addedIds.add(userId);
+			addedIdsStr.append(userId+",");
+			if(allUserFriendsList!=null)
 			{
-				addedIds.add(friends.getUserId());
-				friendIdsStr.append(friends.getUserId()+",");
-				addedIdsStr.append(friends.getUserId()+",");
-			}
-		}
-		
-		//Search by location and name and should not be in friend list
-		if(location!=null && !location.equals(""))
-		{
-			logger.debug("searching by location and name and should not be in friend list====> ");
-			List<User> searchUserByLocationAndNameList = userDAO.getUserByNameAndLocation(location, name, userId, friendsId);
-			if(searchUserByLocationAndNameList!=null && !searchUserByLocationAndNameList.equals(""))
-			{
-				logger.debug("searchUserByLocationAndNameList ===>"+searchUserByLocationAndNameList.size());
-				for(User user:searchUserByLocationAndNameList)
+				for(User friends:allUserFriendsList)
 				{
-					logger.debug("adding in user model"+user.getUserId()+"; name: "+user.getFirstName());
+					friendsId.add(friends.getUserId());
+					addedIds.add(friends.getUserId());
+					friendIdsStr.append(friends.getUserId()+",");
+					addedIdsStr.append(friends.getUserId()+",");
+				}
+			}
+
+			//Search by location and name and should not be in friend list
+			if(location!=null && !location.equals(""))
+			{
+				logger.debug("searching by location and name and should not be in friend list====> ");
+				List<User> searchUserByLocationAndNameList = userDAO.getUserByNameAndLocation(location, name, userId, friendsId);
+				if(searchUserByLocationAndNameList!=null && !searchUserByLocationAndNameList.equals(""))
+				{
+					logger.debug("searchUserByLocationAndNameList ===>"+searchUserByLocationAndNameList.size());
+					for(User user:searchUserByLocationAndNameList)
+					{
+						logger.debug("adding in user model"+user.getUserId()+"; name: "+user.getFirstName());
+						UserModel userModel = new UserModel();
+						userModel.setAddressline1(user.getAddressline1());
+						userModel.setBirthDate(user.getBirthDate());
+						userModel.setBirthMonth(user.getBirthMonth());
+						userModel.setBirthYear(user.getBirthYear());
+						userModel.setCity(user.getCity());
+						userModel.setConfirmationId(user.getConfirmationId());
+						userModel.setCountry(user.getCountry());
+						userModel.setCreatedtime(user.getCreatedtime().toString());
+						userModel.setEmailId(user.getEmailId());
+						userModel.setFirstName(user.getFirstName());
+						userModel.setGender(user.getGender());
+						userModel.setIsActive(user.getIsActive());
+						userModel.setIsDeleted(user.getIsDeleted());
+						userModel.setLastName(user.getLastName());
+						userModel.setMiddleName(user.getMiddleName());
+						userModel.setPassword(user.getPassword());
+						userModel.setSessionId(user.getSessionId());
+						userModel.setState(user.getState());
+						userModel.setStreet(user.getStreet());
+						userModel.setUpdatedtime(user.getUpdatedtime().toString());
+						userModel.setUserId(user.getUserId());
+						userModel.setZipcode(user.getZipcode());
+						addedIds.add(user.getUserId());
+						addedIdsStr.append(user.getUserId()+",");
+						userModelList.add(userModel);
+					}
+				}
+
+			}	
+
+			// Search by friends of friends
+			logger.debug("searching in friends of friends ====> ");
+			logger.debug("allUserFriendsList ====>"+allUserFriendsList.size());
+			friendIdsStr.deleteCharAt(friendIdsStr.length() - 1);
+			addedIdsStr.deleteCharAt(addedIdsStr.length() - 1);
+			logger.debug("addedIdsStr ==>"+addedIdsStr+ "friendIdsStr ==>"+friendIdsStr);
+			List<User> searchMutualFriendsList = userDAO.findInMutualFriends(name, friendIdsStr.toString(), addedIdsStr.toString());
+			if(searchMutualFriendsList!=null && !searchMutualFriendsList.equals(""))
+			{
+				logger.debug("searchMutualFriendList ===>"+searchMutualFriendsList.size());
+				for(User user:searchMutualFriendsList)
+				{
+					logger.debug("adding in user model"+user.getUserId()+"; name "+user.getFirstName());
 					UserModel userModel = new UserModel();
 					userModel.setAddressline1(user.getAddressline1());
 					userModel.setBirthDate(user.getBirthDate());
@@ -83,124 +132,94 @@ public class AddFriendService implements IAddFriendService{
 					userModel.setUserId(user.getUserId());
 					userModel.setZipcode(user.getZipcode());
 					addedIds.add(user.getUserId());
-					addedIdsStr.append(user.getUserId()+",");
 					userModelList.add(userModel);
 				}
 			}
-			
-		}	
-		
-		// Search by friends of friends
-		logger.debug("searching in friends of friends ====> ");
-		logger.debug("allUserFriendsList ====>"+allUserFriendsList.size());
-		friendIdsStr.deleteCharAt(friendIdsStr.length() - 1);
-		addedIdsStr.deleteCharAt(addedIdsStr.length() - 1);
-		logger.debug("addedIdsStr ==>"+addedIdsStr+ "friendIdsStr ==>"+friendIdsStr);
-		List<User> searchMutualFriendsList = userDAO.findInMutualFriends(name, friendIdsStr.toString(), addedIdsStr.toString());
-		if(searchMutualFriendsList!=null && !searchMutualFriendsList.equals(""))
-		{
-			logger.debug("searchMutualFriendList ===>"+searchMutualFriendsList.size());
-			for(User user:searchMutualFriendsList)
+
+			// Search others
+			logger.debug("searching others ====> ");
+
+			List<User> searchOtherThanFriendsList = userDAO.findOtherThanMutualFriends(name, addedIds);
+			if(searchOtherThanFriendsList!=null && !searchOtherThanFriendsList.equals(""))
 			{
-				logger.debug("adding in user model"+user.getUserId()+"; name "+user.getFirstName());
-				UserModel userModel = new UserModel();
-				userModel.setAddressline1(user.getAddressline1());
-				userModel.setBirthDate(user.getBirthDate());
-				userModel.setBirthMonth(user.getBirthMonth());
-				userModel.setBirthYear(user.getBirthYear());
-				userModel.setCity(user.getCity());
-				userModel.setConfirmationId(user.getConfirmationId());
-				userModel.setCountry(user.getCountry());
-				userModel.setCreatedtime(user.getCreatedtime().toString());
-				userModel.setEmailId(user.getEmailId());
-				userModel.setFirstName(user.getFirstName());
-				userModel.setGender(user.getGender());
-				userModel.setIsActive(user.getIsActive());
-				userModel.setIsDeleted(user.getIsDeleted());
-				userModel.setLastName(user.getLastName());
-				userModel.setMiddleName(user.getMiddleName());
-				userModel.setPassword(user.getPassword());
-				userModel.setSessionId(user.getSessionId());
-				userModel.setState(user.getState());
-				userModel.setStreet(user.getStreet());
-				userModel.setUpdatedtime(user.getUpdatedtime().toString());
-				userModel.setUserId(user.getUserId());
-				userModel.setZipcode(user.getZipcode());
-				addedIds.add(user.getUserId());
-				userModelList.add(userModel);
+				logger.debug("searchOtherThanFriendsList ===>"+searchOtherThanFriendsList.size());
+				for(User user:searchOtherThanFriendsList)
+				{
+					logger.debug("adding in user model"+user.getUserId()+"; name "+user.getFirstName());
+					UserModel userModel = new UserModel();
+					userModel.setAddressline1(user.getAddressline1());
+					userModel.setBirthDate(user.getBirthDate());
+					userModel.setBirthMonth(user.getBirthMonth());
+					userModel.setBirthYear(user.getBirthYear());
+					userModel.setCity(user.getCity());
+					userModel.setConfirmationId(user.getConfirmationId());
+					userModel.setCountry(user.getCountry());
+					userModel.setCreatedtime(user.getCreatedtime().toString());
+					userModel.setEmailId(user.getEmailId());
+					userModel.setFirstName(user.getFirstName());
+					userModel.setGender(user.getGender());
+					userModel.setIsActive(user.getIsActive());
+					userModel.setIsDeleted(user.getIsDeleted());
+					userModel.setLastName(user.getLastName());
+					userModel.setMiddleName(user.getMiddleName());
+					userModel.setPassword(user.getPassword());
+					userModel.setSessionId(user.getSessionId());
+					userModel.setState(user.getState());
+					userModel.setStreet(user.getStreet());
+					userModel.setUpdatedtime(user.getUpdatedtime().toString());
+					userModel.setUserId(user.getUserId());
+					userModel.setZipcode(user.getZipcode());
+					userModelList.add(userModel);
+				}
 			}
+
+			friendListResponse.setUser(userModelList);
+			friendListResponse.setStatus(ServiceAPIStatus.OK.getStatus());
+			logger.debug("Done ==>");
 		}
-		
-		// Search others
-		logger.debug("searching others ====> ");
-		
-		List<User> searchOtherThanFriendsList = userDAO.findOtherThanMutualFriends(name, addedIds);
-		if(searchOtherThanFriendsList!=null && !searchOtherThanFriendsList.equals(""))
+		catch(Exception e)
 		{
-			logger.debug("searchOtherThanFriendsList ===>"+searchOtherThanFriendsList.size());
-			for(User user:searchOtherThanFriendsList)
-			{
-				logger.debug("adding in user model"+user.getUserId()+"; name "+user.getFirstName());
-				UserModel userModel = new UserModel();
-				userModel.setAddressline1(user.getAddressline1());
-				userModel.setBirthDate(user.getBirthDate());
-				userModel.setBirthMonth(user.getBirthMonth());
-				userModel.setBirthYear(user.getBirthYear());
-				userModel.setCity(user.getCity());
-				userModel.setConfirmationId(user.getConfirmationId());
-				userModel.setCountry(user.getCountry());
-				userModel.setCreatedtime(user.getCreatedtime().toString());
-				userModel.setEmailId(user.getEmailId());
-				userModel.setFirstName(user.getFirstName());
-				userModel.setGender(user.getGender());
-				userModel.setIsActive(user.getIsActive());
-				userModel.setIsDeleted(user.getIsDeleted());
-				userModel.setLastName(user.getLastName());
-				userModel.setMiddleName(user.getMiddleName());
-				userModel.setPassword(user.getPassword());
-				userModel.setSessionId(user.getSessionId());
-				userModel.setState(user.getState());
-				userModel.setStreet(user.getStreet());
-				userModel.setUpdatedtime(user.getUpdatedtime().toString());
-				userModel.setUserId(user.getUserId());
-				userModel.setZipcode(user.getZipcode());
-				userModelList.add(userModel);
-			}
+			logger.debug("Error:::: "+e.getMessage());
+			friendListResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
 		}
-		
-		friendListResponse.setUser(userModelList);
-		logger.debug("Done ==>");
 		return friendListResponse;
 	}
-	
+
 	@Override
 	@Transactional
 	public BaseResponse sendFriendRequest(int userId, int contactId)
 	{
-		
+
 		BaseResponse response = new BaseResponse();
-		User user = userDAO.getUserById(userId);
-		User contact = userDAO.getUserById(contactId);
-		// Add new row in user contact table
-		Usercontacts userContacts = new Usercontacts();
-		if(userId!=0 && contactId!=0)
+		Usercontacts userContact = userDAO.isUsercontactExists(userId, contactId);
+		if(userContact == null)
 		{
-			userContacts.setUserByUserId(user);
-			userContacts.setUserByContactId(contact);
-			userContacts.setIsApproved(false);
-			userContacts.setIsBlock(false);
-			userContacts.setIsDeleted(false);
-			userContacts.setIsDeny(false);
-			userContacts.setIsStar(false);
-			userContacts.setIsActive(true);
-			userContacts.setUpdatedtime(new Date());
-			userContacts.setCreatedtime(new Date());
-			userDAO.saveUsercontacts(userContacts);
-			response.setStatus("Friend request sent");
+			User user = userDAO.getUserById(userId);
+			User contact = userDAO.getUserById(contactId);
+			// Add new row in user contact table
+			Usercontacts userContacts = new Usercontacts();
+			if(userId!=0 && contactId!=0)
+			{
+				userContacts.setUserByUserId(user);
+				userContacts.setUserByContactId(contact);
+				userContacts.setIsApproved(false);
+				userContacts.setIsBlock(false);
+				userContacts.setIsDeleted(false);
+				userContacts.setIsDeny(false);
+				userContacts.setIsStar(false);
+				userContacts.setIsActive(true);
+				userContacts.setUpdatedtime(new Date());
+				userContacts.setCreatedtime(new Date());
+				userDAO.saveUsercontacts(userContacts);
+				response.setStatus("Friend request sent");
+			}
 		}
 		else
 		{
-			response.setError("Friend request not sent");
+			if(userContact.getUserByUserId().getUserId() == userId)
+				response.setStatus("Friend request already sent");
+			else
+				response.setStatus("You have pending request from this user");
 		}
 		return response;
 	}

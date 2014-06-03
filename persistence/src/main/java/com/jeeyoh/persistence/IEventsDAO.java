@@ -1,10 +1,8 @@
 package com.jeeyoh.persistence;
 
-import java.util.Date;
 import java.util.List;
 
 import com.jeeyoh.persistence.domain.CommunityComments;
-import com.jeeyoh.persistence.domain.CommunityReview;
 import com.jeeyoh.persistence.domain.CommunityReviewMap;
 import com.jeeyoh.persistence.domain.Events;
 import com.jeeyoh.persistence.domain.Eventuserlikes;
@@ -61,5 +59,7 @@ public interface IEventsDAO {
 	public List<Events> getEventsByuserLikesForCurrentWeekend(String likekeyword,
 			String itemCategory, String providerName, double latitude, double longitude);
 	public List<Page> getCommunityBySearchKeyword(String searchText, String category, int offset, int limit);
+	public int getRecentEvent(int pageId);
+	public List<Integer> getEventsByPgaeId(int pageId);;
 
 }

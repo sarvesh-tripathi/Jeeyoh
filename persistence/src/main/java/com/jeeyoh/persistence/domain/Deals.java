@@ -66,7 +66,7 @@ public class Deals  implements java.io.Serializable {
     public Deals(Business business) {
         this.business = business;
     }
-    public Deals(Business business, String dealId, String title, String placementPriority, String sidebarImageUrl, String smallImageUrl, String mediumImageUrl, String largeImageUrl, String announcementTitle, String dealUrl, String status, Boolean isTipped, Integer tippingPoint, Boolean isSoldOut, Boolean isPopular, String additionalDeals, String impRestrictions, String additionalRestrictions, String soldQuantity, Boolean shippingAddressRequired, String highlightsHtml, String pitchHtml, String dealType, Date startAt, Date endAt, Boolean isNowDeal, Date tippedAt, String dealSource, Set dealsusages, Set dealoptions, Set tags) {
+    public Deals(Business business, String dealId, String title, String placementPriority, String sidebarImageUrl, String smallImageUrl, String mediumImageUrl, String largeImageUrl, String announcementTitle, String dealUrl, String status, Boolean isTipped, Integer tippingPoint, Boolean isSoldOut, Boolean isPopular, String additionalDeals, String impRestrictions, String additionalRestrictions, String soldQuantity, Boolean shippingAddressRequired, String highlightsHtml, String pitchHtml, String dealType, Date startAt, Date endAt, Boolean isNowDeal, Date tippedAt, String dealSource, Set dealsusages, Set dealoptions, Set tags, Set userdealssuggestions, Set topdealssuggestions) {
        this.business = business;
        this.dealId = dealId;
        this.title = title;
@@ -97,6 +97,9 @@ public class Deals  implements java.io.Serializable {
        this.dealSource = dealSource;
        this.dealsusages = dealsusages;
        this.dealoptions = dealoptions;
+       this.tags = tags;
+       this.userdealssuggestions = userdealssuggestions;
+       this.topdealssuggestions = topdealssuggestions;
       
     }
    

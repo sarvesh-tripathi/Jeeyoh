@@ -37,6 +37,7 @@ public class NonDealSearch implements INonDealSearch {
 	public final String EVENTS_CATEGORY = "EVENT";
 	public final String GETAWAYS_CATEGORY = "GETAWAYS";
 	public final String SPORTS_CATEGORY = "SPORT";
+	public final String SPA_CATEGORY = "SPA";
 
 	@Autowired
 	private IUserDAO userDAO;
@@ -116,7 +117,7 @@ public class NonDealSearch implements INonDealSearch {
 			logger.debug("userCategoryList size::  "+userCategoryList.size());
 			for(UserCategory userCategory : userCategoryList) {
 
-				if(userCategory.getItemCategory().equalsIgnoreCase(MOVIE_CATEGORY) || userCategory.getItemCategory().equalsIgnoreCase(RESTAURANT_CATEGORY) || userCategory.getItemCategory().equalsIgnoreCase(NIGHTLIFE_CATEGORY) || userCategory.getItemCategory().equalsIgnoreCase(EVENTS_CATEGORY) || userCategory.getItemCategory().equalsIgnoreCase(GETAWAYS_CATEGORY) || userCategory.getItemCategory().equalsIgnoreCase(SPORTS_CATEGORY)) {
+				if(userCategory.getItemCategory().equalsIgnoreCase(MOVIE_CATEGORY) || userCategory.getItemCategory().equalsIgnoreCase(RESTAURANT_CATEGORY) || userCategory.getItemCategory().equalsIgnoreCase(NIGHTLIFE_CATEGORY) || userCategory.getItemCategory().equalsIgnoreCase(EVENTS_CATEGORY) || userCategory.getItemCategory().equalsIgnoreCase(GETAWAYS_CATEGORY) || userCategory.getItemCategory().equalsIgnoreCase(SPORTS_CATEGORY) || userCategory.getItemCategory().equalsIgnoreCase(SPA_CATEGORY)) {
 
 					//UserCategoryLikes userCategoryLikes = (UserCategoryLikes)userCategory.getUserCategoryLikes().iterator().next();
 					UserCategoryLikes userCategoryLikes = userDAO.getUserCategoryLikes(userId, userCategory.getUserCategoryId());
@@ -141,7 +142,7 @@ public class NonDealSearch implements INonDealSearch {
 									{
 										List<Usernondealsuggestion> usernondealsuggestions = userDAO.isNonDealSuggestionExists(user.getUserId(), business.getId());
 										logger.debug("NonDealSearch ==> usernondealsuggestions ==> " + usernondealsuggestions);
-										if(usernondealsuggestions == null || usernondealsuggestions.size() == 0)
+										if(usernondealsuggestions == null || usernondealsuggestions.size() == 0 || (usernondealsuggestions.get(0).getSuggestedTime() != null && usernondealsuggestions.get(0).getSuggestedTime().compareTo(Utils.getCurrentDate()) < 0))
 										{
 											String type = business.getBusinesstype().getBusinessType();
 											if(type.equalsIgnoreCase(MOVIE_CATEGORY) || type.equalsIgnoreCase(RESTAURANT_CATEGORY) || type.equalsIgnoreCase(NIGHTLIFE_CATEGORY) || type.equalsIgnoreCase(EVENTS_CATEGORY) || type.equalsIgnoreCase(GETAWAYS_CATEGORY) || type.equalsIgnoreCase(SPORTS_CATEGORY)) {
@@ -201,7 +202,7 @@ public class NonDealSearch implements INonDealSearch {
 													suggestion.setUpdatedtime(currentDate);
 													suggestion.setUser(user);
 													suggestion.setUserContact(suggestingUser);
-													suggestion.setSuggestedTime(weekendDate);
+													//suggestion.setSuggestedTime(weekendDate);
 													if(isGroupMember)
 														suggestion.setSuggestionType("Group Member's Like");
 													else if(isContactsAccessed)
@@ -277,7 +278,7 @@ public class NonDealSearch implements INonDealSearch {
 					{
 						List<Usernondealsuggestion> usernondealsuggestions = userDAO.isNonDealSuggestionExists(user.getUserId(), community.getBusiness().getId());
 						logger.debug("NonDealSearch ==> usernondealsuggestions ==> " + usernondealsuggestions);
-						if(usernondealsuggestions == null || usernondealsuggestions.size() == 0)
+						if(usernondealsuggestions == null || usernondealsuggestions.size() == 0 || (usernondealsuggestions.get(0).getSuggestedTime() != null && usernondealsuggestions.get(0).getSuggestedTime().compareTo(Utils.getCurrentDate()) < 0))
 						{
 							logger.debug("NonDealSearch ==> search ==> pageId ==> " + community.getPageId());
 							List<Pagetype> pageTypeList = userDAO.getCommunityType(community.getPageId());
@@ -290,7 +291,7 @@ public class NonDealSearch implements INonDealSearch {
 							if(pageType != null) {
 								String type = pageType.getPageType();
 
-								if(type.equalsIgnoreCase(MOVIE_CATEGORY) || type.equalsIgnoreCase(RESTAURANT_CATEGORY) || type.equalsIgnoreCase(NIGHTLIFE_CATEGORY) || type.equalsIgnoreCase(EVENTS_CATEGORY) || type.equalsIgnoreCase(GETAWAYS_CATEGORY) || type.equalsIgnoreCase(SPORTS_CATEGORY)) {
+								if(type.equalsIgnoreCase(MOVIE_CATEGORY) || type.equalsIgnoreCase(RESTAURANT_CATEGORY) || type.equalsIgnoreCase(NIGHTLIFE_CATEGORY) || type.equalsIgnoreCase(EVENTS_CATEGORY) || type.equalsIgnoreCase(GETAWAYS_CATEGORY) || type.equalsIgnoreCase(SPORTS_CATEGORY) || type.equalsIgnoreCase(SPA_CATEGORY)) {
 
 									Business business = businessDAO.getBusinessById(community.getBusiness().getId());
 									if(business.getLattitude() == null && business.getLongitude() == null || (business.getLattitude().trim().equals("") && business.getLongitude().trim().equals(""))  || (business.getLattitude().trim().equals("0.0") && business.getLongitude().trim().equals("0.0")))
@@ -402,7 +403,7 @@ public class NonDealSearch implements INonDealSearch {
 										suggestion.setUpdatedtime(currentDate);
 										suggestion.setUser(user);
 										suggestion.setUserContact(suggestingUser);
-										suggestion.setSuggestedTime(weekendDate);
+										//suggestion.setSuggestedTime(weekendDate);
 										if(isGroupMember)
 											suggestion.setSuggestionType("Group Member's Community Like");
 										else if(isContactsAccessed)

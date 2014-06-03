@@ -12,7 +12,7 @@
             <column name="dealId" not-null="true"/>
        	</many-to-one>
         <property name="description" type="string">
-            <column name="description" length="250"/>
+            <column name="description"/>
         </property>
         <property name="price" type="java.lang.Long">
             <column name="price" precision="10" scale="0" />

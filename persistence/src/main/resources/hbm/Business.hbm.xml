@@ -47,13 +47,13 @@
 			<column name="rating"/>
 		</property>
 		<property name="ratingImgUrl" type="string">
-			<column name="ratingImgUrl" length="250" />
+			<column name="ratingImgUrl"/>
 		</property>
 		<property name="ratingSmallImgUrl" type="string">
-			<column name="ratingSmallImgUrl" length="250" />
+			<column name="ratingSmallImgUrl"/>
 		</property>
 		<property name="ratingLargeImgUrl" type="string">
-			<column name="ratingLargeImgUrl" length="250" />
+			<column name="ratingLargeImgUrl"/>
 		</property>
 		<property name="snippetText" type="string">
 			<column name="snippetText" length="65535" />

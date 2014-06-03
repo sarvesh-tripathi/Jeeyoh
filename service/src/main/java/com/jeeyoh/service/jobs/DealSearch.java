@@ -44,6 +44,7 @@ public class DealSearch implements IDealSearch {
 		List<User> userList = userDAO.getUsers();
 		// Iterate user list for suggestion
 		Date  weekendDate = Utils.getNearestWeekend(null);
+		Date currentDate = Utils.getCurrentDate();
 		for (User user : userList)
 		{
 			if(user != null)
@@ -52,7 +53,7 @@ public class DealSearch implements IDealSearch {
 				//for user Contacts affinity level
 				List<Object[]> userContactsList = userDAO.getAllUserContacts(user.getUserId());
 
-				saveDealSuggestion(user,user,false,false,false,null,true,false,true,weekendDate);
+				saveDealSuggestion(user,user,false,false,false,null,true,false,true,weekendDate,currentDate);
 				if(userContactsList != null)
 				{
 					for(Object[] row:userContactsList)
@@ -61,7 +62,7 @@ public class DealSearch implements IDealSearch {
 						Boolean isStar = usercontacts.getIsStar();
 						User contact = (User)row[0];
 						logger.debug("Friend Name ::"+contact.getFirstName());
-						saveDealSuggestion(contact,user,true,isStar,false,null,contact.getIsShareProfileWithFriend(),contact.getIsShareProfileWithGroup(),contact.getIsShareCommunity(),weekendDate);
+						saveDealSuggestion(contact,user,true,isStar,false,null,contact.getIsShareProfileWithFriend(),contact.getIsShareProfileWithGroup(),contact.getIsShareCommunity(),weekendDate,currentDate);
 					}
 				}
 
@@ -76,7 +77,7 @@ public class DealSearch implements IDealSearch {
 							String groupType = jeeyohGroup1.getGroupType();
 							for(User groupMember : groupusermapList)
 							{
-								saveDealSuggestion(groupMember,user,false,false,true,groupType,groupMember.getIsShareProfileWithFriend(),groupMember.getIsShareProfileWithGroup(),groupMember.getIsShareCommunity(),weekendDate);
+								saveDealSuggestion(groupMember,user,false,false,true,groupType,groupMember.getIsShareProfileWithFriend(),groupMember.getIsShareProfileWithGroup(),groupMember.getIsShareCommunity(),weekendDate,currentDate);
 							}
 						}
 					}
@@ -86,7 +87,7 @@ public class DealSearch implements IDealSearch {
 	}
 
 
-	private void saveDealSuggestion(User user,User userFor,Boolean contactFlag,Boolean isStar, Boolean isGroupMember, String groupType, boolean isSharedWithFriends, boolean isSharedWithGroup, boolean isSharedWithCommunity, Date weekendDate)
+	private void saveDealSuggestion(User user,User userFor,Boolean contactFlag,Boolean isStar, Boolean isGroupMember, String groupType, boolean isSharedWithFriends, boolean isSharedWithGroup, boolean isSharedWithCommunity, Date weekendDate, Date currentDate)
 	{
 
 		//get user detail and deal usage	
@@ -102,10 +103,8 @@ public class DealSearch implements IDealSearch {
 			if(isSharedWithGroup)
 				dealUsage = userDAO.getUserDealUsageByType(user.getUserId(),groupType, Double.parseDouble(userFor.getLattitude()), Double.parseDouble(userFor.getLongitude()));
 			
-			if(dealUsage != null)
-			{
-				logger.debug("size of deal usage :: "+dealUsage.size());
-			}
+				logger.debug("size of deal usage :: "+dealUsage);
+			
 		}
 
 		// user community 
@@ -141,7 +140,7 @@ public class DealSearch implements IDealSearch {
 			for(Dealsusage dealsusage : dealUsage) {
 				Deals deal = dealsusage.getDeals();
 				List<Userdealssuggestion> userdealsuggestions = userDAO.isDealSuggestionExists(userFor.getUserId(), deal.getId());
-				if(userdealsuggestions == null || userdealsuggestions.size() == 0)
+				if(userdealsuggestions == null || userdealsuggestions.size() == 0 || (userdealsuggestions.get(0).getSuggestedTime() != null && userdealsuggestions.get(0).getSuggestedTime().compareTo(currentDate) < 0))
 				{
 					Business business = deal.getBusiness();
 					if(business != null)
@@ -161,9 +160,7 @@ public class DealSearch implements IDealSearch {
 						logger.debug("Like COUNT :::::"+likeCount);
 						if(dealsusage.getIsFavorite() || dealsusage.getIsLike() || likeCount >= 2)
 						{
-							try {
-								logger.debug("deal.getId():::  "+deal.getId());
-								logger.debug("Cross basic three level3",deal.getId());									
+							try {								
 								saveDealsSuggestionInDataBase(deal,user,userFor,isGroupMember, contactFlag, false,false, weekendDate);
 
 							} catch (Exception e) {
@@ -195,7 +192,7 @@ public class DealSearch implements IDealSearch {
 					for(Deals deal : deals)
 					{
 						List<Userdealssuggestion> userdealsuggestions = userDAO.isDealSuggestionExists(userFor.getUserId(), deal.getId());
-						if(userdealsuggestions == null || userdealsuggestions.size() == 0)
+						if(userdealsuggestions == null || userdealsuggestions.size() == 0 || (userdealsuggestions.get(0).getSuggestedTime() != null && userdealsuggestions.get(0).getSuggestedTime().compareTo(currentDate) < 0))
 						{
 							saveDealsSuggestionInDataBase(deal,user,userFor,isGroupMember, contactFlag, true,false, weekendDate);
 						}
@@ -241,7 +238,7 @@ public class DealSearch implements IDealSearch {
 									}
 							
 									List<Userdealssuggestion> userdealsuggestions = userDAO.isDealSuggestionExists(userFor.getUserId(), catdeal.getId());
-									if(userdealsuggestions == null || userdealsuggestions.size() == 0)
+									if(userdealsuggestions == null || userdealsuggestions.size() == 0 || (userdealsuggestions.get(0).getSuggestedTime() != null && userdealsuggestions.get(0).getSuggestedTime().compareTo(currentDate) < 0))
 									{
 										saveDealsSuggestionInDataBase(catdeal,user,userFor,isGroupMember, contactFlag, false,true, weekendDate);
 									}
@@ -268,7 +265,7 @@ public class DealSearch implements IDealSearch {
 											business.setLongitude(Double.toString(array[1]));
 										}
 										List<Userdealssuggestion> userdealsuggestions = userDAO.isDealSuggestionExists(userFor.getUserId(), catdeal.getId());
-										if(userdealsuggestions == null || userdealsuggestions.size() == 0)
+										if(userdealsuggestions == null || userdealsuggestions.size() == 0 || (userdealsuggestions.get(0).getSuggestedTime() != null && userdealsuggestions.get(0).getSuggestedTime().compareTo(currentDate) < 0))
 										{
 											saveDealsSuggestionInDataBase(catdeal,user,userFor, isGroupMember, contactFlag, false,true, weekendDate);
 										}
@@ -294,7 +291,7 @@ public class DealSearch implements IDealSearch {
 												business.setLongitude(Double.toString(array[1]));
 											}
 											List<Userdealssuggestion> userdealsuggestions = userDAO.isDealSuggestionExists(userFor.getUserId(), catdeal.getId());
-											if(userdealsuggestions == null || userdealsuggestions.size() == 0)
+											if(userdealsuggestions == null || userdealsuggestions.size() == 0 || (userdealsuggestions.get(0).getSuggestedTime() != null && userdealsuggestions.get(0).getSuggestedTime().compareTo(currentDate) < 0))
 											{
 												saveDealsSuggestionInDataBase(catdeal,user,userFor, isGroupMember, contactFlag, false,true, weekendDate);
 											}
@@ -325,7 +322,7 @@ public class DealSearch implements IDealSearch {
 		dealSuggestion.setIsLike(true);
 		dealSuggestion.setIsRedempted(true);
 		dealSuggestion.setUpdatedtime(date);
-		dealSuggestion.setSuggestedTime(weekendDate);
+		//dealSuggestion.setSuggestedTime(weekendDate);
 		dealSuggestion.setUser(user);
 		dealSuggestion.setUserContact(suggestingUser);
 		if(isCommunityLike)

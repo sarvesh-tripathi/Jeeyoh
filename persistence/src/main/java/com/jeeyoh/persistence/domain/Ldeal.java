@@ -12,7 +12,7 @@ public class Ldeal implements java.io.Serializable
 	 */
 	private static final long serialVersionUID = 1L;
 	private Integer id;
-	private Integer dealId;
+	private String dealId;
 	private String dealType;
 	private String dealUrl;
 	private String shortTitle;
@@ -34,7 +34,7 @@ public class Ldeal implements java.io.Serializable
 	
 	
 	public Ldeal(){}
-	public Ldeal(Integer dealId, String dealType, String dealUrl, String shortTitle, String longTitle, String merchantName, Date startAt, Date endAt, String cityName, String smallImageUrl, String mediumImageUrl, String largeImageUrl, Long price, String countryName, Long distance, Boolean isSoldOut, Integer orderCount){
+	public Ldeal(String dealId, String dealType, String dealUrl, String shortTitle, String longTitle, String merchantName, Date startAt, Date endAt, String cityName, String smallImageUrl, String mediumImageUrl, String largeImageUrl, Long price, String countryName, Long distance, Boolean isSoldOut, Integer orderCount){
 		this.dealId =  dealId;
 		this.dealType = dealType;
 		this.dealUrl = dealUrl;
@@ -60,10 +60,10 @@ public class Ldeal implements java.io.Serializable
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	public Integer getDealId() {
+	public String getDealId() {
 		return dealId;
 	}
-	public void setDealId(Integer dealId) {
+	public void setDealId(String dealId) {
 		this.dealId = dealId;
 	}
 	public String getDealType() {

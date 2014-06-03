@@ -152,4 +152,5 @@ public interface IUserDAO {
 	public void updateUserEventSuggestion(Usereventsuggestion usereventsuggestion);
 	public Dealsusage getUserDealProperties(int userId, int dealId);
 	public List<Topcommunitysuggestion> getTopCommunitySuggestions(String userEmail);
+	public List<User> getUserFriendRequests(int userId);
 }

@@ -39,6 +39,8 @@ import com.jeeyoh.persistence.domain.Events;
 import com.jeeyoh.persistence.domain.Funboard;
 import com.jeeyoh.persistence.domain.Groupusermap;
 import com.jeeyoh.persistence.domain.Jeeyohgroup;
+import com.jeeyoh.persistence.domain.Page;
+import com.jeeyoh.persistence.domain.Pageuserlikes;
 import com.jeeyoh.persistence.domain.User;
 import com.jeeyoh.persistence.domain.Userdealssuggestion;
 import com.jeeyoh.persistence.domain.Usereventsuggestion;
@@ -194,7 +196,6 @@ public class WallFeedSharingService implements IWallFeedSharingService{
 				commentModel.setUserName(user.getFirstName()+" "+user.getLastName());
 				commentModelList.add(commentModel);
 			}
-			logger.debug("add community comments in response");
 			response.setWallFeedComments(commentModelList);
 		}
 
@@ -225,26 +226,47 @@ public class WallFeedSharingService implements IWallFeedSharingService{
 					if(itemType.equalsIgnoreCase("deal"))
 					{
 						Deals deals = dealsDAO.getDealById(item.getItemId());
-						suggestionModel.setImageUrl(deals.getLargeImageUrl());
-						suggestionModel.setCategoryType(itemType);
-						suggestionModel.setItemId(item.getItemId());
+						if(deals != null)
+						{
+							suggestionModel.setImageUrl(deals.getLargeImageUrl());
+							suggestionModel.setTitle(deals.getTitle());
+							suggestionModel.setSuggestionType(itemType);
+							suggestionModel.setItemId(item.getItemId());
+						}		
 					}
 					else if(itemType.equalsIgnoreCase("event"))
 					{
 						Events events = eventsDAO.getEventById(item.getItemId());
-						suggestionModel.setCategoryType(itemType);
-						suggestionModel.setItemId(item.getItemId());
-
+						if(events != null)
+						{
+							suggestionModel.setTitle(events.getTitle());
+							suggestionModel.setSuggestionType(itemType);
+							suggestionModel.setItemId(item.getItemId());
+						}
 					}
-					else
+					else if(itemType.equalsIgnoreCase("business"))
 					{
 						Business business = businessDAO.getBusinessById(item.getItemId());
-						suggestionModel.setImageUrl(business.getImageUrl());
-						suggestionModel.setCategoryType(itemType);
-						suggestionModel.setItemId(item.getItemId());						
+						if(business != null)
+						{
+							suggestionModel.setTitle(business.getName());
+							suggestionModel.setImageUrl(business.getImageUrl());
+							suggestionModel.setSuggestionType(itemType);
+							suggestionModel.setItemId(item.getItemId());	
+						}					
+					}
+					else if(itemType.equalsIgnoreCase("community"))
+					{
+						Page page = eventsDAO.getPageDetailsByID(item.getItemId());
+						if(page != null)
+						{
+							suggestionModel.setTitle(page.getAbout());
+							suggestionModel.setImageUrl(page.getProfilePicture());
+							suggestionModel.setSuggestionType(itemType);
+							suggestionModel.setItemId(item.getItemId());		
+						}
 					}
 					itemsList.add(suggestionModel);
-
 				}
 
 				Set<WallFeedComments> comments = wallFeed.getWallFeedComments();
@@ -343,12 +365,14 @@ public class WallFeedSharingService implements IWallFeedSharingService{
 	@Transactional
 	public BaseResponse addWallFeedSuggestions(SaveShareWallRequest request) 
 	{
+		boolean isSaved = false;
 		logger.debug("addWallFeedSuggestions => addSuggestions");
 		BaseResponse response = new BaseResponse();
 		logger.debug("userId"+request.getUserId());
 		User user = userDAO.getUserById(request.getUserId());
 		List<Integer> friendsIdList = request.getFriends();
 		List<Integer> groups = request.getGroups();
+		Date currentDate = Utils.getCurrentDate();
 		Date suggestionDate = null;
 		Date date = new Date();
 		logger.debug("wall feed id"+request.getWallFeedId());
@@ -376,46 +400,20 @@ public class WallFeedSharingService implements IWallFeedSharingService{
 			int batch_size = 0;
 			for(SuggestionModel suggestion:suggestionsItems)
 			{
-				String suggestionType = suggestion.getCategoryType();
-				Integer suggetstionId = suggestion.getItemId();
+				String suggestionType = suggestion.getSuggestionType();
+				Integer suggestionId = suggestion.getItemId();
 
 				if(suggestionType.equalsIgnoreCase("event"))
 				{
-					logger.debug("event => "+suggetstionId);
-					Events event = eventsDAO.getEventById(suggetstionId);
-					logger.debug("event desc => "+event.getDescription());
+
+					Events event = eventsDAO.getEventById(suggestionId);
 					if(friendsIdList != null)
 					{
 						for(Integer friendId:friendsIdList)
 						{
-							User users1 = userDAO.getUserById(friendId);
-							Usereventsuggestion userEventSuggestion = userDAO.isEventSuggestionExistsForDirectSuggestion(friendId, event.getEventId(), user.getUserId());
-							logger.debug("userEventSuggestion:::  "+userEventSuggestion);
-							if(userEventSuggestion != null)
-							{
-								if(userEventSuggestion.getSuggestedTime().compareTo(suggestionDate) < 0)
-								{
-									userEventSuggestion.setUpdatedTime(date);
-									userEventSuggestion.setSuggestedTime(suggestionDate);
-									userEventSuggestion.setSuggestionType("Wall Feed Suggestion");
-									userDAO.updateUserEventSuggestion(userEventSuggestion);
-								}
-								response.setStatus("Ok");
-							}
-							else
-							{
-								userEventSuggestion = new Usereventsuggestion();
-								userEventSuggestion.setEvents(event);
-								userEventSuggestion.setCreatedTime(date);
-								userEventSuggestion.setSuggestionType("Wall Feed Suggestion");
-								userEventSuggestion.setUpdatedTime(date);
-								userEventSuggestion.setUser(users1);
-								userEventSuggestion.setUserContact(user);
-								userEventSuggestion.setSuggestedTime(suggestionDate);
-								userDAO.saveEventsSuggestions(userEventSuggestion, batch_size);
+							isSaved = saveEventDirectSuggestion(user, friendId, event.getEventId(), date, suggestionDate, batch_size, currentDate);
+							if(isSaved)
 								batch_size++;
-								response.setStatus("Ok");
-							}
 						}
 					}
 
@@ -428,42 +426,21 @@ public class WallFeedSharingService implements IWallFeedSharingService{
 							for (Groupusermap groups1 : groups2)
 							{
 								User users1 = groups1.getUser();
-								Usereventsuggestion userEventSuggestion = userDAO.isEventSuggestionExistsForDirectSuggestion(users1.getUserId(), event.getEventId(), user.getUserId());
-								if(userEventSuggestion != null)
+								if(users1.getUserId() != user.getUserId())
 								{
-									if(userEventSuggestion.getSuggestedTime().compareTo(suggestionDate) < 0)
-									{
-										userEventSuggestion.setUpdatedTime(date);
-										userEventSuggestion.setSuggestedTime(suggestionDate);
-										userEventSuggestion.setSuggestionType("Wall Feed Suggestion");
-										userDAO.updateUserEventSuggestion(userEventSuggestion);
-									}
-									response.setStatus("Ok");
-								}
-								else
-								{
-									userEventSuggestion = new Usereventsuggestion();
-									userEventSuggestion.setEvents(event);
-									userEventSuggestion.setCreatedTime(date);
-									userEventSuggestion.setSuggestionType("Wall Feed Suggestion");
-									userEventSuggestion.setUpdatedTime(date);
-									userEventSuggestion.setUser(users1);
-									userEventSuggestion.setUserContact(user);
-									userEventSuggestion.setSuggestedTime(suggestionDate);
-									userDAO.saveEventsSuggestions(userEventSuggestion, batch_size);
-									batch_size++;
-									response.setStatus("Ok");
+									isSaved = saveEventDirectSuggestion(user, users1.getUserId(), event.getEventId(), date, suggestionDate, batch_size, currentDate);
+									if(isSaved)
+										batch_size++;
 								}
 							}
 						}
 					}
+					response.setStatus("Ok");
 
 				}
 				else if (suggestionType.equalsIgnoreCase("deal"))
 				{
-					logger.debug("deal => "+suggetstionId);
-					Deals deal = dealsDAO.getDealById(suggetstionId);
-					logger.debug("event desc => "+deal.getTitle());
+					Deals deal = dealsDAO.getDealById(suggestionId);
 					if(friendsIdList != null)
 					{
 						for(Integer friendId:friendsIdList)
@@ -471,24 +448,38 @@ public class WallFeedSharingService implements IWallFeedSharingService{
 							Userdealssuggestion userDealSuggestion = userDAO.isDealSuggestionExistsForDirectSuggestion(friendId, deal.getId(), user.getUserId());
 							if(userDealSuggestion != null)
 							{
-								if(userDealSuggestion.getSuggestedTime().compareTo(suggestionDate) < 0)
+								if(userDealSuggestion.getSuggestedTime() == null || userDealSuggestion.getSuggestedTime().compareTo(currentDate) >= 0)
 								{
 									userDealSuggestion.setUpdatedtime(date);
 									userDealSuggestion.setSuggestedTime(suggestionDate);
-									userDealSuggestion.setSuggestionType("Wall Feed Suggestion");
+									userDealSuggestion.setSuggestionType("Direct Suggestion");
 									userDAO.updateUserDealSuggestion(userDealSuggestion);
+								}
+								else
+								{
+									User friend = userDAO.getUserById(friendId);
+									userDealSuggestion = new Userdealssuggestion();
+									userDealSuggestion.setDeals(deal);
+									userDealSuggestion.setCreatedtime(date);
+									userDealSuggestion.setSuggestionType("Direct Suggestion");
+									userDealSuggestion.setUpdatedtime(date);
+									userDealSuggestion.setUser(friend);
+									userDealSuggestion.setUserContact(user);
+									userDealSuggestion.setSuggestedTime(suggestionDate);
+									dealsDAO.saveSuggestions(userDealSuggestion);
+									batch_size++;
 								}
 								response.setStatus("Ok");
 							}
 							else
 							{
-								User users1 = userDAO.getUserById(friendId);
+								User friend = userDAO.getUserById(friendId);
 								userDealSuggestion = new Userdealssuggestion();
 								userDealSuggestion.setDeals(deal);
 								userDealSuggestion.setCreatedtime(date);
-								userDealSuggestion.setSuggestionType("Wall Feed Suggestion");
+								userDealSuggestion.setSuggestionType("Direct Suggestion");
 								userDealSuggestion.setUpdatedtime(date);
-								userDealSuggestion.setUser(users1);
+								userDealSuggestion.setUser(friend);
 								userDealSuggestion.setUserContact(user);
 								userDealSuggestion.setSuggestedTime(suggestionDate);
 								dealsDAO.saveSuggestions(userDealSuggestion);
@@ -507,40 +498,57 @@ public class WallFeedSharingService implements IWallFeedSharingService{
 							for (Groupusermap groups1 : groups2)
 							{
 								User users1 = groups1.getUser();
-								Userdealssuggestion userDealSuggestion = userDAO.isDealSuggestionExistsForDirectSuggestion(users1.getUserId(), deal.getId(), user.getUserId());
-								if(userDealSuggestion != null)
+								if(users1.getUserId() != user.getUserId())
 								{
-									if(userDealSuggestion.getSuggestedTime().compareTo(suggestionDate) < 0)
+									Userdealssuggestion userDealSuggestion = userDAO.isDealSuggestionExistsForDirectSuggestion(users1.getUserId(), deal.getId(), user.getUserId());
+									if(userDealSuggestion != null)
 									{
-										userDealSuggestion.setUpdatedtime(date);
-										userDealSuggestion.setSuggestedTime(suggestionDate);
-										userDealSuggestion.setSuggestionType("Wall Feed Suggestion");
-										userDAO.updateUserDealSuggestion(userDealSuggestion);
+										if(userDealSuggestion.getSuggestedTime() == null || userDealSuggestion.getSuggestedTime().compareTo(currentDate) >= 0)
+										{
+											userDealSuggestion.setUpdatedtime(date);
+											userDealSuggestion.setSuggestedTime(suggestionDate);
+											userDealSuggestion.setSuggestionType("Direct Suggestion");
+											userDAO.updateUserDealSuggestion(userDealSuggestion);
+										}
+										else
+										{
+											userDealSuggestion = new Userdealssuggestion();
+											userDealSuggestion.setDeals(deal);
+											userDealSuggestion.setCreatedtime(date);
+											userDealSuggestion.setSuggestionType("Direct Suggestion");
+											userDealSuggestion.setUpdatedtime(date);
+											userDealSuggestion.setUser(users1);
+											userDealSuggestion.setUserContact(user);
+											userDealSuggestion.setSuggestedTime(suggestionDate);
+											batch_size++;
+											dealsDAO.saveSuggestions(userDealSuggestion);
+										}
+
+										response.setStatus("Ok");
 									}
-									response.setStatus("Ok");
-								}
-								else
-								{
-									userDealSuggestion = new Userdealssuggestion();
-									userDealSuggestion.setDeals(deal);
-									userDealSuggestion.setCreatedtime(date);
-									userDealSuggestion.setSuggestionType("Wall Feed Suggestion");
-									userDealSuggestion.setUpdatedtime(date);
-									userDealSuggestion.setUser(users1);
-									userDealSuggestion.setUserContact(user);
-									userDealSuggestion.setSuggestedTime(suggestionDate);
-									dealsDAO.saveSuggestions(userDealSuggestion);
-									response.setStatus("Ok");
+									else
+									{
+										userDealSuggestion = new Userdealssuggestion();
+										userDealSuggestion.setDeals(deal);
+										userDealSuggestion.setCreatedtime(date);
+										userDealSuggestion.setSuggestionType("Direct Suggestion");
+										userDealSuggestion.setUpdatedtime(date);
+										userDealSuggestion.setUser(users1);
+										userDealSuggestion.setUserContact(user);
+										userDealSuggestion.setSuggestedTime(suggestionDate);
+										dealsDAO.saveSuggestions(userDealSuggestion);
+										batch_size++;
+										response.setStatus("Ok");
+									}
 								}
 							}
 						}
 					}
+
 				}
 				else if (suggestionType.equalsIgnoreCase("business"))
 				{
-					logger.debug("business => "+suggetstionId);
-					Business business = businessDAO.getBusinessById(suggetstionId);
-					logger.debug("event desc => "+business.getName());
+					Business business = businessDAO.getBusinessById(suggestionId);
 					if(friendsIdList != null)
 					{
 						for(Integer friendId:friendsIdList)
@@ -548,30 +556,144 @@ public class WallFeedSharingService implements IWallFeedSharingService{
 							Usernondealsuggestion userNonDealSuggestion = userDAO.isNonDealSuggestionExistsForDirectSuggestion(friendId, business.getId(), user.getUserId());
 							if(userNonDealSuggestion != null)
 							{
-								if(userNonDealSuggestion.getSuggestedTime().compareTo(suggestionDate) < 0)
+								if(userNonDealSuggestion.getSuggestedTime() == null || userNonDealSuggestion.getSuggestedTime().compareTo(currentDate) >= 0)
 								{
 									userNonDealSuggestion.setUpdatedtime(date);
 									userNonDealSuggestion.setSuggestedTime(suggestionDate);
-									userNonDealSuggestion.setSuggestionType("Wall Feed Suggestion");
+									userNonDealSuggestion.setSuggestionType("Direct Suggestion");
 									userDAO.updateUserNonDealSuggestion(userNonDealSuggestion);
+								}
+								else
+								{
+									User friend = userDAO.getUserById(friendId);
+									userNonDealSuggestion = new Usernondealsuggestion();
+									userNonDealSuggestion.setBusiness(business);
+									userNonDealSuggestion.setCreatedtime(date);
+									userNonDealSuggestion.setSuggestionType("Direct Suggestion");
+									userNonDealSuggestion.setUpdatedtime(date);
+									userNonDealSuggestion.setUser(friend);
+									userNonDealSuggestion.setUserContact(user);
+									userNonDealSuggestion.setSuggestedTime(suggestionDate);
+									userDAO.saveNonDealSuggestions(userNonDealSuggestion, batch_size);
+									batch_size++;
 								}
 								response.setStatus("Ok");
 							}
 							else
 							{
-								User users1 = userDAO.getUserById(friendId);
+								User friend = userDAO.getUserById(friendId);
 								userNonDealSuggestion = new Usernondealsuggestion();
 								userNonDealSuggestion.setBusiness(business);
 								userNonDealSuggestion.setCreatedtime(date);
-								userNonDealSuggestion.setSuggestionType("Wall Feed Suggestion");
+								userNonDealSuggestion.setSuggestionType("Direct Suggestion");
 								userNonDealSuggestion.setUpdatedtime(date);
-								userNonDealSuggestion.setUser(users1);
+								userNonDealSuggestion.setUser(friend);
 								userNonDealSuggestion.setUserContact(user);
 								userNonDealSuggestion.setSuggestedTime(suggestionDate);
 								userDAO.saveNonDealSuggestions(userNonDealSuggestion, batch_size);
 								batch_size++;
 								response.setStatus("Ok");
 							}
+						}
+					}
+					if(groups != null)
+					{
+						for(Integer groupId:groups)
+						{
+							Jeeyohgroup jeeyohGroup = groupDAO.getGroupByGroupId(groupId);
+							Set<Groupusermap> groups2   = jeeyohGroup.getGroupusermaps();
+							for (Groupusermap groups1 : groups2)
+							{
+								User users1 = groups1.getUser();
+								if(users1.getUserId() != user.getUserId())
+								{
+									Usernondealsuggestion userNonDealSuggestion = userDAO.isNonDealSuggestionExistsForDirectSuggestion(users1.getUserId(), business.getId(), user.getUserId());
+									if(userNonDealSuggestion != null)
+									{
+										if(userNonDealSuggestion.getSuggestedTime() == null || userNonDealSuggestion.getSuggestedTime().compareTo(currentDate) >= 0)
+										{
+											userNonDealSuggestion.setUpdatedtime(date);
+											userNonDealSuggestion.setSuggestedTime(suggestionDate);
+											userNonDealSuggestion.setSuggestionType("Direct Suggestion");
+											userDAO.updateUserNonDealSuggestion(userNonDealSuggestion);
+										}
+										else
+										{
+											userNonDealSuggestion = new Usernondealsuggestion();
+											userNonDealSuggestion.setBusiness(business);
+											userNonDealSuggestion.setCreatedtime(date);
+											userNonDealSuggestion.setSuggestionType("Direct Suggestion");
+											userNonDealSuggestion.setUpdatedtime(date);
+											userNonDealSuggestion.setUser(users1);
+											userNonDealSuggestion.setUserContact(user);
+											userNonDealSuggestion.setSuggestedTime(suggestionDate);
+											userDAO.saveNonDealSuggestions(userNonDealSuggestion, batch_size);
+											batch_size++;
+										}
+										response.setStatus("Ok");
+									}
+									else
+									{
+										userNonDealSuggestion = new Usernondealsuggestion();
+										userNonDealSuggestion.setBusiness(business);
+										userNonDealSuggestion.setCreatedtime(date);
+										userNonDealSuggestion.setSuggestionType("Direct Suggestion");
+										userNonDealSuggestion.setUpdatedtime(date);
+										userNonDealSuggestion.setUser(users1);
+										userNonDealSuggestion.setUserContact(user);
+										userNonDealSuggestion.setSuggestedTime(suggestionDate);
+										userDAO.saveNonDealSuggestions(userNonDealSuggestion, batch_size);
+										batch_size++;
+										response.setStatus("Ok");
+									}
+								}
+							}
+						}
+					}
+				}
+				else if(suggestionType.equalsIgnoreCase("community"))
+				{
+					int eventId = eventsDAO.getRecentEvent(suggestionId);
+					List<Integer> eventList = eventsDAO.getEventsByPgaeId(suggestionId);
+					if(friendsIdList != null)
+					{
+						for(Integer friendId:friendsIdList)
+						{
+							Pageuserlikes pageuserlikes = userDAO.getUserPageProperties(friendId, suggestionId);
+							if(pageuserlikes != null)
+							{
+								if(pageuserlikes.getIsFollowing())
+								{
+									if(eventList != null)
+									{
+										for(Integer event : eventList)
+										{
+											isSaved = saveEventDirectSuggestion(user, friendId, event, date, suggestionDate, batch_size, currentDate);
+											if(isSaved)
+												batch_size++;
+										}
+									}
+								}
+								else
+								{
+									if(eventId != 0)
+									{
+										isSaved = saveEventDirectSuggestion(user, friendId, eventId, date, suggestionDate, batch_size, currentDate);
+										if(isSaved)
+											batch_size++;
+									}
+								}
+							}
+							else
+							{
+								if(eventId != 0)
+								{
+									isSaved = saveEventDirectSuggestion(user, friendId, eventId, date, suggestionDate, batch_size, currentDate);
+									if(isSaved)
+										batch_size++;
+								}
+							}
+
 						}
 					}
 
@@ -584,35 +706,48 @@ public class WallFeedSharingService implements IWallFeedSharingService{
 							for (Groupusermap groups1 : groups2)
 							{
 								User users1 = groups1.getUser();
-								Usernondealsuggestion userNonDealSuggestion = userDAO.isNonDealSuggestionExistsForDirectSuggestion(users1.getUserId(), business.getId(), user.getUserId());
-								if(userNonDealSuggestion != null)
+								if(users1.getUserId() != user.getUserId())
 								{
-									if(userNonDealSuggestion.getSuggestedTime().compareTo(suggestionDate) < 0)
+									Pageuserlikes pageuserlikes = userDAO.getUserPageProperties(users1.getUserId(), suggestionId);
+									if(pageuserlikes != null)
 									{
-										userNonDealSuggestion.setUpdatedtime(date);
-										userNonDealSuggestion.setSuggestedTime(suggestionDate);
-										userNonDealSuggestion.setSuggestionType("Wall Feed Suggestion");
-										userDAO.updateUserNonDealSuggestion(userNonDealSuggestion);
+										if(pageuserlikes.getIsFollowing())
+										{
+											if(eventList != null)
+											{
+												for(Integer event : eventList)
+												{
+													isSaved = saveEventDirectSuggestion(user, users1.getUserId(), event, date, suggestionDate, batch_size, currentDate);
+													if(isSaved)
+														batch_size++;
+												}
+											}
+										}
+										else
+										{
+											if(eventId != 0)
+											{
+												isSaved = saveEventDirectSuggestion(user, users1.getUserId(), eventId, date, suggestionDate, batch_size, currentDate);
+												if(isSaved)
+													batch_size++;
+											}
+										}
 									}
-									response.setStatus("Ok");
-								}
-								else
-								{
-									userNonDealSuggestion = new Usernondealsuggestion();
-									userNonDealSuggestion.setBusiness(business);
-									userNonDealSuggestion.setCreatedtime(date);
-									userNonDealSuggestion.setSuggestionType("Wall Feed Suggestion");
-									userNonDealSuggestion.setUpdatedtime(date);
-									userNonDealSuggestion.setUser(users1);
-									userNonDealSuggestion.setUserContact(user);
-									userNonDealSuggestion.setSuggestedTime(suggestionDate);
-									userDAO.saveNonDealSuggestions(userNonDealSuggestion, batch_size);
-									batch_size++;
-									response.setStatus("Ok");
+									else
+									{
+										if(eventId != 0)
+										{
+											isSaved = saveEventDirectSuggestion(user, users1.getUserId(), eventId, date, suggestionDate, batch_size, currentDate);
+											if(isSaved)
+												batch_size++;
+										}
+									}
 								}
 							}
 						}
+
 					}
+					response.setStatus("Ok");
 				}
 				else
 				{
@@ -623,6 +758,61 @@ public class WallFeedSharingService implements IWallFeedSharingService{
 		}
 		logger.debug("done");
 		return response;
+	}
+
+
+	private boolean saveEventDirectSuggestion(User user, int friendId,int eventId, Date date, Date suggestionDate, int batch_size, Date currentDate)
+	{
+		Usereventsuggestion userEventSuggestion = userDAO.isEventSuggestionExistsForDirectSuggestion(friendId, eventId, user.getUserId());
+		if(userEventSuggestion != null)
+		{
+			if(userEventSuggestion.getSuggestedTime() == null || userEventSuggestion.getSuggestedTime().compareTo(currentDate) >= 0)
+			{
+				userEventSuggestion.setUpdatedTime(date);
+				userEventSuggestion.setSuggestedTime(suggestionDate);
+				userEventSuggestion.setSuggestionType("Direct Suggestion");
+				userDAO.updateUserEventSuggestion(userEventSuggestion);
+			}
+			else
+			{
+				Events events = new Events();
+				events.setEventId(eventId);
+
+				User users1 = new User();
+				users1.setUserId(friendId);
+
+				userEventSuggestion.setEvents(events);
+				userEventSuggestion.setCreatedTime(date);
+				userEventSuggestion.setSuggestionType("Direct Suggestion");
+				userEventSuggestion.setUpdatedTime(date);
+				userEventSuggestion.setUser(users1);
+				userEventSuggestion.setUserContact(user);
+				userEventSuggestion.setSuggestedTime(suggestionDate);
+				userDAO.saveEventsSuggestions(userEventSuggestion, batch_size);
+			}
+
+			return false;
+		}
+		else
+		{
+			userEventSuggestion = new Usereventsuggestion();
+
+			Events events = new Events();
+			events.setEventId(eventId);
+
+			User users1 = new User();
+			users1.setUserId(friendId);
+
+			userEventSuggestion.setEvents(events);
+			userEventSuggestion.setCreatedTime(date);
+			userEventSuggestion.setSuggestionType("Direct Suggestion");
+			userEventSuggestion.setUpdatedTime(date);
+			userEventSuggestion.setUser(users1);
+			userEventSuggestion.setUserContact(user);
+			userEventSuggestion.setSuggestedTime(suggestionDate);
+			userDAO.saveEventsSuggestions(userEventSuggestion, batch_size);
+			return true;
+		}
 	}
 
 }

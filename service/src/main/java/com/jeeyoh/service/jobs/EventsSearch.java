@@ -2,7 +2,6 @@ package com.jeeyoh.service.jobs;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +14,6 @@ import com.jeeyoh.persistence.IGroupDAO;
 import com.jeeyoh.persistence.IUserDAO;
 import com.jeeyoh.persistence.domain.Events;
 import com.jeeyoh.persistence.domain.Eventuserlikes;
-import com.jeeyoh.persistence.domain.Groupusermap;
 import com.jeeyoh.persistence.domain.Jeeyohgroup;
 import com.jeeyoh.persistence.domain.Page;
 import com.jeeyoh.persistence.domain.Pageuserlikes;
@@ -288,7 +286,7 @@ public class EventsSearch implements IEventSearch{
 		{
 			List<Usereventsuggestion> usereventsuggestions = userDAO.isEventSuggestionExists(user.getUserId(), event.getEventId());
 			logger.debug("EventSearch ==> usereventsuggestions ==> " + usereventsuggestions);
-			if(usereventsuggestions == null || usereventsuggestions.size() == 0)
+			if(usereventsuggestions == null || usereventsuggestions.size() == 0 || usereventsuggestions.get(0).getSuggestedTime().compareTo(currentDate) < 0)
 			{
 				boolean includePage = true;
 				double distance = 0;

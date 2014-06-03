@@ -2,19 +2,19 @@
 <!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
 	<session-factory>
-		<property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+		<!-- <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
 		<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
 		<property name="hibernate.connection.url">${db.jdbc.url}</property>
 		<property name="hibernate.connection.username">${db.jdbc.username}</property>
-		<property name="hibernate.connection.password">${db.jdbc.password}</property>
-		<property name="connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
+		<property name="hibernate.connection.password">${db.jdbc.password}</property> -->
+		<!-- <property name="connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
 		<property name="c3p0.acquire_increment">1</property>
-		<property name="c3p0.idle_test_period">100</property> <!-- seconds -->
+		<property name="c3p0.idle_test_period">100</property> seconds
 		<property name="c3p0.max_size">100</property>
 		<property name="c3p0.max_statements">0</property>
 		<property name="c3p0.min_size">10</property>
-		<property name="c3p0.timeout">1800</property> <!-- seconds -->
-		<property name="show_sql">true</property>
+		<property name="c3p0.timeout">1800</property> seconds
+		<property name="show_sql">true</property> -->
 		<property name="hibernate.jdbc.batch_size">20</property>
 		<mapping resource="hbm/Yreview.hbm.xml" />
 		<mapping resource="hbm/Gdeal.hbm.xml" />

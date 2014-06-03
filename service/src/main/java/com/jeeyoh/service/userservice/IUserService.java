@@ -44,5 +44,6 @@ public interface IUserService {
 	public UserFriendsGroupResponse getUserFriendsAndGroup(int userId);
 	public UploadMediaServerResponse uploadProfileImage(MediaContenModel mediaContenModel);
 	public SuggestionResponse getuserSuggestionByCategory(SearchRequest searchRequest);
+	public FriendListResponse getFriendRequestOfUser(int userId);
 
 }

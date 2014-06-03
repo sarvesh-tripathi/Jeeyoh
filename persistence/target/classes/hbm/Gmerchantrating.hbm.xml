@@ -20,7 +20,7 @@
 			<column name="rating"/>
 		</property>
 		<property name="url" type="string">
-			<column name="url" length="250" />
+			<column name="url"/>
 		</property>
 		<property name="linkText" type="string">
 			<column name="linkText" length="100" />

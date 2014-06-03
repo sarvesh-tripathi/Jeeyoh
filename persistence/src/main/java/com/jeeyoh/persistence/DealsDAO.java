@@ -1,5 +1,11 @@
 package com.jeeyoh.persistence;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -507,7 +513,8 @@ public class DealsDAO implements IDealsDAO {
 		criteria.createAlias("userdealssuggestion.deals", "deals");
 		criteria.add(Restrictions.conjunction().add(Restrictions.ge("deals.endAt", Utils.getCurrentDate()))
 				.add(Restrictions.gt("deals.endAt", Utils.getNearestThursday())));
-		criteria.add(Restrictions.ge("userdealssuggestion.suggestedTime", Utils.getNearestWeekend(null)));
+		criteria.add(Restrictions.disjunction().add(Restrictions.isNull("userdealssuggestion.suggestedTime"))
+				.add(Restrictions.ge("userdealssuggestion.suggestedTime", Utils.getCurrentDate())));
 		criteria.setFirstResult(offset*10)
 		.setMaxResults(limit);
 
@@ -569,15 +576,67 @@ public class DealsDAO implements IDealsDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Deals isDealExists(String dealId) {
-		List<Deals> dealList = null;
-		Session session = sessionFactory.getCurrentSession();
-		String hqlQuery = "from Deals a where a.dealId = :dealId";
+	public int isDealExists(String dealId) {
+		logger.error("isDealExists ==== > ");
+		List<Integer> dealList = null;
+		/*Connection conn = null;
+		   Statement stmt = null;
+		   ResultSet rs = null;
+		   try{
+		      //STEP 2: Register JDBC driver
+		      Class.forName("com.mysql.jdbc.Driver");
+
+		      //STEP 3: Open a connection
+		      System.out.println("Connecting to database...");
+		      conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/jeeyoh?zeroDateTimeBehavior=convertToNull", "root", "");
+
+		      //STEP 4: Execute a query
+		      System.out.println("Creating database...");
+		     // stmt = conn.createStatement();
+		      long startTime = System.currentTimeMillis();
+				logger.debug("DealsDAO ==> isDealExists ==> startTime ==> " + startTime);
+		      String sql = "select id from deals where dealId = ?";
+		      PreparedStatement st = conn.prepareStatement(sql);
+		      st.setString(1, dealId);
+		      rs = st.executeQuery();
+		      rs.next();
+		      long endTime = System.currentTimeMillis();
+		      logger.debug("DealId:::  "+rs.getInt(1));
+			logger.debug("DealsDAO ==> isDealExists ==> startTime ==> " + endTime + " total time ==> " + (endTime-startTime));
+
+		   }catch(SQLException se){
+			   logger.debug("Error1:::  "+se.getMessage());
+		      //Handle errors for JDBC
+		      se.printStackTrace();
+		   }catch(Exception e){
+			   logger.debug("Error2:::  "+e.getMessage());
+		      //Handle errors for Class.forName
+		      e.printStackTrace();
+		   }finally{
+		      //finally block used to close resources
+		      try{
+		         if(stmt!=null)
+		            stmt.close();
+		      }catch(SQLException se2){
+		      }// nothing we can do
+		      try{
+		         if(conn!=null)
+		            conn.close();
+		      }catch(SQLException se){
+		         se.printStackTrace();
+		      }//end finally try
+		   }//end try
+*/		Session session = sessionFactory.getCurrentSession();
+		String hqlQuery = "select id from Deals a where a.dealId = :dealId";
 		try{
+			long startTime = System.currentTimeMillis();
+			logger.debug("DealsDAO ==> isDealExists ==> startTime ==> " + startTime);
 			Query query = session.createQuery(
 					hqlQuery);
 			query.setParameter("dealId", dealId);
-			dealList = (List<Deals>)query.list();
+			dealList = (List<Integer>)query.list();
+			long endTime = System.currentTimeMillis();
+			logger.debug("DealsDAO ==> isDealExists ==> startTime ==> " + endTime + " total time ==> " + (endTime-startTime));
 
 		}
 		catch (HibernateException e) {
@@ -586,7 +645,14 @@ public class DealsDAO implements IDealsDAO {
 		catch (Exception e) {
 			e.printStackTrace();
 		}
-		return dealList != null && !dealList.isEmpty() ? dealList.get(0) : null;
+		/*try {
+			return rs != null && !rs.next() ? rs.getInt(1) : 0;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return 0;
+		}*/
+		return dealList != null && !dealList.isEmpty() ? dealList.get(0) : 0;
 	}
 
 	@Override

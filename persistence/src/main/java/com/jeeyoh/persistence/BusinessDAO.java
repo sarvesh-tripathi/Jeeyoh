@@ -57,6 +57,7 @@ public class BusinessDAO implements IBusinessDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Business> getBusinessByIdForGroupon(String businessId) {
+		logger.debug("getBusinessByIdForGroupon ::::");
 		Session session = sessionFactory.openSession();
 		Transaction tx = null;
 		List<Business> businessList = null;
@@ -181,7 +182,7 @@ public class BusinessDAO implements IBusinessDAO {
 					hqlQuery);
 			query.setParameter("type", type);
 			businessTypeList = (List<Businesstype>) query.list();
-
+			logger.debug("Business By Type after query :: "+businessTypeList);
 		}
 		catch (HibernateException e) {
 			e.printStackTrace();
@@ -268,7 +269,7 @@ public class BusinessDAO implements IBusinessDAO {
 
 		List<Business> businessList = criteria.list();*/
 		List<Business> businessList = null;
-		String hqlQuery = "select a from Business a, Businesstype b where b.businessType = :category and a.businesstype.businessTypeId = b.businessTypeId and (a.displayAddress like '%" + likekeyword  +"%' or a.businessId like '%" + likekeyword  +"%' or a.name like '%" + likekeyword  +"%' or a.websiteUrl like '%" + likekeyword  +"%' or a.city like '%" + likekeyword  +"%') and (((acos(sin(((:latitude)*pi()/180)) * sin((a.lattitude*pi()/180))+cos(((:latitude)*pi()/180)) * cos((a.lattitude*pi()/180)) * cos((((:longitude)- a.longitude)*pi()/180))))*180/pi())*60*1.1515) <=50 group by a.businessId";
+		String hqlQuery = "select a from Business a, Businesstype b where b.businessType = :category and a.businesstype.businessTypeId = b.businessTypeId and (a.displayAddress like '%" + likekeyword  +"%' or a.businessId like '%" + likekeyword  +"%' or a.name like '%" + likekeyword  +"%' or a.websiteUrl like '%" + likekeyword  +"%' or a.city like '%" + likekeyword  +"%') and (((acos(sin(((:latitude)*pi()/180)) * sin((a.lattitude*pi()/180))+cos(((:latitude)*pi()/180)) * cos((a.lattitude*pi()/180)) * cos((((:longitude)- a.longitude)*pi()/180))))*180/pi())*60*1.1515) <=50  and a.websiteUrl is not null group by a.businessId";
 		try
 		{
 
@@ -295,7 +296,7 @@ public class BusinessDAO implements IBusinessDAO {
 		logger.debug("getBusinessCategory ::: "+name);
 		List<Gcategory> gCategory = null;
 		Session session = sessionFactory.getCurrentSession();
-		String hqlQuery = "from Gcategory where category =:name)";
+		String hqlQuery = "from Gcategory where category =:name";
 		try
 		{
 			Query query = session.createQuery(hqlQuery);
@@ -461,7 +462,9 @@ public class BusinessDAO implements IBusinessDAO {
 			criteria.add(Restrictions.eq("user.emailId", userEmail));
 		}
 
-		criteria.add(Restrictions.eq("usernondealsuggestion.suggestedTime", Utils.getNearestWeekend(null)));
+		criteria.add(Restrictions.disjunction().add(Restrictions.isNull("usernondealsuggestion.suggestedTime"))
+				.add(Restrictions.ge("usernondealsuggestion.suggestedTime", Utils.getCurrentDate())));
+		//criteria.add(Restrictions.eq("usernondealsuggestion.suggestedTime", Utils.getNearestWeekend(null)));
 
 		criteria.setFirstResult(offset*10)
 		.setMaxResults(limit);

@@ -187,6 +187,8 @@ public class UserService implements IUserService{
 			userDAO.updateUser(user1);
 			user.setSessionId(sessionId);
 			user.setUserId(user1.getUserId());
+			if(user1.getImageUrl() != null)
+				user.setImageUrl(hostPath+user1.getImageUrl());
 			loginResponse.setUser(user);
 			loginResponse.setStatus(ServiceAPIStatus.OK.getStatus());
 			loginResponse.setError("");
@@ -478,6 +480,7 @@ public class UserService implements IUserService{
 	public SuggestionResponse getUserSuggestions(UserModel user) {
 
 		logger.debug("getOffset:::   "+user.getOffset());
+		logger.debug("getNearestWeekend:::  "+Utils.getNearestWeekend(null));
 		int totalCount = 0;
 		//Getting total number of suggestions
 		if(user.getOffset() == 0)
@@ -523,7 +526,7 @@ public class UserService implements IUserService{
 					else if(pageuserlikes.getIsLike())
 						businessModel.setSuggestionCriteria("like");
 					else if(pageuserlikes.getIsVisited())
-						businessModel.setSuggestionCriteria("visited");
+						businessModel.setSuggestionCriteria("following");
 				}
 				else
 					businessModel.setSuggestionCriteria("like");
@@ -598,7 +601,7 @@ public class UserService implements IUserService{
 						else if(dealProperty.getIsLike())
 							dealModel.setSuggestionCriteria("like");
 						else if(dealProperty.getIsVisited())
-							dealModel.setSuggestionCriteria("visited");
+							dealModel.setSuggestionCriteria("following");
 					}
 					else
 						dealModel.setSuggestionCriteria("like");
@@ -708,7 +711,7 @@ public class UserService implements IUserService{
 				else if(eventProperty.getIsLike())
 					eventModel.setSuggestionCriteria("like");
 				else if(eventProperty.getIsVisited())
-					eventModel.setSuggestionCriteria("visited");
+					eventModel.setSuggestionCriteria("following");
 			}
 			else
 				eventModel.setSuggestionCriteria("like");
@@ -2085,5 +2088,45 @@ public class UserService implements IUserService{
 		suggestionResponse.setStatus(ServiceAPIStatus.OK.getStatus());
 		suggestionResponse.setError("");
 		return suggestionResponse;
+	}
+
+	@Transactional
+	@Override
+	public FriendListResponse getFriendRequestOfUser(int userId) {
+		logger.debug("getFriendsOfUser =>"+userId);
+		FriendListResponse response = new FriendListResponse();
+		List<UserModel> userList = new ArrayList<UserModel>();
+		List<User> friendRequestList = userDAO.getUserFriendRequests(userId);
+		for(User friend: friendRequestList)
+		{
+			UserModel user =  new UserModel();
+			user.setAddressline1(friend.getAddressline1());
+			user.setBirthDate(friend.getBirthDate());
+			user.setBirthMonth(friend.getBirthMonth());
+			user.setBirthYear(friend.getBirthYear());
+			user.setCity(friend.getCity());
+			user.setConfirmationId(friend.getConfirmationId());
+			user.setCountry(friend.getCountry());
+			user.setCreatedtime(friend.getCreatedtime().toString());
+			user.setEmailId(friend.getEmailId());
+			user.setFirstName(friend.getFirstName());
+			user.setGender(friend.getGender());
+			user.setIsActive(friend.getIsActive());
+			user.setIsDeleted(friend.getIsDeleted());
+			user.setLastName(friend.getLastName());
+			user.setMiddleName(friend.getMiddleName());
+			user.setPassword(friend.getPassword());
+			user.setState(friend.getState());
+			user.setSessionId(friend.getSessionId());
+			user.setStreet(friend.getStreet());
+			user.setUpdatedtime(friend.getUpdatedtime().toString());
+			user.setUserId(friend.getUserId());
+			user.setZipcode(friend.getZipcode());
+			if(friend.getImageUrl() != null)
+				user.setImageUrl(hostPath+friend.getImageUrl());
+			userList.add(user);
+		}
+		response.setUser(userList);
+		return response;
 	}
 }
