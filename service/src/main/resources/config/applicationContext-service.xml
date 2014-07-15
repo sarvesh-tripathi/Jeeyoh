@@ -140,12 +140,12 @@ default-autowire="byName">
 	
 	<!-- Create Message Classifier Bean here not using annotation since Spring Frowns at constructor value injection  -->
 	<bean id="messageClassifierHelper" class="com.jeeyoh.notification.service.MessageClassifierHelper">
-	  <constructor-arg type="java.lang.String" value="${app.storistic.messages.filename}"/>
-	  <constructor-arg type="java.lang.String" value="${app.storistic.messages.smtpNotifier}"/>	  
-	  <constructor-arg type="java.lang.String" value="${app.storistic.messages.priority}"/>
-	  <constructor-arg type="java.lang.String" value="${app.storistic.messages.messageGroup}"/>
-	  <constructor-arg type="java.lang.String" value="${app.storistic.messages.messageID}"/>
-	  <constructor-arg type="java.lang.String" value="${app.storistic.messages.messageVersion}"/>
+	  <constructor-arg type="java.lang.String" value="${app.jeeyoh.messages.filename}"/>
+	  <constructor-arg type="java.lang.String" value="${app.jeeyoh.messages.smtpNotifier}"/>	  
+	  <constructor-arg type="java.lang.String" value="${app.jeeyoh.messages.priority}"/>
+	  <constructor-arg type="java.lang.String" value="${app.jeeyoh.messages.messageGroup}"/>
+	  <constructor-arg type="java.lang.String" value="${app.jeeyoh.messages.messageID}"/>
+	  <constructor-arg type="java.lang.String" value="${app.jeeyoh.messages.messageVersion}"/>
 	</bean>
 	
 		

@@ -155,7 +155,10 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 								business.setStateCode(gdivision.getStateCode());
 								business.setState(gdivision.getState());
 								business.setBusinesstype(businesstype);
-								business.setRating(gmerchantrating.getRating());
+								if(gmerchantrating.getRating() != null)
+									business.setRating(gmerchantrating.getRating());
+								else
+									business.setRating(0.0);
 								business.setRatingImgUrl(gmerchantrating.getUrl());
 								business.setSource("Groupon");
 
@@ -205,7 +208,7 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 
 								Goptiondetail goptiondetail = gDealsDAO.getOptionDeatils(option.getId());
 								dealOption.setDescription(goptiondetail.getDescription());
-								
+
 								Set<Gredemptionlocation> redemptionLocations = option.getGredemptionlocations();
 								if(redemptionLocations != null) {
 									Set<Dealredemptionlocation> dealRedemptionLocations = new HashSet<Dealredemptionlocation>();

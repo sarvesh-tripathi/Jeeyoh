@@ -29,7 +29,7 @@ public interface IUserService {
 	public BaseResponse saveUserFavourite(PageModel page);
 	public CategoryResponse addFavourite(String category,int userId);
 	public BaseResponse deleteFavourite(int id, int userId);
-	public SuggestionResponse getUserSuggestions(UserModel user);
+	public SuggestionResponse getUserSuggestions(SearchRequest searchRequest);
 	public BaseResponse forgetPassword(String emailId);
 	public boolean isUserActive(UserModel user);
 	public long userFavouriteCount(PageModel page);
@@ -45,5 +45,9 @@ public interface IUserService {
 	public UploadMediaServerResponse uploadProfileImage(MediaContenModel mediaContenModel);
 	public SuggestionResponse getuserSuggestionByCategory(SearchRequest searchRequest);
 	public FriendListResponse getFriendRequestOfUser(int userId);
+	public BaseResponse confirmEmail(String emailId, String confirmationId);
+	public BaseResponse emailNotRegistered(String emailId);
+	public UserRegistrationResponse registerBetaListUser(UserModel user);
+	public CategoryResponse getFavourites(String category,int userId);
 
 }

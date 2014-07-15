@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +30,6 @@ import com.jeeyoh.persistence.IEventsDAO;
 import com.jeeyoh.persistence.IFunBoardDAO;
 import com.jeeyoh.persistence.IUserDAO;
 import com.jeeyoh.persistence.domain.Business;
-import com.jeeyoh.persistence.domain.CommunityReview;
 import com.jeeyoh.persistence.domain.Dealoption;
 import com.jeeyoh.persistence.domain.Dealredemptionlocation;
 import com.jeeyoh.persistence.domain.Deals;
@@ -44,6 +42,7 @@ import com.jeeyoh.persistence.domain.FunboardMediaContent;
 import com.jeeyoh.persistence.domain.Notificationpermission;
 import com.jeeyoh.persistence.domain.Page;
 import com.jeeyoh.persistence.domain.Pageuserlikes;
+import com.jeeyoh.persistence.domain.Privacy;
 import com.jeeyoh.persistence.domain.Timeline;
 import com.jeeyoh.persistence.domain.User;
 import com.jeeyoh.utils.Utils;
@@ -85,6 +84,9 @@ public class FunBoardService implements IFunBoardService{
 			logger.debug("funboard::::  "+funboard);
 			if(funboard == null)
 			{
+				// Check privacy id
+				Privacy privacyObj = userDAO.getUserPrivacyType("OPEN");
+
 				SimpleDateFormat simple=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				funboard = new Funboard();
 				Timeline timeline = null;
@@ -96,6 +98,7 @@ public class FunBoardService implements IFunBoardService{
 				funboard.setUpdatedTime(currentDate);
 				funboard.setImageUrl(funBoardModel.getImageUrl());
 				funboard.setSource(funBoardModel.getSource());
+				funboard.setPrivacy(privacyObj);
 				if(funBoardModel.getCategory().equalsIgnoreCase("Sports"))
 				{
 					funboard.setCategory("SPORT");
@@ -107,7 +110,9 @@ public class FunBoardService implements IFunBoardService{
 					Date endDate = simple.parse(funBoardModel.getEndDate());
 					if(funBoardModel.getType().equalsIgnoreCase("Event") || funBoardModel.getType().equalsIgnoreCase("Community"))
 					{
+						funboard.setScheduledTime(endDate);
 						Time funboardCreationTime = new Time(endDate.getTime());
+						funboard.setTimeSlot(funboardCreationTime);
 						logger.debug("funboardCreationTime::  "+funboardCreationTime);
 						timeline = funBoardDAO.getTimeLine(funboardCreationTime);
 					}
@@ -120,6 +125,7 @@ public class FunBoardService implements IFunBoardService{
 						if(funBoardModel.getTimeLine() == null)
 						{
 							timeline = funBoardDAO.getDefaultTimeLine();
+							funboard.setTimeSlot(timeline.getStartTime());
 						}
 						else
 						{
@@ -168,6 +174,7 @@ public class FunBoardService implements IFunBoardService{
 						if(pageuserlikes!=null && !pageuserlikes.equals(""))
 						{
 							pageuserlikes.setIsVisited(true);
+							pageuserlikes.setIsBooked(true);
 							eventsDAO.updatePageUserLikes(pageuserlikes);
 						}
 						else if (pageuserlikes == null)
@@ -180,7 +187,7 @@ public class FunBoardService implements IFunBoardService{
 							pageuserlikes.setIsProfileDetailsHidden(false);
 							pageuserlikes.setIsProfileHidden(false);
 							pageuserlikes.setIsSuggested(false);
-							pageuserlikes.setIsBooked(false);
+							pageuserlikes.setIsBooked(true);
 							pageuserlikes.setUser(user);
 							pageuserlikes.setPage(page);
 							pageuserlikes.setNotificationpermission(notificationPermission);
@@ -262,8 +269,8 @@ public class FunBoardService implements IFunBoardService{
 			else
 			{
 				logger.debug("Item Already exists in your Fun Board....");
-				baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
-				baseResponse.setError("Item Already exists in your Fun Board");
+				baseResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
+				baseResponse.setError("The activity already exists on your Funboard");
 			}
 		}
 		else
@@ -281,74 +288,111 @@ public class FunBoardService implements IFunBoardService{
 	public FunBoardResponse getUserFunBoardItems(UserModel user) {
 		List<Funboard> funboards = funBoardDAO.getUserFunBoardItems(user.getUserId());
 		int alertsCount = 0;
-		List<FunBoardModel> funBoardModels = new ArrayList<FunBoardModel>();
 		List<FunBoardModel> fridayActivefunBoardModels = new ArrayList<FunBoardModel>();
 		List<FunBoardModel> saturadyActivefunBoardModels = new ArrayList<FunBoardModel>();
 		List<FunBoardModel> sundayActivefunBoardModels = new ArrayList<FunBoardModel>();
+		int day = 0;
 		for(Funboard funboard : funboards)
 		{
 			FunBoardModel funBoardModel = null;
+			alertsCount = funBoardDAO.getNotificationCount(funboard.getFunBoardId());
+			funBoardModel = new FunBoardModel();
+			funBoardModel.setFunBoardId(funboard.getFunBoardId());
+			funBoardModel.setItemId(funboard.getItemId());
+			funBoardModel.setCategory(funboard.getCategory());
+			funBoardModel.setImageUrl(funboard.getImageUrl());
+			funBoardModel.setTimeLine(funboard.getTimeline().getTimeLineType());
+			funBoardModel.setNotificationCount(alertsCount);
+			funBoardModel.setType(funboard.getItemType());
+			funBoardModel.setStartDate(funboard.getStartDate().toString());
+			funBoardModel.setEndDate(funboard.getEndDate().toString());
+			funBoardModel.setSource(funboard.getSource());
+			funBoardModel.setTag(funboard.getTag());
+			String privacyType = funboard.getPrivacy().getPrivacyType();
+			if(privacyType.equals("OPEN"))
+				funBoardModel.setIsPublic(true);
+			else
+				funBoardModel.setIsPublic(false);
 			if(funboard.getItemType().equalsIgnoreCase("Business"))
 			{
-				alertsCount = funBoardDAO.getNotificationCount(funboard.getFunBoardId());
-				funBoardModel = new FunBoardModel();
-				funBoardModel.setFunBoardId(funboard.getFunBoardId());
-				funBoardModel.setItemId(funboard.getItemId());
-				funBoardModel.setCategory(funboard.getCategory());
-				funBoardModel.setImageUrl(funboard.getImageUrl());
-				funBoardModel.setTimeLine(funboard.getTimeline().getTimeLineType());
-				funBoardModel.setNotificationCount(alertsCount);
-				funBoardModel.setType(funboard.getItemType());
-				funBoardModel.setStartDate(funboard.getStartDate().toString());
-				funBoardModel.setEndDate(funboard.getEndDate().toString());
-				funBoardModel.setSource(funboard.getSource());
-				fridayActivefunBoardModels.add(funBoardModel);
-				saturadyActivefunBoardModels.add(funBoardModel);
-				sundayActivefunBoardModels.add(funBoardModel);
+				Business business = businessDAO.getBusinessById(funboard.getItemId());
+				if(business != null)
+				{
+					funBoardModel.setRating(business.getRating());
+					funBoardModel.setDescription(business.getName());
+					funBoardModel.setWebsiteUrl(business.getWebsiteUrl());
+
+					if(funboard.getTimeSlot() != null)
+						funBoardModel.setTimeSlot(funboard.getTimeSlot().toString());
+					day = Utils.getDayOfWeek(funboard.getScheduledTime());
+					/*fridayActivefunBoardModels.add(funBoardModel);
+					saturadyActivefunBoardModels.add(funBoardModel);
+					sundayActivefunBoardModels.add(funBoardModel);*/
+				}
+			}
+			else if(funboard.getItemType().equalsIgnoreCase("Deal"))
+			{
+				Deals deals = dealsDAO.getDealById(funboard.getItemId());
+				if(deals != null)
+				{
+					funBoardModel.setRating(deals.getBusiness().getRating());
+					funBoardModel.setDescription(deals.getTitle());
+					funBoardModel.setWebsiteUrl(deals.getDealUrl());
+					if(funboard.getTimeSlot() != null)
+						funBoardModel.setTimeSlot(funboard.getTimeSlot().toString());
+					day = Utils.getDayOfWeek(funboard.getScheduledTime());
+				}
+			}
+			else if(funboard.getItemType().equalsIgnoreCase("community"))
+			{
+				Object[] page = eventsDAO.getPagesAvergeRatingAndDetails(funboard.getItemId());
+				if(page != null)
+				{
+					double avgRating = 0;
+					if(page[0] != null)
+						avgRating = Double.parseDouble(page[0].toString());
+					Page pageDetails = (Page)page[1];
+					funBoardModel.setRating(avgRating);
+					funBoardModel.setDescription(pageDetails.getAbout());
+					funBoardModel.setWebsiteUrl(pageDetails.getPageUrl());
+					if(funboard.getTimeSlot() != null)
+						funBoardModel.setTimeSlot(funboard.getTimeSlot().toString());
+
+					day = Utils.getDayOfWeek(funboard.getStartDate());
+				}
 			}
 			else
 			{
-				//if(funboard.getEndDate().compareTo(Utils.getCurrentDate()) >=0)
-				//{
-				alertsCount = funBoardDAO.getNotificationCount(funboard.getFunBoardId());
-				funBoardModel = new FunBoardModel();
-				funBoardModel.setFunBoardId(funboard.getFunBoardId());
-				funBoardModel.setItemId(funboard.getItemId());
-				funBoardModel.setCategory(funboard.getCategory());
-				funBoardModel.setImageUrl(funboard.getImageUrl());
-				funBoardModel.setTimeLine(funboard.getTimeline().getTimeLineType());
-				funBoardModel.setNotificationCount(alertsCount);
-				funBoardModel.setType(funboard.getItemType());
-				funBoardModel.setStartDate(funboard.getStartDate().toString());
-				funBoardModel.setEndDate(funboard.getEndDate().toString());
-				funBoardModel.setSource(funboard.getSource());
-				int day = 0;
-				if(funboard.getItemType().equalsIgnoreCase("Event") || funboard.getItemType().equalsIgnoreCase("Community"))
+				Events events = eventsDAO.getEventById(funboard.getItemId());
+				if(events != null)
 				{
+					double avgRating = eventsDAO.getCommunityReviewByPageId(events.getPage().getPageId());
+
+					funBoardModel.setRating(avgRating);
+					funBoardModel.setDescription(events.getDescription());
+					funBoardModel.setTitle(events.getTitle());
+					funBoardModel.setWebsiteUrl(events.getUrlpath());
+					if(funboard.getTimeSlot() != null)
+						funBoardModel.setTimeSlot(funboard.getTimeSlot().toString());
 					day = Utils.getDayOfWeek(funboard.getStartDate());
 				}
-				else
-				{
-					day = Utils.getDayOfWeek(funboard.getScheduledTime());
-				}
-				switch(day){
-				case 6: 
-					fridayActivefunBoardModels.add(funBoardModel);
-					break;	
-				case 7: 
-					saturadyActivefunBoardModels.add(funBoardModel);
-					break;	
-				case 1: 
-					sundayActivefunBoardModels.add(funBoardModel);
-					break;	
-				}
-				//}
+			}
+
+			switch(day){
+			case 6: 
+				fridayActivefunBoardModels.add(funBoardModel);
+				break;	
+			case 7: 
+				saturadyActivefunBoardModels.add(funBoardModel);
+				break;	
+			case 1: 
+				sundayActivefunBoardModels.add(funBoardModel);
+				break;	
 			}
 		}
 
 		logger.debug("fridayActivefunBoardModels: "+fridayActivefunBoardModels.size() + " saturadyActivefunBoardModels: "+saturadyActivefunBoardModels.size()+" sundayActivefunBoardModels: "+sundayActivefunBoardModels.size());
 		FunBoardResponse funBoardResponse = new FunBoardResponse();
-		funBoardResponse.setFunBoards(funBoardModels);
 		funBoardResponse.setFridayActivefunBoards(fridayActivefunBoardModels);
 		funBoardResponse.setSaturdayActivefunBoards(saturadyActivefunBoardModels);
 		funBoardResponse.setSundayActivefunBoards(sundayActivefunBoardModels);
@@ -459,6 +503,7 @@ public class FunBoardService implements IFunBoardService{
 			User user = userDAO.getUserById(commentModel.getUserId());
 			commentModel.setCreatedTime(Utils.getTime(date));
 			commentModel.setUserName(user.getFirstName());
+			commentModel.setEmailId(user.getEmailId());
 			if(user.getImageUrl() != null)
 				commentModel.setImageUrl(hostPath + user.getImageUrl());
 			response.setComment(commentModel);
@@ -489,10 +534,13 @@ public class FunBoardService implements IFunBoardService{
 			funBoardModel.setRating(business.getRating());
 			funBoardModel.setTitle(business.getName());
 			funBoardModel.setSource(business.getSource());
+
 			if(business.getDisplayAddress() != null)
 				funBoardModel.setAddress(business.getDisplayAddress().replaceAll("[<>\\[\\],-]", ""));
-			funBoardModel.setLatitude(Double.parseDouble(business.getLattitude()));
-			funBoardModel.setLongitude(Double.parseDouble(business.getLongitude()));
+			if(business.getLattitude() != null)
+				funBoardModel.setLatitude(Double.parseDouble(business.getLattitude()));
+			if(business.getLongitude() != null)
+				funBoardModel.setLongitude(Double.parseDouble(business.getLongitude()));
 			userList = userDAO.getAttendingUsersForBusiness(funBoardModel.getItemId(),request.getUserId());
 
 		}
@@ -528,8 +576,10 @@ public class FunBoardService implements IFunBoardService{
 					{
 						String address = dealredemptionlocation.getName()+"\n"+dealredemptionlocation.getStreetAddress1()+"\n"+dealredemptionlocation.getCity()+","+dealredemptionlocation.getState()+" "+dealredemptionlocation.getPostalCode();
 						funBoardModel.setAddress(address);
-						funBoardModel.setLatitude(Double.parseDouble(dealredemptionlocation.getLattitude()));
-						funBoardModel.setLongitude(Double.parseDouble(dealredemptionlocation.getLongitude()));
+						if(dealredemptionlocation.getLattitude() != null)
+							funBoardModel.setLatitude(Double.parseDouble(dealredemptionlocation.getLattitude()));
+						if(dealredemptionlocation.getLongitude() != null)
+							funBoardModel.setLongitude(Double.parseDouble(dealredemptionlocation.getLongitude()));
 					}
 				}
 			}
@@ -564,8 +614,10 @@ public class FunBoardService implements IFunBoardService{
 
 			String address = events.getVenue_name()+"\n"+events.getCity()+","+events.getState()+" "+events.getZip();
 			funBoardModel.setAddress(address);
-			funBoardModel.setLatitude(Double.parseDouble(events.getLatitude()));
-			funBoardModel.setLongitude(Double.parseDouble(events.getLongitude()));
+			if(events.getLatitude() != null)
+				funBoardModel.setLatitude(Double.parseDouble(events.getLatitude()));
+			if(events.getLongitude() != null)
+				funBoardModel.setLongitude(Double.parseDouble(events.getLongitude()));
 			funBoardModel.setTimeLine(Utils.getTimeLineForEvent(events.getEvent_date_local(), events.getEvent_time_local()));
 			funBoardModel.setTitle(events.getTitle());
 			funBoardModel.setSource(events.getEventSource());
@@ -602,8 +654,10 @@ public class FunBoardService implements IFunBoardService{
 			if(event_date != null)
 			{
 				funBoardModel.setTimeLine(Utils.getTimeLineForEvent((Date)event_date[0], event_date[1].toString()));
-				funBoardModel.setLatitude(Double.parseDouble(event_date[2].toString()));
-				funBoardModel.setLongitude(Double.parseDouble(event_date[3].toString()));
+				if(event_date[2] != null && !event_date[2].toString().trim().equals(""))
+					funBoardModel.setLatitude(Double.parseDouble(event_date[2].toString()));
+				if(event_date[3] != null && !event_date[3].toString().trim().equals(""))
+					funBoardModel.setLongitude(Double.parseDouble(event_date[3].toString()));
 			}
 
 			funBoardModel.setTitle(page.getAbout());
@@ -633,6 +687,7 @@ public class FunBoardService implements IFunBoardService{
 				commentModel.setUserId(user.getUserId());
 				commentModel.setCreatedTime(Utils.getTime(funboardComments.getCreatedTime()));
 				commentModel.setUserName(user.getFirstName());
+				commentModel.setEmailId(user.getEmailId());
 				if(user.getImageUrl() != null)
 					commentModel.setImageUrl(hostPath + user.getImageUrl());
 				if(funboardComments.getIsComment())
@@ -707,7 +762,7 @@ public class FunBoardService implements IFunBoardService{
 	}
 
 
-	@Transactional
+	/*@Transactional
 	@Override
 	public BaseResponse updateTimeLine(FunBoardModel funBoardModel) {
 		BaseResponse baseResponse = new BaseResponse();
@@ -720,6 +775,7 @@ public class FunBoardService implements IFunBoardService{
 			Timeline timeline = funBoardDAO.getTimeLine(funboardCreationTime);
 			if(timeline != null)
 			{
+				funboard.setTimeSlot(funboardCreationTime);
 				funboard.setTimeline(timeline);
 				funboard.setUpdatedTime(new Date());
 				funBoardDAO.updateFunBoard(funboard);
@@ -736,4 +792,77 @@ public class FunBoardService implements IFunBoardService{
 	}
 
 
+	@Transactional
+	@Override
+	public BaseResponse updateTag(FunBoardModel funBoardModel) {
+		BaseResponse baseResponse = new BaseResponse();
+		try
+		{
+			Funboard funboard = funBoardDAO.getFunboardById(funBoardModel.getFunBoardId());
+			funboard.setTag(funBoardModel.getTag());
+			funboard.setUpdatedTime(new Date());
+			funBoardDAO.updateFunBoard(funboard);
+			baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
+
+		}catch(Exception e)
+		{
+			logger.debug("Error: "+e.getLocalizedMessage());
+			baseResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
+			baseResponse.setError("Error");
+		}
+		return baseResponse;
+	}
+	 */
+
+	@Transactional
+	@Override
+	public BaseResponse updateFunBoard(FunBoardModel funBoardModel) {
+		BaseResponse baseResponse = new BaseResponse();
+		try
+		{
+			Funboard funboard = funBoardDAO.getFunboardById(funBoardModel.getFunBoardId());
+			if(funboard != null)
+			{
+				//Update TimeLine
+				if(funBoardModel.getTimeLine() != null)
+				{
+					SimpleDateFormat simple=new SimpleDateFormat("HH:mm:ss");
+					Date scheduleTime = simple.parse(funBoardModel.getTimeLine());
+					Time funboardCreationTime = new Time(scheduleTime.getTime());
+					Timeline timeline = funBoardDAO.getTimeLine(funboardCreationTime);
+					if(timeline != null)
+					{
+						funboard.setTimeSlot(funboardCreationTime);
+						funboard.setTimeline(timeline);
+					}
+				}//Update Tag
+				else if(funBoardModel.getTag() != null)
+					funboard.setTag(funBoardModel.getTag());
+				else 
+				{
+					Privacy privacyObj = null;
+					if(funBoardModel.getIsPublic())
+						privacyObj = userDAO.getUserPrivacyType("OPEN");
+					else
+						privacyObj = userDAO.getUserPrivacyType("CLOSED");
+					funboard.setPrivacy(privacyObj);
+				}
+
+				funboard.setUpdatedTime(new Date());
+				funBoardDAO.updateFunBoard(funboard);
+				baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
+			}
+			else
+			{
+				baseResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
+				baseResponse.setError("Error");
+			}
+		}catch(Exception e)
+		{
+			logger.debug("Error: "+e.getLocalizedMessage());
+			baseResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
+			baseResponse.setError("Error");
+		}
+		return baseResponse;
+	}
 }

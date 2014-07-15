@@ -57,6 +57,10 @@ public class PageModel implements Serializable{
 	private String suggestedBy;
 	@JsonProperty
 	private boolean isBooked;
+	@JsonProperty
+	private String timeSlot;
+	@JsonProperty
+	private String abbreviation;
 	
 	/**
 	 * @return the isBooked
@@ -309,6 +313,30 @@ public class PageModel implements Serializable{
 	 */
 	public void setSuggestedBy(String suggestedBy) {
 		this.suggestedBy = suggestedBy;
+	}
+	/**
+	 * @return the timeSlot
+	 */
+	public String getTimeSlot() {
+		return timeSlot;
+	}
+	/**
+	 * @param timeSlot the timeSlot to set
+	 */
+	public void setTimeSlot(String timeSlot) {
+		this.timeSlot = timeSlot;
+	}
+	/**
+	 * @return the abbreviation
+	 */
+	public String getAbbreviation() {
+		return abbreviation;
+	}
+	/**
+	 * @param abbreviation the abbreviation to set
+	 */
+	public void setAbbreviation(String abbreviation) {
+		this.abbreviation = abbreviation;
 	}
 	
 

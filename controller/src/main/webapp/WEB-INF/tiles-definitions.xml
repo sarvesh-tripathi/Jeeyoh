@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_2_0.dtd">
+<tiles-definitions>
+  
+	<!--
+	We declare a new template named template-main.
+	This template is used for displaying the main page.
+	It has 4 attributes. These attributes are placeholder for our contents
+	For each attribute, we have assigned a corresponding JSP
+	-->	
+			<!-- SECTION FOR TEMPLATE LAYOUT DEFINITION  -->
+	<definition name="jeeyoh.homeLayout" template="/WEB-INF/jsp/layouts/homeLayout.jsp">
+		<put-attribute name="title" value="Jeeyoh" />		
+		<put-attribute name="body" value="/WEB-INF/jsp/layouts/body.jsp" />
+		<put-attribute name="footer" value="/WEB-INF/jsp/layouts/footer.jsp" />
+	</definition>
+	    
+    <definition name="registration" extends="jeeyoh.homeLayout">	 	
+        <put-attribute name="body" value="/WEB-INF/jsp/home/registration.jsp"/>
+    </definition>
+	 
+      
+</tiles-definitions>

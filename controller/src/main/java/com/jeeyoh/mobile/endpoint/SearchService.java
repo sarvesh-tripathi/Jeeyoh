@@ -132,8 +132,8 @@ public class SearchService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public FriendListResponse searchFriend(FriendModel friendModel)
 	{
-		logger.debug("searchFriend =>"+friendModel.getLocation()+"; name =>"+friendModel.getName());
-		FriendListResponse response = addFriendService.searchFriend(friendModel.getLocation(), friendModel.getName(), friendModel.getUserId());
+		logger.debug("searchFriend => "+friendModel.getLocation()+"; firstname => "+friendModel.getFirstName() + " lastName: "+ friendModel.getLastName());
+		FriendListResponse response = addFriendService.searchFriend(friendModel.getLocation(), friendModel.getFirstName(), friendModel.getLastName(), friendModel.getUserId());
 		return response;
 	}
 	
@@ -229,10 +229,10 @@ public class SearchService {
 	}
 	
 	@POST
-	@Path("/getCommunityList")
+	@Path("/getPopularCommunityList")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public CommunityListResponse getCommunityList(UserModel userModel)
+	public CommunityListResponse getPopularCommunityList(UserModel userModel)
 	{
 		CommunityListResponse response = communitySearchService.getCommunityList();
 		return response;

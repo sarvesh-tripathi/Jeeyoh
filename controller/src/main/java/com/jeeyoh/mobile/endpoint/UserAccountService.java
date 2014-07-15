@@ -46,6 +46,7 @@ import com.jeeyoh.model.search.CategoryModel;
 import com.jeeyoh.model.search.DirectSuggestionModel;
 import com.jeeyoh.model.search.FavoriteRequestModel;
 import com.jeeyoh.model.search.PageModel;
+import com.jeeyoh.model.search.SearchRequest;
 import com.jeeyoh.model.user.UserModel;
 import com.jeeyoh.notification.service.IMessagingEventPublisher;
 import com.jeeyoh.service.addgroup.IAddGroupService;
@@ -96,6 +97,7 @@ public class UserAccountService {
 	@Path("/login")
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 	public LoginResponse login(UserModel user)
 	{
 		logger.debug("Enter in mobile app "+user);
@@ -108,6 +110,7 @@ public class UserAccountService {
 	@Path("/regiteration")
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 	public UserRegistrationResponse registration(UserModel user)
 	{
 		logger.debug("Enter in mobile app "+user.getFirstName());
@@ -127,7 +130,7 @@ public class UserAccountService {
 					confirmationCode = userRegistrationResponse.getConfirmationId();
 					userRegistrationResponse.setStatus(ServiceAPIStatus.OK.getStatus());
 					logger.debug("confirmation code "+confirmationCode);
-					// eventPublisher.sendConfirmationEmail(user,confirmationCode);//gaurav told not email confirmation
+					//eventPublisher.sendConfirmationEmail(user,confirmationCode);//gaurav told not email confirmation
 				}
 			}
 			else
@@ -155,6 +158,7 @@ public class UserAccountService {
 	@Path("/logout")
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 	public BaseResponse logout(UserModel user)
 	{
 		BaseResponse  baseResponce = userService.logoutUser(user);
@@ -168,6 +172,7 @@ public class UserAccountService {
 	@Path("/changePassword")
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 	public BaseResponse chnagePassword(UserModel user)
 	{
 		logger.debug("change passwor ::");
@@ -176,8 +181,8 @@ public class UserAccountService {
 	}
 	@GET
 	@Path("/confirmEmail")
-	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 	public BaseResponse confirmEmail(@QueryParam("confirmationCode") String confirmationCode)
 	{
 		logger.debug("IN CONFIRMATION MAIL API");
@@ -187,6 +192,7 @@ public class UserAccountService {
 	}
 	@GET
 	@Path("/forgetPassword")
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public BaseResponse forgetPassword(@QueryParam("emailId") String emailId)
 	{
@@ -198,8 +204,8 @@ public class UserAccountService {
 
 	@POST
 	@Path("/getProfile")
-	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 	public CategoryResponse getProfile(UserModel user)
 	{
 		CategoryResponse categoryResponse = userService.getUserProfile(user);
@@ -216,7 +222,7 @@ public class UserAccountService {
 		logger.debug("Category Respose category ::: "+category);
 		logger.debug("Category Respose userId   ::: "+userId);
 		CategoryResponse categoryResponse = null;
-		if(category != null && userId != 0 )
+		if(userId != 0 )
 		{
 			categoryResponse = userService.addFavourite(category, userId);
 		}
@@ -258,11 +264,29 @@ public class UserAccountService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public BaseResponse deleteFavourite(@QueryParam("pageId") int pageId,@QueryParam("userId") int userId)
 	{
-		logger.debug("Category Respose ::: "+pageId);
 		BaseResponse baseResponse = userService.deleteFavourite(pageId, userId);
 		logger.debug("Responce ::::: "+baseResponse.getStatus());
 		return baseResponse;
 
+	}
+	
+	@GET
+	@Path("/getFavourites")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public CategoryResponse getFavourites(@QueryParam("category") String category,@QueryParam("userId") int userId)
+	{
+		CategoryResponse categoryResponse = null;
+		if(category != null && userId != 0 )
+		{
+			categoryResponse = userService.getFavourites(category, userId);
+		}
+		else
+		{
+			categoryResponse = new CategoryResponse();
+			categoryResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
+		}
+		return categoryResponse;
 	}
 
 
@@ -301,9 +325,9 @@ public class UserAccountService {
 	@Path("/getuserSuggestions")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public SuggestionResponse getUserSuggestions(UserModel user)
+	public SuggestionResponse getUserSuggestions(SearchRequest searchRequest)
 	{
-		SuggestionResponse response = userService.getUserSuggestions(user);
+		SuggestionResponse response = userService.getUserSuggestions(searchRequest);
 		return response;
 	}
 
@@ -622,7 +646,7 @@ public class UserAccountService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public BaseResponse wallFeed(WallFeedRequest wallFeedModel)
 	{
-		logger.debug("wallFeed => userid => "+wallFeedModel.getUserId()+" ;SharedWithUserList => "+wallFeedModel.getSharedWithUserList()+" ;SharedfunBoardItemsList() => "+wallFeedModel.getSharedfunBoardItemsList());
+		logger.debug("wallFeed => userid => "+wallFeedModel.getUserId()+" ;SharedWithUserList => "+wallFeedModel.getFriends()+" ;SharedfunBoardItemsList() => "+wallFeedModel.getSharedfunBoardItemsList());
 		BaseResponse response = wallFeedSharingService.saveWallFeedSharingData(wallFeedModel);
 		return response;
 	}
@@ -709,7 +733,8 @@ public class UserAccountService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public BaseResponse updateFunBoard(FunBoardModel funBoardModel)
 	{
-		BaseResponse response = funBoardService.updateTimeLine(funBoardModel);
+		BaseResponse response = new BaseResponse();
+		response = funBoardService.updateFunBoard(funBoardModel);
 		return response;
 	}
 	
@@ -763,5 +788,4 @@ public class UserAccountService {
 		}
 		return response;
 	}
-
 }

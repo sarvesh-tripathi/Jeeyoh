@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Oct 10, 2013 9:08:14 AM by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+	<class name="com.jeeyoh.persistence.domain.PopularCommunity"
+		table="popularCommunity" catalog="jeeyoh">
+		<id name="communityId" type="java.lang.Integer">
+			<column name="communityId" />
+			<generator class="identity" />
+		</id>
+		<many-to-one name="pagetype" class="com.jeeyoh.persistence.domain.Pagetype"
+			fetch="select" lazy="false">
+			<column name="pageTypeId" not-null="true" />
+		</many-to-one>
+		<property name="about" type="string">
+			<column name="about" length="250" />
+		</property>
+		<property name="pageUrl" type="string">
+			<column name="pageUrl" length="250" />
+		</property>
+		<property name="profilePicture" type="string">
+			<column name="profilePicture" length="250" />
+		</property>
+		<property name="abbreviation" type="string">
+			<column name="abbreviation" length="45" />
+		</property>
+		<property name="home" type="string">
+			<column name="home" length="100" />
+		</property>
+		<property name="createdTime" type="timestamp">
+			<column name="createdTime" length="19" not-null="true" />
+		</property>
+		<property name="updatedTime" type="timestamp">
+			<column name="updatedTime" length="19" not-null="true" />
+		</property>
+	</class>
+</hibernate-mapping>

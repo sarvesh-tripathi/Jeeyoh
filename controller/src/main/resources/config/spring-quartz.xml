@@ -23,6 +23,16 @@
 	      <property name="targetMethod" value="fetchFilter" />  
      </bean>  
      
+      <bean id="matchingEventsJob"  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">  
+	      <property name="targetObject" ref="jobs" />  
+	      <property name="targetMethod" value="matchingEvents" />  
+     </bean>  
+     
+     <bean id="topJeeyohSuggestionJob"  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">  
+	      <property name="targetObject" ref="jobs" />  
+	      <property name="targetMethod" value="calculateTopJeeyohSuggestion" />  
+     </bean>  
+     
          
     		 <!--  cron trigger define here  -->  
     		 
@@ -40,6 +50,16 @@
 		  <property name="jobDetail" ref="fetchFilterJob"/>
 		  <property name="cronExpression" value="${jobs.fetchfilter.crontime}"/>
 	</bean>
+	
+	<bean id="cronTriggerForMatchingEvents" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		  <property name="jobDetail" ref="matchingEventsJob"/>
+		  <property name="cronExpression" value="${jobs.matchingEvents.crontime}"/>
+	</bean>
+	
+	<bean id="cronTriggerForToJeeyohSuggestions" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		  <property name="jobDetail" ref="topJeeyohSuggestionJob"/>
+		  <property name="cronExpression" value="${jobs.topJeeyohSuggestions.crontime}"/>
+	</bean>
       
      <!-- scheduler factory bean to bind,the executing code and time intervals together -->  
       
@@ -49,6 +69,8 @@
 			        <ref bean="wallFeedJob" />  
 			        <ref bean="suggestionJob" /> 
 			        <ref bean="fetchFilterJob" />  
+			        <ref bean="matchingEventsJob" /> 
+			        <ref bean="topJeeyohSuggestionJob" />  
 		       </list>  
 	      </property>  
 	      <property name="triggers">  
@@ -56,6 +78,8 @@
 		           <ref bean="cronTriggerForWall"/>
 			       <ref bean="cronTriggerForSuggestion"/>
 			       <ref bean="cronTriggerForFetchFilter"/>
+			       <ref bean="cronTriggerForMatchingEvents"/>
+			       <ref bean="cronTriggerForToJeeyohSuggestions"/>
 		       </list>  
 	      </property>  
      </bean>  

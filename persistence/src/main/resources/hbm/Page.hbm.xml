@@ -41,6 +41,9 @@
         <property name="source" type="string">
 			<column name="source" length="50" />
 		</property>
+		 <property name="tag" type="string">
+            <column name="tag"/>
+        </property>
         <property name="createdtime" type="timestamp">
             <column name="createdtime" length="19" not-null="true" />
         </property>

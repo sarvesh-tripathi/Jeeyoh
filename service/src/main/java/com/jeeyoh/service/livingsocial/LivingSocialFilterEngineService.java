@@ -60,7 +60,7 @@ public class LivingSocialFilterEngineService implements ILivingSocialFilterEngin
 				try {
 					//logger.debug("Date::  "+ ldeal.getEndAt() +"  :  "+ sdf.parse(sdf.format((Date)weekendList.get(j))));
 					//if(ldeal.getEndAt().before(weekendList.get(j))){
-					int deal = dealsDAO.isDealExists("da-ff-fdsf-fdf");
+					int deal = dealsDAO.isDealExists(ldeal.getDealId());
 					logger.debug("after query::::  "+deal);
 					if(deal == 0)
 					{

@@ -16,6 +16,11 @@ default-autowire="byName">
 	<!-- bean id="grouponClient" class="com.jeeyoh.service.groupon.GrouponClient">
         <constructor-arg ref="restTemplate"/>        
     </bean -->
+      <context:component-scan base-package="com.jeeyoh.validator"
+		use-default-filters="true">
+		<context:include-filter type="annotation"
+			expression="org.springframework.stereotype.Service" />
+	</context:component-scan>
 	
 	<bean id="httpClientParams" class="org.apache.commons.httpclient.params.HttpClientParams">
         <property name="authenticationPreemptive" value="true"/>
@@ -32,8 +37,8 @@ default-autowire="byName">
 	</bean>
     
     <bean id="credentials" class="org.apache.commons.httpclient.UsernamePasswordCredentials">
-        <constructor-arg value="storistic-service"/>
-        <constructor-arg value="storistic"/>
+        <constructor-arg value="jeeyoh-service"/>
+        <constructor-arg value="jeeyoh"/>
     </bean>
     <bean id="httpClientFactory" class="org.springframework.http.client.CommonsClientHttpRequestFactory">
         <constructor-arg ref="httpClient"/>

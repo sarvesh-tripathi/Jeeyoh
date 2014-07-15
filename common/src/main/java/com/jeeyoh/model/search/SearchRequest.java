@@ -22,13 +22,15 @@ public class SearchRequest implements Serializable{
 	@JsonProperty
 	private String location;
 	@JsonProperty
-	private String rating;
+	private double rating;
 	@JsonProperty
 	private String category;
 	@JsonProperty
 	private int offset;
 	@JsonProperty
 	private int limit;
+	@JsonProperty
+	private String abbreviation;
 	@JsonProperty
 	private int exactMatchBusinessCount;
 	@JsonProperty
@@ -49,6 +51,21 @@ public class SearchRequest implements Serializable{
 	private int exactMatchEventCommunityCount;
 	@JsonProperty
 	private int likeMatchEventCommunityCount;
+	@JsonProperty
+	private double latitude;
+	@JsonProperty
+	private double longitude;
+	@JsonProperty
+	private int distance;
+	@JsonProperty
+	private int minPricae;
+	@JsonProperty
+	private int maxPrice;
+	@JsonProperty
+	private String zipCode;
+	@JsonProperty
+	private String itemType;
+	
 	/**
 	 * @return the userId
 	 */
@@ -100,13 +117,13 @@ public class SearchRequest implements Serializable{
 	/**
 	 * @return the rating
 	 */
-	public String getRating() {
+	public double getRating() {
 		return rating;
 	}
 	/**
 	 * @param rating the rating to set
 	 */
-	public void setRating(String rating) {
+	public void setRating(double rating) {
 		this.rating = rating;
 	}
 	/**
@@ -144,6 +161,18 @@ public class SearchRequest implements Serializable{
 	 */
 	public int getLimit() {
 		return limit;
+	}
+	/**
+	 * @return the abbreviation
+	 */
+	public String getAbbreviation() {
+		return abbreviation;
+	}
+	/**
+	 * @param abbreviation the abbreviation to set
+	 */
+	public void setAbbreviation(String abbreviation) {
+		this.abbreviation = abbreviation;
 	}
 	/**
 	 * @return the exactMatchBusinessCount
@@ -264,6 +293,90 @@ public class SearchRequest implements Serializable{
 	 */
 	public void setExactMatchEventCommunityCount(int exactMatchEventCommunityCount) {
 		this.exactMatchEventCommunityCount = exactMatchEventCommunityCount;
+	}
+	/**
+	 * @return the latitude
+	 */
+	public double getLatitude() {
+		return latitude;
+	}
+	/**
+	 * @param latitude the latitude to set
+	 */
+	public void setLatitude(double latitude) {
+		this.latitude = latitude;
+	}
+	/**
+	 * @return the longitude
+	 */
+	public double getLongitude() {
+		return longitude;
+	}
+	/**
+	 * @param longitude the longitude to set
+	 */
+	public void setLongitude(double longitude) {
+		this.longitude = longitude;
+	}
+	/**
+	 * @return the distance
+	 */
+	public int getDistance() {
+		return distance;
+	}
+	/**
+	 * @param distance the distance to set
+	 */
+	public void setDistance(int distance) {
+		this.distance = distance;
+	}
+	/**
+	 * @return the minPricae
+	 */
+	public int getMinPricae() {
+		return minPricae;
+	}
+	/**
+	 * @param minPricae the minPricae to set
+	 */
+	public void setMinPricae(int minPricae) {
+		this.minPricae = minPricae;
+	}
+	/**
+	 * @return the maxPrice
+	 */
+	public int getMaxPrice() {
+		return maxPrice;
+	}
+	/**
+	 * @param maxPrice the maxPrice to set
+	 */
+	public void setMaxPrice(int maxPrice) {
+		this.maxPrice = maxPrice;
+	}
+	/**
+	 * @return the zipCode
+	 */
+	public String getZipCode() {
+		return zipCode;
+	}
+	/**
+	 * @param zipCode the zipCode to set
+	 */
+	public void setZipCode(String zipCode) {
+		this.zipCode = zipCode;
+	}
+	/**
+	 * @return the itemType
+	 */
+	public String getItemType() {
+		return itemType;
+	}
+	/**
+	 * @param itemType the itemType to set
+	 */
+	public void setItemType(String itemType) {
+		this.itemType = itemType;
 	}
 
 }

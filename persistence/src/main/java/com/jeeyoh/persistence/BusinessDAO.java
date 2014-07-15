@@ -313,14 +313,14 @@ public class BusinessDAO implements IBusinessDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Business> getBusinessBySearchKeyword(String searchText,String category, String location,int offset, int limit) {
+	public List<Business> getBusinessBySearchKeyword(String searchText,String category, String location,int offset, int limit, double lat, double lon, int distance, double rating) {
 		logger.debug("getBusinessBySearchKeyword ==> "+searchText);
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Business.class, "business").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
 		criteria.createAlias("business.businesstype", "businessTypes");
 
 		criteria.add(Restrictions.isNotNull("business.websiteUrl"));
-		
+
 		if(searchText != null && !searchText.trim().equals(""))
 		{
 			criteria.add(Restrictions.disjunction().add(Restrictions.eq("business.businessId", searchText))
@@ -347,6 +347,15 @@ public class BusinessDAO implements IBusinessDAO {
 		{
 			criteria.add(Restrictions.eq("business.rating", Long.parseLong(rating)));
 		}*/
+		
+		if(rating != 0)
+			criteria.add(Restrictions.ge("rating", rating));
+
+		if(lat != 0 && lon != 0)
+		{
+			String sql =  "(((acos(sin(((" + lat + ")*pi()/180)) * sin((lattitude*pi()/180))+cos(((" + lat + ")*pi()/180)) * cos((lattitude*pi()/180)) * cos((((" + lon + ")- longitude)*pi()/180))))*180/pi())*60*1.1515)<="+distance;     
+			criteria.add(Restrictions.sqlRestriction(sql)); 
+		}
 
 		criteria.setFirstResult(offset)
 		.setMaxResults(limit);
@@ -359,14 +368,14 @@ public class BusinessDAO implements IBusinessDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Business> getBusinessByLikeSearchKeyword(String searchText,String category, String location,int offset, int limit) {
+	public List<Business> getBusinessByLikeSearchKeyword(String searchText,String category, String location,int offset, int limit, double lat, double lon, int distance, double rating) {
 		logger.debug("getBusinessByLikeSearchKeyword ==> "+searchText);
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Business.class, "business").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
 		criteria.createAlias("business.businesstype", "businessTypes");
 
 		criteria.add(Restrictions.isNotNull("business.websiteUrl"));
-		
+
 		if(searchText != null && !searchText.trim().equals(""))
 		{
 			criteria.add(Restrictions.disjunction().add(Restrictions.like("business.businessId", "%" + searchText + "%"))
@@ -396,6 +405,15 @@ public class BusinessDAO implements IBusinessDAO {
 		{
 			criteria.add(Restrictions.eq("business.rating", Long.parseLong(rating)));
 		}*/
+		
+		if(rating != 0)
+			criteria.add(Restrictions.ge("rating", rating));
+
+		if(lat != 0 && lon != 0)
+		{
+			String sql =  "(((acos(sin(((" + lat + ")*pi()/180)) * sin((lattitude*pi()/180))+cos(((" + lat + ")*pi()/180)) * cos((lattitude*pi()/180)) * cos((((" + lon + ")- longitude)*pi()/180))))*180/pi())*60*1.1515)<="+distance;     
+			criteria.add(Restrictions.sqlRestriction(sql)); 
+		}
 
 		List<Business> businessList = criteria.list();
 
@@ -451,7 +469,7 @@ public class BusinessDAO implements IBusinessDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Business> getUserNonDealSuggestions(String userEmail,
-			int offset, int limit) {
+			int offset,int limit, String category, String suggestionType,  double lat, double lon, int distance, double rating) {
 		logger.debug("getUserNonDealSuggestions ==> "+userEmail +" ==> "+offset+" ==> "+limit);
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Business.class, "business").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
@@ -462,9 +480,46 @@ public class BusinessDAO implements IBusinessDAO {
 			criteria.add(Restrictions.eq("user.emailId", userEmail));
 		}
 
+		
+		if(category != null && !category.trim().equals(""))
+		{
+			criteria.createAlias("businesstype", "businessTypes");
+			criteria.add(Restrictions.eq("businessTypes.businessType", category));
+		}
+
 		criteria.add(Restrictions.disjunction().add(Restrictions.isNull("usernondealsuggestion.suggestedTime"))
 				.add(Restrictions.ge("usernondealsuggestion.suggestedTime", Utils.getCurrentDate())));
 		//criteria.add(Restrictions.eq("usernondealsuggestion.suggestedTime", Utils.getNearestWeekend(null)));
+
+		if(suggestionType != null)
+		{
+			if(suggestionType.equalsIgnoreCase("Friend Suggestion"))
+			{
+				criteria.add(Restrictions.disjunction().add(Restrictions.like("usernondealsuggestion.suggestionType", "%Friend%"))
+						.add(Restrictions.like("usernondealsuggestion.suggestionType", "%Group%"))
+						.add(Restrictions.eq("usernondealsuggestion.suggestionType", "Wall Feed Suggestion"))
+						.add(Restrictions.eq("usernondealsuggestion.suggestionType", "Direct Suggestion")));
+			}
+			else if(suggestionType.equalsIgnoreCase("Community Suggestion"))
+			{
+				criteria.add(Restrictions.like("usernondealsuggestion.suggestionType", "%Community%"));
+			}
+			else
+			{
+				criteria.add(Restrictions.disjunction().add(Restrictions.like("usernondealsuggestion.suggestionType", "%User%"))
+						.add(Restrictions.like("usernondealsuggestion.suggestionType", "%Friend%"))
+						.add(Restrictions.eq("usernondealsuggestion.suggestionType", "Group")));
+			}
+		}
+		
+		/*if(rating != 0)
+			criteria.add(Restrictions.ge("rating", rating));
+
+		if(lat != 0 && lon != 0)
+		{
+			String sql =  "(((acos(sin(((" + lat + ")*pi()/180)) * sin((lattitude*pi()/180))+cos(((" + lat + ")*pi()/180)) * cos((lattitude*pi()/180)) * cos((((" + lon + ")- longitude)*pi()/180))))*180/pi())*60*1.1515)<="+distance;     
+			criteria.add(Restrictions.sqlRestriction(sql)); 
+		}*/
 
 		criteria.setFirstResult(offset*10)
 		.setMaxResults(limit);
@@ -518,15 +573,15 @@ public class BusinessDAO implements IBusinessDAO {
 
 	@Override
 	public int getTotalBusinessBySearchKeyWord(String searchText,
-			String category, String location) {
+			String category, String location, double lat, double lon, int distance, double rating) {
 		logger.debug("getTotalBusinessBySearchKeyWord::  ");
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Business.class, "business").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
 				.setProjection(Projections.count("business.id"));
 
 		criteria.createAlias("business.businesstype", "businessTypes");
-		
+
 		criteria.add(Restrictions.isNotNull("business.websiteUrl"));
-		
+
 		if(searchText != null && !searchText.trim().equals(""))
 		{
 			criteria.add(Restrictions.disjunction().add(Restrictions.like("business.businessId", "%" + searchText + "%"))
@@ -549,7 +604,16 @@ public class BusinessDAO implements IBusinessDAO {
 					.add(Restrictions.like("business.state", "%" + location + "%"))
 					.add(Restrictions.like("business.stateCode", "%" + location + "%")));
 		}
-		
+
+		if(rating != 0)
+			criteria.add(Restrictions.ge("rating", rating));
+
+		if(lat != 0 && lon != 0)
+		{
+			String sql =  "(((acos(sin(((" + lat + ")*pi()/180)) * sin((lattitude*pi()/180))+cos(((" + lat + ")*pi()/180)) * cos((lattitude*pi()/180)) * cos((((" + lon + ")- longitude)*pi()/180))))*180/pi())*60*1.1515)<="+distance;     
+			criteria.add(Restrictions.sqlRestriction(sql)); 
+		}
+
 		//int rowCount = criteria.list().size();
 		int rowCount = Integer.parseInt(criteria.uniqueResult().toString());
 		return rowCount;

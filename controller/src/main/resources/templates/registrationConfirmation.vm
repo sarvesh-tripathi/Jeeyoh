@@ -15,27 +15,27 @@
 <body>
 <p class="p1">Hi $userName!</p>
 <p class="p2"></p>
-<p class="p1">You're on your way to create incredible deals in your area</p>
+<p class="p1">You're on your way to create incredible deals in your area! Just confirm your email.</p>
 <p class="p2"></p>
 <p class="p1"><span class="Apple-converted-space"></span>
 #if ($entity)
-	<a href="$serverURL/confirmEmail?confirmationCode=$confirmationCode&amp;userName=$encUserName&amp;to=$encEmail&amp;$entity=$entityId">	
+	<a href="$serverURL/confirmEmail?confirmationCode=$confirmationCode&amp;userName=$encUserName&amp;emailId=$encEmail&amp;$entity=$entityId">	
 #else
-	<a href="$serverURL/confirmEmail?confirmationCode=$confirmationCode&amp;userName=$encUserName&amp;to=$encEmail">
+	<a href="$serverURL/confirmEmail?confirmationCode=$confirmationCode&amp;userName=$encUserName&amp;emailId=$encEmail">
 #end
 
-<span class="s1">Confirm</span></a></p>
+<span class="s1">Confirm your Email</span></a></p>
 <p class="p1">Thanks,</p>
 <p class="p1">Jeeyoh Support Team</p>
 <p class="p2"><i></i></p>
-<p class="p1"><i>If the button above doesn't work, please copy and this URL into your browser:<br>
+<p class="p1"><i>If the button above doesn't work, please copy and paste this URL into your browser:<br>
 #if ($entity)
-	$serverURL/confirmEmail?confirmationCode=$confirmationCode&amp;userName=$encUserName&amp;to=$encEmail&amp;$entity=$entityId
+	$serverURL/confirmEmail?confirmationCode=$confirmationCode&amp;userName=$encUserName&amp;emailId=$encEmail&amp;$entity=$entityId
 #else
-	$serverURL/confirmEmail?confirmationCode=$confirmationCode&amp;userName=$encUserName&amp;to=$encEmail
+	$serverURL/confirmEmail?confirmationCode=$confirmationCode&amp;userName=$encUserName&amp;emailId=$encEmail
 #end
 </i></p>
-<p class="p2"><br></p>
-<p class="p1">$messageID.$messageVersion</p>
+<!--<p class="p2"><br></p>
+<p class="p1">$messageID.$messageVersion</p>-->
 </body>
 </html>

@@ -11,16 +11,17 @@ public class WallFeed implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	private Integer wallFeedId;
 	private User user;
 	private String packageName;
 	private Date createdTime;
 	private Date updatedTime;
-	 private Set wallFeedItems = new HashSet(0);
-	 private Set wallFeedUserShareMap = new HashSet(0);
-	 private Set wallFeedComments = new HashSet(0);
-	
+	private String tag;
+	private Set wallFeedItems = new HashSet(0);
+	private Set wallFeedUserShareMap = new HashSet(0);
+	private Set wallFeedComments = new HashSet(0);
+
 	public Integer getWallFeedId() {
 		return wallFeedId;
 	}
@@ -99,8 +100,47 @@ public class WallFeed implements Serializable {
 	public void setWallFeedComments(Set wallFeedComments) {
 		this.wallFeedComments = wallFeedComments;
 	}
-	
-	
-	
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((wallFeedId == null) ? 0 : wallFeedId.hashCode());
+		return result;
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		WallFeed other = (WallFeed) obj;
+		if (wallFeedId == null) {
+			if (other.wallFeedId != null)
+				return false;
+		} else if (!wallFeedId.equals(other.wallFeedId))
+			return false;
+		return true;
+	}
+	/**
+	 * @return the tag
+	 */
+	public String getTag() {
+		return tag;
+	}
+	/**
+	 * @param tag the tag to set
+	 */
+	public void setTag(String tag) {
+		this.tag = tag;
+	}
 }

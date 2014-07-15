@@ -103,6 +103,8 @@ public class SuggestionModel implements Serializable{
     private int discount;
 	@JsonProperty
 	private boolean isBooked;
+	@JsonProperty
+	private String timeSlot;
 	
 	/**
 	 * @return the timeLine
@@ -643,6 +645,18 @@ public class SuggestionModel implements Serializable{
 	 */
 	public void setIsBooked(boolean isBooked) {
 		this.isBooked = isBooked;
+	}
+	/**
+	 * @return the timeSlot
+	 */
+	public String getTimeSlot() {
+		return timeSlot;
+	}
+	/**
+	 * @param timeSlot the timeSlot to set
+	 */
+	public void setTimeSlot(String timeSlot) {
+		this.timeSlot = timeSlot;
 	}
 
 }

@@ -6,7 +6,6 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
-import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.CriteriaSpecification;
@@ -18,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.jeeyoh.model.user.UserModel;
+import com.jeeyoh.persistence.domain.Business;
 import com.jeeyoh.persistence.domain.Dealsusage;
 import com.jeeyoh.persistence.domain.Events;
 import com.jeeyoh.persistence.domain.Eventuserlikes;
@@ -34,6 +34,7 @@ import com.jeeyoh.persistence.domain.Topnondealsuggestion;
 import com.jeeyoh.persistence.domain.User;
 import com.jeeyoh.persistence.domain.UserCategory;
 import com.jeeyoh.persistence.domain.UserCategoryLikes;
+import com.jeeyoh.persistence.domain.UserSession;
 import com.jeeyoh.persistence.domain.Usercontacts;
 import com.jeeyoh.persistence.domain.Userdealssuggestion;
 import com.jeeyoh.persistence.domain.Usereventsuggestion;
@@ -661,7 +662,16 @@ public class UserDAO implements IUserDAO {
 
 	@Override
 	public void updateUser(User user) {
-		sessionFactory.getCurrentSession().update(user);
+		try
+		{
+			logger.debug("updateUser:::: ");
+			sessionFactory.getCurrentSession().update(user);
+		}
+		catch(HibernateException e)
+		{
+			logger.debug("ERROR:::: "+e.getMessage());
+			e.printStackTrace();
+		}
 
 	}
 
@@ -1147,7 +1157,21 @@ public class UserDAO implements IUserDAO {
 		List<Topnondealsuggestion> topnondealsuggestions = criteria.list();
 		return topnondealsuggestions;
 	}
-	
+
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Topcommunitysuggestion> isTopCommunitySuggestionExists(int userId, int pageId) {
+		logger.debug("UserId ==> "+userId +" pageId ==> "+pageId);
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Topcommunitysuggestion.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+
+		criteria.add(Restrictions.eq("user.userId", userId));
+		criteria.add(Restrictions.eq("page.pageId", pageId));
+
+		List<Topcommunitysuggestion> topcommunitysuggestions = criteria.list();
+		return topcommunitysuggestions;
+	}
+
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -1239,15 +1263,18 @@ public class UserDAO implements IUserDAO {
 	public List<User> getStarFriends(int userId, Double lattitude,Double longitude) {
 		logger.debug("getStarFriends =>");
 		List<User> starFriendList = new ArrayList<User>();
-		List<User> starFriendWithinFiftyMilesList = new ArrayList<User>();
-		List<User> userList = new ArrayList<User>();
-		String hqlQuery = "from User a where a.userId in (select b.userByContactId.userId from Usercontacts b where b.userByUserId.userId=:userId and b.isStar=true)";
+		//List<User> starFriendWithinFiftyMilesList = new ArrayList<User>();
+		//List<User> userList = new ArrayList<User>();
+		//String hqlQuery = "from User a where a.userId in (select b.userByContactId.userId from Usercontacts b where b.userByUserId.userId=:userId and b.isStar=true)";
+		String hqlQuery = "select a from User a, Usercontacts b where ((b.userByUserId.userId = :userId and a.userId = b.userByContactId.userId) or (b.userByContactId.userId = :userId and a.userId = b.userByUserId.userId)) and b.isApproved is true and b.isStar=true and (((acos(sin(((:lat)*pi()/180)) * sin((a.lattitude*pi()/180))+cos(((:lat)*pi()/180)) * cos((a.lattitude*pi()/180)) * cos((((:long)- a.longitude)*pi()/180))))*180/pi())*60*1.1515)<=50";
 		try{
 			Query query = sessionFactory.getCurrentSession().createQuery(hqlQuery);
 			query.setParameter("userId", userId);
+			query.setDouble("lat", lattitude);
+			query.setDouble("long", longitude);
 			starFriendList = (List<User>) query.list();
 			logger.debug("starFriendList =>"+starFriendList);
-			for(User user:starFriendList)
+			/*for(User user:starFriendList)
 			{
 				String hqlQuery1 = "select a from User a WHERE userId=:userId group by a.emailId HAVING (((acos(sin(((:lat)*pi()/180)) * sin((a.lattitude*pi()/180))+cos(((:lat)*pi()/180)) * cos((a.lattitude*pi()/180)) * cos((((:long)- a.longitude)*pi()/180))))*180/pi())*60*1.1515)<=50";
 				try {
@@ -1261,14 +1288,14 @@ public class UserDAO implements IUserDAO {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			}
+			}*/
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		logger.debug("userList =>"+starFriendWithinFiftyMilesList);
-		return starFriendWithinFiftyMilesList;
+		//logger.debug("userList =>"+starFriendWithinFiftyMilesList);
+		return starFriendList;
 	}
 
 	@Override
@@ -1330,12 +1357,15 @@ public class UserDAO implements IUserDAO {
 
 		List<UserCategory>  userCategories = null;
 		//String hqlQuery = "from UserCategory  a where a.itemCategory =:category and a.userCategoryId not in (select b.userCategory.userCategoryId from UserCategoryLikes b where b.user.userId =:userId)";
-		String hqlQuery = "from UserCategory  a where a.userCategoryId not in (select b.userCategory.userCategoryId from UserCategoryLikes b where b.user.userId =:userId)";
-
+		String hqlQuery = "from UserCategory  a where";
+		if(categoryType != null && !categoryType.trim().equals(""))
+			hqlQuery = hqlQuery + " a.itemCategory =:category and";
+		hqlQuery = hqlQuery + " a.userCategoryId not in (select b.userCategory.userCategoryId from UserCategoryLikes b where b.user.userId =:userId)";
 		try{
 			Query query = sessionFactory.getCurrentSession().createQuery(hqlQuery);
 			query.setParameter("userId",userId);
-			//query.setParameter("category",categoryType);
+			if(categoryType != null && !categoryType.trim().equals(""))
+				query.setParameter("category",categoryType);
 			userCategories = query.list();
 		}
 		catch(HibernateException e)
@@ -1383,7 +1413,7 @@ public class UserDAO implements IUserDAO {
 	public List<Object[]> getTopCommunitySuggestions(int userId) {
 		logger.debug("getTopCommunitySuggestions ==> "+userId);
 		List<Object[]> rows = null;
-		
+
 		String hqlQuery = "select avg(d.rating) as rating, c from Topcommunitysuggestion c left join c.page b left Join b.communityReviewMap a left join a.communityReview d where c.user.userId = :userId group by b.pageId order by suggestionId asc";
 		//String hqlQuery = "select avg(d.rating) as rating, c.* from topcommunitysuggestion c left join page b on c.pageId = b.pageId left Join communityReviewMap a on b.pageId = a.pageId left join communityReview d on d.reviewId=a.reviewId where c.userId = :userId group by b.pageId order by suggestionId asc";
 		//String hqlQuery = "select avg(d.rating) as rating, b.pageId from Page b left Join b.communityReviewMap a left join a.communityReview d group by b.pageId";
@@ -1405,13 +1435,12 @@ public class UserDAO implements IUserDAO {
 
 		List<Topcommunitysuggestion> pageList = criteria.list();*/
 		return rows;
-
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Topcommunitysuggestion> getTopCommunitySuggestions(String userEmail) {
-		
+
 		logger.debug("getTopCommunitySuggestions ==> "+userEmail);
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Topcommunitysuggestion.class,"topcommunitysuggestion");
 		criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
@@ -1436,6 +1465,8 @@ public class UserDAO implements IUserDAO {
 		criteria.createAlias("topdealssuggestion.deals", "deals");
 		criteria.add(Restrictions.conjunction().add(Restrictions.ge("deals.endAt", Utils.getCurrentDate()))
 				.add(Restrictions.gt("deals.endAt", Utils.getNearestThursday())));
+		criteria.add(Restrictions.disjunction().add(Restrictions.isNull("topdealssuggestion.suggestedTime"))
+				.add(Restrictions.ge("topdealssuggestion.suggestedTime", Utils.getCurrentDate())));
 		List<Topdealssuggestion> dealsList = criteria.list();
 		return dealsList;
 	}
@@ -1451,6 +1482,8 @@ public class UserDAO implements IUserDAO {
 		criteria.add(Restrictions.eq("user.emailId", userEmail));
 		criteria.createAlias("topeventsuggestion.events", "events");
 		criteria.add(Restrictions.ge("events.event_date_time_local", Utils.getCurrentDate()));
+		criteria.add(Restrictions.disjunction().add(Restrictions.isNull("topeventsuggestion.suggestedTime"))
+				.add(Restrictions.ge("topeventsuggestion.suggestedTime", Utils.getCurrentDate())));
 		List<Topeventsuggestion> eventsList = criteria.list();
 		return eventsList;
 	}
@@ -1465,6 +1498,8 @@ public class UserDAO implements IUserDAO {
 		criteria.add(Restrictions.like("topnondealsuggestion.suggestionType", "%" + suggestionType + "%"));
 		criteria.createAlias("topnondealsuggestion.user", "user");
 		criteria.add(Restrictions.eq("user.emailId", userEmail));
+		criteria.add(Restrictions.disjunction().add(Restrictions.isNull("topnondealsuggestion.suggestedTime"))
+				.add(Restrictions.ge("topnondealsuggestion.suggestedTime", Utils.getCurrentDate())));
 
 		List<Topnondealsuggestion> businessList = criteria.list();
 
@@ -1636,7 +1671,60 @@ public class UserDAO implements IUserDAO {
 	}
 
 	@Override
-	public int getTotalUserNonDealSuggestions(Integer userId) {
+	public int getTotalUserNonDealSuggestions(Integer userId, String category, String suggestionType, double lat, double lon, int distance, double rating) {
+
+		logger.debug("userNonDealSuggestionCount => ");
+		/*Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Business.class, "business").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+				.setProjection(Projections.count("business.id"));
+
+		criteria.createAlias("business.usernondealsuggestions", "usernondealsuggestion");
+		criteria.createAlias("usernondealsuggestion.user", "user");
+		criteria.add(Restrictions.eq("user.userId", userId));
+
+
+		if(category != null && !category.trim().equals(""))
+		{
+			criteria.createAlias("businesstype", "businessTypes");
+			criteria.add(Restrictions.eq("businessTypes.businessType", category));
+		}
+
+		criteria.add(Restrictions.disjunction().add(Restrictions.isNull("usernondealsuggestion.suggestedTime"))
+				.add(Restrictions.ge("usernondealsuggestion.suggestedTime", Utils.getCurrentDate())));
+		//criteria.add(Restrictions.eq("usernondealsuggestion.suggestedTime", Utils.getNearestWeekend(null)));
+
+		if(suggestionType != null)
+		{
+			if(suggestionType.equalsIgnoreCase("Friend Suggestion"))
+			{
+				criteria.add(Restrictions.disjunction().add(Restrictions.like("usernondealsuggestion.suggestionType", "%Friend%"))
+						.add(Restrictions.like("usernondealsuggestion.suggestionType", "%Group%"))
+						.add(Restrictions.eq("usernondealsuggestion.suggestionType", "Wall Feed Suggestion"))
+						.add(Restrictions.eq("usernondealsuggestion.suggestionType", "Direct Suggestion")));
+			}
+			else if(suggestionType.equalsIgnoreCase("Community Suggestion"))
+			{
+				criteria.add(Restrictions.like("usernondealsuggestion.suggestionType", "%Community%"));
+			}
+			else
+			{
+				criteria.add(Restrictions.disjunction().add(Restrictions.like("usernondealsuggestion.suggestionType", "%User%"))
+						.add(Restrictions.like("usernondealsuggestion.suggestionType", "%Friend%"))
+						.add(Restrictions.eq("usernondealsuggestion.suggestionType", "Group")));
+			}
+		}
+
+		if(rating != 0)
+			criteria.add(Restrictions.ge("rating", rating));
+
+		if(lat != 0 && lon != 0)
+		{
+			String sql =  "(((acos(sin(((" + lat + ")*pi()/180)) * sin((this_.lattitude*pi()/180))+cos(((" + lat + ")*pi()/180)) * cos((this_.lattitude*pi()/180)) * cos((((" + lon + ")- this_.longitude)*pi()/180))))*180/pi())*60*1.1515)<="+distance;     
+			criteria.add(Restrictions.sqlRestriction(sql)); 
+		}
+
+		int rowCount = Integer.parseInt(criteria.uniqueResult().toString());
+*/
+
 		logger.debug("userNonDealSuggestionCount => ");
 		int rowCount = 0;
 		//String hqlQuery = "select count(suggestionId) from Usernondealsuggestion where user.userId = :userId and suggestedTime = :currentWeekend";
@@ -1681,7 +1769,7 @@ public class UserDAO implements IUserDAO {
 	}
 
 	@Override
-	public int getTotalUserEventSuggestions(Integer userId) {
+	public int getTotalUserEventSuggestions(Integer userId, String category, String suggestionType, double lat, double lon, int distance, double rating) {
 		logger.debug("getTotalUserEventSuggestions => ");
 		int rowCount = 0;
 		String hqlQuery = "select count(a.userEventMapId) from Usereventsuggestion a where a.user.userId = :userId and a.events.event_date_time_local >= :currentDate and a.suggestedTime >= :currentDate";
@@ -1701,7 +1789,7 @@ public class UserDAO implements IUserDAO {
 		return rowCount;
 	}
 
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Page> getUserCommunitiesByPageType(int userId, String pageType) {
@@ -1850,8 +1938,8 @@ public class UserDAO implements IUserDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<User> getUserByNameAndLocation(String location, String name, int userId, List<Integer> friendsIds) {
-		logger.debug("getUserByNameAndLocation location ::: ===> "+location + " name  :::: "+name + " friendsIds: "+friendsIds);
+	public List<User> getUserByNameAndLocation(String location, String firstName, String lastName, int userId, List<Integer> friendsIds) {
+		logger.debug("getUserByNameAndLocation location ::: ===> "+location + " name  :::: "+firstName + " friendsIds: "+friendsIds);
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class, "user").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
 		if(location != null && !location.trim().equals(""))
@@ -1863,16 +1951,20 @@ public class UserDAO implements IUserDAO {
 					.add(Restrictions.like("user.state", "%" + location + "%"))
 					.add(Restrictions.like("user.country", "%" + location + "%")));
 		}
-		if(name != null && !name.trim().equals(""))
+		if(firstName != null && !firstName.trim().equals(""))
 		{
-			criteria.add(Restrictions.disjunction().add(Restrictions.like("user.emailId", "%" + name + "%"))
-					.add(Restrictions.like("user.firstName", "%" + name + "%"))
-					.add(Restrictions.like("user.middleName", "%" + name + "%"))
-					.add(Restrictions.like("user.lastName", "%" + name + "%")));
+			criteria.add(Restrictions.disjunction().add(Restrictions.like("user.firstName", "%" + firstName + "%"))
+					.add(Restrictions.like("user.emailId", "%" + firstName + "%")));
+		}
+		if(lastName != null && !lastName.trim().equals(""))
+		{
+			criteria.add(Restrictions.disjunction().add(Restrictions.like("user.lastName", "%" + lastName + "%"))
+					.add(Restrictions.like("user.emailId", "%" + lastName + "%")));
 		}
 		criteria.add(Restrictions.eq("user.isActive", true));
 		criteria.add(Restrictions.ne("user.userId", userId));
-		criteria.add(Restrictions.not(Restrictions.in("user.userId",friendsIds)));
+		if(friendsIds != null && !friendsIds.isEmpty())
+			criteria.add(Restrictions.not(Restrictions.in("user.userId",friendsIds)));
 
 		List<User> userList = criteria.list();
 		return userList;
@@ -1906,11 +1998,16 @@ public class UserDAO implements IUserDAO {
 	}
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<User> findInMutualFriends(String name,String friendsIds, String alreadyExistingIds) 
+	public List<User> findInMutualFriends(String firstName, String lastName,String friendsIds, String alreadyExistingIds) 
 	{
-		logger.debug("findInMutualFriends ==> name : "+ name + " ; friendsIds : "+friendsIds + " ; alreadyExistingIds : " + alreadyExistingIds);
+		logger.debug("findInMutualFriends ==> name : "+ firstName + " ; friendsIds : "+friendsIds + " ; alreadyExistingIds : " + alreadyExistingIds);
 		List<User> list = null;
-		String hqlQuery = "select b from Usercontacts a, User b where (b.firstName like '%"+name+"%' or b.middleName like '%"+name+"%' or b.lastName like '%"+name+"%' or b.emailId like '%"+name+"%') and ((a.userByContactId.userId = b.userId and a.userByUserId.userId in("+friendsIds+") and a.userByContactId.userId not in ("+alreadyExistingIds+")) or (a.userByUserId.userId = b.userId and a.userByContactId.userId in("+friendsIds+") and a.userByUserId.userId not in ("+alreadyExistingIds+"))) group by b.userId";
+		String hqlQuery = "select b from Usercontacts a, User b where";  
+		if(firstName != null && !firstName.trim().equals(""))
+			hqlQuery += "(b.firstName like '%"+firstName+"%' or b.emailId like '%"+firstName+"%')";
+		if(lastName != null && !lastName.trim().equals(""))
+			hqlQuery += "(b.firstName like '%"+lastName+"%' or b.emailId like '%"+lastName+"%')";
+		hqlQuery += "and ((a.userByContactId.userId = b.userId and a.userByUserId.userId in("+friendsIds+") and a.userByContactId.userId not in ("+alreadyExistingIds+")) or (a.userByUserId.userId = b.userId and a.userByContactId.userId in("+friendsIds+") and a.userByUserId.userId not in ("+alreadyExistingIds+"))) group by b.userId";
 		logger.debug("findInMutualFriends hqlQuery ===>"+hqlQuery);
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
@@ -1949,18 +2046,21 @@ public class UserDAO implements IUserDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<User> findOtherThanMutualFriends(String name, List<Integer> alreadyExistingIds) {
+	public List<User> findOtherThanMutualFriends(String firstName, String lastName, List<Integer> alreadyExistingIds) {
 
-		logger.debug("findOtherThanMutualFriends ==> name : "+ name + " ; alreadyExistingIds : "+alreadyExistingIds);
+		logger.debug("findOtherThanMutualFriends ==> name : "+ firstName + " ; alreadyExistingIds : "+alreadyExistingIds);
 
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class, "user").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
-		if(name != null && !name.trim().equals(""))
+		if(firstName != null && !firstName.trim().equals(""))
 		{
-			criteria.add(Restrictions.disjunction().add(Restrictions.like("user.emailId", "%" + name + "%"))
-					.add(Restrictions.like("user.firstName", "%" + name + "%"))
-					.add(Restrictions.like("user.middleName", "%" + name + "%"))
-					.add(Restrictions.like("user.lastName", "%" + name + "%")));
+			criteria.add(Restrictions.disjunction().add(Restrictions.like("user.firstName", "%" + firstName + "%"))
+					.add(Restrictions.like("user.emailId", "%" + firstName + "%")));
+		}
+		if(lastName != null && !lastName.trim().equals(""))
+		{
+			criteria.add(Restrictions.disjunction().add(Restrictions.like("user.lastName", "%" + lastName + "%"))
+					.add(Restrictions.like("user.emailId", "%" + lastName + "%")));
 		}
 		if(alreadyExistingIds!=null && !alreadyExistingIds.isEmpty())
 		{
@@ -1987,7 +2087,7 @@ public class UserDAO implements IUserDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return usercontacts!=null ? usercontacts.get(0):null;
+		return usercontacts!=null  && !usercontacts.isEmpty() ? usercontacts.get(0):null;
 	}
 
 
@@ -2029,8 +2129,8 @@ public class UserDAO implements IUserDAO {
 		return usereventsuggestions != null && !usereventsuggestions.isEmpty() ? usereventsuggestions.get(0) : null;
 
 	}
-	
-	
+
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public Usernondealsuggestion isNonDealSuggestionExistsForDirectSuggestion(int userId,
@@ -2107,8 +2207,8 @@ public class UserDAO implements IUserDAO {
 			logger.error(e.toString());
 		}
 	}
-	
-	
+
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public Dealsusage getUserDealProperties(int userId, int dealId) {
@@ -2141,5 +2241,58 @@ public class UserDAO implements IUserDAO {
 		}
 		return contactList;
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public UserSession isSessionActive(int userId, String sessionId) {
+		List<UserSession> userSessions = null;
+		String hqlQuery = "select a from UserSession a where a.user.userId = :userId and a.sessionId = :sessionId and a.expirationTime >= :currentDate";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("userId", userId);
+			query.setParameter("sessionId", sessionId);
+			query.setParameter("currentDate", Utils.getCurrentDate());
+			userSessions = (List<UserSession>) query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return userSessions != null && !userSessions.isEmpty() ? userSessions.get(0) : null;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<User> getGroupMembersWithinFiftyMiles(int groupId, int userId,
+			double latitude, double longitude) {
+		List<User> contactList = null;
+
+		String hqlQuery = "select a from User a, Groupusermap b where b.jeeyohgroup.groupId = :groupId and b.user.userId != :userId and a.userId = b.user.userId and (a.isShareProfileWithGroup is true or a.isShareCommunity is true) and (((acos(sin(((:lat)*pi()/180)) * sin((a.lattitude*pi()/180))+cos(((:lat)*pi()/180)) * cos((a.lattitude*pi()/180)) * cos((((:long)- a.longitude)*pi()/180))))*180/pi())*60*1.1515)<=50";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("userId", userId);
+			query.setParameter("groupId", groupId);
+			contactList = (List<User>) query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return contactList;
+	}
+
+	@Override
+	public long getUserFavouriteCount(String category, int userId) {
+		Criteria criteria=sessionFactory.getCurrentSession().createCriteria(UserCategoryLikes.class)
+				.setProjection(Projections.count("userCategoryLikesId"));
+		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		criteria.createAlias("userCategory", "userCategory");
+		criteria.add(Restrictions.eq("userCategory.itemCategory", category));
+		criteria.createAlias("user", "user");        
+		criteria.add(Restrictions.eq("user.userId", userId));
+		criteria.setProjection(Projections.rowCount());
+		Long resultCount = (Long)criteria.uniqueResult();
+		logger.debug("count :: ==> "+resultCount);
+		return resultCount;
+	}
+
+
 }

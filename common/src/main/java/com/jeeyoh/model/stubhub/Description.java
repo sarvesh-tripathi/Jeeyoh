@@ -86,6 +86,8 @@ public class Description {
 	private String title_en_US;
 	@JsonProperty
 	private String event_date_time_local;
+	@JsonProperty
+	private List<String>ancestorGeoDescriptions;
 	
 	public String getEvent_date() {
 		return event_date;
@@ -380,6 +382,20 @@ public class Description {
 	 */
 	public void setEvent_date_time_local(String event_date_time_local) {
 		this.event_date_time_local = event_date_time_local;
+	}
+
+	/**
+	 * @return the ancestorGeoDescriptions
+	 */
+	public List<String> getAncestorGeoDescriptions() {
+		return ancestorGeoDescriptions;
+	}
+
+	/**
+	 * @param ancestorGeoDescriptions the ancestorGeoDescriptions to set
+	 */
+	public void setAncestorGeoDescriptions(List<String> ancestorGeoDescriptions) {
+		this.ancestorGeoDescriptions = ancestorGeoDescriptions;
 	}
 
 

@@ -147,13 +147,16 @@ public class WallFeedDAO implements IWallFeedDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> getMemoryCard(int userId, String searchText,
-			Date startDate, Date endDate) {
+			Date startDate, Date endDate, String category) {
+		//logger.debug("getMemoryCard: "+ startDate + " endDate: "+endDate+" category: "+category);
 		List<String> list = null;
-		String hqlquery = "select mediaPathUrl from FunboardMediaContent where funBoardId in (select c.funBoardId from WallFeed a, WallFeedItems b, Funboard c where a.user.userId = :userId and a.wallFeedId = b.wallFeed.wallFeedId and b.funboard.funBoardId = c.funBoardId and c.tag like '%"+ searchText + "%' and (a.createdTime >= :startDate and a.createdTime <= :endDate))";
+		//String hqlquery = "select mediaPathUrl from FunboardMediaContent where funBoardId in (select c.funBoardId from WallFeed a, WallFeedItems b, Funboard c where a.user.userId = :userId and a.wallFeedId = b.wallFeed.wallFeedId and b.funboard.funBoardId = c.funBoardId and c.tag like '%"+ searchText + "%' and (a.createdTime >= :startDate and a.createdTime <= :endDate))";
+		String hqlquery = "select mediaPathUrl from FunboardMediaContent where funBoardId in (select distinct c.funBoardId from WallFeed a, WallFeedItems b, Funboard c where a.user.userId = :userId and a.wallFeedId = b.wallFeed.wallFeedId and b.funboard.funBoardId = c.funBoardId and c.category = :category and (a.createdTime >= :startDate and a.createdTime <= :endDate))";
+		
 		try{
-
 			Query query = sessionFactory.getCurrentSession().createQuery(hqlquery);
 			query.setParameter("userId", userId);
+			query.setParameter("category", category);
 			query.setParameter("startDate", startDate);
 			query.setParameter("endDate", endDate);
 			list = query.list();
@@ -222,15 +225,17 @@ public class WallFeedDAO implements IWallFeedDAO {
 
 		logger.debug("getUserWallFeed => ");
 		List<WallFeed> wallFeed = null;
-		String hqlQuery = "select a from WallFeed a, WallFeedItems b where a.user.userId = :userId and a.wallFeedId = b.wallFeed.wallFeedId group by a.wallFeedId order by b.packageRank desc";
+		//String hqlQuery = "select a,b.packageRank from WallFeed a, WallFeedItems b where a.user.userId = :userId and a.wallFeedId = b.wallFeed.wallFeedId group by a.wallFeedId order by b.packageRank desc";
+		String hqlQuery = "select a from WallFeed a left join a.wallFeedUserShareMap b left join a.wallFeedItems c where (a.user.userId = :userId or b.shareWithUser.userId = :userId) group by a.wallFeedId order by c.packageRank desc";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);	
 			query.setParameter("userId", userId);
 			wallFeed = (List<WallFeed>) query.list();
-			logger.debug("userList => " + wallFeed);
+			logger.debug("wallFeed => " + wallFeed);
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.debug("ERROR: "+e.getMessage());
 		}
 		return wallFeed;
 
@@ -270,6 +275,25 @@ public class WallFeedDAO implements IWallFeedDAO {
 			e.printStackTrace();
 		}
 		return wallFeedList != null && !wallFeedList.isEmpty() ? wallFeedList.get(0) : null; 
+	}
+
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Object[]> getSharedWithUserWallFeed(int userId) {
+		logger.debug("getUserWallFeed => ");
+		List<Object[]> wallFeed = null;
+		String hqlQuery = "select a,b.packageRank from WallFeed a WallFeedItems b, WallFeedUserShareMap c where a.shareWithUser.userId = :userId and a.wallFeedId = b.wallFeed.wallFeedId and a.wallFeedId = c.wallFeed.wallFeedId group by a.wallFeedId order by b.packageRank desc";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);	
+			query.setParameter("userId", userId);
+			wallFeed = (List<Object[]>) query.list();
+			logger.debug("userList => " + wallFeed);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return wallFeed;
 	}
 
 }

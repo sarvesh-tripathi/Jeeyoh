@@ -1,0 +1,6160 @@
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video
+	{
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+} /* HTML5 display-role reset for older browsers */cssClass
+article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section
+	{
+	display: block;
+}
+
+body {
+	line-height: 1;
+}
+
+ol,ul {
+	list-style: none;
+}
+
+blockquote,q {
+	quotes: none;
+}
+
+blockquote:before,blockquote:after,q:before,q:after {
+	content: '';
+	content: none;
+}
+
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+	/* FORM ELEMENTSinput,textarea{	font:normal 12px helveticaneueregular,Sans-Serif;} */
+/* STICKY FOOTER */
+html,body {
+	height: 100%;
+	width: 100%;
+}
+
+#mainContent {
+	min-height: 100%; /*height:auto !important;*/
+	height: 100%;
+	min-height: 100% !important;
+	float: left;
+	width: 100%; /*margin:0 auto -60px;*/
+	margin: -105px auto -60px;
+}
+
+#outerFooter,#innerFooter,#landingScroll,.push {
+	height: 60px;
+	clear: both;
+}
+
+.containerBg #mainContent {
+	margin: -110px auto 35px;
+} /* THEAM STYLE */
+body {
+	font: normal .75em/1 Conv_18836_HELR45W, arial, Sans-serif;
+	background: #b2a48e;
+}
+
+.searhBg {
+	background: #000;
+}
+
+.containerBg {
+	background: #fff;
+}
+
+.wrapper {
+	margin: 0 auto;
+	position: relative;
+}
+
+.clr {
+	clear: both;
+}
+
+.alignCenter {
+	text-align: center;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: none;
+} /* OUTER PAGES */
+#outerLogin {
+	padding-top: 200px;
+}
+
+.outerLoginBg {
+	background: url(../images/home_bg.jpg) repeat-x;
+	height: 385px;
+	position: relative;
+}
+
+#outerLogin #leftBanner {
+	position: absolute;
+	top: -50px;
+}
+
+#loginOptions {
+	float: right;
+	margin: 100px 0 50px 0;
+	width: 400px;
+	text-align: right;
+}
+
+#loginOptions hgroup h1 {
+	font-size: 4em;
+	color: #fff;
+	letter-spacing: .09em
+}
+
+#loginOptions h2 {
+	font-size: 1.5em;
+	font-family: Conv_GothamLight;
+	color: #cf5e01;
+	font-weight: bold;
+	margin: -9px 3px 27px 0;
+	letter-spacing: -0.5px;
+}
+
+#loginOptions .headTitle {
+	color: #C95700;
+	font-size: 1em;
+	font-weight: bold;
+	line-height: 1.2em;
+	padding-bottom: 10px;
+}
+
+#loginOptions a.whiteRoundBtn,#articleBlock .signButton,#loginOptions input[type='submit'],#outerForm input[type='submit']
+	{
+	background: #4bcce2;
+	border: none;
+	-webkit-border-radius: 20px;
+	-moz-border-radius: 20px;
+	border-radius: 20px;
+	color: #FFFFFF;
+	display: inline-block;
+	font-size: 1.4em;
+	margin: 10px 0 0 10px;
+	padding: 6px 0 7px;
+	text-align: center;
+	width: 128px;
+}
+
+#articleBlock .signButton {
+	width: 70px !important;
+}
+
+#loginOptions .viewButton {
+	width: auto !important;
+}
+
+#loginOptions a.whiteRoundBtn:hover,#loginOptions .viewButton:hover {
+	background: #cf5e01;
+	color: #fff;
+	text-decoration: none;
+}
+
+#outerFooter {
+	text-align: center;
+	color: #999;
+}
+
+#outerFooter ul {
+	padding-top: 30px;
+}
+
+#outerFooter li {
+	display: inline-block;
+	padding: 0 2px;
+}
+
+#outerFooter a {
+	color: #999;
+}
+
+#outerFooter a.active {
+	text-decoration: underline;
+}
+
+#littleDescription {
+	padding: 30px 0;
+	float: right;
+	width: 60%;
+	margin-right: 70px;
+}
+
+#littleDescription ul {
+	float: left;
+	width: 100%;
+}
+
+#littleDescription li {
+	float: right;
+	width: 27%;
+	margin: 0 3%
+}
+
+#littleDescription li figure {
+	float: left;
+	margin: 5px 15px 0 0;
+}
+
+#littleDescription li img {
+	display: block;
+	margin: 0 auto;
+}
+
+#littleDescription h3 {
+	color: #4a4a43;
+	font-size: 1.5em;
+	margin: 8px 0 5px;
+	width: 60%;
+	float: left;
+}
+
+#littleDescription h3 a {
+	color: #4a4a43;
+	text-decoration: none;
+}
+
+#outerForm h1 {
+	font-size: 1.8em;
+	color: #fff;
+	text-align: center;
+	padding-bottom: 12px;
+	margin-bottom: 12px;
+}
+
+#littleDescription p {
+	line-height: 1.3;
+	color: #95c8e1;
+	line-height: 1.2;
+}
+
+#outerForm label input[type='checkbox'] {
+	position: relative;
+	top: 2px;
+}
+
+#outerForm label,#outerForm a {
+	color: #fff;
+}
+
+#outerForm {
+	position: absolute;
+	right: 0;
+	left: 0;
+	margin: 0 auto;
+	/*top: 243px;*/
+	width: 400px;
+	z-index: 1;
+}
+
+#outerForm #createAccount,#outerForm #loginAccont {
+	display: none;
+}
+
+#outerForm .fieldsContainer {
+	background: #1e1e1e;
+	text-align: left;
+	padding: 15px;
+	/*width: 275px;*/
+}
+
+#outerForm .fieldsContainer label {
+	display: block;
+	clear: both;
+	color: #ccc;
+	margin-bottom: 9px;
+}
+
+#outerForm .fieldsContainer input[type='text'],#outerForm .fieldsContainer select,#outerForm .fieldsContainer input[type='email'],#outerForm .fieldsContainer input[type='password']
+	{
+	border: none;
+	padding: 10px 5px;
+	background: #343434;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	/*width: 265px;*/
+	width: 95%;
+	color: #ccc;
+	font-size: 1.2em;
+}
+
+#outerForm .fieldsContainer input.age {
+	width: 120px;
+	float: left;
+}
+
+#outerForm .fieldsContainer .customSelectNumber {
+	float: right;
+	margin-bottom: 9px;
+}
+
+#outerForm .fieldsContainer .customSelectNumber span.customStyleSelectBox
+	{
+	margin: 0;
+	padding: 12px 10px 5px;
+	width: 110px;
+	background-position: 92% 15px;
+}
+
+#outerForm .fieldsContainer .custom-checkbox label {
+	padding: 3px 0 6px 30px; /*width:225px;*/
+}
+
+#outerForm .fieldsContainer .custom-checkbox label a.forgotPassword {
+	margin-left: 15px;
+	float: right;
+}
+
+#outerForm .fieldsContainer .custom-checkbox input {
+	position: absolute !important;
+}
+
+#outerForm .fieldsContainer .customSelectNumber select {
+	width: 130px;
+	line-height: 32px;
+}
+	/*#outerForm .fieldsContainer label,#outerForm .fieldsContainer input[type='text'],#outerForm .fieldsContainer input[type='email'],#outerForm .fieldsContainer input[type='password']{	margin-left:10px;	margin-right:10px;}*/
+#outerForm  .alignCenter {
+	margin: 10px 0;
+} /* LANDING PAGE */
+#landingHeader {
+	background: url(../images/header_bg.png) repeat-x;
+	height: 105px;
+	position: relative;
+	z-index: 3;
+}
+
+#landingHeader h1,#storisticHeader h1 {
+	padding: 14px 0;
+}
+
+#landingHeader h1 a {
+	color: #fff;
+}
+
+#landingHeader nav li {
+	float: left; /*position:relative;*/
+}
+
+#landingHeader #mainMenu {
+	height: 54px;
+	width: 480px; /* position:absolute; */
+	margin: -55px auto 0;
+	top: 0;
+	position: relative;
+}
+
+#landingHeader #mainMenu a {
+	color: #222323;
+	padding: 11px 2px;
+	display: block; /* background:#f1f1f1; */
+	font-size: 15px;
+	line-height: 1.1;
+	text-align: center;
+	font-weight: bold;
+	width: 100px;
+	margin-left: 12%;
+	text-decoration: none;
+}
+
+#landingHeader #mainMenu li:first-child a {
+	margin-left: 0;
+}
+
+#landingHeader #mainMenu li:nth-of-type(4) a {
+	margin-left: 8%;
+}
+
+#mainMenu .active a,#mainMenu a:hover {
+	background: url(../images/main_menu_active.png) no-repeat 0 1px;
+	color: #fff !important;
+}
+	/*#landingHeader #mainMenu li.active a{font-weight:bold; background:url(../images/menu_active.png) no-repeat 50% 53px; padding-bottom:25px;}*/
+#landingHeader #userOptions {
+	position: absolute;
+	right: 0;
+	top: 14px;
+}
+
+#landingHeader #userOptions li {
+	float: left;
+	margin-left: 5px;
+}
+
+#landingHeader #userOptions li span.search,#landingHeader #userOptions li span.friends,#landingHeader #userOptions li span.capture,#landingHeader #userOptions li span.flag,#landingHeader #userOptions li span.redflag,#landingHeader #userOptions li span.settings
+	{
+	background: url(../images/sprite.png) no-repeat;
+	display: block;
+	width: 32px;
+	height: 51px;
+	cursor: pointer;
+}
+
+#landingHeader #userOptions li span.capture {
+	-webkit-opacity: 0.40;
+	-moz-opacity: 0.40;
+	opacity: 0.40;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
+	filter: alpha(opacity = 50);
+}
+
+#landingHeader #userOptions span.search {
+	background-position: -6px -280px !important;
+}
+
+#landingHeader #userOptions span.capture {
+	background-position: -49px -280px !important;
+}
+
+#landingHeader #userOptions span.friends {
+	background-position: -90px -280px !important;
+}
+
+#landingHeader #userOptions span.settings {
+	background-position: -133px -280px !important;
+}
+
+#landingHeader #userOptions li .custom-checkbox {
+	width: 70%;
+}
+
+#landingHeader #userOptions li .custom-checkbox input {
+	left: 90%;
+	top: 4px;
+}
+
+#landingHeader #userOptions li .custom-checkbox label {
+	background-position: 147px 0;
+	padding: 5px 0;
+}
+
+#landingHeader #userOptions li .custom-checkbox label.checked {
+	background-position: 147px -24px;
+}
+
+#landingHeader #userOptions span.search:hover {
+	background-position: -173px -279px !important;
+} /* commented to fix cosmetic issue */
+/*#landingHeader #userOptions span.capture:hover{background-position:-211px -279px !important;}*/
+#landingHeader #userOptions span.friends:hover {
+	background-position: -248px -279px !important;
+}
+
+#landingHeader #userOptions span.settings:hover {
+	background-position: -285px -279px !important;
+}
+
+#landingHeader #userOptions span.flag:hover {
+	background-position: -184px -580px !important;
+}
+
+#innerFooter,#landingScroll {
+	background: #1e1e1e;
+	position: relative;
+}
+
+#innerFooter,#landingScroll #slider {
+	width: 75% !important;
+	height: 55px !important;
+}
+
+#landingScroll ul {
+	padding-top: 10px;
+	font-size: 1.05em;
+}
+
+#landingScroll ul li {
+	float: left;
+	width: 210px;
+	height: 50px;
+}
+
+#landingScroll ul li a:hover {
+	text-decoration: none;
+}
+
+#landingScroll ul figure {
+	float: left;
+	margin-right: 10px;
+}
+
+#landingScroll ul span {
+	display: block;
+	padding-top: 3px;
+	color: #fff;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	margin-right: 30px;
+}
+
+#landingScroll ul time {
+	display: block;
+	color: #636363;
+	padding-top: 3px;
+}
+
+#frndsUpdates {
+	position: absolute;
+	right: 0;
+	top: 19px;
+	background: url(../images/friends_update_arrow.png) no-repeat left top;
+	width: 14px;
+	height: 22px;
+}
+
+#makeMeScrollable {
+	position: relative;
+	z-index: 1;
+	overflow: hidden;
+}
+
+#myStoryLines { /*border-bottom:4px solid #fff;*/
+	position: relative;
+	width: 100%;
+	overflow: hidden; /* margin-bottom:-12px; */
+}
+	/* #myStoryLines,#myMoments{	overflow-y:hidden;	overflow-x:auto;	float:left;	width:100%;} */
+/* .scrollContainer{	width:700%;	float:left;	height:100px;} */
+#myMoments {
+	position: relative;
+	background: url(../images/transparent_bg.png);
+	float: left;
+	width: 100%;
+	clear: both;
+	height: 100%;
+	margin-top: -12px; /*padding-bottom:10px;*/
+	z-index: 1;
+}
+
+#myMoments .creatNewBtn {
+	top: 70px;
+}
+
+#myStoryLines .creatNewBtn {
+	bottom: 10px;
+}
+
+#storyLineContainer .creatNewBtn {
+	background: url(../images/creat.png) no-repeat left top;
+	width: 30px;
+	height: 30px;
+	position: absolute;
+	right: 10px;
+	bottom: 25px;
+	cursor: pointer;
+	z-index: 2;
+	display: block;
+}
+
+.storyContainer {
+	border: 1px solid red;
+	width: 386px;
+	float: left;
+}
+
+.scrollContainer {
+	overflow-y: hidden;
+	overflow-x: auto;
+	float: left;
+	width: 100%;
+	position: absolute;
+	bottom: 0; /* background:#ddd; */
+}
+
+.scrollContainer ul { /* width:6000px; */
+	float: left; /* background:#d2d2d2; */
+	margin-top: 40px;
+}
+
+.scrollContainer li,.scrollContainer .smoothScroll { /*width:370px;*/
+	/*height:223px;*/
+	float: left;
+	position: Relative; /*margin-left:40px;*/
+}
+
+.scrollContainer li figure,.scrollContainer .smoothScroll figure {
+	float: left; /*width:370px; height:225px;*/
+	position: relative;
+	overflow: hidden;
+	text-align:center;
+}
+	/*.scrollContainer li figure img, .scrollContainer .smoothScroll figure img{width:100%; height:100%;}*/
+.scrollContainer li figure .favorite,.scrollContainer .smoothScroll figure .favorite,#storyLineBlock .featureBlock figure .favorite
+	{
+	width: 25px;
+	height: 25px;
+	background: url(../images/sprite.png) no-repeat -178px -208px;
+	position: absolute;
+	top: 5px;
+	left: 5px;
+}
+
+#momentSlider .momentScroll .momentTitle .favorite,
+#sharedMomentSlider .momentScroll .momentTitle .favorite {
+	width: 25px;
+	height: 25px;
+	background: url(../images/sprite.png) no-repeat -178px -208px;
+	position: absolute;
+	/*left: 4px;*/
+	/*bottom: 8px;*/
+	right:45px;
+	top: 3px;
+	z-index: 2;
+}
+
+.scrollContainer li figure img {
+	display: block;
+}
+
+.scrollContainer li figcaption,.scrollContainer .smoothScroll figcaption
+	{
+	background: url(../images/beattitle_bg.png);
+	padding: 7px 10px;
+	font-weight: bold;
+	font-size: 17px;
+	color: #ccc;
+	width: 100%;
+	line-height: 18px;
+	position: absolute;
+	bottom: 0;
+	text-align:left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow:hidden;
+
+}
+
+.scrollContainer li figcaption time,.scrollContainer .smoothScroll figcaption time
+	{
+	display: block;
+	font-size: 12px;
+	color: #838282;
+}
+
+.scrollContainer ul li .linePointer,.scrollContainer .smoothScroll .linePointer,.scrollContainer .smoothScroll .creatPointer
+	{
+	width: 11px;
+	display: block;
+	position: absolute; /*left:145px;*/ /*bottom:-85px;*/
+	left: 50%;
+	/*top: 222px;*/
+	border-left: 1px solid #333;
+	z-index: -1;
+    bottom:2px;
+}
+	/*.scrollContainer .smoothScroll .linePointer{top:100%; height:18%; /*padding-bottom:12%;}*/
+.scrollContainer ul li .linePointer .circle,
+.scrollContainer .smoothScroll .linePointer .circle,
+.scrollContainer .smoothScroll .creatPointer .circle,
+#storyLineBlock .featureBlock .linePointer .circle,
+#storyLineBlock .myStoryBlock .linePointer .circle,
+#myMomentBlock .momentScroll .momentTime .circle,
+#myMomentBlock .momentScroll .audioTime .circle,
+#myMomentBlock .dragArea .momentTime .circle,
+.dragArea .linePointer .circle,	
+.dragArea .draglinePointer .circle 
+	{
+	background: url(../images/circle_bg.png) no-repeat;
+	width: 9px;
+	height: 9px;
+	position: absolute;
+	left: -5px;
+	bottom: 0;
+	cursor: pointer;
+}
+
+.scrollContainer ul li img {
+	max-width: 100%;
+	height: auto;
+} /*04.03.2013*/
+.scrollContainer ul li .storyLine,.scrollContainer .smoothScroll .storyLine
+	{ /*background:#6ca7bc; height:75%;*/
+	width: 55px;
+	position: absolute;
+	right: 25px;
+	top: 10px;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+}
+
+.scrollContainer ul li .storyLine ul,.scrollContainer .smoothScroll .storyLine ul
+	{
+	margin: 0;
+	float: none;
+}
+
+.scrollContainer ul li .storyLine ul li:first-child,.scrollContainer .smoothScroll .storyLine ul li:first-child
+	{
+	margin-top: 0;
+}
+
+.scrollContainer ul li .storyLine ul li,.scrollContainer .smoothScroll .storyLine ul li
+	{
+	width: auto;
+	height: auto;
+	margin: 0;
+}
+
+.scrollContainer ul li .storyLine li a,.scrollContainer .smoothScroll .storyLine li a
+	{
+	display: block;
+	width: 55px;
+	text-align: center;
+	padding: 6px 0;
+	text-decoration: none;
+}
+
+.scrollContainer ul li .storyLine li a .number,.scrollContainer .smoothScroll .storyLine li a .number
+	{
+	color: #fff;
+	display: block;
+	font-weight: bold;
+}
+
+.timeLine {
+	background: #fff;
+	position: relative;
+	clear: both;
+	width: 100%;
+	z-index: -2;
+	height: 4px; /*margin:-8px 0;*/
+	float: left;
+}
+
+div.scrollWrapper {
+	height: 100%;
+	overflow: hidden;
+	position: relative;
+	width: 100%;
+}
+
+#myStoryLines h2,#myMoments h2 {
+	font-size: 15px;
+	color: #666;
+	padding: 5px 16px;
+	min-width: 100px;
+	position: absolute;
+	left: 0;
+	background: #1e1e1e;
+	z-index: 2;
+}
+
+#myStoryLines h2 {
+	bottom: 8px;
+}
+
+#myMoments h2 {
+	top: 4px;
+} /*#myStoryLines h2 span, #myMoments h2 span{float:right;}*/
+#myMoments .momentBlock {
+	float: left; /*margin-left:70px;*/
+	position: relative;
+	padding-top: 55px;
+	height: 100%;
+}
+
+#myMoments .momentBlock .momentTime {
+	border-left: 1px solid #fff;
+	display: block;
+	left: 50%;
+	position: absolute;
+	top: 0;
+	width: 11px;
+	z-index: -1; /*height:50px;*/
+	cursor: pointer;
+	height: 40%;
+}
+
+#myMoments .momentBlock .momentTime .circle {
+	background: url(../images/circle_white.png) no-repeat;
+	top: 0;
+	cursor: pointer;
+	height: 9px;
+	left: -5px;
+	position: absolute;
+	width: 9px;
+}
+
+#myMoments .momentBlock .date,#storyLineContainer .smoothScroll .date {
+	color: #fff;
+	position: absolute; /* border-left:1px solid #fff; */
+	font-weight: bold;
+}
+
+#myMoments .momentBlock .date {
+	top: 4px;
+	/*right: 3px;*/
+	left:55%;
+	width:100%;
+	padding: 10px 0 0 10px;
+}
+
+#storyLineContainer .smoothScroll .date { /*bottom:-65px;*/
+	right: 0;
+	padding: 0 0 10px 10px;
+	height: 12px;
+} /*.scrollContainer .smoothScroll{margin-top:40px;}*/
+.fRight {
+	float: right !important;
+}
+
+.fLeft {
+	float: left;
+}
+
+#prevBtn a,#nextBtn a,#slider1next a,#slider1prev a {
+	background: url("../images/sprite.png") no-repeat -213px -212px;
+	display: block;
+	height: 35px;
+	position: absolute;
+	width: 35px;
+	font-size: 0;
+}
+
+#prevBtn a {
+	left: 9%;
+	bottom: 10px;
+}
+
+#nextBtn a {
+	right: 10%;
+	bottom: 10px;
+	background-position: -258px -210px;
+}
+
+.menuBlock {
+	position: absolute; /*top:-600px;*/
+	top: -9999px;
+	right: 0;
+	background: #1e1e1e; /*width:570px;*/
+	min-width: 285px;
+	min-height: 200px;
+	z-index: 9999;
+	color: #ccc;
+	font-size: 13px; /* visibility:hidden ;*/
+} /*#landingHeader #userOptions li:hover > .menuBlock{top:52px;}*/
+.menuBlock .menuHover {
+	position: absolute;
+	top: -12px; /*right:53px;*/
+	background: url(../images/menu_hover.png) no-repeat;
+	width: 24px;
+	height: 12px;
+}
+
+.menuBlock .menuTab {
+	float: left;
+	padding: 25px 10px 25px 20px;
+}
+
+.menuBlock .menuTab li {
+	float: left;
+	margin: 0 !important;
+}
+
+.menuBlock .menuTab li a {
+	color: #fff;
+	background: #343434;
+	text-decoration: none;
+	font-size: 13px;
+	margin: -4px 1px 0 0;
+	padding: 10px 7px 10px;
+	float: left;
+}
+
+.menuBlock .menuTab li a:hover,.menuBlock .menuTab li a.active {
+	background: #47b4b8;
+}
+
+.searchBlock {
+	width: 235px;
+	height: 27px;
+	padding: 20px 0;
+	position: relative;
+}
+
+.searchBlock input[type="text"] {
+	background: #343434;
+	border: none;
+	width: 155px;
+	height: 32px;
+	color: #fff;
+	font-weight: bold;
+	padding: 0 15px;
+	float: left;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+
+.searchBlock input[type="text"]:focus {
+	background: #595959;
+	color: #fff;
+}
+
+.searchBlock input[type="submit"] {
+	position: absolute;
+	right: 0;
+	width: 45px;
+	height: 32px;
+	background: url(../images/sprite.png) no-repeat -127px -67px #343434;
+	border: none;
+	cursor: pointer;
+	border-radius: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+}
+
+.searchBlock input[type="submit"]:focus {
+	background-color: #47b4b8;
+}
+
+.menuBlock .overview ul,.menuBlock .notificationText ul {
+	margin-top: 10px;
+}
+
+.menuBlock .overview ul li,.menuBlock .notificationText ul li {
+	border-bottom: 1px solid #333;
+	padding: 7px 20px;
+	margin: 0 !important;
+	min-height: 35px;
+	width: 92%;
+}
+
+.menuBlock .overview ul li span,.menuBlock .overview ul li label {
+	float: left;
+	background: none !important;
+	color: #ccc;
+}
+
+.menuBlock .overview ul li span.thumbIcon {
+	width: 33px;
+	height: 33px;
+	margin-right: 15px;
+}
+
+.nameTitle a{cursor: default;}
+
+.menuBlock .overview ul li label.nameTitle {
+	padding: 10px 15px 10px 0;
+	width: 70%;
+}
+
+.menuBlock .overview ul li label.nameTitle span {
+	float: left;
+	margin-right: 25px;
+}
+
+.menuBlock .overview ul li label.nameTitle .enabledTwitterIcon,.menuBlock .overview ul li label.nameTitle .enabledFaceBookIcon,.menuBlock .overview ul li label.nameTitle .enabledGtalkIcon,.menuBlock .overview ul li label.nameTitle .enabledPicasaIcon,.menuBlock .overview ul li label.nameTitle .enabledFlickrIcon,.menuBlock .overview ul li label.nameTitle .enabledInstagramIcon,.menuBlock .overview ul li .editSocial .enabledTwitterIcon, .menuBlock .overview ul li .editSocial .enabledFaceBookIcon, .menuBlock .overview ul li .editSocial .enabledGtalkIcon, .menuBlock .overview ul li .editSocial .enabledPicasaIcon, .menuBlock .overview ul li .editSocial .enabledFlickrIcon , .menuBlock .overview ul li .editSocial .enabledInstagramIcon 
+	{
+	background: url(../images/sprite.png) no-repeat;
+	float: left;
+	height: 24px;
+	width: 20px;
+	margin: -5px 0 0 8px;
+}
+
+.menuBlock .overview ul li label.nameTitle .enabledTwitterIcon,
+.menuBlock .overview ul li .editSocial .enabledTwitterIcon{	background-position: -150px -584px;}
+
+.menuBlock .overview ul li label.nameTitle .enabledFaceBookIcon,
+.menuBlock .overview ul li .editSocial .enabledFaceBookIcon{background-position: -268px -38px;}
+
+.menuBlock .overview ul li label.nameTitle .enabledGtalkIcon,
+.menuBlock .overview ul li .editSocial .enabledGtalkIcon{background-position: -18px -583px;	width: 24px;}
+
+.menuBlock .overview ul li label.nameTitle .enabledPicasaIcon,
+.menuBlock .overview ul li .editSocial .enabledPicasaIcon{background-position: -54px -584px;width: 25px;}
+
+.menuBlock .overview ul li label.nameTitle .enabledFlickrIcon,
+.menuBlock .overview ul li .editSocial .enabledFlickrIcon {background-position: -85px -584px;width: 25px;}
+
+.menuBlock .overview ul li label.nameTitle .enabledInstagramIcon,
+.menuBlock .overview ul li .editSocial .enabledInstagramIcon {background-position: -119px -584px;width: 25px;}
+
+.menuBlock .overview ul li label.editColum {
+	float: right;
+	margin-bottom: 10px;
+}
+
+.menuBlock .overview ul li label.editColum .edit,.menuBlock .overview ul li label.editColum .delete,.menuBlock .overview ul li label.editColum .deleteFriend,.menuBlock .overview ul li label.editColum .deleteUserGroup,.menuBlock .overview ul li label.editColum .logout, .menuBlock .overview ul li label.editColum .tutorialIcon
+	{
+	background: url(../images/sprite.png) no-repeat -256px -3px;
+	width: 22px;
+	height: 25px;
+	margin: 5px 10px 0 0;
+	float: left;
+}
+
+.menuBlock .overview ul li label.editColum .delete,.menuBlock .overview ul li label.editColum .deleteFriend,.menuBlock .overview ul li label.editColum .deleteUserGroup
+	{
+	background-position: -287px -4px;
+}
+
+.menuBlock .overview ul li label.editColum .logout {
+	background-position: -358px -4px;
+}
+
+.menuBlock .overview ul li label.nameTitle .groupName {
+	font-weight: bold;
+	font-size: 13px;
+	padding-right: 5px;
+}
+
+.menuBlock .overview ul li label.nameTitle .member {
+	color: #ccc;
+}
+
+.menuBlock .overview ul li label.editColum a {
+	text-decoration: none;
+}
+
+.menuBlock .overview ul li label.editColum a.faceBook,.menuBlock .overview ul li label.editColum a.gTalk,.menuBlock .overview ul li label.editColum a.twitter,.menuBlock .overview ul li label.editColum a.social
+	{
+	margin: 4px 7px;
+	float: left;
+}
+
+.menuBlock .overview ul li label.editColum .inviteBTN {
+	background: #47b4b8;
+	color: #fff;
+	padding: 5px 15px 6px;
+	margin: 4px 0 0 5px;
+	float: left;
+	border-radius: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+}
+
+.menuBlock .editColum .active {
+	background-position: -228px -68px !important;
+}
+
+.menuBlock #searchList ul li label.nameTitle {
+	width: 45%;
+}
+
+.menuBlock .overview dl {
+	padding: 20px 0;
+	overflow: hidden;
+}
+
+.menuBlock .overview dl dt {
+	float: left;
+	width: 115px;
+	font-size: 13px;
+	padding-top: 15px;
+	color: #ccc;
+	clear: both;
+}
+
+.menuBlock .overview dl dd {
+	float: left;
+}
+
+.menuBlock .overview dl dd input[type="text"],.menuBlock .overview dl dd input[type="password"],.menuBlock .overview dl dd input[type="email"],.menuBlock .overview dl dd select
+	{
+	border: none;
+	background: #343434;
+	color: #ccc;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	padding: 2px 5px;
+	width: 220px;
+	height: 28px;
+	margin-top: 10px;
+}
+
+.menuBlock .overview dl dd select {
+	margin-top: 2px;
+	border: none;
+	width: 230px;
+}
+
+.customSelectNumber span.customStyleSelectBox {
+	background: url("../images/drop_button.png") no-repeat #343434 scroll
+		96% 11px;
+	width: 210px;
+	color: #ccc;
+	font-weight: normal;
+	height: 19px;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	padding: 9px 10px 4px;
+	margin-top: 8px;
+}
+
+.menuBlock .overview .addNewgroup dl dd input,.menuBlock .overview .addNewgroup dl dd select,.menuBlock .overview .addNewgroup dl dd .customSelectNumber span.customStyleSelectBox
+	{
+	background-color: #1e1e1e;
+}
+
+.menuBlock .addGroup {
+	background: #323232;
+	font-size: 14px;
+	padding: 10px;
+	color: #fff;
+}
+
+.menuBlock .addGroup a {
+	float: left;
+	margin: -2px 6px 0 0;
+}
+
+.menuBlock .account {
+	float: left;
+	width: 35px;
+	height: 30px;
+	margin: -4px 10px 0 0;
+	background: url(../images/sprite.png) no-repeat -170px -171px;
+}
+
+.borderTop {
+	border-top: 4px solid #99CCE5;
+}
+
+.borderBTM {
+	border-bottom: 1px solid #3399cc;
+}
+
+.borderSolid {
+	border-bottom: 3px solid #99cce5;
+}
+
+.submitBTN,.noButton {
+	background: #1e1e1e;
+	border: 1px solid #1e1e1e;
+	color: #fff;
+	font-size: 15px;
+	cursor: pointer;
+	padding: 7px 12px;
+	margin-top: 10px;
+	font-family: arial;
+	border-radius: 12px;
+	-moz-border-radius: 12px;
+	-webkit-border-radius: 12px;
+}
+
+.submitButton, .sendButton {
+	background: #47b4b8;
+	color: #fff;
+	font-size: 18px;
+	cursor: pointer;
+	border: none;
+	margin: 10px 0;
+	padding: 5px 20px;
+	text-align: center;
+	min-width: 200px;
+	border-radius: 15px;
+	-moz-border-radius: 15px;
+	-webkit-border-radius: 15px;
+}
+
+.submitBTN:hover,.noButton:hover {
+	border: 1px solid #000;
+}
+
+.margin125 {
+	margin-left: 125px;
+}
+
+.margin175 {
+	margin-left: 175px;
+}
+
+.menuBlock .overview ul li .editFriend,.menuBlock .overview ul li .editSettings,.menuBlock .overview ul li .editGroup,.menuBlock .overview ul li .editSocial
+	{
+	background: #343434;
+	min-height: 60px;
+	clear: both;
+	padding: 10px 10px 10px 20px;
+	position: relative;
+	overflow: hidden;
+	display: none;
+}
+
+.menuBlock .overview ul li .editFriend {
+	margin: 50px -22px -7px -30px;
+}
+
+.menuBlock .overview ul li .editSettings {
+	margin: 0 -16px 0 -20px;
+}
+
+.menuBlock .overview ul li .editGroup {
+	margin: 0 -17px -5px -20px;
+}
+
+.menuBlock .overview ul li .editSocial {
+	margin: 0 -20px -8px -34px;
+}
+
+.menuBlock .overview ul li .editFriend dl,.menuBlock .overview ul li .editSettings dl,.menuBlock .overview .addNewgroup dl
+	{
+	padding: 0 0 10px 15px;
+}
+
+.menuBlock .overview ul li .editFriend span.thumbIcon,.menuBlock .overview ul li .editSettings span.thumbIcon
+	{
+	margin-top: 15px;
+}
+
+.menuBlock .overview ul li .editFriend dl dd input[type="text"],.menuBlock .overview ul li .editSettings dl dd input[type="text"],.menuBlock .overview ul li .editSettings dl dd input[type="password"],.menuBlock .overview ul li .editFriend dl dd select,.menuBlock .overview ul li .editSettings dl dd select
+	{
+	background: #1e1e1e;
+	color: #ccc;
+}
+
+.editFriend .customSelectNumber span.customStyleSelectBox,.editSettings .customSelectNumber span.customStyleSelectBox,.editGroup .customSelectNumber span.customStyleSelectBox
+	{
+	float: none !important;
+	background: url(../images/drop_button.png) no-repeat 96% 13px #1e1e1e
+		!important;
+	color: #ccc;
+}
+
+.editFriend .customSelectNumber span.customStyleSelectBox span,.editSettings .customSelectNumber span.customStyleSelectBox span,#invite_friends .customSelectNumber span.customStyleSelectBox span,.menuBlock .customSelectNumber span.customStyleSelectBox span
+	{
+	border-right: 1px solid #333;
+	height: 23px;
+	margin-top: -8px;
+	padding-top: 7px;
+	width: 185px !important;
+}
+
+.menuBlock .overview ul li .editGroup .customSelectNumber select {
+	width: 230px;
+}
+
+.menuBlock .overview .addNewgroup {
+	margin-top: 3px;
+	position: relative;
+	background: #323232;
+	display: none;
+}
+
+.menuBlock .overview .addNewgroup .add {
+	float: left;
+	margin: 13px 0 0 10px;
+	color: #ccc;
+}
+
+.menuBlock .overview .addNewgroup .add img {
+	float: left;
+	margin-right: 5px;
+}
+
+.menuBlock .overview ul li .editGroup select {
+	background: #1e1e1e;
+	color: #CCCCCC;
+	width: 210px;
+	margin-top: 2px;
+	border: none;
+	padding: 6px 5px;
+	border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+}
+
+.menuBlock .overview ul li .editGroup ul {
+	overflow: hidden;
+}
+
+.menuBlock .overview ul li .editGroup ul li {
+	border-bottom: none;
+	color: #fff;
+	padding: 5px 10px 0 0;
+	width: 100%;
+	font-size: 13px;
+	min-height: 20px;
+}
+
+.menuBlock .overview ul li .editGroup ul li span {
+	width: 85%;
+}
+
+.menuBlock .overview ul li .editGroup ul li .delete,.menuBlock .overview ul li .editGroup ul li .deleteFriend
+	{
+	margin: 2px 0 0 5px;
+	float: left;
+}
+
+.menuBlock .overview ul li .editGroup h3,.menuBlock .overview ul li .editSocial h3
+	{
+	font-size: 15px;
+	color: #fff;
+}
+
+.menuBlock .overview ul li .editGroup h3 span {
+	float: none;
+	font-size: 12px;
+	color: #8fa6c0;
+}
+
+.h3Title {
+	padding: 20px 10px 20px 20px;
+	font-size: 20px;
+}
+
+.menuBlock .overview ul li .editSocial input[type="text"] {
+	background: #1e1e1e;
+	border: none;
+	border-radius: 5px;
+	width: 240px;
+	height: 30px;
+	padding: 3px 5px;
+	margin: 0 5px;
+	color: #ccc;
+}
+
+.menuBlock .overview ul li .editSocial .social {
+	padding: 10px 0 10px 10px;
+}
+
+.menuBlock .overview ul li .editSocial .twitterIcon,.menuBlock .overview ul li .editSocial .faceBookIcon,.menuBlock .overview ul li .editSocial .gtalkIcon,.menuBlock .overview ul li .editSocial .flickrIcon,.menuBlock .overview ul li .editSocial .instagramIcon,.menuBlock .overview ul li .editSocial .picasaIcon
+	{
+	background: url(../images/sprite.png) no-repeat -228px -38px;
+	height: 24px;
+	float: left;
+	width: 20px;
+	margin: -5px 0 0 8px;
+}
+
+.menuBlock .overview ul li .editSocial .faceBookIcon {
+	background-position: -184px -372px;
+}
+
+.menuBlock .overview ul li .editSocial .gtalkIcon {
+	background-position: -306px -39px;
+	width: 30px;
+}
+
+.menuBlock .overview ul li .editSocial .picasaIcon {
+	background-position: -11px -474px;
+	width: 26px;
+}
+
+.menuBlock .overview ul li .editSocial .flickrIcon {
+	background-position: -72px -473px;
+	width: 24px;
+}
+
+.menuBlock .overview ul li .editSocial .instagramIcon {
+	background-position: -41px -473px;
+	width: 25px;
+}
+
+.menuBlock #searchResult {
+	padding: 20px;
+}
+
+.menuBlock #searchResult ul li {
+	float: none !important;
+	padding: 3px 0;
+}
+
+.close {
+	position: absolute;
+	right: 10px;
+	top: 5px;
+	background: url(../images/sprite.png) no-repeat -317px -211px;
+	width: 25px;
+	height: 30px;
+}
+	/*.menuBlock #captureMode .overview {padding:15px 0; overflow:hidden;}.menuBlock #captureMode .overview p{width:55%; line-height:16px;}.menuBlock #captureMode .overview .customSelectNumber{width:43%; float:right;}.menuBlock #captureMode .overview .customSelectNumber select{margin-top:8px; width:210px; background:#C1E0F0;}.menuBlock #captureMode .captureBlock{padding:15px 0;}.menuBlock #captureMode .captureBlock ul li a{float:left; color:#fff; background:#3399cc; margin-right:7px; padding:5px 12px 6px;}.menuBlock #captureMode .captureBlock ul li a span{float:left;}.menuBlock #captureMode .captureBlock ul li a:hover, .menuBlock #captureMode .captureBlock ul li a.active{background:#1e4d81;}.menuBlock #captureMode .captureBlock ul li a span.photo,.menuBlock #captureMode .captureBlock ul li a span.video,.menuBlock #captureMode .captureBlock ul li a span.audio,.menuBlock #captureMode .captureBlock ul li a span.text{background:url(../images/sprite.png) no-repeat -13px -71px; width:25px; height:20px; margin-right:5px;}.menuBlock #captureMode .captureBlock ul li a span.video{background-position:-45px -71px;}.menuBlock #captureMode .captureBlock ul li a span.audio{background-position:-45px -71px;}.menuBlock #captureMode .captureBlock ul li a span:nth-of-type(2){padding:3px 0;}*/
+#mainContent .searchListing {
+	padding: 30px 0;
+	margin-top: 72px;
+}
+
+#mainContent .searchListing h2 {
+	font-size: 18px;
+	color: #ccc;
+	float: left;
+}
+
+#mainContent .searchListing ul li {
+	float: left;
+	margin: 4px 0 0 12px;
+	color: #fff;
+}
+
+#mainContent .searchListing .searchBlock {
+	padding: 0 0 0 20px;
+}
+
+#mainContent .searchListing table {
+	border-spacing: 0;
+	border: 1px solid #333333;
+	margin-top: 15px;
+	margin-bottom: -15px;
+	position: relative;
+	z-index: 2;
+}
+
+#mainContent .searchListing table tr th {
+	background: #333;
+	font-weight: bold;
+	text-align: left;
+}
+
+#mainContent .searchListing table tr th:last-child{padding-left:0 !important;}
+
+#mainContent .searchListing table tr th,#mainContent .searchListing table tr td
+	{
+	padding: 10px 15px 15px;
+	font-size: 13px;
+	color: #ccc;
+	vertical-align: top;
+}
+
+#mainContent .searchListing table tr td {
+	border-top: 1px solid #333;
+}
+
+#mainContent .searchListing table tr td h3 {
+	font-size: 14px;
+	font-weight: bold;
+	color: #ccc;
+	width: 600px;
+}
+
+#mainContent .searchListing table tr td p {
+	line-height: 18px;
+	width: 600px;
+	height: 50px;
+	word-wrap: break-word;
+} /*Pagination*/
+.pagination {
+	width: 100px;
+	margin: 0 auto;
+}
+
+.pagination li {
+	float: left;
+	margin: 10px 15px 10px 0 !important;
+}
+
+.pagination li a {
+	color: #fff;
+	display: block;
+	text-decoration: none;
+	font-size: 12px;
+	float: left;
+	width: 32px;
+	text-align: center;
+}
+	/*.pagination li a.current, .pagination li a:hover{background:url(../images/sprite.png) no-repeat -323px -279px;}*/
+.pagination li a.next,.pagination li a.prev {
+	background: url(../images/sprite.png) no-repeat -212px -211px;
+	width: 35px;
+	height: 35px;
+	font-size: 0;
+}
+
+.pagination li a.next {
+	background-position: -255px -211px;
+} /*Custom Checkbox/Radio*/
+.custom-checkbox,.custom-radio {
+	position: relative;
+}
+
+.custom-checkbox input,.custom-radio input {
+	position: absolute;
+	left: 2px;
+	left: 0\9;
+	top: 0;
+	margin: 0;
+	z-index: 0;
+}
+
+.custom-checkbox label,.custom-radio label {
+	display: block;
+	position: relative;
+	z-index: 1;
+	padding-right: 1em;
+	line-height: 1;
+	padding: 3px 0 5px 25px;
+	margin: 0 0 .3em;
+	cursor: pointer;
+}
+
+.custom-checkbox label,.custom-radio label {
+	background: url(../images/custom_checkbox.png) no-repeat;
+}
+
+.custom-checkbox label.checked,.custom-radio label.checked {
+	background-position: 0 -24px;
+}
+
+#storyLineBlock {
+	position: relative;
+	margin-bottom: -30px; /*height:430px;*/
+	overflow: hidden;
+	background: url(../images/storylinebtm_bg.png) repeat-x bottom;
+}
+
+#storyLineBlock .featureBlock {
+	width: 600px;
+	height: 215px; /*padding:6px;*/
+	float: left; /*margin-left:50px;*/
+	position: relative;
+}
+
+#storyLineBlock #storyLineScroll {
+	margin-left: 350px;
+}
+
+#storyLineBlock .featureBlock figure {
+	float: left; /*width:300px;*/
+	overflow: hidden;
+}
+
+#storyLineBlock .featureBlock .featureDis {
+	/*float: left;*/
+	display: table-cell;
+	padding: 45px 20px 0 20px;
+	/*width: 210px;*/
+	color: #fff;
+    text-align:justify;
+    float:left;
+}
+
+#storyLineBlock .featureBlock .featureDis h3 {
+	font-size: 16px;
+	font-weight: bold;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+#storyLineBlock .myStoryBlock .featureDis h3 {
+	font-size: 16px;
+	font-weight: bold;
+	padding-bottom: 5px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+#storyLineBlock .featureBlock .featureDis p {
+	font-size: 13px;
+	line-height: 16px;
+	padding: 5px 0;
+	word-wrap: break-word;
+}
+
+#storyLineBlock .myStoryBlock .featureDis p {
+	font-size: 13px;
+	line-height: 15px;
+	min-height: 12px;
+	max-height: 105px;
+	word-wrap: break-word;
+	overflow: hidden;
+}
+
+#storyLineBlock .featureBlock .downArrow,#storyLineBlock .myStoryBlock .downArrow
+	{
+	background: url(../images/down_arrow.png) no-repeat;
+	width: 17px;
+	height: 8px;
+	position: absolute;
+	left: 47%;
+	bottom: -8px;
+}
+
+#storyLineBlock .myStoryBlock .downArrow {
+	bottom: -50px;
+	left: 146px;
+}
+
+#storyLineBlock .featureBlock .linePointer,#storyLineBlock .myStoryBlock .linePointer
+	{
+	width: 58px;
+	border-left: 1px solid #333; /*height:120px;*/
+	position: absolute;
+	left: 53%;
+	/*top: 218px;*/
+	z-index: -1;
+}
+
+/*#storyLineBlock .myStoryBlock .linePointer {
+	height: 125px;
+}*/
+
+#storyLineBlock .myStoryBlock .linePointer {
+	left: 50%;
+}
+
+#storyLineBlock .featureBlock .linePointer figure,#storyLineBlock .myStoryBlock .linePointer figure
+	{
+	position: absolute;
+	bottom: -20px;
+	left: -28px;
+}
+
+#storyLineBlock  .featureBlock .lineAnimate,#storyLineBlock  .myStoryBlock .lineAnimate
+	{ /*background:url(../images/line_animate.png) repeat-x;*/
+	height: 85px;
+	width: 585px;
+	position: absolute;
+	left: 255px; /*bottom:-165px;*/
+}
+
+#storyLineBlock  .myStoryBlock .lineAnimate {
+	width: 450px;
+	height: 80px;
+}
+
+#storyLineBlock .featureBlock .date,#storyLineBlock .myStoryBlock .date
+	{
+	color: #ccc;
+	border-left: 1px solid #ccc;
+	font-weight: bold;
+	font-size: 13px;
+	position: absolute;
+	left: 42%;
+	top: -9px;
+	padding: 10px 0 0 10px;
+}
+
+#storyLineBlock .myStoryBlock .lineAnimate .date {
+	left: 0;
+}
+
+#storyLineBlock .featureBlock .commentIcon,#storyLineBlock .myStoryBlock .commentIcon
+	{
+	background: url(../images/sprite.png) no-repeat -318px -170px;
+	color: #333;
+	font-weight: bold;
+	height: 23px;
+	padding: 4px 0;
+	text-align: center;
+	width: 28px;
+	position: absolute;
+	right: 0; /*top:225px;*/
+	bottom: -32px;
+}
+	/*#storyLineBlock .myStoryBlock .commentIcon{right:-2px; bottom:-78px;}*/
+#mainContent .storTitle {
+	margin: -158px 0 51px;
+	position: relative;
+	z-index: 1;
+}
+
+#mainContent .storTitle h2.storyTitle { /*background:#6ca7bc;*/
+	color: #fff;
+	float: left;
+	font-size: 18px;
+	font-weight: normal;
+	padding: 10px 20px 9px;
+	position: relative;
+}
+
+#mainContent .storTitle h2.storyTitle span {
+	float: left;
+}
+
+#mainContent .storTitle h2.storyTitle .menuTitle {
+	margin: 2px 0 0 14px;
+	float: right;
+}
+	/*#mainContent .storTitle .nextBTN{float:right; background:url(../images/sprite.png) no-repeat -348px -35px #5da8cd; width:14px; height:22px; margin-top:8px; padding:5px 15px; border-radius:7px 0 0 0; -moz-border-radius:7px 0 0 0; -webkit-border-radius:7px 0 0 0;}*/
+#storyLineBlock  .featureBlock .beatThumb,#storyLineBlock  .myStoryBlock .beatThumb
+	{
+	position: absolute;
+	width: 65px;
+	height: 65px;
+	bottom: 0;
+	left: 48%; /*left:270px;*/
+}
+
+#storyLineBlock  .myStoryBlock .beatThumb {
+	left: 41%;
+}
+
+.storyScroll {
+	margin: -105px auto -100px !important;
+	position: relative;
+}
+
+.storyScroll .push {
+	clear: both;
+	height: 108px;
+}
+
+#sportyTitle,.mikeStoryTitle {
+	background: #1E1E1E; /*height:100px;*/
+	position: relative;
+	margin-top: -1px;
+	padding: 0 50px 0 0;
+}
+
+#sportyTitle figure,.mikeStoryTitle figure {
+	float: left;
+	padding: 20px 0 0 50px;
+}
+
+#sportyTitle figure img,.mikeStoryTitle figure img {
+	float: left;
+}
+
+#sportyTitle figure.current figcaption,.mikeStoryTitle figure.current figcaption
+	{
+	color: #ccc !important;
+}
+
+#sportyTitle figure figcaption,.mikeStoryTitle figure figcaption {
+	float: right;
+	color: #565656;
+	font-weight: bold;
+	font-size: 13px;
+	padding: 10px 10px;
+	width: 105px;
+}
+
+#sportyTitle figure figcaption span,.mikeStoryTitle figure figcaption span
+	{
+	display: block;
+	font-weight: normal;
+	font-size: 12px;
+	padding-top: 5px;
+	white-space: nowrap;
+	width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+#sportyFrame {
+	position: relative;
+}
+
+#storyLineBlock .myStoryBlock {
+	min-width: 300px; /*height:207px;*/
+	float: left; /*margin-left:50px;*/
+	position: relative;
+}
+
+#storyLineBlock .myStoryBlock a{color:#fff;}
+
+#storyLineBlock .myStoryBlock .featureDis {
+	/*width:340px; height:255px;*/
+	float: left;
+	 /*padding:20px;*/
+	/*display: table-cell;*/
+	/*vertical-align: middle */
+	vertical-align: bottom; 
+	color: #fff;
+	position: relative;
+	z-index: 1;
+}
+
+#storyLineBlock .myStoryBlock .featureDis .beatDetail,#storyLineBlock .myStoryBlock .featureDis .beatTrans
+	{
+	position: absolute;
+	bottom: -1px;
+	padding: 7px 15px; /*width:310px;*/
+	width: 92%;
+}
+	/*#storyLineBlock .myStoryBlock .featureDis .beatDetail{background:#6CA7BC;}*/
+#storyLineBlock .myStoryBlock .featureDis .beatTrans {
+	background: url(../images/beattitle_bg.png);
+}
+
+#storyLineBlock .myStoryBlock .BeatThumb {
+	 /*display: block;*/
+    float: left;
+    vertical-align:bottom;
+    height:inherit;
+ 	text-align:center; 
+ 	/*width:340px; height:255px; border-bottom:1px solid #8dbfd8;*/
+}
+
+#storyLineBlock .myStoryBlock .beatColRT { /*width:72px;*/
+	float: right;
+	margin-left: 10px;
+}
+
+#storyLineBlock .myStoryBlock .beatColRT ul li {
+	margin-bottom: 8px;
+	position: relative;
+}
+
+#sportyFrame .creatNewBtn,.storyScroll .creatNewBtn {
+	background: url("../images/creat.png") no-repeat scroll left top
+		transparent;
+	bottom: 38px;
+	cursor: pointer;
+	height: 32px;
+	position: absolute;
+	right: 8px;
+	width: 33px;
+	z-index: 1;
+}
+
+.storyScroll .creatNewBtn {
+	top: 70%;
+}
+
+#sportyFrame .creatNewBtn {
+	top: 40%;
+} /*popup*/
+.popupBlock,.viewPopup {
+	background: #1e1e1e;
+	color: #ccc;
+	min-height: 600px;
+	z-index: 999; /*position:absolute;*/
+	border: 1px solid #1e1e1e;
+	z-index: 100;
+	visibility: hidden;
+}
+
+.viewPopup {
+	visibility: visible;
+}
+	/* .viewPopup{width:472px; overflow:hidden; min-height:500px; max-height:1000px;} */
+.popupBlock {
+	width: 675px; /*top:10%; left:25%;*/
+}
+
+.popupBlock .leftCol {
+	height: 350px;
+	width: 350px;
+	float: left;
+	margin-bottom: 4px;
+}
+
+.popupBlock .rightCol {
+	width: 270px;
+	float: left;
+	width: 285px;
+	height: 230px;
+	padding: 50px 20px 0 20px;
+}
+
+.popupBlock .rightCol #colRight {
+	width: 295px;
+}
+
+.popupBlock h3 {
+	font-size: 15px;
+	padding-bottom: 10px;
+	font-weight: bold;
+}
+
+.viewPopup h3 {
+	font-size: 15px;
+	font-weight: bold; /*padding:20px 5px 10px;*/
+	padding-bottom: 5px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow:hidden;
+}
+
+.viewPopup .contentTitle {
+	padding: 15px 0 15px 10px;
+}
+
+.viewPopup .contentTitle h3 {
+	padding: 10px 0 5px 0;
+}
+
+.viewPopup .contentTitle .visitorImg {
+	float: left;
+	margin: 10px 10px 0 0;
+}
+
+.popupBlock p,.viewPopup p {
+	line-height: 16px;
+	padding-bottom: 5px;
+}
+
+.popupBlock #visitorComment {
+	clear: both;
+	margin: 0 5px -1px 0;
+}
+
+.popupBlock #visitorComment .viewport {
+	height: 200px;
+	overflow: hidden;
+	position: relative;
+	width: 98%;
+}
+
+#visitorComment .thumb {
+	left: 2px !important;
+}
+
+.popupBlock .commentBlock {
+	width: 670px;
+}
+
+.popupBlock .commentBlock .comment,.viewPopup .commentBlock .comment,.popupBlock .commentBlock .addComment,.popupBlock .commentBlock .addFootnote,.viewPopup .commentBlock .addComment,.viewPopup .commentBlock .addFootnote,.expandCommentBlcok .comment,.expandRightCol .addComment,.expandRightCol .addFootnote
+	{
+	padding: 10px 0 10px 15px;
+	color: #ccc;
+	overflow: hidden;
+	border-bottom: 1px solid #333;
+}
+
+.popupBlock .commentBlock .addComment,.popupBlock .commentBlock .addFootnote,.viewPopup .commentBlock .addComment,.viewPopup .commentBlock .addFootnote,.expandRightCol .addComment,.expandRightCol .addFootnote
+	{
+	background: #333;
+	width: 99%;
+}
+
+.popupBlock .commentBlock .comment input[type="text"],.popupBlock .commentBlock .addComment input[type="text"],.popupBlock .commentBlock .addFootnote input[type="text"],.viewPopup .commentBlock .addComment input[type="text"],.viewPopup .commentBlock .addFootnote input[type="text"],.viewPopup .commentBlock .comment input[type="text"],.expandRightCol .addComment input[type="text"],.expandRightCol .addFootnote input[type="text"]
+	{
+	background: #464545;
+	border: 1px solid #252424;
+	color: #ccc;
+	padding: 2px 10px;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	height: 23px;
+	width: 99%;
+}
+
+.popupBlock .commentBlock .comment .commentThumb,.popupBlock .commentBlock .comment .footnoteThumb,.popupBlock .commentBlock .addComment .commentThumb,.popupBlock .commentBlock .addFootnote .footnoteThumb,.viewPopup .commentBlock .addComment .commentThumb,.viewPopup .commentBlock .addFootnote .footnoteThumb,.viewPopup .commentBlock .comment .commentThumb,.viewPopup .commentBlock .comment .footnoteThumb,.expandCommentBlcok .comment .commentThumb,.expandRightCol .addComment .commentThumb,.expandRightCol .addFootnote .footnoteThumb
+	{
+	float: left;
+	margin-right: 12px;
+}
+
+.popupBlock .commentBlock .comment label,.popupBlock .commentBlock .addComment label,.popupBlock .commentBlock .addFootnote label,.expandCommentBlcok .commentBlock .comment label,.viewPopup .commentBlock .addComment label,.viewPopup .commentBlock .addFootnote label,.viewPopup .commentBlock .comment label
+	{
+	float: left;
+	width: 85%;
+}
+
+.popupBlock .commentBlock .comment label h4,.viewPopup .commentBlock .comment label h4,.expandCommentBlcok .comment label h4
+	{
+	font-size: 13px;
+	color: #ccc;
+	font-weight: bold;
+	padding-bottom: 3px;
+}
+
+.popMenu {
+	position: absolute;
+	right: 0;
+	top: 0;
+	z-index: 1;
+}
+
+.popMenu ul li a {
+	padding: 2px 3px 1px;
+	display: block;
+}
+
+.popMenu ul li ul {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 195px;
+	display: none;
+}
+
+.popMenu ul li ul li {
+	float: left;
+}
+
+.popMenu ul li ul li a,.popMenu div span a {
+	background: url(../images/sprite.png) no-repeat #2789ba;
+	padding: 5px;
+	width: 17px;
+	height: 13px;
+	margin-left: 2px;
+}
+
+.popMenu ul li ul li a.pencil,.popMenu div span a.pencil {
+	background-position: -7px -104px;
+}
+
+.popMenu ul li ul li a.fevi,.popMenu div span a.fevi {
+	background-position: -36px -105px;
+}
+
+.popMenu ul li ul li a.foot,.popMenu div span a.foot {
+	background-position: -63px -105px;
+}
+
+.popMenu ul li ul li a.delete,.popMenu div span a.delete,.popMenu div span a.deleteFriend
+	{
+	background-position: -90px -105px;
+}
+
+.popMenu ul li ul li a.heart,.popMenu div span a.heart {
+	background-position: -241px -134px;
+}
+
+.popMenu ul li ul li a.sortView,.popMenu div span a.sortView {
+	background-position: -348px -216px;
+	padding-left: 10px;
+    padding-right: 10px;
+}
+
+.popMenu div {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 116px; /* display:none; */
+}
+
+.popMenu div span a {
+	float: left;
+}
+
+.popMenu ul li:hover>ul {
+	display: block;
+}
+
+.popMenu:hover>div {
+	display: block;
+}
+
+.viewPopup #scrollPopup {
+	height: auto !important;
+}
+
+.titleSubMenu {
+	float: left;
+	display: none;
+	height: 38px;
+	background:url(../images/menutransparent_bg.png);
+	margin: -10px -20px -9px 15px;
+}
+
+.titleSubMenu ul li {
+	float: left;
+}
+
+.titleSubMenu ul li a {
+	background: url(../images/sprite.png) no-repeat;
+	padding: 5px;
+	width: 17px;
+	height: 13px;
+	margin: 9px 4px 0 8px;
+	display: block;
+	cursor: pointer;
+}
+
+.titleSubMenu li a.editStory {
+	background-position: -205px -134px;
+}
+
+.titleSubMenu ul li a.heart {
+	background-position: -242px -134px;
+}
+
+.titleSubMenu ul li a.shareStory {
+	background-position: -277px -134px;
+}
+
+.titleSubMenu ul li a.sortView {
+	background-position: -351px -216px;
+	width:20px;
+}
+
+.titleSubMenu ul li a.deleteStory {
+	background-position: -313px -133px;
+}
+
+.storyTitle:hover>.titleSubMenu {
+	display: block;
+}
+
+.storyTitle:hover>.menuTitle{display:none;} 
+
+#dragDrop a.removeBeat {
+	background: url("../images/sprite.png") no-repeat scroll -309px -138px transparent;
+	padding: 7px;
+	width: 10px;
+	float: right;
+}
+
+.viewPopup .blur {
+	float: left;
+	color: #fff;
+	font-weight: bold;
+	margin: -2px 5px 0 0;
+	background: url(../images/sprite.png) no-repeat -218px -173px;
+	padding: 3px 0;
+	width: 30px;
+	height: 25px;
+	text-align: center;
+}
+
+.viewPopup .storyBeat,.popupExpand .storyBeat {
+	background: #6ca7bc;
+	color: #fff;
+	padding: 12px 0;
+	text-align: center;
+	font-size: 13px;
+	position: absolute;
+	width: 100%;
+	bottom: 0;
+}
+
+.viewPopup #prevBtn a,.viewPopup #nextBtn a {
+	background: url(../images/sprite.png) no-repeat -125px -105px;
+	width: 22px;
+	height: 22px;
+	position: absolute;
+}
+
+.viewPopup #prevBtn a {
+	left: 7px;
+	bottom: 6px;
+}
+
+.viewPopup #nextBtn a {
+	right: 7px;
+	bottom: 6px;
+	background-position: -158px -104px;
+}
+
+.popupBlock a,.viewPopup a {
+	color: #ccc;
+}
+
+#contentBlock {
+	width: 460px;
+	margin: -3px 5px 10px 5px;
+	clear: both;
+}
+
+#colRight {
+	width: 270px;
+	margin: 0 5px 10px 5px;
+	clear: both;
+}
+
+.storyComment,#beatComment {
+	width: 465px;
+	margin: 0 0 10px;
+	clear: both;
+}
+
+.contentTitle {
+	width: 456px;
+	margin: 0 5px 10px 0;
+	clear: both;
+}
+
+#contentBlock .viewport {
+	width: 440px;
+	height: 120px;
+	overflow: hidden;
+	position: relative;
+}
+
+.storyComment .viewport,#beatComment .viewport,.contentTitle .viewport {
+	width: 440px;
+	height: 190px;
+	overflow: hidden;
+	position: relative;
+}
+
+.storyComment .viewport {
+	height: 110px;
+}
+
+#colRight .viewport {
+	width: 275px;
+	height: 200px;
+	overflow: hidden;
+	position: relative;
+    text-align:justify;
+}
+
+#colRight .overview {
+	color: #fff !important;
+}
+
+#contentBlock .overview {
+	color: #fff !important;
+}
+
+.viewPopup .imgListing {
+	overflow: hidden;
+	margin: 5px 0;
+	height: 85px;
+}
+
+.viewPopup .imgListing figure {
+	float: left;
+	width: 94px;
+}
+
+.viewPopup .imgListing figure img {
+	margin-right: 20px;
+} /*.viewPopup .imgListing figure:first-child{margin-left:11px;}*/
+.contentTitle .overview {
+	color: #fff !important;
+}
+	/*.overlay{width:100%;height:100%;display:none;position:absolute;z-index:9998;top:0;left:0;-webkit-opacity:0.75;-moz-opacity:0.75;opacity:0.75;-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";filter:alpha(opacity=75);background:#000;}*/
+.overlay,.overlay1 {
+	background: #000;
+	-webkit-opacity: 0.65;
+	-moz-opacity: 0.65;
+	opacity: 0.65;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+	filter: alpha(opacity = 65);
+	background: #000;
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	z-index: 99;
+	top: 0;
+}
+
+.overlay {
+	visibility: hidden;
+}
+
+.overlay1 {
+	display: none;
+}
+
+#scrollPopup ul li {
+	float: left;
+	width: 472px;
+} /*Create storyline 13 March*/
+.scrollContainer .smoothScroll .creatStory,#myMoments .momentBlock .creatMoment
+	{
+	position: relative;
+	color: #fff;
+	font-size: 13px;
+	border: 2px dashed #FFFFFF;
+}
+
+.scrollContainer .smoothScroll .creatStory {
+	width: 320px;
+	height: 190px;
+}
+
+.scrollContainer .smoothScroll .creatStory label {
+	padding-top: 80px;
+	display: block;
+}
+
+.scrollContainer .smoothScroll .creatStory .creatNewBtn {
+	bottom: 40px !important;
+	left: 140px;
+}
+
+#myMoments .momentBlock .creatMoment {
+	width: 80px;
+	height: 80px;
+	font-size: 14px;
+}
+
+#myMoments .momentBlock .creatMoment label {
+	padding: 20px 5px;
+	display: block;
+}
+
+#myMoments .momentBlock .creatMoment .creatNewBtn {
+	left: 38px;
+	top: 60px;
+}
+
+.momentBlock .createMoment {
+	position: absolute;
+	left: -68px;
+	top: -20px;
+	z-index: 1;
+	width: 145px;
+}
+
+.scrollContainer .ScrollCenter {
+	margin-top: 50px;
+}
+
+.scrollContainer .ScrollCenter .createNewStory {
+	position: absolute;
+	top: -48px; /*left:85px;*/
+	padding-left: 85px;
+	z-index: 1;
+}
+
+.scrollContainer .ScrollCenter .creatFirstStory {
+	font-family: hand_of_seanregular;
+	font-size: 18px;
+	color: #fff;
+	position: absolute;
+	left: -70%;
+	background: url(../images/create-arrow.png) no-repeat 156px 15px;
+	height: 100%;
+	width: 100%;
+}
+
+.scrollContainer .smoothScroll .creatPointer {
+	top: 193px !important;
+}
+
+.momentBlock .addMoment {
+	font-family: hand_of_seanregular;
+	font-size: 18px;
+	color: #fff;
+	position: absolute;
+	width: 285px;
+	text-align: right;
+	left: 80px;
+	height: 100%;
+	background: url(../images/addmoment_arrow.png) no-repeat 10px -3px;
+	padding: 14px 0 15px 17px;
+}
+
+.createStoryBlock {
+	min-width: 270px;
+	position: absolute;
+	top: 15%;
+	left: 30%;
+	z-index: 100;
+	visibility: hidden;
+}
+
+.editStoryBlock {
+	min-width: 270px;
+	position: absolute;
+	top: 15%;
+	left: -6%;
+	z-index: 100;
+	visibility: hidden;
+}
+
+.createStoryBlock .createStory,.createStoryBlock .generateStory,.editStoryBlock .editStoryline
+	{
+	background: #1e1e1e;
+	width: 300px;
+	min-height: 180px;
+	position: absolute;
+	left: 40%;
+	display: none;
+}
+
+.createStoryBlock .createStory figure:first-child input[type="file"] {
+	height: 92px;
+	left: 4px;
+	opacity: 0;
+	position: absolute;
+	top: 3px;
+}
+
+.createStoryBlock .createStory h3,
+.createStoryBlock .generateStory h3,
+.editStoryBlock .editStoryline h3,
+.selectedSocialScreen h3
+	{
+	color: #fff;
+	font-size: 20px;
+	padding: 15px 12px;
+}
+.selectedSocialScreen h3{background:#1E1E1E; margin:0 -15px;}
+.createStoryBlock .createStory h3 .createIcon,.createStoryBlock .generateStory h3 .generateIcon,.editStoryBlock .editStoryline  h3 .createIcon
+	{
+	background: url(../images/sprite.png) no-repeat -280px -97px;
+	width: 30px;
+	height: 35px;
+	float: left;
+	margin: -4px 10px 0 0;
+}
+
+.createStoryBlock .generateStory h3 .generateIcon {
+	background-position: -263px -163px;
+	width: 40px;
+}
+
+.createStoryBlock .createStory label,.createStoryBlock .generateStory label,.editStoryBlock .editStoryline label
+	{
+	display: block;
+	padding: 8px 8px 0 8px;
+	position: relative;
+	clear: both;
+}
+
+.createStoryBlock .createStory label input[type="text"],.editStoryBlock .editStoryline label input[type="text"],.createStoryBlock .dateBlock input[type="text"],.editStoryBlock .dateBlock input[type="text"],.videoPopup .dateBlock input[type="text"],.editBeatPopup .dateBlock input[type="text"],.editMomentPopup .dateBlock input[type="text"],.createStoryBlock .generateStory label input[type="text"],.createStoryBlock .createStory label textarea,.editStoryBlock .editStoryline label textarea,.createStoryBlock .generateStory label textarea
+	{
+	background: #343434;
+	border: none;
+	width: 96%;
+	color: #ccc;
+	font-size: 14px;
+	padding: 10px 5px;
+	border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	resize: none;
+}
+
+.generateStory .customSelectNumber span.customStyleSelectBox {
+	background: url(../images/drop_button.png) no-repeat scroll 96% 16px
+		#343434;
+	padding: 13px 8px 5px;
+	margin-top: 0;
+	width: 94%;
+}
+
+.generateStory .customSelectNumber span.customStyleSelectBox span {
+	width: 232px !important;
+	border-right: 1px solid #000;
+	height: 24px;
+	margin-top: -13px;
+	padding-top: 13px;
+}
+
+.createStoryBlock .generateStory label select {
+	width: 94%;
+	color: #ccc;
+	background: #343434;
+	margin-top: 3px;
+}
+
+.createStoryBlock .createStory figure,.editStoryBlock .editStoryline figure
+	{
+	float: left;
+	margin: 10px 0 12px 8px;
+	color: #ccc;
+	text-align: center;
+	position: relative;
+	overflow: hidden;
+}
+
+.createStoryBlock .createStory figure.feature,.editStoryBlock .editStoryline figure.feature
+	{
+	width: 125px;
+}
+
+.createStoryBlock .createStory figure.background,.editStoryBlock .editStoryline figure.background
+	{
+	width: 150px;
+}
+
+.createStoryBlock .generateStory figure {
+	float: left;
+	margin: 10px 0 12px 8px;
+	width: 280px;
+	text-align: center;
+	position: relative;
+	overflow: hidden;
+	color: #ccc;
+}
+
+.createStoryBlock .generateStory figure input.file {
+	position: absolute;
+	top: 32px;
+	left: -44px;
+	height: 50px;
+	opacity: 0;
+	filter: alpha(opacity =   0);
+}
+
+.createStoryBlock .createStory figure input[type="file"],.editStoryBlock .editStoryline figure input[type="file"]
+	{
+	position: absolute;
+	left: -123px;
+	top: 25px;
+	height: 50px;
+	opacity: 0;
+	filter: alpha(opacity =   0);
+}
+
+.createStoryBlock .createStory figure figcaption,.editStoryBlock .editStoryline figure figcaption,.createStoryBlock .generateStory figure figcaption
+	{
+	font-size: 13px;
+	padding-top: 3px 0;
+}
+
+.createStoryBlock .createStory figure span.file,.editStoryBlock .editStoryline figure span.file,.createStoryBlock .generateStory figure span.file,.videoPopup figure span.file,.editMomentPopup figure span.file,.editBeatPopup figure span.file,.editMomentPopup figure span.file
+	{
+	float: left;
+	width: 115px;
+	overflow: hidden;
+	margin: 4px 0 0 0;
+	position: relative;
+}
+
+.createStoryBlock .createStory figure span.file input[type="file"],.editStoryBlock .editStoryline figure span.file input[type="file"].createStoryBlock .generateStory figure span.file input[type="file"],.videoPopup figure span.file input[type="file"],.editMomentPopup figure span.file input[type="file"],.editBeatPopup figure span.file input[type="file"]
+	{
+	position: absolute;
+	left: -110px;
+	left: -130px\9;
+	opacity: 0;
+	filter: alpha(opacity =   0);
+}
+
+.createStory figure span.file input[type="button"],.editStoryline figure span.file input[type="button"],.generateStory figure span.file input[type="button"],.videoPopup figure span.file input[type="button"],.editMomentPopup figure span.file input[type="button"],.editBeatPopup figure span.file input[type="button"]
+	{
+	background: #343434;
+	color: #ccc;
+	padding: 2px 5px;
+	font-weight: bold;
+	cursor: pointer;
+	border: none;
+}
+
+.createStory figure input[type="text"],.editStoryline figure input[type="text"],.generateStory figure input[type="text"]
+	{
+	border: none;
+	background: #343434;
+	color: #ccc;
+	padding: 2px;
+	width: 90%;
+	margin-top: 5px;
+}
+
+.createStoryBlock .createNewGroup .createNewStory {
+	float: left;
+	background: #1e1e1e;
+	width: 230px;
+	padding: 20px;
+	color: #ccc;
+	margin-right: 2px;
+	text-align: center;
+}
+
+.createStoryBlock .createNewGroup .createNewStory .createIcon {
+	margin: 10px auto;
+	display: block;
+	width: 80px;
+}
+
+.createStoryBlock .createNewGroup .createNewStory .generateIcon {
+	background-position: -324px -92px;
+}
+
+.createStoryBlock .createNewGroup .createNewStory p {
+	line-height: 15px;
+	padding: 10px 0;
+	text-align: left;
+	font-size: 13px;
+}
+
+.createStoryBlock .dateBlock,.editStoryBlock .dateBlock,.videoPopup .dateBlock,.editBeatPopup .dateBlock,.editMomentPopup .dateBlock
+	{
+	padding: 8px 8px 0;
+	display: block;
+	position: relative;
+	clear: both;
+	overflow: hidden;
+	width:425px;
+}
+
+.createStoryBlock .dateBlock .date,.editStoryBlock .dateBlock .date {
+	width: 130px;
+	float: left;
+	margin-right: 10px;
+	overflow: hidden;
+}
+
+.videoPopup .dateBlock .date,.editBeatPopup .dateBlock .date,.editMomentPopup .dateBlock .date
+	{
+	width: 115px;
+	float: left;
+	margin-left: 8px;
+	overflow: hidden;
+}
+
+.createStoryBlock .dateBlock .date input[type="text"],.editStoryBlock .dateBlock .date  input[type="text"],.videoPopup .dateBlock .date input[type="text"],.editBeatPopup .dateBlock .date input[type="text"],.editMomentPopup .dateBlock .date input[type="text"]
+	{
+	width: 90%;
+}
+
+.createStoryBlock .dateBlock .heightlight,.editStoryBlock .dateBlock .heightlight,.videoPopup .dateBlock .heightlight,.editBeatPopup .dateBlock .heightlight,.editMomentPopup .dateBlock .heightlight
+	{
+	background: #343434;
+	border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	color: #ccc;
+	height: 23px;
+	padding: 13px 10px 0;
+	position: absolute;
+	left: 155px;
+	width: 116px;
+	overflow: hidden;
+}
+
+.videoPopup .dateBlock .heightlight,.editBeatPopup .dateBlock .heightlight,.editMomentPopup .dateBlock .heightlight
+	{
+	left: 142px;
+	width: 110px;
+	padding: 12px 10px 0;
+}
+
+.createStoryBlock .dateBlock .heightlight span,.editStoryBlock .dateBlock .heightlight span,.videoPopup .dateBlock .heightlight span,.editBeatPopup .dateBlock .heightlight span,.editMomentPopup .dateBlock .heightlight span
+	{
+	float: left;
+	margin-right: 32px;
+}
+
+.createStoryBlock .dateBlock .heightlight .colorBox li,.editStoryBlock .dateBlock .heightlight .colorBox li,.videoPopup .dateBlock .heightlight .colorBox li,.editBeatPopup .dateBlock .heightlight .colorBox li,.editMomentPopup .dateBlock .heightlight .colorBox li
+	{
+	float: left;
+	width: 20px;
+	height: 18px;
+	margin: -3px 0 15px 7px;
+	cursor: pointer;
+}
+
+.heightlight .colorBox .green {
+	background: #47b4b8;
+}
+
+.heightlight .colorBox .blue {
+	background: #6ca7bc;
+}
+
+.heightlight .colorBox .red {
+	background: #b8474f;
+}
+
+.heightlight .colorBox .yellow {
+	background: #ca8d3e;
+}
+
+.heightlight .colorBox .violet {
+	background: #9b74a4;
+}
+
+.heightlight .colorBox .activeColor {
+	border: 1px solid #000;
+}
+
+.dateBlock .heightlight:hover {
+	width: 250px;
+}
+
+.createStory .submitBTN,.generateStory .submitBTN,.editStoryline .submitBTN
+	{
+	border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	margin-bottom: 10px;
+}
+
+.createNewStory .submitBTN {
+	border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	margin: 25px 0 25px 50px;
+}
+
+.center {
+	text-align: center;
+}
+/* For safari/chrome */
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+	.createStory figure span.file input[type="file"],.editStoryline figure span.file input[type="file"]
+    {left: 0;}
+  .bottomAlignInFigure{display: table-cell !important;}
+}
+
+/* Tiny Scrollbar */
+#my_friends,#inviteGroup,#invite_friends,#searchList,#captureMode {
+	width: 485px;
+	margin: 0 5px 10px 15px;
+	clear: both;
+}
+
+#accountSetting {
+	width: 450px;
+	margin: 0 5px 10px 15px;
+	clear: both;
+}
+
+#accountSetting .logOutButton {
+	background: none repeat scroll 0 0 #47B4B8;
+	border: medium none;
+	border-radius: 20px 20px 20px 20px;
+	color: #FFFFFF;
+	display: inline-block;
+	font-size: 1.4em;
+	margin-left: 140px;
+	padding: 6px 0 7px;
+	text-align: center;
+	width: 130px;
+	text-decoration: none;
+}
+
+#accountSetting .updateButton {
+	background: none repeat scroll 0 0 #47B4B8;
+	border: medium none;
+	border-radius: 20px 20px 20px 20px;
+	color: #FFFFFF;
+	display: inline-block;
+	font-size: 1.4em;
+	margin-left: 160px;
+	padding: 6px 0 7px;
+	text-align: center;
+	width: 100px;
+	text-decoration: none;
+}
+
+#my_friends .viewport,#inviteGroup .viewport,#searchList .viewport {
+	width: 475px;
+	height: 300px;
+	overflow: hidden;
+	position: relative;
+}
+
+#my_friends .overview,#inviteGroup .overview,#searchList .overview,#visitorComment .overview,#contentBlock .overview,.storyComment .overview,#beatComment .overview,.contentTitle  .overview,#colRight  .overview,.momentTitle  .overview,.verticalImgListing .overview,.notificationScroll .overview,.titleDescScroll .overview, .popupExpand .overview
+	{
+	list-style: none;
+	position: absolute;
+	left: 0;
+	top: 0;
+	padding: 0;
+	margin: 0;
+	color: #3399cc;
+	width: 100%;
+}
+
+#my_friends .scrollbar,#inviteGroup .scrollbar,#searchList .scrollbar,#visitorComment .scrollbar,#contentBlock .scrollbar,.storyComment .scrollbar,#beatComment .scrollbar,.contentTitle .scrollbar,#colRight .scrollbar,.momentTitle  .scrollbar,.expandRightCol .expandCommentBlcok .scrollbar,.verticalImgListing .scrollbar,.notificationScroll .scrollbar,.titleDescScroll .scrollbar
+	{
+	background: #f0f0f0;
+	position: relative;
+	background-position: 0 0;
+	float: right;
+	width: 7px;
+	display: block;
+}
+
+#my_friends .track,#inviteGroup .track,#searchList .track,#visitorComment .track,#contentBlock .track,.storyComment .track,#beatComment .track,.contentTitle .track,#colRight .track,.momentTitle  .track,.expandRightCol .expandCommentBlcok .track,.verticalImgListing .track,.notificationScroll .track,.titleDescScroll .track
+	{
+	height: 100%;
+	width: 5px;
+	position: relative;
+	padding: 0 1px;
+}
+
+#my_friends .thumb,#inviteGroup .thumb,#searchList .thumb,#visitorComment .thumb,#contentBlock .thumb,.storyComment .thumb,#beatComment .thumb,.contentTitle .thumb,#colRight .thumb,.momentTitle  .thumb,.expandRightCol .expandCommentBlcok .thumb,.verticalImgListing .thumb,.notificationScroll .thumb,.titleDescScroll .thumb
+	{
+	background: #a6a6a6;
+	height: 20px;
+	width: 5px;
+	cursor: pointer;
+	overflow: hidden;
+	position: absolute;
+	top: 0;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+
+#my_friends .thumb .end,#inviteGroup .thumb .end,#searchList .thumb .end,#visitorComment .thumb .end,#contentBlock .thumb .end,.storyComment .thumb .end,#beatComment .thumb .end,.contentTitle .thumb .end,#colRight .thumb .end,.momentTitle  .thumb .end,.expandRightCol .expandCommentBlcok .end,.verticalImgListing .end,.notificationScroll .end,.titleDescScroll .end
+	{
+	overflow: hidden;
+	height: 5px;
+	width: 5px;
+}
+	/*#my_friends .disable, #inviteGroup .disable, #searchList .disable,#visitorComment .disable, #contentBlock .disable, #storyComment .disable, #beatComment .disable,#storyBlock .disable, #colRight .disable, .momentTitle .disable{ display: none; }*/
+/* MEDIA QUERY BREAKPOINTS */
+@media only screen and (min-width: 1024px) and (max-width: 1280px) {
+	.wrapper {
+		width: 90%;
+	}
+} /* DESKTOP */
+@media screen and (min-width:1280px) {
+	.wrapper { /*width:1150px;*/
+		width: 95%;
+	}
+	#littleDescription li {
+		width: 30%;
+		margin: 0 0 0 2%;
+	}
+} /* iPad HORIZONTAL */
+@media screen and (max-width:1024px) {
+	.wrapper {
+		width: 95%;
+	}
+	#littleDescription h3 {
+		font-size: 1.4em;
+	}
+	#littleDescription p {
+		font-size: 1.2em;
+	}
+	#landingHeader #mainMenu {
+		width: 365px;
+		margin: -55px auto 0;
+	}
+	#landingHeader #mainMenu a {
+		padding: 10px 0;
+		font-size: 1.1em;
+		margin-left: 9%;
+		width: 85px;
+	}
+	#mainMenu .active a,#mainMenu a:hover {
+		background: #47b4b8;
+		border-radius: 25px;
+		-moz-border-radius: 25px;
+		-webkit-border-radius: 25px;
+	}
+	#sportyTitle {
+		margin-top: 45px;
+		height: 130px;
+	}
+	#littleDescription {
+		width: 55%;
+	}
+	#littleDescription h3 {
+		font-size: 1.1em;
+		width: 55%;
+	}
+	.storyScroll .push {
+		height: 60px;
+	}
+	#mainContent .searchListing h2 {
+		font-size: 15px;
+		padding-top: 5px;
+	}
+	.searchListing .custom-checkbox label {
+		padding: 3px 0 6px 25px;
+	}
+	#mainContent #articleBlock .articleCol,#mainContent #articleBlock .slideCol
+		{
+		margin-left: 70px !important;
+	}
+	#mainContent #articleBlock .slideCol img {
+		width: 450px;
+		height: 300px;
+	}
+	.momentScroll .videoBlock{min-height:65%;}
+    .momentScroll .videoBlock .mejs-overlay{min-height:280px;}
+}
+
+/* iPad VERTICAL */
+@media screen and (max-width:768px) { /*.wrapper{		width:730px;	}*/
+	.outerLoginBg {
+		height: 330px;
+		position: relative;
+	}
+	#outerLogin {
+		padding-top: 130px
+	}
+	#loginOptions {
+		margin: 95px 50px 0 0;
+	}
+	#littleDescription {
+		padding: 140px 0 0;
+		width: 100%;
+	}
+	#littleDescription h3 {
+		font-size: 1.5em;
+	}
+	#littleDescription p {
+		font-size: 1.4em;
+	}
+	#landingHeader #mainMenu {
+		width: 365px;
+	}
+	#landingHeader #mainMenu a {
+		padding: 10px 0;
+		font-size: 1em;
+	}
+	#mainMenu a.active,#mainMenu a:hover {
+		background-image: none;
+		background-color: #47b4b8;
+	} /*#myMoments .momentBlock{padding-top:10%;}*/
+	#sportyTitle {
+		margin-top: 45px;
+		height: 200px;
+	}
+	#outerLogin #leftBanner {
+		top: 0;
+	}
+	#outerLogin #leftBanner img {
+		width: 415px;
+		height: 365px;
+	}
+	#loginOptions hgroup h1 img {
+		width: 275px;
+		height: 75px;
+	}
+	#loginOptions h2 {
+		font-size: 1.25em;
+	}
+	#myMomentBlock .momentBar {
+		padding-bottom: 17px;
+	}
+	#mainContent .searchListing h2 {
+		font-size: 15px;
+		padding-top: 5px;
+	}
+	.searchListing .custom-checkbox label {
+		padding: 3px 0 6px 25px;
+	}
+	#mainContent #articleBlock h1 {
+		font-size: 32px !important;
+	}
+	#mainContent #articleBlock .articleCol,#mainContent #articleBlock .slideCol
+		{
+		margin-left: 20px !important;
+	}
+	#mainContent #articleBlock .slideCol img {
+		width: 425px;
+		height: 300px;
+	}
+	#mainContent #articleBlock #storyContainer .signButton {
+		padding: 6px 25px !important;
+	}
+	#storisticHeader #topMenu ul li {
+		margin: 13px 15px 0 0 !important;
+		font-size: 13px !important;
+	}
+	.scrollContainer .smoothScroll .linePointer {
+		height: 20%
+	}
+	.scrollContainer ul li .storyLine li a,.scrollContainer .smoothScroll .storyLine li a
+		{
+		padding: 18px 0;
+	}
+	#storyLineBlock  .featureBlock .beatThumb {
+		left: 50%;
+	}
+	#storyLineBlock  .myStoryBlock  .beatThumb {
+		left: 44%;
+	}
+	 .createStoryBlock{left:15%; top:30%;} 
+	 
+	 #tutorialBlock ul li img{height:auto;}
+}
+
+.selected {
+	display: block !important;
+}
+
+.hidden {
+	display: none !important;
+} /**/
+.shareStoryline,.storylineSetting {
+	background: #1e1e1e;
+	position: relative;
+	position: absolute;
+	top: 5%;
+	left: 0;
+	width: 320px;
+	z-index: 999;
+	overflow: hidden;
+}
+
+.shareStoryline h3,.deleteConfirmation h3,.deleteBeatConfirmation h3,.storylineSetting h3,.deleteGroup h3,.deleteFriendPopup h3,.deleteSocialSitePopup h3
+	{ /*background:#1e4d81;*/
+	color: #fff;
+	font-size: 18px;
+	padding: 10px 0;
+	text-align: center;
+}
+
+.shareStoryline h3 .share,.storylineSetting h3 .setting {
+	width: 20px;
+	height: 18px;
+	background: url(../images/sprite.png) no-repeat -11px -107px;
+	margin: 0 10px 0 7px;
+	float: left;
+}
+
+.videoPopup label input[type="text"],.editBeatPopup label input[type="text"],.videoPopup label select,.editBeatPopup label select,.editMomentPopup label select,.editMomentPopup label input[type="text"],.videoPopup label textarea,.editMomentPopup label textarea,.editBeatPopup label textarea,.storylineSetting dl dd input[type="text"],.videoPopup .search input[type="text"],.editMomentPopup .search input[type="text"],.editBeatPopup .search input[type="text"],.shareStoryline label input[type="text"]
+	{
+	color: #ccc;
+	background: #343434;
+	border: none;
+	font-size: 13px;
+	width: 95%;
+	padding: 8px 5px;
+	resize: none;
+	border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+}
+
+.videoPopup label select,.editMomentPopup label select {
+	width: 150px;
+	margin: 0px 0px 4px 0px;
+}
+
+.editMomentPopup .customSelectNumber label {
+	padding: 10px 0 0 6px;
+}
+
+.storylineSetting .submitBTN,.videoPopup .submitBTN,.editMomentPopup .submitBTN,.editBeatPopup .submitBTN
+	{
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border: 1px solid #b2d1e7;
+	margin: 10px 0 10px 10px;
+}
+
+.shareStoryline label.shareEmail,.shareStoryline .shareStoristic {
+	display: none;
+	margin: 7px 10px;
+	float: left;
+	width: 95%;
+}
+
+.shareStoryline label.shareEmail input[type="text"],.shareStoryline .shareStoristic input[type="text"]
+	{
+	width: 60%;
+	float: left;
+}
+
+.shareStoryline label.shareEmail input[type="submit"],.shareStoryline .shareStoristic input[type="submit"]
+	{
+	width: 35%;
+	float: left;
+	color: #fff;
+	border: none;
+	background: #1E4D81;
+	padding: 6px 2px;
+	border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	margin-left: 5px;
+	cursor: pointer;
+}
+
+.shareStoryline .shareStoristic select {
+	width: 46%;
+	float: left;
+	background: #343434;
+	color: #ccc;
+	font-size: 11px;
+	padding: 8px 2px;
+	margin-right: 10px;
+	border: none;
+	max-height: 50px;
+	margin-bottom: 10px;
+}
+
+.shareStoryline .shareStoristic .shareButtonGroup {
+	width: 300px;
+	margin-left: 25px;
+	overflow: hidden;
+}
+
+.shareStoryline .shareStoristic .contriBlock label {
+	display: block;
+    background: #47b4b8;
+	margin: 0 auto 5px;
+	font-size: 15px;
+	font-weight:bold;
+	color: #fff;
+	overflow: hidden;
+	width: 130px;
+    padding:7px 10px 0;
+    height:22px;
+	text-align:center;
+    border-radius:15px;
+    -moz-border-radius:15px;
+    -webkit-border-radius:15px;
+    cursor:pointer;
+}
+
+.shareStoryline .shareStoristic .contriBlock label span {
+	/*background: #6CA7BC;*/
+	color: #fff;
+	float: right;
+	height: 17px;
+	width: 45px;
+	text-align: center;
+	padding-top: 5px;
+	margin-top: -4px;
+}
+
+.shareStoryline .shareStoristic .contriBlock label span.contributors img,.shareStoryline .shareStoristic .contriBlock label span.viewer img
+	{
+	float: right;
+	margin: 2px 8px 0 0;
+}
+
+.sharePopup .groupColum {
+	color: #fff;
+	max-height: 400px;
+	overflow-y: auto;
+}
+
+.sharePopup .groupColum h3,.sharePopup .groupColum h4 {
+	font-size: 15px;
+	text-align: center;
+	margin-bottom: 10px;
+	font-weight:bold;
+}
+
+.sharePopup .groupColum h3 {
+	margin-bottom: 20px;
+}
+
+.sharePopup .groupColum label {
+	display: block;
+	overflow: hidden;
+	font-size: 14px;
+	margin-bottom: 5px;
+}
+
+.sharePopup .groupColum label .custom-checkbox {
+	float: left;
+	margin: 0px 10px 0 0;
+}
+
+.sharePopup .groupColum label .custom-checkbox input[type="checkbox"] {
+	position: inherit;
+}
+
+.sharePopup .sharedBlock,.sharePopup .viewersBlock,.sharePopup .contributorsBlock
+	{
+	background: #1E1E1E;
+	width: 350px;
+	padding: 15px;
+	display: none;
+	z-index: 999;
+}
+
+.sharePopup input[type='submit'] {
+	min-width: 110px;
+	margin: 20px 6px 6px;
+}
+
+.shareStoryline {
+	min-height: 100px;
+	top: 51%;
+	width: 320px;
+	display: none;
+}
+
+.shareStoryline h3 .share {
+	background-position: -40px -107px;
+}
+
+.shareStoryline .socialMedia {
+	width: 225px;
+	margin: 0 auto;
+}
+
+.shareStoryline .socialMedia li {
+	float: left;
+}
+
+.shareStoryline .socialMedia li a {
+	height: 30px;
+	display: block;
+	background: url(../images/sprite.png) no-repeat;
+	margin: 15px 0 0 15px;
+}
+
+.shareStoryline .socialMedia li.twitter a {
+	background-position: -9px -172px;
+	width: 20px;
+}
+
+.shareStoryline .socialMedia li.facbook a {
+	background-position: -45px -171px;
+	width: 20px;
+}
+
+.shareStoryline .socialMedia li.gTalk a {
+	background-position: -82px -170px;
+	width: 32px;
+}
+
+.shareStoryline .socialMedia li.message a {
+	background-position: -123px -171px;
+	width: 35px;
+}
+
+.shareStoryline .socialMedia li.storistic a {
+	background-position: -282px -419px;
+	width: 27px;
+	height: 35px;
+}
+
+.deleteConfirmation,.deleteBeatConfirmation,.deleteGroup,.deleteFriendPopup
+	{
+	top: 54%;
+	display: none;
+}
+
+.deleteConfirmation ul li,.deleteBeatConfirmation ul li,.deleteGroup ul li,.deleteFriendPopup ul li, .deleteSocialSitePopup ul li
+	{
+	float: left;
+	margin: 10px;
+}
+
+.deleteConfirmation ul,.deleteFriendPopup ul,.deleteGroup ul,.deleteFiendConfirmation ul,.deleteBeatConfirmation ul, deleteSocialSitePopup ul
+	{
+	width: 150px;
+	margin: 0 auto;
+}
+
+.deleteConfirmation,.deleteBeatConfirmation,.deleteGroup,.deleteFriendPopup
+	{
+	background: #1e1e1e;
+	position: relative;
+	position: absolute;
+	top: 65px;
+	left: 0;
+	min-width: 200px;
+	z-index: 999;
+	overflow: hidden;
+	padding: 5px;
+	border: 1px solid #4E4C4C;
+	height: 75px;
+}
+
+.deleteConfirmation .submitBTN,.deleteConfirmation .noButton,.deleteBeatConfirmation .submitBTN,.deleteBeatConfirmation .noButton,.deleteGroup .noButton,.deleteGroup .submitBTN,.deleteFriendPopup .noButton,.deleteFriendPopup .submitBTN, .deleteSocialSitePopup .submitBTN,.deleteSocialSitePopup .noButton
+	{
+	background: #47b4b8;
+}
+
+.storylineSetting {
+	min-height: 200px;
+	top: 31%;
+	display: none;
+}
+
+.storylineSetting h3 .setting {
+	background-position: -123px -137px;
+}
+
+.storylineSetting dl dt {
+	font-size: 13px;
+	color: #ccc;
+	padding: 15px 0 10px 10px;
+	float: left;
+	width: 100px;
+	clear: both;
+}
+
+.storylineSetting dl dd {
+	float: left;
+	padding-top: 8px;
+	position: relative;
+}
+
+.storylineSetting dl dd input[type="text"] {
+	padding: 8px 5px;
+	border-radius: 12px;
+	-moz-border-radius: 12px;
+	-webkit-border-radius: 12px;
+	text-align: center;
+}
+
+.storylineSetting .customSelectNumber {
+	margin: 0 10px;
+}
+
+.storylineSetting .customSelectNumber select {
+	width: 90%;
+	color: #ccc;
+	background: #343434;
+}
+
+.storylineSetting .customSelectNumber .customStyleSelectBox {
+	background-color: #343434;
+	width: 240px;
+	padding: 10px 10px 4px;
+	margin: 0;
+}
+
+.storylineSetting .customSelectNumber .customStyleSelectBox span {
+	width: 210px !important;
+	margin-top: -10px;
+	padding-top: 10px;
+	border-right: 1px solid #000;
+	height: 23px;
+}
+
+.storylineSetting dl dd .custom-checkbox {
+	margin-top: 5px;
+}
+
+.storylineSetting dl dd .custom-checkbox label {
+	background: url(../images/custom_checkbox.png) no-repeat;
+	padding: 9px 0 12px 21px;
+}
+
+.storylineSetting dl dd .custom-checkbox label.checked {
+	background-position: 0 -24px;
+}
+
+.videoPopup {
+	background: #1e1e1e;
+	color: #ccc;
+	position: relative;
+	position: absolute;
+	top: 5%;
+	left: 40%;
+	width: 290px;
+	z-index: 999; /*overflow:hidden;*/
+	min-height: 300px;
+	padding-bottom: 5px;
+	display: none;
+}
+
+.editMomentPopup,.editBeatPopup {
+	background: #1e1e1e;
+	color: #ccc;
+	position: relative;
+	position: absolute;
+	top: 5%;
+	left: 3%;
+	width: 290px;
+	z-index: 999; /*overflow:hidden;*/
+	min-height: 300px;
+	padding-bottom: 5px;
+	display: none;
+}
+
+.videoPopup .beatTab,.editMomentPopup .beatTab,.editBeatPopup .beatTab {
+	padding: 10px 15px;
+}
+
+.videoPopup .beatTab ul li,.editMomentPopup .beatTab ul li,.editBeatPopup .beatTab ul li
+	{
+	float: left;
+}
+
+.videoPopup .beatTab ul li a,.editMomentPopup .beatTab ul li a,.editBeatPopup .beatTab ul li a
+	{
+	display: block;
+	background: url(../images/sprite.png) no-repeat;
+	width: 25px;
+	height: 20px;
+	padding: 5px 3px;
+	margin-right: 15px;
+}
+
+.videoPopup .beatTab ul li.audio a,.editMomentPopup .beatTab ul li.audio a,.editBeatPopup .beatTab ul li.audio a
+	{
+	background-position: -9px -65px !important;
+}
+
+.videoPopup .beatTab ul li.video a,.editMomentPopup .beatTab ul li.video a,.editBeatPopup .beatTab ul li.video a
+	{
+	background-position: -43px -66px !important;
+}
+
+.videoPopup .beatTab ul li.imgIcon a,.editMomentPopup .beatTab ul li.imgIcon a,.editBeatPopup .beatTab ul li.imgIcon a
+	{
+	background-position: -72px -68px !important;
+}
+
+.videoPopup .beatTab ul li.textIcon a,.editMomentPopup .beatTab ul li.textIcon a,.editBeatPopup .beatTab ul li.textIcon a
+	{
+	background-position: -96px -67px !important;
+}
+
+.videoPopup .beatTab ul li.group a,.editMomentPopup .beatTab ul li.group a,.editBeatPopup .beatTab ul li.group a
+	{
+	background-position: -240px -98px !important;
+}
+
+.videoPopup .beatTab ul li.audio a:hover,.videoPopup .beatTab ul li.audio a.active,.editMomentPopup .beatTab ul li.audio a:hover,.editMomentPopup .beatTab ul li.audio a.active,.editBeatPopup .beatTab ul li.audio a:hover,.editBeatPopup .beatTab ul li.audio a.active
+	{
+	background-position: -8px -367px !important;
+}
+
+.videoPopup .beatTab ul li.video a:hover,.videoPopup .beatTab ul li.video a.active,.editMomentPopup .beatTab ul li.video a:hover,.editMomentPopup .beatTab ul li.video a.active,.editBeatPopup .beatTab ul li.video a:hover,.editBeatPopup .beatTab ul li.video a.active
+	{
+	background-position: -42px -368px !important;
+}
+
+.videoPopup .beatTab ul li.imgIcon a:hover,.videoPopup .beatTab ul li.imgIcon a.active,.editMomentPopup .beatTab ul li.imgIcon a:hover,.editMomentPopup .beatTab ul li.imgIcon a.active,.editBeatPopup .beatTab ul li.imgIcon a:hover,.editBeatPopup .beatTab ul li.imgIcon a.active
+	{
+	background-position: -71px -370px !important;
+}
+
+.videoPopup .beatTab ul li.textIcon a:hover,.videoPopup .beatTab ul li.textIcon a.active,.editMomentPopup .beatTab ul li.textIcon a:hover,.editMomentPopup .beatTab ul li.textIcon a.active,.editBeatPopup .beatTab ul li.textIcon a:hover,.editBeatPopup .beatTab ul li.textIcon a.active
+	{
+	background-position: -95px -369px !important;
+}
+
+.videoPopup .beatTab ul li.group a:hover,.videoPopup .beatTab ul li.group a.active,.editMomentPopup .beatTab ul li.group a:hover,.editMomentPopup .beatTab ul li.group a.active,.editBeatPopup .beatTab ul li.group a:hover,.editBeatPopup .beatTab ul li.group a.active
+	{
+	background-position: -130px -368px !important;
+}
+
+.videoPopup .beatBlock,.editMomentPopup .beatBlock,.editBeatPopup .beatBlock
+	{
+	padding-top: 10px;
+	overflow: hidden;
+	width: 100%;
+}
+
+.videoPopup .beatBlock figure,.editMomentPopup .beatBlock figure,.editBeatPopup .beatBlock figure
+	{
+	margin: 0 10px 0 15px;
+	float: left;
+}
+
+.videoPopup #audio figure,.videoPopup #image figure,.videoPopup #video figure,.editMomentPopup #editAudio figure,.editMomentPopup #editImage figure,.editMomentPopup #editVideo figure,.editBeatPopup #editAudio figure,.editBeatPopup #editImage figure,.editBeatPopup #editVideo figure
+	{
+	width: 255px;
+	height: 165px;
+	overflow: hidden;
+	position: relative;
+}
+
+.videoPopup #audio figure input[type="file"],.videoPopup #image figure input[type="file"],.videoPopup #video figure input[type="file"],.editMomentPopup #editAudio figure input[type="file"],.editMomentPopup #editImage figure input[type="file"],.editMomentPopup #editVideo figure input[type="file"],.editBeatPopup #editAudio figure input[type="file"],.editBeatPopup #editImage figure input[type="file"],.editBeatPopup #editVideo figure input[type="file"]
+	{
+	position: absolute;
+	top: 36px;
+	left: -59px;
+	height: 83px;
+	opacity: 0;
+	filter: alpha(opacity =   0);
+}
+
+.videoPopup label,.editBeatPopup label,.editMomentPopup label {
+	padding: 10px 15px 0 15px;
+	display: block;
+	clear: both;
+}
+	/*.videoPopup .beatBlock label, .videoPopup .eventDetail label,.editMomentPopup .beatBlock label, .editMomentPopup .eventDetail label,.editBeatPopup .beatBlock label, .editBeatPopup .eventDetail label{padding:10px 15px 0 15px; display:block; clear:both;}*/
+.videoPopup .search,.editMomentPopup .search,.editBeatPopup .search {
+	position: relative;
+	padding: 0 15px 15px 15px;
+	overflow: hidden;
+}
+
+.videoPopup .search input[type="text"],.editMomentPopup .search input[type="text"],.editBeatPopup .search input[type="text"]
+	{
+	width: 72%;
+	float: left;
+}
+
+.videoPopup .search input[type="submit"],.editMomentPopup .search input[type="submit"],.editBeatPopup .search input[type="submit"]
+	{
+	background: url(../images/sprite.png) no-repeat -125px -67px #343434;
+	width: 50px;
+	height: 33px;
+	border: none;
+	cursor: pointer;
+	border-radius: 12px;
+	-moz-border-radius: 12px;
+	-webkit-border-radius: 12px;
+	float: left;
+	margin-left: 8px;
+}
+
+.videoPopup .search ul li,.editMomentPopup .search ul li,.editBeatPopup .search ul li
+	{
+	float: left;
+	padding: 10px 10px 0 0;
+}
+
+.videoPopup .search ul li .custom-checkbox label,.editMomentPopup .search ul li .custom-checkbox label,.editBeatPopup .search ul li .custom-checkbox label
+	{
+	padding: 4px 0 5px 28px;
+	color: #ccc;
+	background: url(../images/custom_checkbox.png) no-repeat;
+	background-position: 1px 1px\9;
+}
+
+.videoPopup .search ul li .custom-checkbox label.checked,.editMomentPopup .search ul li .custom-checkbox label.checked,.editBeatPopup .search ul li .custom-checkbox label.checked
+	{
+	background-position: 0 -24px;
+	background-position: 1px -22px\9;
+}
+
+.videoPopup .listingBlock,.editMomentPopup .listingBlock,.editBeatPopup .listingBlock
+	{
+	height: 330px;
+	overflow: auto;
+}
+
+.videoPopup .listingBlock ul li,.editMomentPopup .listingBlock ul li,.editBeatPopup .listingBlock ul li
+	{
+	color: #ccc;
+	font-size: 13px;
+	border-top: 1px solid #333;
+	padding: 10px 0;
+	overflow: hidden;
+}
+
+.videoPopup .listingBlock ul li .listDetail,.editMomentPopup .listingBlock ul li .listDetail,.editBeatPopup .listingBlock ul li .listDetail
+	{
+	float: left;
+	width: 220px;
+}
+
+.videoPopup .listingBlock ul li .listDetail h4,.editMomentPopup .listingBlock ul li .listDetail h4,.editBeatPopup .listingBlock ul li .listDetail h4
+	{
+	font-size: 13px;
+	font-weight: bold;
+}
+
+.videoPopup .listingBlock ul li .listDetail p,.editMomentPopup .listingBlock ul li .listDetail p,.editBeatPopup .listingBlock ul li .listDetail p
+	{
+	padding: 3px 0 5px 0;
+}
+
+.videoPopup .listingBlock ul li .listDetail time span,.editMomentPopup .listingBlock ul li .listDetail time span,.editBeatPopup .listingBlock ul li .listDetail time span
+	{
+	float: left;
+	font-size: 12px;
+	padding-right: 10px;
+	color: #666;
+}
+
+.videoPopup .customSelectNumber,.editMomentPopup .customSelectNumber,.editBeatPopup .customSelectNumber
+	{
+	padding: 10px 10px 0;
+}
+
+.videoPopup .customSelectNumber span.customStyleSelectBox,.editMomentPopup .customSelectNumber span.customStyleSelectBox,.editBeatPopup .customSelectNumber span.customStyleSelectBox
+	{
+	margin-top: 0;
+	background-color: #fff;
+	height: 15px;
+}
+
+.videoPopup .customSelectNumber span.customStyleSelectBox span,.editMomentPopup .customSelectNumber span.customStyleSelectBox span,.editBeatPopup .customSelectNumber span.customStyleSelectBox span
+	{
+	width: 100% !important;
+}
+
+.videoPopup .customSelectNumber select,.editBeatPopup .customSelectNumber select
+	{
+	width: 91%;
+	margin-top: 5px;
+	color: #3A95C2;
+} /**/
+/*#myMomentBlock{position:fixed; width:100%; z-index:1; height:100%;}*/
+#myMomentBlock #momentSlider,
+#myMomentBlock #sharedMomentSlider {
+	overflow: hidden;
+}
+
+#myMomentBlock  #momentSlider .momentScroll,
+#myMomentBlock  #sharedMomentSlider .momentScroll {
+	/*width:290px; height:420px;*/
+	float: left; /*margin-left:32px;*/
+	position: relative;
+}
+
+#myMomentBlock #momentSlider .momentScroll figure,
+#myMomentBlock #sharedMomentSlider .momentScroll figure  {
+	overflow: hidden;
+}
+
+#myMomentBlock #momentSlider .momentScroll .momentTitle,
+#myMomentBlock #sharedMomentSlider .momentScroll .momentTitle {
+	color: #fff;
+	font-size: 13px;
+	line-height: 16px;
+	width: 305px;
+	position: relative; /*top:285px;*/
+}
+
+#momentSlider .momentTitle .viewport,
+#sharedMomentSlider .momentTitle .viewport { /*width: 260px; height: 85px;*/
+	overflow: hidden;
+	position: relative;
+}
+
+#momentSlider .momentTitle .overview,
+#sharedMomentSlider .momentTitle .overview{
+	color: #fff !important;
+	height: 100%;
+}
+
+#myMomentBlock #momentSlider .momentScroll .momentTitle h3,
+#myMomentBlock #sharedMomentSlider .momentScroll .momentTitle h3 {
+	font-size: 16px;
+	padding: 30px 5px 10px 15px;
+	overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#myMomentBlock #momentSlider .momentScroll .momentTitle .momentDis,
+#myMomentBlock #sharedMomentSlider .momentScroll .momentTitle .momentDis {
+	padding: 0 5px 10px 15px;
+}
+
+#myMomentBlock #momentSlider .momentScroll .momentTitle .momentDis p,
+#myMomentBlock #sharedMomentSlider .momentScroll .momentTitle .momentDis p {
+	padding-top: 5px;
+}
+
+#myMomentBlock #momentSlider .momentScroll .leftCorner,
+#myMomentBlock #sharedMomentSlider .momentScroll .leftCorner {
+	width: 58px;
+	height: 33px;
+	position: absolute;
+	right: -15px;
+	top: 0;
+	z-index: 1;
+}
+
+#myMomentBlock #momentSlider .momentScroll .leftCorner span,
+#myMomentBlock #sharedMomentSlider .momentScroll .leftCorner span {
+	background: url(../images/sprite.png) no-repeat;
+	float: left;
+	width: 18px;
+	height: 26px;
+	margin: 4px 0 0 6px;
+}
+
+#myMomentBlock #momentSlider .momentScroll .leftCorner span.Aha,
+#myMomentBlock #sharedMomentSlider .momentScroll .leftCorner span.Aha {
+	background-position: -7px -208px !important;
+}
+
+#myMomentBlock #momentSlider .momentScroll .leftCorner span.Feelings,
+#myMomentBlock #sharedMomentSlider .momentScroll .leftCorner span.Feelings {
+	background-position: -36px -207px !important;
+	width: 30px;
+}
+
+#myMomentBlock #momentSlider .momentScroll .leftCorner span.Gratitude,
+#myMomentBlock #sharedMomentSlider .momentScroll .leftCorner span.Gratitude {
+	background-position: -72px -210px !important;
+	width: 30px;
+}
+
+#myMomentBlock #momentSlider .momentScroll .leftCorner span.BlindSpot,
+#myMomentBlock #sharedMomentSlider .momentScroll .leftCorner span.BlindSpot {
+	background-position: -108px -208px !important;
+	width: 30px;
+}
+
+#myMomentBlock #momentSlider .momentScroll .leftCorner span.Personal,
+#myMomentBlock #sharedMomentSlider .momentScroll .leftCorner span.Personal {
+	background-position: -145px -208px !important;
+	width: 30px;
+}
+
+#myMomentBlock .momentScroll .popMenu ul li a {
+	background-color: #8dc0d9;
+}
+
+#myMomentBlock .momentScroll .popMenu ul li ul li a {
+	background-color: #1e4d81;
+}
+
+#mainMenu ul li {
+	position: relative;
+}
+
+#mainMenu ul li .momentMenu, #mainMenu ul li .momentSubmenu{
+	overflow: hidden;
+	width: 220px;
+	position: absolute;
+	top: 100%;
+	left: -48px;
+	padding-top: 9px;
+	display: none;
+}
+
+#mainMenu ul li .momentMenu ul li {
+	float: left;
+}
+
+#mainMenu ul li .momentMenu ul li a {
+	background: url(../images/sprite.png) no-repeat !important;
+	width: 27px !important;
+	height: 26px;
+	display: block;
+	margin: 10px 0 0 10px !important;
+	padding: 0 !important;
+}
+
+#mainMenu ul li .momentMenu ul li.ahe a {
+	background-position: 0 -209px !important;
+}
+
+#mainMenu ul li .momentMenu ul li.feeling a {
+	background-position: -38px -209px !important;
+}
+
+#mainMenu ul li .momentMenu ul li.gratitude a {
+	background-position: -73px -209px !important;
+}
+
+#mainMenu ul li .momentMenu ul li.blindSpot a {
+	background-position: -110px -210px !important;
+}
+
+#mainMenu ul li .momentMenu ul li.personal a {
+	background-position: -144px -209px !important;
+}
+
+#myMomentBlock #momentSlider .momentTime,
+#myMomentBlock #momentSlider .audioTime,
+#myMomentBlock #sharedMomentSlider .momentTime,
+#myMomentBlock #sharedMomentSlider .audioTime {
+	border-left: 1px solid #333;
+	width: 30px;
+	position: absolute;
+	left: 50%;
+	top: 83%;
+	z-index: -1;
+}
+	/*#myMomentBlock #momentSlider .momentTime .circle{background:url(../images/sprite.png) no-repeat -114px -242px #1883BA; width:32px; height:32px; position:absolute; bottom:-8px; left:-16px;}*/
+#myMomentBlock #momentSlider .momentTime time,
+#myMomentBlock #momentSlider .audioTime time,
+#myMomentBlock #sharedMomentSlider .momentTime time,
+#myMomentBlock #sharedMomentSlider .audioTime time {
+	color: #ccc;
+	position: absolute;
+	left: -21px;
+	bottom: -15px;
+}
+#myMomentBlock #momentSlider .audioTime time{width:100px;}
+
+#myMomentBlock #momentSlider .momentTime .date,
+#myMomentBlock #sharedMomentSlider .momentTime .date {
+	color: #ccc;
+	position: absolute;
+	right: -115px;
+	bottom: -15px;
+	border-left: 1px solid #ccc;
+	padding: 7px 0 0 10px;
+}
+
+#myMomentBlock  .momentLine {
+	border-bottom: 1px solid #fff;
+	width: 100%;
+	position: absolute; /*top:83%;*/
+	z-index: -2;
+}
+
+#momentSlider .momentDate,
+#sharedMomentSlider .momentDate {
+	border-left: 1px solid #3f93bd;
+	width: 30px;
+	position: absolute;
+	z-index: 1; /*min-height:50px;*/
+	left: 90%;
+	min-height: 70px;
+}
+
+#momentSlider .momentDate time,
+#sharedMomentSlider .momentDate time {
+	color: #83b9d4;
+	position: absolute;
+	left: -19px;
+	bottom: -9px;
+}
+
+#myMomentBlock .momentBar {
+	background: url(../images/transparent_bg.png);
+	width: 100%;
+	position: absolute;
+	bottom: 0; /*height:65px;*/
+	height: 12%;
+	z-index: -2;
+}
+
+#myMomentBlock .creatNewBtn,#landingScroll .creatNewBtn {
+	background: url(../images/creat.png) no-repeat left top;
+	bottom: 13%;
+	cursor: pointer;
+	height: 40px;
+	position: absolute;
+	right: 8px;
+	width: 30px;
+	z-index: 1;
+}
+
+#mainMenu ul li.active:hover>.momentMenu
+	{
+	display: block;
+}
+
+ /**/
+#landingHeader .h2Title {
+	color: #D67C01;
+	font-size: 19px;
+	font-weight: bold;
+	margin: -46px auto 0;
+	width: 400px;
+	position: relative;
+	text-align: center;
+}
+
+#landingHeader .searchBTN {
+	background: url(../images/sprite.png) no-repeat -4px -287px;
+	width: 30px;
+	height: 23px;
+	border: none;
+	position: absolute;
+	right: 0;
+	top: 18px;
+	cursor: pointer;
+} /*.mikeStoryLine{padding-top:75px;}*/
+/*.mikeStoryLine div.scrollingHotSpotLeft, .mikeStoryLine div.scrollingHotSpotRight{top:295px;}*/
+.mikeStoryTitle .btnGroup, #sportyFrame .btnGroup {
+	position: absolute;
+	right: 50px;
+	top: 30px; 
+	z-index: 5;
+}
+
+.mikeStoryTitle .btnGroup .signBTN, #sportyFrame .btnGroup .signBTN {
+	background: #47B4B8;
+	color: #fff;
+	font-size: 16px;
+	float: left;
+	padding: 5px 15px;
+	border: none;
+	margin: 5px 0 0 10px;
+	border-radius: 12px;
+	-moz-border-radius: 12px;
+	-webkit-border-radius: 12px;
+	text-decoration: none;
+} /*smooth scroll*/
+div.scrollingHotSpotLeft {
+	width: 20px;
+	height: 22px;
+	background: url(../images/sprite.png) no-repeat -208px -212px;
+	position: absolute;
+	z-index: 200;
+	left: 0;
+	top: 58%;
+	padding: 5px 12px;
+	cursor: pointer;
+	border-radius: 0 7px 0 0;
+	-moz-border-radius: 0 7px 0 0;
+	-webkit-border-radius: 0 7px 0 0;
+	display:block !important;
+	opacity: 0.50 !important;
+}
+
+div.scrollingHotSpotLeft:hover,div.scrollingHotSpotRight:hover {
+	opacity: 1 !important;
+	-moz-opacity: 1 !important;
+	filter: alpha(opacity =   1) !important;
+} /* Visible left hotspot */ /* Invisible right hotspot */
+div.scrollingHotSpotRight {
+	width: 20px;
+	height: 22px;
+	background: url(../images/sprite.png) no-repeat -257px -212px;
+	position: absolute;
+	z-index: 200;
+	right: 0;
+	top: 58%;
+	padding: 5px 12px;
+	cursor: pointer;
+	border-radius: 7px 0 0 0;
+	-moz-border-radius: 7px 0 0 0;
+	-webkit-border-radius: 7px 0 0 0;
+	display:block !important;
+	opacity: 1 !important;
+}
+
+#momentSlider div.scrollingHotSpotLeft,#momentSlider div.scrollingHotSpotRight,
+#sharedMomentSlider div.scrollingHotSpotLeft,#sharedMomentSlider div.scrollingHotSpotRight
+	{
+	top: 92%;
+} /* Visible right hotspot */ /*ie7 css*/
+*+html #mainContent {
+	margin: 0 auto -45px;
+}
+
+*+html .storyScroll .creatNewBtn {
+	top: 60%;
+}
+
+*+html #storyLineBlock {
+	height: 440px;
+}
+
+*+html #storyLineBlock .featureBlock {
+	margin-top: 55px;
+}
+
+*+html .scrollContainer .smoothScroll figcaption time {
+	margin-top: -25px;
+}
+
+*+html .menuBlock {
+	width: 570px;
+}
+
+*+html .custom-checkbox label,*+html .custom-radio label {
+	margin: -12px 0 0 1px;
+}
+
+*+html #mainContent .storTitle h2.storyTitle .menuTitle {
+	float: none;
+}
+
+*+html .createStory figure span.file input[type="file"] {
+	left: -104px;
+}
+
+*+html .editStoryline figure span.file input[type="file"] {
+	left: -104px;
+}
+
+*+html #outerFooter li {
+	display: inline;
+}
+
+*+html #littleDescription li figure {
+	width: 50px;
+}
+
+.error {
+	color: red;
+	display: block;
+	margin: -5px 0 5px 10px;
+	padding-bottom: 10px;
+}
+
+.errorCheckbox {
+	margin: 6px 0 0;
+}
+
+#outerForm .custom-checkbox input[type="checkbox"] {
+	margin-right: 10px;
+	float: left;
+	top: 0;
+	position: inherit;
+} /*drag & drop*/
+.dragArea {
+	min-width: 50px;
+	max-width: 500px;
+	float: left;
+	height: 215px;
+	position: relative;
+}
+
+.dragArea a.dropBlock {
+	height: 215px;
+	width: 100%;
+	position: absolute;
+	left: 0;
+	display: none;
+}
+
+.DropArea {
+	border: 2px dashed #fff;
+	float: left;
+	width: 288px;
+	height: 155px;
+	margin: 0 50px;
+	text-align: center;
+	color: #fff;
+	font-weight: bold; /*padding:25% 0;*/
+}
+
+.dragArea .linePointer, .dragArea .momentTime, .dragArea .draglinePointer {
+	display: none;
+	position: absolute;
+	left: 50%;
+	top: 222px;
+	border-left: 1px solid #333;
+	width: 55px;
+	z-index: -1;
+}
+
+.dragArea .draglinePointer {top:0;} 
+
+#momentSlider .DropArea,
+#sharedMomentSlider .DropArea { /*padding:34% 0;*/
+	height: 280px;
+} /*.scrollableArea{width:100% !important; height:100%;}*/
+/*.creatNewBtn{cursor:move !important;}*/
+.scrollableArea {
+	position: relative;
+	display: block;
+	float: left;
+	margin: 0;
+	padding: 0;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+} /*custom font*/
+@font-face {
+	font-family: 'helveticaneueregular';
+	src: url('../fonts/18921_helveticaneue-webfont.eot');
+	src: url('../fonts/18921_helveticaneue-webfont.eot?#iefix')
+		format('embedded-opentype'),
+		url('../fonts/18921_helveticaneue-webfont.woff') format('woff'),
+		url('../fonts/18921_helveticaneue-webfont.ttf') format('truetype'),
+		url('../fonts/18921_helveticaneue-webfont.svg#helveticaneueregular')
+		format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Conv_18836_HELR45W';
+	src: url('../fonts/18836_HELR45W.eot');
+	src: local('?'), url('../fonts/18836_HELR45W.woff') format('woff'),
+		url('../fonts/18836_HELR45W.ttf') format('truetype'),
+		url('../fonts/18836_HELR45W.svg') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'hand_of_seanregular';
+	src: url('../fonts/handsean-webfont.eot');
+	src: url('../fonts/handsean-webfont.eot?#iefix')
+		format('embedded-opentype'), url('../fonts/handsean-webfont.woff')
+		format('woff'), url('../fonts/handsean-webfont.ttf')
+		format('truetype'),
+		url('../fonts/handsean-webfont.svg#hand_of_seanregular') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Conv_GothamLight';
+	src: url('../fonts/GothamLight.eot');
+	src: local('?'), url('../fonts/GothamLight.woff') format('woff'),
+		url('../fonts/GothamLight.ttf') format('truetype'),
+		url('../fonts/GothamLight.svg') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+    font-family: 'HelveticaNeueRegular';
+    src: url('../fonts/helvetica.eot');
+    src: url('../fonts/helvetica.eot') format('embedded-opentype'),
+         url('../fonts/helvetica.woff') format('woff'),
+         url('../fonts/helvetica.ttf') format('truetype'),
+         url('../fonts/helvetica.svg#HelveticaNeueRegular') format('svg');
+}
+
+.overview .editColum {
+	position: relative;
+}
+
+.overview .editColum input[type="file"] {
+	position: absolute;
+	bottom: 0;
+	right: -14px;
+	opacity: 0;
+	filter: alpha(opacity =   0);
+} /*for lightbox image scroll*/
+.scrollgeneric {
+	line-height: 1px;
+	font-size: 1px;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.vscrollerbase {
+	width: 10px;
+	background-color: white;
+}
+
+.vscrollerbar {
+	width: 10px;
+	background-color: black;
+}
+
+.hscrollerbase {
+	height: 6px;
+	background: #1e1e1e;
+}
+
+.hscrollerbar {
+	height: 6px;
+	background: #ccc;
+	cursor: pointer;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+
+.scrollerjogbox {
+	width: 10px;
+	height: 10px;
+	top: auto;
+	left: auto;
+	bottom: 0px;
+	right: 0px;
+	background-color: gray;
+}
+
+.fixedwidth {
+	color: black;
+	height: auto;
+	padding: 1px;
+	position: relative;
+}
+	/*#storyLineBlock .featureBlock,#storyLineBlock .myStoryBlock,.dragArea,.scrollContainer li, .scrollContainer .smoothScroll{margin-top:90px;}*/
+#storyLineContainer,#storyLineBlock,#myMomentBlock {
+	margin-top: 100px;
+}
+
+.pageContainer {
+	margin: -65px auto -60px !important;
+}
+
+#mainContent #articleBlock {
+	background: #fff; /*min-height:100%;*/
+}
+
+#landingHeader #topMenu {
+	position: absolute;
+	top: 10px;
+	right: 0;
+}
+
+#storisticHeader {
+	background: url(../images/header_bg.png) repeat-x;
+	height: 65px;
+	width: 100%;
+	position: fixed;
+	z-index: 2;
+}
+
+#storisticHeader #topMenu {
+	position: absolute;
+	top: 10px;
+	right: 0;
+}
+
+#landingHeader #topMenu ul li {
+	float: left;
+	font-size: 17px;
+	margin: 13px 45px 0 0;
+}
+
+#landingHeader #topMenu ul li a {
+	color: #4a4a43;
+	text-decoration: none;
+}
+
+#landingHeader #topMenu ul li a span {
+	background: url(../images/sprite.png) no-repeat -11px -415px;
+	height: 40px;
+	width: 36px;
+	float: left;
+	margin: -14px 12px 0 0;
+}
+
+#landingHeader #topMenu ul li a.active .storiTitle,#landingHeader #topMenu ul li a .storiTitle:hover
+	{
+	background-position: -146px -414px;
+}
+
+#landingHeader #topMenu ul li a .storiWork {
+	background-position: -96px -421px;
+}
+
+#landingHeader #topMenu ul li a.active .storiWork,#landingHeader #topMenu ul li a .storiWork:hover
+	{
+	background-position: -231px -420px;
+}
+
+#landingHeader #topMenu ul li a .storiApp {
+	background-position: -59px -420px;
+}
+
+#landingHeader #topMenu ul li a.active .storiApp,#landingHeader #topMenu ul li a .storiApp:hover
+	{
+	background-position: -194px -420px;
+}
+
+#storisticHeader #topMenu ul li {
+	float: left;
+	font-size: 16px;
+	margin: 13px 45px 0 0;
+}
+
+#storisticHeader #topMenu ul li a {
+	color: #666;
+	text-decoration: none;
+}
+
+#storisticHeader #topMenu ul li a span {
+	background: url(../images/sprite.png) no-repeat;
+	height: 40px;
+	width: 36px;
+	float: left;
+	margin: -14px 12px 0 0;
+}
+
+#storisticHeader #topMenu ul li a .storiTitle {
+	background-position: -11px -415px;
+}
+
+#storisticHeader #topMenu ul li a.active .storiTitle {
+	background-position: -145px -414px;
+}
+
+#storisticHeader #topMenu ul li a .storiWork {
+	background-position: -59px -420px;
+}
+
+#storisticHeader #topMenu ul li a.active .storiWork {
+	background-position: -194px -420px;
+}
+
+#storisticHeader #topMenu ul li a .storiApp {
+	background-position: -59px -420px;
+}
+
+#storisticHeader #topMenu ul li a.active .storiApp {
+	background-position: -194px -420px;
+}
+
+#mainContent #articleBlock, #mainContent #aboutContainer {
+	background: #fff;
+	margin-top: 150px;
+}
+
+#mainContent #articleBlock #storyContainer {
+	min-height: 100%;
+	background: url(../images/article_bg.png) repeat-x bottom;
+}
+
+#mainContent #articleBlock #storyContainer,#mainContent #articleBlock #storyWork
+	{
+	padding: 50px 0;
+	font-size: 13px;
+	width: 1100px;
+	margin: 0 auto;
+}
+
+#mainContent #articleBlock .articleCol {
+	float: left;
+	width: 35%;
+	margin-left: 100px;
+}
+
+#mainContent #articleBlock .slideCol {
+	float: left;
+	margin-left: 100px;
+}
+
+#mainContent #articleBlock h1 {
+	font-size: 35px;
+	font-family: Conv_HelveticaNeueLTStd-Lt;
+	padding: 20px 0;
+}
+
+#mainContent #articleBlock #storyContainer .signButton {
+	padding: 6px 40px;
+}
+
+#mainContent #articleBlock p,
+#mainContent #aboutContainer p {
+	line-height: 18px;
+	text-align: justify;
+	padding-bottom: 10px;
+}
+
+.marginTop40 {
+	margin-top: 40px;
+}
+
+#landingScroll .creatNewBtn {
+	bottom: 15px;
+}
+
+#mainContent #articleBlock .articleCol,#mainContent #articleBlock .slideCol
+	{
+	margin-left: 70px !important;
+}
+
+/*
+#mainContent #articleBlock .slideCol img {
+	width: 450px;
+	height: 300px;
+}
+*/
+
+#mainContent #articleBlock .articleContainer {
+	font-size: 13px;
+	line-height: 20px;
+	padding-bottom: 20px;
+}
+
+#mainContent #articleBlock .articleContainer h2 {
+	font-size: 20px;
+	color: #c75200;
+	padding-bottom: 10px;
+}
+
+#mainContent #articleBlock .articleContainer h3 {
+	font-size: 16px;
+	color: #c75200;
+}
+
+#mainContent #articleBlock .articleContainer p.highlight {
+	font-weight: bold;
+}
+
+#mainContent #articleBlock .articleContainer p.highlight strong {
+	color: #c75200;
+	font-size: 14px;
+}
+
+#mainContent #articleBlock .articleContainer ol,#mainContent #articleBlock .articleContainer ul
+	{
+	padding-left: 20px;
+}
+
+#mainContent #articleBlock .articleContainer ol li {
+	text-align: justify;
+	padding-bottom: 15px;
+	list-style: decimal;
+}
+
+#mainContent #articleBlock .articleContainer ol li strong {
+	font-weight: bold;
+}
+
+#mainContent #articleBlock .articleContainer ol li ul li {
+	padding: 10px 0 0 0;
+	list-style: disc;
+}
+
+#mainContent #articleBlock .articleContainer a {
+	color: #c75200;
+}
+
+.registerMsg {
+	background: #1e1e1e;
+	color: #FFFFFF;
+	padding: 15px;
+	position: absolute;
+	right: 0;
+	top: 200px;
+	width: 275px;
+	text-align: left;
+	font: normal 12px Arial, Helvetica, Sans-Serif;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+} /* BEAT POPUP  */
+.beatPopup .commentBlock .addComment {
+	width: 96.7%;
+}
+
+.beatPopup .popMenu>div {
+	display: none;
+}
+
+.beatPopup .popMenu:hover>div {
+	display: block;
+}
+
+.beatPopup,.customSlider {
+	width: 472px
+}
+
+.customSlider {
+	overflow: hidden;
+	position: relative;
+}
+
+.beatPopup {
+	visibility: hidden;
+	z-index: 999;
+}
+
+.beatPopup .customSlider>ul>li,.popupExpand .customExSlider>ul>li {
+	float: left;
+	position: relative;
+}
+
+.customSlider .navigation {
+	clear: left;
+	text-align: center;
+	width: 100%;
+	position: absolute;
+	bottom: 0;
+	height: 37px;
+}
+
+.navigation .next,.navigation .prev {
+	background: url(../images/sprite.png) no-repeat -160px -105px;
+	width: 19px;
+	height: 19px;
+	cursor: pointer;
+	float: right;
+	margin-top: 9px;
+	margin-right: 8px;
+}
+
+.navigation .prev {
+	background-position: -126px -106px;
+	float: left;
+	margin-left: 8px;
+}
+
+.deleteBeat {
+	background: url(../images/sprite.png) #2789BA no-repeat -90px -105px
+		!important;
+} /*new css*/
+#momentSlider .momentScroll .mejs-audio,
+#sharedMomentSlider .momentScroll .mejs-audio {
+	height: 70px !important;
+} /*#momentSlider .momentScroll .mejs-video{width:305px !important;}*/
+.videoPlayer {
+	width: 600px;
+	height: 400px;
+	background: #000;
+	z-index: 100;
+	padding: 2px;
+	display: none;
+}
+
+.audioPlayer {
+	width: 400px;
+	background: #000;
+	z-index: 100;
+	padding: 30px 2px;
+	display: none;
+}
+
+.jumpDateBtn {
+	background: url(../images/jumpicon.png) no-repeat left top;
+	width: 31px;
+	height: 31px;
+	position: absolute;
+	right: 10px;
+	top: 68%;
+	cursor: pointer;
+	z-index: 2;
+	display: block;
+}
+
+#myMoments .jumpDateBtn {
+	top: 35%;
+}
+
+#storyLineBlock .DropArea {
+	height: 205px;
+}
+
+#myStoryLines .DropArea {
+	height: 220px;
+}
+
+#storyLineBlock .dragArea .linePointer {
+	top: 207px;
+} /*#myStoryLines .smoothScroll .linePointer,*/
+/*#myStoryLines .dragArea .linePointer{top:222px; height:35%;}*/
+#momentScroll .DropArea {
+	width: 90px;
+	height: 85px;
+	margin: 55px 45px 0;
+}
+
+#momentScroll .dragArea .momentTime {
+	border-color: #fff;
+	left: 50%;
+	top: 0;
+	height: 26%;
+}
+
+#momentSlider .dragArea,
+#sharedMomentSlider .dragArea {
+	height: 395px;
+}
+
+#myMoments .creatNewBtn {
+	background: url("../images/creat.png") no-repeat scroll left top
+		transparent;
+	top: -20%;
+	cursor: pointer;
+	height: 32px;
+	position: absolute;
+	right: 8px;
+	width: 33px;
+	z-index: 1;
+} /*for mac os*/
+.mac-os #loginOptions h2 {
+	font-size: 1.4em;
+}
+
+.mac-os #littleDescription {
+	width: 53%;
+}
+
+.mac-os #littleDescription li {
+	width: 32%;
+}
+
+.mac-os #littleDescription h3 {
+	font-size: 1.3em;
+}
+
+#myStoryLines h2 span,#myMoments h2 span {
+	float: right;
+	font-weight: bold;
+}
+
+.inviteConfirmation {
+	background: #1e1e1e;
+	padding-bottom: 12px;
+	position: absolute;
+	text-align: center;
+	width: 250px;
+	z-index: 999;
+}
+
+.inviteConfirmation h3 { /*background:#1e4d81;*/
+	color: #fff;
+	font-size: 16px;
+	padding: 12px 0;
+}
+
+.inviteConfirmation h3 span {
+	display: block;
+}
+
+.inviteFriendOkButton {
+	background: #1e1e1e;
+	border: 1px solid #1e1e1e;
+	color: #fff;
+	font-size: 15px;
+	cursor: pointer;
+	padding: 7px 12px;
+	margin-top: 10px;
+	font-family: arial;
+	border-radius: 12px;
+	-moz-border-radius: 12px;
+	-webkit-border-radius: 12px;
+}
+
+.inviteFriendOkButton:hover {
+	border: 1px solid #000;
+}
+
+.inviteConfirmation .inviteFriendOkButton {
+	background: #47b4b8;
+	display: block;
+	margin: 15px auto 0;
+	width: 75px;
+	text-decoration: none;
+}
+
+.sharePopup .sharedEntity {
+	min-height: 135px;
+	max-height: 335px;
+	overflow-y: auto;
+}
+
+.sharePopup .sharedEntity .innerCheckBoxBlock{margin-left:30px;}
+
+#loginOptions .invitedButton {
+	background: #47b4b8;
+	border: none;
+	-webkit-border-radius: 20px;
+	-moz-border-radius: 20px;
+	border-radius: 20px;
+	color: #FFFFFF;
+	display: inline-block;
+	font-size: 1.4em;
+	margin: 10px 0 0 10px;
+	padding: 6px 10px 7px !important;;
+	text-align: center;
+	width: 128px;
+}
+
+#loginOptions .invitedButton {
+	width: auto !important;
+}
+
+#loginOptions a.whiteRoundBtn:hover,#loginOptions .invitedButton:hover {
+	background: #cf5e01;
+	color: #fff;
+	text-decoration: none;
+}
+
+.sharedMomentButton {
+	bottom: 10px;
+	position: absolute;
+	right: 10px;
+	z-index: 999;
+}
+
+.sharedMomentButton .signBTN {
+	background: #fff;
+	color: #1e4d81;
+	font-size: 16px;
+	float: left;
+	padding: 5px 15px;
+	border: none;
+	margin: 5px 35px 0 10px;
+	border-radius: 12px;
+	-moz-border-radius: 12px;
+	-webkit-border-radius: 12px;
+	text-decoration: none;
+}
+
+#searchContentSection .searchResult {
+	min-height: 50px;
+	max-height: 367px;
+	overflow-y: auto;
+	position: relative;
+    z-index: 1;
+}
+/*
+#searchContentSection .searchResult table {
+	margin-top: -10px;
+}
+*/
+#infomessage {
+	color: #800080;
+	font-style: inherit;
+	font-weight: bold;
+	display: block;
+	text-align: center;
+} /*new css for generate storyline*/
+/*.createStoryBlock .generateStory{display:block !important; visibility:visible !important;}*/
+.createStoryBlock .generateStory {
+	width: auto;
+	left: 10%;
+	font-size: 14px;
+	color: #ccc;
+}
+
+.createStoryBlock .generateStory .selectSource {
+	width: 500px;
+	margin: 35px auto;
+	text-align: center;
+	line-height: 16px;
+}
+
+.createStoryBlock .generateStory .selectSource p {
+	margin-bottom: 10px;
+}
+
+.createStoryBlock .generateStory .generateMenuTab {
+	width: 700px;
+	padding: 0 15px 0 15px;
+}
+
+.createStoryBlock .generateStory .generateMenuTab h3{
+	padding-top: 27px;
+}
+
+.createStoryBlock .generateStory .albumBlock ul li {
+	position: relative;
+	float: left;
+}
+
+.createStoryBlock .generateStory .albumBlock ul li a span:first-child {
+	font-size: 15px;
+	color: #666;
+	text-decoration: none;
+	float: left;
+	padding: 15px 35px;
+	display: block
+}
+
+.createStoryBlock .generateStory .albumBlock ul li a span:hover,.createStoryBlock .generateStory .albumBlock ul li a.active span
+	{
+	color: #fff;
+}
+
+.createStoryBlock .generateStory .albumBlock ul li a:hover span.arrow,.createStoryBlock .generateStory .albumBlock ul li a.active span.arrow
+	{
+	color: #fff;
+	background: url(../images/sprite.png) no-repeat -327px -426px;
+	width: 23px;
+	height: 25px;
+	position: absolute;
+	left: 45%;
+	top: 39px;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock,
+.selectedSocialScreen .listingTabBlock {
+	background: #7c7b73;
+	margin: 0 -15px;
+	overflow: hidden;
+	width: 730px;
+	clear: both;
+}
+
+.createStoryBlock .generateStory .albumBlock .friendListing,
+.selectedSocialScreen .friendListing {
+	padding-top: 20px;
+}
+
+.createStoryBlock .generateStory .albumBlock .friendListing .viewport,
+.selectedSocialScreen .friendListing .viewport {
+	width: 700px;
+	height: 300px;
+	overflow: hidden;
+	position: relative;
+}
+
+.createStoryBlock .generateStory .albumBlock  .friendListing  .overview,
+.selectedSocialScreen .friendListing  .overview
+	{
+	list-style: none;
+	position: absolute;
+	left: 0;
+	top: 0;
+	padding: 0;
+	margin: 0;
+	width: 100%;
+}
+
+.createStoryBlock .generateStory .albumBlock .friendListing ul li,
+.selectedSocialScreen .friendListing ul li{
+	float: left;
+	width: 145px;
+	position: relative;
+	margin: 0 0 20px 27px;
+	height: 200px;
+}
+
+.createStoryBlock .generateStory .albumBlock .friendListing ul li figure,
+.selectedSocialScreen .friendListing ul li figure
+	{
+	width: 145px;
+	margin: 0;
+}
+
+.createStoryBlock .generateStory .albumBlock .friendListing ul li .custom-checkbox,
+.createStoryBlock .generateStory .albumBlock .friendListing ul li .custom-radio,
+.selectedSocialScreen .friendListing ul li .custom-checkbox,
+.selectedSocialScreen .friendListing ul li .custom-radio
+	{
+	clear: both;
+}
+
+.createStoryBlock .generateStory .albumBlock .friendListing ul li .custom-checkbox input,
+.createStoryBlock .generateStory .albumBlock .friendListing ul li .custom-radio input,
+.selectedSocialScreen .friendListing ul li .custom-checkbox input,
+.selectedSocialScreen .friendListing ul li .custom-radio input
+	{
+	left: 130px;
+	top: 11px;
+	opacity: 0;
+	filter: alpha(opacity =   0);
+}
+
+.createStoryBlock .generateStory .albumBlock .friendListing ul li .custom-checkbox label,
+.selectedSocialScreen .friendListing ul li .custom-checkbox label
+	{
+	background: url(../images/listing_check.png) no-repeat -33px 5px;
+	padding: 5px 3px 8px;
+}
+
+.createStoryBlock .generateStory .albumBlock .friendListing ul li .custom-radio label,
+.selectedSocialScreen .friendListing ul li .custom-radio label
+	{
+	background: url(../images/radio_checkbox.png) no-repeat -33px 4px;
+	padding: 5px 3px 8px;
+}
+
+.createStoryBlock .generateStory .albumBlock .friendListing ul li .custom-checkbox label.checked,
+.selectedSocialScreen .friendListing ul li .custom-checkbox label.checked
+	{
+	background-position: 125px 5px;
+}
+
+.createStoryBlock .generateStory .albumBlock .friendListing ul li .custom-radio label.checked,
+.selectedSocialScreen .friendListing ul li .custom-radio label.checked
+	{
+	background-position: 123px 4px;
+}
+
+.createStoryBlock .generateStory .albumBlock .friendListing ul li .custom-checkbox label span,
+.selectedSocialScreen .friendListing ul li .custom-checkbox label span,
+.createStoryBlock .generateStory .albumBlock .friendListing ul li .custom-radio label span,
+.selectedSocialScreen .friendListing ul li .custom-radio label span
+	{
+	display: block;
+	color:#ccc;
+	width: 115px;
+	font-size: 14px;
+	font-weight: bold;
+	word-wrap: break-word;
+}
+
+.createStoryBlock .generateStory .albumBlock .friendListing ul li .custom-checkbox label span span,
+.selectedSocialScreen .friendListing ul li .custom-checkbox label span span
+	{
+	font-weight: normal;
+	font-size: 12px;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock dl {
+	padding: 20px 40px 40px;
+	overflow: hidden;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock dl dt {
+	padding-top: 10px;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock dl dt,.createStoryBlock .generateStory .albumBlock .listingTabBlock dl dd
+	{
+	float: left;
+	padding-right: 15px;
+	font-size: 15px;
+	color: #fff;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock dl dd input[type="text"]
+	{
+	background: #343434;
+	border: none;
+	color: #fff;
+	padding: 10px;
+	width: 240px;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock dl dd input.dateTimeline
+	{
+	width: 100px;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock table {
+	width: 97%;
+	border: 1px solid #8c8a83;
+	margin-left: 20px;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock table tr td
+	{
+	border-left: 1px solid #8c8a83;
+	padding: 10px;
+	vertical-align: middle;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock table tr {
+	border-top: 1px solid #e5e5e3;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock table tr:first-child
+	{
+	border-top: none;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock table tr td:first-child
+	{
+	border-left: none;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock table tr td .custom-checkbox label
+	{
+	background: url(../images/userlisting_check.png) no-repeat -46px 22px;
+	padding: 0px 30px 0;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock table tr td .custom-checkbox label.checked
+	{
+	background-position: 0 22px;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock table tr td .custom-checkbox input
+	{
+	top: 25px;
+	opacity: 0;
+	filter: alpha(opacity =   0);
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock table tr td .custom-checkbox span.username
+	{
+	float: right;
+	text-align: left;
+	width: 55px;
+	padding-top: 10px;
+}
+
+.socialMenu {
+	width: 400px;
+	overflow: hidden;
+	margin: 15px auto;
+}
+
+.socialMenu ul li {
+	/*float: left;*/
+	display:inline-block;
+	border: 1px solid #294d4e;
+	background: #42b5b8;
+	width: 50px;
+	height: 45px;
+	margin-left: 5px;
+	cursor: pointer;
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	opacity: 0.25;
+	filter: alpha(opacity =   0.25);
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=25)";
+}
+
+.socialMenu ul li span {
+	background: url(../images/sprite.png) no-repeat;
+	width: 30px;
+	height: 25px;
+	display: block;
+	margin: 11px 0 0 10px;
+}
+
+.socialMenu ul li.faceBook span, .socialMenu ul #FbBeat span {
+	background-position: -179px -372px;
+}
+
+.socialMenu ul li.twitter span {
+	background-position: -205px -372px;
+}
+
+.socialMenu ul li.googlePlus span {
+	background-position: -234px -372px;
+}
+
+.socialMenu ul li.instaGram span {
+	background-position: -264px -372px;
+}
+
+.socialMenu ul li.picasa span, .socialMenu ul li#picasaBeat span {
+	background-position: -294px -372px;
+}
+
+.socialMenu ul li.flickr span, .socialMenu ul li#flickrBeat span {
+	background-position: -327px -372px;
+}
+
+.socialMenu ul li.folder span {
+	background-position: -364px -372px;
+}
+
+.socialMenu ul li.active {
+	opacity: 1;
+	filter: alpha(opacity =   1);
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+}
+
+.listingTabBlock .viewMore {
+	color: #FFFFFF;
+	display: block;
+	text-align: center;
+	text-decoration: none;
+}
+
+.nextButton , .fileButton{
+	background: #47b4b8;
+	color: #fff;
+	font-size: 18px;
+	cursor: pointer;
+	border: none;
+	margin: 10px 0;
+	padding: 5px 20px;
+	margin-left: 10px;
+	text-align: center;
+	min-width: 100px;
+	border-radius: 15px;
+	-moz-border-radius: 15px;
+	-webkit-border-radius: 15px;
+}
+
+.fileButton{width:120px; overflow:hidden; margin-top:-6px;}
+.multiplePhoto span{float:left; padding:15px;}
+
+.friendListing .scrollbar {
+	position: relative;
+	background-position: 0 0;
+	float: right;
+	width: 20px;
+	display: block;
+}
+
+.friendListing .track {
+	height: 100%;
+	width: 5px;
+	position: relative;
+	padding: 0 1px;
+}
+
+.friendListing .thumb {
+	background: #a6a6a6;
+	height: 20px;
+	width: 5px;
+	cursor: pointer;
+	overflow: hidden;
+	position: absolute;
+	top: 0;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+
+.butttonFrame {
+	text-align: center;
+	background: #1E1E1E;
+	margin-top: 15px;
+	position: relative;
+}
+
+.butttonFrame .loaderIcon {
+	position: absolute;
+	left: 48%;
+}
+
+.createStoryBlock .generateStory .generateMenuTab  h4 {
+	font-size: 17px;
+	color: #fff;
+	padding: 5px 0 20px;
+}
+
+.createStoryBlock .generateStory .generateMenuTab  h4.headTitle {
+	width: 43%;
+	word-wrap: break-word;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock table tr td .custom-checkbox span.userTitle
+	{
+	text-align: left;
+	float: right;
+	width: 82%;
+	font-weight: bold;
+	padding-top: 20px;
+	color: #fff;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock table tr td .video,.createStoryBlock .generateStory .albumBlock .listingTabBlock table tr td .note,.createStoryBlock .generateStory .albumBlock .listingTabBlock table tr td .number
+	{
+	float: left;
+	color: #fff;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock table tr td .video
+	{
+	background: url(../images/sprite.png) no-repeat -106px -474px;
+	width: 25px;
+	height: 25px;
+	margin: -4px 5px 0 5px;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock table tr td .note
+	{
+	background: url(../images/sprite.png) no-repeat -136px -473px;
+	width: 20px;
+	height: 22px;
+	margin: -4px 5px 0 5px;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock .leftColumn
+	{
+	float: left;
+	width: 290px;
+	margin: 20px;
+	color: #fff;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock .leftColumn .heightlight,.createStoryBlock .generateStory .albumBlock .listingTabBlock .leftColumn input[type="text"],.createStoryBlock .generateStory .albumBlock .listingTabBlock .leftColumn textarea
+	{
+	background: #343434;
+	padding: 10px;
+	color: #ccc;
+	border: none;
+	border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	resize: none;
+	width: 92%;
+	margin-bottom: 10px;
+	position: relative;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock .leftColumn .heightlight
+	{
+	height: 17px;
+	width: 44%;
+	left: 140px;
+	position: absolute;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock .leftColumn .heightlight span
+	{
+	float: left;
+	padding: 2px 12px 0 0;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock .leftColumn .heightlight .colorBox
+	{
+	height: 18px;
+	overflow: hidden;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock .leftColumn .heightlight .colorBox li
+	{
+	float: left;
+	height: 18px;
+	width: 20px;
+	margin: 0 0 0 7px;
+	cursor: pointer;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock .leftColumn .heightlight:hover
+	{
+	width: 92%;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock .leftColumn .backgroundSelector
+	{
+	text-align: center;
+	color: #fff;
+	position: relative;
+	overflow: hidden;
+	float: left;
+	padding-bottom: 5px;
+	width: 136px;
+	margin-right: 8px;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock .leftColumn .backgroundSelector figure
+	{
+	display: block;
+	width: 136px;
+	margin: 0;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock .leftColumn .backgroundSelector figure figcaption
+	{
+	display: block;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock .leftColumn .backgroundSelector input[type="file"]
+	{
+	position: absolute;
+	left: -118px;
+	top: 36px;
+	height: 53px;
+	z-index: 2;
+	opacity: 0;
+	filter: alpha(opacity =   0);
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock .leftColumn .dateBlock
+	{
+	padding: 0;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock .leftColumn .dateBlock input[type="text"]
+	{
+	width: 80% !important;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock .leftColumn h5
+	{
+	font-size: 16px;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock .leftColumn p
+	{
+	line-height: 16px;
+	padding: 5px 0;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock .leftColumn ul li
+	{
+	width: 100%;
+	margin-top: 15px;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock .leftColumn ul li span
+	{
+	float: left;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock .leftColumn ul li span.photo,.createStoryBlock .generateStory .albumBlock .listingTabBlock .leftColumn ul li span.beats,.createStoryBlock .generateStory .albumBlock .listingTabBlock .leftColumn ul li span.comment
+	{
+	background: url(../images/sprite.png) no-repeat;
+	width: 24px;
+	height: 23px;
+	margin: -2px 10px 0 0;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock .leftColumn ul li span.photo
+	{
+	background-position: -105px -475px;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock .leftColumn ul li span.beats
+	{
+	background-position: -134px -475px;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock .leftColumn ul li span.comment
+	{
+	background-position: -238px -476px;
+}
+
+.createStoryBlock .generateStory .generateMenuTab  .h4Title {
+	float: right;
+	width: 382px;
+	padding-top: 28px;
+}
+
+.listingTabBlock .leftColumn .ownAccount {
+	padding-top: 110px;
+}
+
+.listingTabBlock .leftColumn .ownAccount span {
+	float: left;
+	background: url(../images/sprite.png) no-repeat;
+	margin: 12px 20px 0 0;
+}
+
+.listingTabBlock .leftColumn .ownAccount span.faceBook {
+	width: 15px;
+	height: 18px;
+	background-position: -14px -509px;
+}
+
+.listingTabBlock .leftColumn .ownAccount span.twitter {
+	width: 22px;
+	height: 18px;
+	background-position: -35px -509px;
+}
+
+.listingTabBlock .leftColumn .ownAccount span.googlePlus {
+	width: 20px;
+	height: 20px;
+	background-position: -63px -509px;
+}
+
+.listingTabBlock .leftColumn .ownAccount span.camera {
+	width: 18px;
+	height: 18px;
+	background-position: -93px -509px;
+}
+
+.listingTabBlock .leftColumn .ownAccount span.picasa {
+	width: 19px;
+	height: 19px;
+	background-position: -121px -509px;
+}
+
+.listingTabBlock .leftColumn .ownAccount span.flickr {
+	width: 23px;
+	height: 19px;
+	background-position: -147px -509px;
+}
+
+.listingTabBlock .leftColumn .ownAccount span.folder {
+	width: 28px;
+	height: 20px;
+	background-position: -180px -509px;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock .storyGallery
+	{
+	float: left;
+	width: 400px;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock .storyGallery ul li
+	{
+	width: 400px;
+	height: 400px;
+	position: inherit;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock .storyGallery ul li p
+	{
+	position: absolute;
+	left: 78%;
+	top: 16%;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock .storyGallery ul li p span
+	{
+	float: none !important;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock .storyGallery ul li span
+	{
+	float: left;
+	width: 200px;
+	height: 133px;
+	color: #fff;
+	text-align: center;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock #nextBtn a,.createStoryBlock .generateStory .albumBlock .listingTabBlock #prevBtn a
+	{
+	background: url(../images/sprite.png) no-repeat;
+	width: 25px;
+	height: 25px;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock #nextBtn a
+	{
+	top: 85px;
+	right: 10px;
+	background-position: -204px -472px;
+}
+
+.createStoryBlock .generateStory .albumBlock .listingTabBlock #prevBtn a
+	{
+	top: 85px;
+	left: 329px;
+	background-position: -165px -472px;
+}
+
+.butttonDisable {
+	opacity: 0.25;
+	filter: alpha(opacity =   0.25);
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=25)";
+} /*storyline large lightbox*/
+.zoomFullview, .zoomStoryCompactView, .zoomBeatCompactView /*, .zoomCompactView*/ {
+	background: url(../images/sprite.png) no-repeat #111;
+	width: 22px;
+	height: 20px;
+	position: absolute;
+	left: 5px;
+	top: 0;
+	cursor: pointer;
+	display: block;
+	z-index: 5;
+}
+
+.zoomFullview {
+	background-position: -280px -476px;
+}
+
+.zoomStoryCompactView, .zoomBeatCompactView /*, .zoomCompactView*/ {
+	background-position: -316px -476px;
+}
+
+.popupFullScreen {
+	width: 88%;
+	min-height: 85%;
+	overflow: hidden;
+}
+
+.popupFullScreen .leftCol {
+	width: 62%;
+	margin: 0;
+	overflow: hidden;
+}
+
+.popupFullScreen .rightCol {
+	width: 31%;
+	height: 298px;
+	padding: 15px 29px 0 30px;
+}
+
+.popupFullScreen #colRight .viewport {
+	width: 97%;
+	height: 70px !important;
+}
+
+.popupFullScreen #colRight .scrollbar {
+	display: none;
+}
+
+.popupFullScreen #visitorComment {
+	width: 36%;
+	overflow: hidden;
+	clear: none;
+	margin: 0;
+}
+
+.popupFullScreen #visitorComment .comment label {
+	width: 80%;
+}
+
+.popupFullScreen #visitorComment .viewport {
+	width: 95%;
+}
+
+.popupFullScreen #visitorComment .scrollbar,.popupFullScreen #visitorComment .track
+	{
+	width: 10px;
+}
+
+.popupFullScreen .rightCol #colRight {
+	width: 100%;
+	float: left;
+}
+
+.popupFullScreen .commentBlock {
+	width: 36%;
+	float: right;
+	clear: right;
+}
+
+.popupFullScreen .commentBlock .addComment label {
+	width: 80%;
+}
+
+.popupFullScreen .navigation {
+	width: 100%;
+	height: 7% !important;
+	overflow: hidden;
+	background: #6CA7BC;
+}
+
+.popupFullScreen .navigation .next,.popupFullScreen .navigation .prev {
+	width: 25px;
+	height: 25px;
+	margin: 8px;
+	position: relative;
+	z-index: 2;
+}
+
+.popupFullScreen .navigation .prev {
+	background-position: -165px -472px;
+}
+
+.popupFullScreen .navigation .next {
+	background-position: -204px -472px;
+}
+
+.popupFullScreen .navigation h3 {
+	position: absolute;
+	left: 35px;
+	bottom: 0;
+	width: 90%;
+	text-align: center;
+	font-size: 17px;
+	color: #fff;
+}
+
+.popupFullScreen .clr {
+	display: none;
+}
+
+.popupBlock .navigation {
+	height: 0;
+	overflow: hidden;
+}
+
+.popupFullScreen #diplaySelectedMoment {
+	height: 100%;
+	overflow: hidden;
+}
+
+.popupFullScreen .storyBeat {
+	background: none !important;
+	z-index: 1;
+}
+	/*.ui-draggable-dragging{background:url("../images/sprite.png") no-repeat -220px -502px !important; width:35px; height:32px !important;}*/
+/*home page signup box*/
+.signupOverlay {
+	background: #000;
+	-webkit-opacity: 0.50;
+	-moz-opacity: 0.50;
+	opacity: 0.50;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+	filter: alpha(opacity = 50);
+	background: #000;
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	z-index: 2;
+	top: 0;
+	display: none;
+}
+
+.signupBox {
+	position: absolute;
+	left: 40%;
+	top: 30%;
+	width: 25%;
+	z-index: 5;
+	background: #fff;
+	padding: 10px;
+	border: 1px solid #ca3d00;
+	text-align: center;
+	display: none;
+}
+
+.signupBox p {
+	font-size: 16px;
+	padding: 10px 0 20px;
+	font-family: hand_of_seanregular;
+	color: #ca3d00;
+	line-height: 28px;
+}
+
+.signupBox input[type="button"] {
+	background: #47B4B8;
+	color: #fff;
+	border: none;
+	font-size: 13px;
+	padding: 2px 20px 3px;
+	border-radius: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+}
+
+.inviteFriend {
+	float: left;
+	position: relative;
+	font-size: 13px;
+	color: #ccc;
+	font-weight: bold;
+	padding: 10px 0 0 50px;
+}
+
+.inviteFriend span {
+	float: left;
+	padding-right: 15px;
+}
+
+.inviteFriend span.title {
+	padding-top: 16px;
+}
+
+.inviteFriend .creatNewBtn {
+	bottom: -2px !important;
+	right: -30px !important;
+}
+
+.ageGenderError span {
+	float: left;
+	margin-top: 2px;
+}
+
+.ageGenderError span:nth-of-type(2) {
+	float: left;
+	margin: -7px 0 0 48px;
+}
+
+.videoPopup #beatImgListing {
+	width: 255px !important;
+	position: absolute;
+	top: 163px;
+	left: 19px;
+	background: #000; /*margin:0 32px;*/
+}
+
+.videoPopup #beatImgListing ul li {
+	float: left;
+	width: 55px;
+	margin-top: 1px;
+}
+
+.videoPopup #prevBtn a,.videoPopup #nextBtn a {
+	top: 36%;
+	width: 18px;
+	height: 25px;
+}
+
+.videoPopup #prevBtn a {
+	left: 0;
+	background-position: -262px -506px;
+}
+
+.videoPopup #nextBtn a {
+	right: 4px;
+	background-position: -298px -506px;
+} /*horizontal scroll css*/
+.imgListing {
+	margin: 5px auto;
+	width: 1000px;
+	text-align: center;
+	clear: both;
+}
+
+.imgListing .viewport {
+	width: 472px;
+	height: 72px;
+	overflow: hidden;
+	position: relative;
+}
+
+.imgListing .overview {
+	list-style: none;
+	width: 600px;
+	padding: 0;
+	margin: 0;
+	position: absolute;
+	left: 0;
+	top: 0;
+}
+
+.imgListing .overview img {
+	float: left;
+}
+
+.imgListing .scrollbar {
+	background: transparent url(../images/bg-scrollbar-track-x.png)
+		no-repeat 0 0;
+	position: relative;
+	margin: 0 0 5px;
+	clear: both;
+	height: 10px;
+	cursor: pointer;
+}
+
+.imgListing .track {
+	width: 100%;
+	height: 15px;
+	position: relative;
+	top: 1px;
+}
+
+.imgListing .thumb {
+	background: #ccc;
+	height: 6px;
+	cursor: pointer;
+	overflow: hidden;
+	position: absolute;
+	left: 0;
+	top: 1px;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+
+.imgListing .thumb .end {
+	background: transparent url(../images/bg-scrollbar-thumb-x.png)
+		no-repeat 0 50%;
+	overflow: hidden;
+	height: 25px;
+	width: 5px;
+}
+
+.imgListing .disable {
+	display: none;
+}
+
+.noSelect {
+	user-select: none;
+	-o-user-select: none;
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+} /*expand view*/
+.popupExpand {
+	background: #1E1E1E;
+	/*min-height: 560px;*/
+	/*width: 1150px;*/
+    /*min-width: 80%;
+    min-height: 90%;*/
+	overflow: hidden;
+	z-index: 999;
+	position: absolute;
+}
+
+.popupExpand .popMenu div {
+	width: 165px;
+	display: none;
+}
+
+.popupExpand .popMenu:hover>div {
+	display: block;
+}
+
+.popupExpand .imgLeftCol {
+	float: left;
+	width: 60%;
+	position: relative;
+	overflow: hidden;
+}
+
+.popupExpand .expandRightCol {
+	float: right;
+	width: 40%;
+	color: #fff;
+}
+
+.popupExpand .expandRightCol .storyTitleBlock {
+	background: #6CA7BC;
+	/*height: 220px;*/
+	padding: 12px;
+}
+
+.popupExpand .expandRightCol .storyTitleBlock p,.popupExpand .expandCommentBlcok p
+	{
+	padding: 10px 0 0 10px;
+	line-height: 16px;
+}
+
+.popupExpand .expandRightCol .storyTitleBlock h3 {
+	font-size: 15px;
+	font-weight: bold;
+	padding-top: 15px;
+}
+
+.popupExpand .expandCommentBlcok .viewport {
+	/*height: 200px;*/
+    /*width: 95%;*/
+	overflow: hidden;
+	position: relative;
+	padding-left: 10px;
+}
+
+.expandRightCol .commentBlock .addComment label, .expandRightCol .commentBlock .addFootnote label {
+	float: left;
+	width: 80%;
+}
+
+.popupExpand .storyBeat {
+	bottom: 0;
+}
+
+.popupExpand .navigation {
+	text-align: center;
+	width: 100%;
+	position: absolute;
+	bottom: 0;
+	height: 37px;
+}
+
+.popupExpand .navigation .next,.popupExpand .navigation .prev {
+	width: 25px;
+	height: 25px;
+	margin: 8px;
+	position: absolute;
+	z-index: 2;
+}
+
+.popupExpand .navigation .prev {
+	background-position: -165px -472px;
+	left: 0;
+}
+
+.popupExpand .navigation .next {
+	background-position: -204px -472px;
+	right: 0;
+}
+
+.popupExpand .expandCommentBlcok {
+	margin-bottom: 10px;
+	padding-top: 15px;
+    clear:both;
+}
+
+.popupExpand .expandCommentBlcok .overview{
+  color:#fff;
+}
+
+.popupExpand .expandCommentBlcok h3 {
+	font-size: 15px;
+	font-weight: bold;
+	padding: 10px 0 5px 10px;
+}
+
+.popupExpand .customExSlider {
+	/*width: 1150px;*/
+    width:auto;
+}
+
+.verticalImgListing {
+	position: absolute;
+	right: 0;
+	top: 5px;
+}
+
+.verticalImgListing figure {
+	margin-bottom: 2px;
+}
+
+.verticalImgListing .viewport {
+	width: 77px;
+	float: left;
+	overflow: hidden;
+	position: relative;
+}
+
+#landingHeader #userOptions span.flag {
+	background-position: -353px -503px !important;
+}
+#landingHeader #userOptions span.redflag {
+	background-position: -322px -503px !important;
+}
+.menuBlock .notificationText {
+	padding: 10px;
+	min-width: 400px;
+}
+
+.menuBlock .notificationText h3 {
+	background: #323232;
+	display: block;
+	color: #FFFFFF;
+	font-size: 14px;
+	font-weight: bold;
+	padding: 10px;
+}
+
+.menuBlock .notificationText ul li {
+	width: 100%;
+}
+
+.menuBlock .notificationText ul li figure,.menuBlock .notificationText ul li .notificationContent
+	{
+	float: left;
+	margin-left: 10px;
+	color: #CCCCCC;
+}
+
+.menuBlock .notificationText ul li .notificationContent time {
+	display: block;
+}
+
+.menuBlock .notificationText ul li .notificationText a {
+	color: #ccc;
+}
+
+.notificationScroll .viewport {
+	width: 350px;
+	height: 300px;
+	overflow: hidden;
+	position: relative;
+}
+
+/*.popupExpand .commentBlock .addComment {width: 96%;}*/
+
+/*storybeat updated css*/
+.customSlider .storyComment {
+	display: none;
+}
+
+.viewPopup .viewCommments {
+	color: #fff;
+	font-size: 13px;
+	overflow: hidden;
+}
+
+.viewPopup .viewCommments span.number {
+	background: url(../images/sprite.png) no-repeat -218px -170px;
+	height: 30px;
+	width: 30px;
+	float: left;
+	margin: -2px 8px 0 6px;
+	padding-top: 5px;
+	text-align: center;
+}
+
+.viewPopup .viewCommments span.title {
+	float: left;
+	margin-top: 3px;
+}
+
+.viewPopup .viewCommments a {
+	color: #fff;
+}
+
+.viewPopup .titleDescBlock {
+	padding: 5px 7px 5px 10px;
+}
+
+.viewPopup .contentTitle {
+	display: none;
+}
+
+.viewPopup .blankSpace {
+	padding-top: 20px;
+}
+
+.addMoreMoment {
+	bottom: 11%;
+	color: #CCC;
+	font-size: 13px;
+	font-weight: bold;
+	height: 35px;
+	position: absolute;
+	right: 6px;
+	width: 11%;
+}
+
+.addMoreStory {
+	top: 46%;
+	color: #CCC;
+	font-size: 15px;
+	font-weight: bold;
+	position: absolute;
+	right: 4%;
+	z-index: 1;
+}
+
+#sportyFrame #sportyTitle .scrollWrapper {
+	width: 100%;
+}
+
+.addMoreBeat {
+	top: 72%;
+	color: #CCC;
+	font-size: 15px;
+	font-weight: bold;
+	position: absolute;
+	right: 4%;
+	z-index: 1;
+}
+
+.titleDescScroll .viewport {
+	width: 435px;
+	height: 65px;
+	overflow: hidden;
+	position: relative;
+}
+
+.titleDescScroll .viewport .overview {
+	color: #ccc;
+}
+
+.momentScroll .mejs-video,
+.momentScroll .mejs-audio,
+.momentScroll .mejs-overlay,
+.momentScroll .videoBlock,
+.momentScroll .momentTitle
+	{
+	width: 100% !important;
+}
+
+.momentScroll .mejs-video, .momentScroll .mejs-overlay {
+	height: 100% !important;
+}
+
+.textMoment{
+	color: #FFF;
+    font-size: 130%;
+    height: 90%;
+    line-height: 18px;
+    overflow: hidden;
+    padding: 5px;
+    word-wrap: break-word;
+}
+
+#mainMenu ul li .momentSubmenu, #mainMenu ul li .storylineSubmenu{
+    overflow: hidden;
+	position: absolute;
+	padding-top: 18px;
+	width:400px;
+	display: none;
+	left:0;
+}
+
+#mainMenu ul li .storylineSubmenu{left:-75px;}
+#mainMenu ul li .storylineSubmenu ul li a,
+#mainMenu ul li .momentSubmenu ul li a{width:auto !important; margin-right:10px; background:url("../images/submenu_icon.png") no-repeat 93% 5px #EBEBEB; padding:7px 34px 7px 10px !important; color:#222323 !important; font-size:14px !important;
+border-radius:20px; -moz-border-radius:20px; -webkit-border-radius:20px;}
+
+#mainMenu ul li .storylineSubmenu ul li a:hover, #mainMenu ul li .momentSubmenu ul li a:hover{background:url("../images/submenu_icon.png") no-repeat 93% -28px #47b4b8; color:#fff !important;}
+
+#mainMenu ul li.active:hover>.storylineSubmenu, #mainMenu ul li.active:hover>.momentSubmenu {
+	display: block;
+}
+
+#mainMenu ul li:hover>.landingStorySubMenu, #mainMenu ul li:hover>.landingMomentSubMenu {
+ display: block;
+}
+#mainMenu ul li .landingStorySubMenu{left:-12px;}
+
+.editGroupError{float: right !important; padding-right: 90px; padding-top: 10px;}
+.momentTypeLabel{float: left; font-size: 13px; padding-top: 11px;}
+.momentTypeSelect{float:right;}
+.storyBeatExpand, .storylinePreview{display:none;}
+
+.mediaPlayIcon{position:absolute; cursor:pointer; top:40%; left:44%; z-index:5;}
+.videoPlayIcon{position:absolute; top:35%; left:35%; z-index:1;}
+
+#mainContent #aboutContainer{font-family: HelveticaNeueRegular; font-weight: lighter; font-size:20px;}
+#mainContent #aboutContainer section
+	{
+	font-size: 13px;
+	width: 800px;
+	margin: 0 auto;
+    padding-top:30px;
+}
+#mainContent #aboutContainer p, #mainContent #aboutContainer dl{font-size:19px; line-height:22px; font-weight:lighter;}
+#mainContent #aboutContainer .articleCol dl dt,
+#mainContent #aboutContainer .articleCol dl dd{float:left; padding:10px 0;}
+#mainContent #aboutContainer .articleCol dl dt{width:200px; padding:13px 0; clear:both;}
+#mainContent #aboutContainer .articleCol dl dd input[type="text"],
+#mainContent #aboutContainer .articleCol dl dd input[type="email"],
+#mainContent #aboutContainer .articleCol dl dd textarea{width:548px; padding:7px 5px; resize:none; border:1px solid #cecece; box-shadow:0 0 6px #CCC; -moz-box-shadow:0 0 6px #CCC; -webkit-box-shadow:0 0 6px #CCC;}
+#storisticHeader #topMenu ul li #about.active, #storisticHeader #topMenu ul li #contact.active{color:#C75200;}
+#mainContent #aboutContainer #notification{color:#d50707; font-size:13px; text-align:center; clear:both;}
+
+#mainContent #aboutContainer h1 {
+	font-family: Conv_HelveticaNeueLTStd-Lt;
+	font-size: 35px;
+	padding-bottom: 10px;
+}
+#mainContent #aboutContainer .sendButton {
+	min-width: 120px; margin:3px 0 10px 241px;
+}
+#mainContent #aboutContainer .articleCol dl dt .required{color:#d50707;}
+
+.yui3-uploader{height: 40px; left: 49%; position: absolute; top: 30%; width: 140px; z-index: 1000;}
+.yui3-button {
+    background-color: #47b4b8 !important;
+    font-size:16px !important;
+    font-weight:bold;
+    color:#fff !important;
+    border-radius: 20px !important;
+}
+/*#myMomentBlock  #momentSlider .audioBlock, #myMomentBlock  #momentSlider .textBlock, #myMomentBlock  #sharedMomentSlider .audioBlock, #myMomentBlock  #sharedMomentSlider .textBlock{position:relative;}*/
+.selectMultiple{color:#fff; float:left; margin:30px 0 0 100px; font-size:16px;}
+#storyLineBlock .featureBlock .featureComment:nth-of-type(2){height:100%; display:block;}
+.TokenContainer {margin:170px auto 0; width:90%; text-align:center;}
+.TokenContainer h1{font-size:20px; font-weight:bold; padding-bottom:20px; text-shadow:3px 2px 2px #fff; color:#B34704;}
+.TokenContainer a{color:#000; font-weight:bold; font-size:13px; text-decoration:underline;}
+.TokenContainer a:hover{color:#B34704;}
+
+#myMoments .dragDrop{position:absolute; right:5px; top:15px; width:200px; color:#ccc; font-size:17px; font-weight:bold; line-height:25px; font-family:hand_of_seanregular;}
+.socialShare textarea{background: #C1C0B7;
+    border: 1px solid #CCC;
+    margin: 5px 0;
+    resize: none;
+    width: 95%;}
+.socialShare span{display:block; margin-left:50px;}
+.socialShare span input[type="button"]{background: #47b4b8;
+	color: #fff;
+	font-size: 13px;
+	cursor: pointer;
+	border: none;
+	margin: 5px;
+	padding: 5px 10px;
+	text-align: center;
+	min-width: 90px;
+	font-weight:bold;
+	border-radius: 15px;
+	-moz-border-radius: 15px;
+	-webkit-border-radius: 15px;}
+	
+	
+.forgotPasswordPopup{color: #ccc; background:#292828; padding:20px 20px 0 20px; z-index: 100; position:absolute; left:40%; top:50%; display:none;}
+.forgotPasswordPopup input[type="text"],
+.changePasswordPopup input[type="password"]{border: none; background: #343434; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; color: #ccc;	font-size: 1.2em;  padding:5px 10px; width:235px;}
+.forgotPasswordPopup input[type="button"],
+.changePasswordPopup input[type="button"]{background:#47B4B8; border-radius:10px; color:#fff; padding:5px 20px; border:none; font-weight:bold;}
+.forgotPasswordPopup span{display:block; margin:20px 30px 0; color:#47B4B8;}
+
+.changePasswordPopup #passwordChangeNotification{display:block; margin:15px 30px; color:#47B4B8; text-align:center;}
+
+#InviteFriendResponse{display: block; margin-left: 30px;}
+
+.changePasswordPopup{position:absolute; left:40%; top:40%; background:#343434; width:300px; min-height:100px; z-index: 100;}
+.changePasswordPopup .headingTitle{background:#47B4B8; color:#fff; font-size:15px; font-weight:bold; text-align:center; padding:8px 5px;}
+.changePasswordPopup dl{margin-top:0;}
+.changePasswordPopup dl dd{padding: 10px 0 7px 25px;}
+.changePasswordPopup input[type="password"]{background:#484646;}
+.facebookButton {text-align:center; border-bottom:2px solid #343434;}
+#deleteSocialSiteID{margin-left: 25px;}
+
+IMG.centered {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    max-height:100%;
+    max-width:100%
+}
+
+#myMoments .momentBlock .momentTime{top:0 !important}
+.deleteSocialSitePopup{
+	display: none;
+	background: #1e1e1e;
+	position: absolute;
+	min-width: 200px;
+	z-index: 999;
+	overflow: hidden;
+	padding: 5px;
+	border: 1px solid #4E4C4C;
+	height: 75px;
+	top:300%;
+    left:40%;
+}
+
+.heightlight{bottom:1px;}
+
+.bottomAlignInFigure {
+    text-align:center;
+    vertical-align: bottom;
+    position:relative;
+}
+
+.helper {
+    display: block;
+}
+
+.addComment {
+	bottom: 40px;
+	position: absolute;
+	width: 100%;
+}
+.popupBlock .addComment {
+	bottom: 0;
+	width: 98% !important;
+}
+.popupExpand .addComment{width:39%;}
+
+#momentSlider .momentScroll a{display:block; overflow:hidden;}
+
+.popupExpand .addComment, .popupExpand .addFootnote{width:39%;}
+.popupExpand .commentBlock .addFootnote{position:absolute; top:22%;}
+.viewPopup .commentBlock .addFootnote, .popupBlock .commentBlock .addFootnote{position:absolute; width:97%; top:50%;}
+.viewPopup .commentBlock .addFootnote .close, .popupBlock .commentBlock .addFootnote .close{right:3px; top:0;}
+.viewPopup .commentBlock .addFootnote label, .popupBlock .commentBlock .addFootnote label{width:79%;}
+.popupBlock .commentBlock .addFootnote .butttonBlock,
+.viewPopup .commentBlock .addFootnote .butttonBlock,
+.popupExpand .commentBlock .addFootnote .butttonBlock{display:block; text-align:center; overflow:hidden; width:100%;}
+.viewPopup .commentBlock .addFootnote .butttonBlock input[type="submit"],
+.popupBlock .commentBlock .addFootnote .butttonBlock input[type="submit"],
+.popupExpand .commentBlock .addFootnote .butttonBlock input[type="submit"]{background:#47B4B8; color:#fff; padding:4px; width:70px; border-radius:10px; -moz-border-radius:10px; -webkit-border-radius:10px; border:none;}
+.customSlider .popMenu ul, .customSlider .popMenu ul li{height:auto !important;}
+.momentScroll .textBlock .leftCorner{top:2px !important;}
+.menuBlock .overview ul li label.editColum .tutorialIcon{background-position:-227px -585px; cursor:pointer;}
+.validationError{
+	color: red;
+	display: block;
+	margin: 2px 3px -14px 7px;
+	padding-bottom: 10px;	
+}
+.beatBlock .socialData{margin:25px auto; width:230px;}
+.beatBlock .socialData p{font-size:14px; line-height:17px; color:#fff;}
+.beatBlock .socialData .socialMenu{background:#343434; width:auto; padding:10px 0; text-align:center;}
+
+.selectedSocialScreen{display:none; width:700px; min-height:180px; z-index:1000; position:absolute; left:30%; top:5%;}
+.selectedSocialScreen .close{right:-7px;}
+.confermBeatPop{background:#1E1E1E; width:250px; min-height:80px; position:absolute; left:40%; top:30%; padding:15px 0; color:#fff; display:none;}
+.confermBeatPop label{display:block; padding:0 5px 10px 10px; font-size:14px;}
+.confermBeatPop label input[type="button"]{float:left; margin-right:5px;}
+.confermBeatPop .close{right:1px; top:-6px;}
+.confermBeatPop .submitButton{min-width:110px; padding:4px 20px;}
+.confermBeatPop .submitButton{min-width:110px; padding:4px 20px;}
+.socialBeatLoader{position:absolute; top:30%; left:43%; z-index:1;}
+.createStory .shareFriendBlock, .editStoryline .shareFriendBlock{clear:both; padding: 0 14px; color:#fff;}
+.createStory .shareFriendBlock label, .editStoryline .shareFriendBlock label{padding:5px 8px 7px 30px;}
+
+#mainContent .storTitle h2.storyTitle span:first-child{overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 160px;}
+.scrollContainer li a, .scrollContainer .smoothScroll a{display:inline-block; position:relative;}
+
+.popupExpand .imgLeftCol .slideImg{display:table-cell; vertical-align:middle; text-align:center;}
+.colorWhite{color:#fff;}
+
+.addStoryComment{position:absolute; right:170px; top:165px; width: 320px; color:#ccc; font-size:17px; font-weight:bold; line-height:25px; font-family:hand_of_seanregular;}
+.addStoryComment .fLeft{width: 235px;}
+.addStoryComment .topArrow{position:absolute;  right: -20px; top: -1px;}
+.socialAuthPopup{background:#1E1E1E; color:#ccc; width:25%; min-height:150px; z-index:1000; display:none;}
+.socialAuthPopup h3{font-size:15px; padding:20px 15px 35px; text-align:center;}
+.socialAuthPopup .submitButton{min-width:100px;}
+.selectedSocialScreen .friendListing h4.h4Title{font-size:15px; background:#1E1E1E; margin:-20px 0 10px; overflow:hidden;}
+.selectedSocialScreen .friendListing h4.h4Title span{padding:5px 10px; float:left; background:#535353; color:#fff;}

@@ -104,5 +104,8 @@
         <property name="ancestorGenreDescriptions" type="string">
             <column name="ancestorGenreDescriptions" />
         </property>
+        <property name="ancestorGeoDescriptions" type="string">
+            <column name="ancestorGeoDescriptions" />
+        </property>
      </class>
 </hibernate-mapping>

@@ -182,7 +182,43 @@ public class Utils {
 				c.setTime(date);
 			c.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
 			cal1.setTime(getCurrentDate());
-			if(c.get(Calendar.DAY_OF_MONTH) < cal1.get(Calendar.DAY_OF_MONTH))
+			if(cal1.get(Calendar.DAY_OF_WEEK) > 2)
+			{
+				if(c.get(Calendar.MONTH) < cal1.get(Calendar.MONTH))
+					c.add(Calendar.DATE,7);
+				else if(c.get(Calendar.DAY_OF_MONTH) < cal1.get(Calendar.DAY_OF_MONTH))
+					c.add(Calendar.DATE,7);
+			}
+
+			// Set time fields to end  
+			setTimeFields(c);
+
+			return c.getTime();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+
+	}
+	
+	
+	/**
+	 * Get previous weekend for a particular date
+	 * @return weekendDate
+	 */
+	public static Date getPreviousWeekend(Date date)
+	{
+		try {
+			Calendar c = Calendar.getInstance();
+			Calendar cal1 = Calendar.getInstance();
+			if(date != null)
+				c.setTime(date);
+			c.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+			c.add(Calendar.WEEK_OF_YEAR, -1);
+			cal1.setTime(getCurrentDate());
+			if(c.get(Calendar.MONTH) < cal1.get(Calendar.MONTH))
+				c.add(Calendar.DATE,7);
+			else if(c.get(Calendar.DAY_OF_MONTH) < cal1.get(Calendar.DAY_OF_MONTH))
 				c.add(Calendar.DATE,7);
 
 			// Set time fields to end  
@@ -192,6 +228,56 @@ public class Utils {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
+		}
+
+	}
+	
+	
+	/**
+	 * Get nearest Monday for a particular date
+	 * @return weekendDate
+	 */
+	public static Date getCurrentWeekMonday()
+	{
+		try {
+			Calendar c = Calendar.getInstance();
+			Calendar cal1 = Calendar.getInstance();
+			c.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+			cal1.setTime(getCurrentDate());
+			if(cal1.get(Calendar.DAY_OF_WEEK) < 2)
+			{
+				if(c.get(Calendar.MONTH) > cal1.get(Calendar.MONTH))
+					c.add(Calendar.DATE,-7);
+				else if(c.get(Calendar.DAY_OF_MONTH) >= cal1.get(Calendar.DAY_OF_MONTH))
+					c.add(Calendar.DATE,-7);
+			}
+
+			// Set time fields to end  
+			setTimeFields(c);
+
+			return c.getTime();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+
+	}
+	
+	/**
+	 * Get current day
+	 * @return weekendDate
+	 */
+	public static int getCurrentDay()
+	{
+		try {
+			Calendar cal = Calendar.getInstance();
+
+			// Set time fields to end  
+			setTimeFields(cal);
+			return cal.get(Calendar.DAY_OF_WEEK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return 0;
 		}
 
 	}
@@ -210,7 +296,9 @@ public class Utils {
 				c.setTime(date);
 			c.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
 			cal1.setTime(getCurrentDate());
-			if(c.get(Calendar.DAY_OF_MONTH) < cal1.get(Calendar.DAY_OF_MONTH))
+			if(c.get(Calendar.MONTH) < cal1.get(Calendar.MONTH))
+				c.add(Calendar.DATE,7*4);
+			else if(c.get(Calendar.DAY_OF_MONTH) < cal1.get(Calendar.DAY_OF_MONTH))
 				c.add(Calendar.DATE,7*4);
 
 			// Set time fields to end 
@@ -321,7 +409,7 @@ public class Utils {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Get current time for event
 	 * @return 
@@ -330,7 +418,6 @@ public class Utils {
 	{
 		try {
 			Calendar c = Calendar.getInstance();
-			c.set(Calendar.DAY_OF_WEEK, Calendar.THURSDAY);
 
 			Time currentTime = new Time(c.getTimeInMillis());
 
@@ -340,8 +427,8 @@ public class Utils {
 			return null;
 		}
 	}
-	
-	
+
+
 	/**
 	 * Get current date
 	 * @return
@@ -670,7 +757,9 @@ public class Utils {
 			// The switch checks the day of the week for Saturdays and Sundays
 			switch(cal.get(Calendar.DAY_OF_WEEK)){
 			case Calendar.SUNDAY:
-				if(cal.get(Calendar.DAY_OF_MONTH) < start.get(Calendar.DAY_OF_MONTH))
+				if(cal.get(Calendar.MONTH) < start.get(Calendar.MONTH))
+					cal.add(Calendar.DATE,7);
+				else if(cal.get(Calendar.DAY_OF_MONTH) < start.get(Calendar.DAY_OF_MONTH))
 					cal.add(Calendar.DATE,7);
 				weekendList.add(cal.getTime());
 				break;
@@ -731,7 +820,7 @@ public class Utils {
 
 		return interval;
 	}
-	
+
 	/**
 	 * Get timeLine from Event Date
 	 * @param eventDate

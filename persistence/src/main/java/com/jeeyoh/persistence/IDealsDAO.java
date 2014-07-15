@@ -33,12 +33,12 @@ public interface IDealsDAO {
 	public int userCategoryLikeCount(Integer userCategoryId);
 	public List<Deals> getDealsByLikeSearchKeyword(String searchText,String category, String location, int offset, int limit);
 	public List<Deals> getDealsBySearchKeyword(String searchText,String category, String location, int offset, int limit);
-	public List<Userdealssuggestion> getUserDealSuggestions(String userEmail, int offset, int limit);
+	public List<Userdealssuggestion> getUserDealSuggestions(String userEmail, int offset, int limit, String category, String suggestionType, double lat, double lon, int distance, double rating, int minPrice, int maxPrice);
 	public List<Object[]> getTopDealsByRating(String idsStr);
 	public List<Object[]> getDealLikeCountByPage(String idsStr);
 	public Deals getDealById(int dealId);
 	public int isDealExists(String dealId);
-	public int getTotalDealsBySearchKeyWord(String searchText,String category, String location);
+	public int getTotalDealsBySearchKeyWord(String searchText,String category, String location, double lat, double lon, int distance, double rating, int minPrice, int maxPrice);
 	public List<Deals> getDealsByUserCategory(String itemCategory,
 			String itemType, String providerName);
 	public boolean saveDealUserLikes(Dealsusage dealsusage);

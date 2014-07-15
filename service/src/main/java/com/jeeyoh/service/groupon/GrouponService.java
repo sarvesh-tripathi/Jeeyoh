@@ -127,7 +127,8 @@ public class GrouponService implements IGrouponService {
 									deal.setAnnouncementTitle(dealModel.getAnnouncementTitle());
 									deal.setDealId(dealModel.getDealId());
 									deal.setDealType(dealModel.getType());
-									deal.setDealUrl(dealModel.getDealUrl());								
+									deal.setDealUrl(dealModel.getDealUrl());
+									logger.debug("EndDate: "+dealModel.getEndAt());
 									deal.setEndAt(new DateTime(dealModel.getEndAt()).toDate());
 									deal.setGdivision(division);
 									deal.setHighlightsHtml(dealModel.getHighlightsHtml());

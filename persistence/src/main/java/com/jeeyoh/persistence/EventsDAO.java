@@ -3,14 +3,17 @@ package com.jeeyoh.persistence;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.type.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +26,7 @@ import com.jeeyoh.persistence.domain.Eventuserlikes;
 import com.jeeyoh.persistence.domain.Page;
 import com.jeeyoh.persistence.domain.Pagetype;
 import com.jeeyoh.persistence.domain.Pageuserlikes;
+import com.jeeyoh.persistence.domain.PopularCommunity;
 import com.jeeyoh.utils.Utils;
 
 @Repository("eventsDAO")
@@ -35,7 +39,7 @@ public class EventsDAO implements IEventsDAO{
 	@Override
 	public void saveEvents(Events events, int batch_size) {
 		logger.debug("saveEvents ==>");
-		/*Session session = sessionFactory.openSession();
+		Session session = sessionFactory.openSession();
 		Transaction tx = null;
 		try
 		{
@@ -55,8 +59,8 @@ public class EventsDAO implements IEventsDAO{
 		finally
 		{
 			session.close();
-		}*/
-		Session session =  sessionFactory.getCurrentSession();
+		}
+		/*Session session =  sessionFactory.getCurrentSession();
 		try
 		{
 			session.save(events);
@@ -69,8 +73,7 @@ public class EventsDAO implements IEventsDAO{
 		catch (HibernateException e) {
 			logger.debug("Error ==> "+e.getLocalizedMessage());
 			e.printStackTrace(); 
-		}
-
+		}*/
 	}
 
 	@SuppressWarnings("unchecked")
@@ -168,7 +171,7 @@ public class EventsDAO implements IEventsDAO{
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Page> getCommunityBySearchKeywordForBusiness(String searchText,String category, String location, int offset, int limit) {
+	public List<Page> getCommunityBySearchKeywordForBusiness(String searchText,String category, String location, int offset, int limit, double lat, double lon, int distance, double rating) {
 		logger.debug("getCommunityBySearchKeyword ==> "+searchText);
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Page.class, "page").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
@@ -209,7 +212,7 @@ public class EventsDAO implements IEventsDAO{
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Page> getCommunityBySearchKeywordForEvents(String searchText,String category, String location, int offset, int limit) {
+	public List<Page> getCommunityBySearchKeywordForEvents(String searchText,String category, String location, int offset, int limit, double lat, double lon, int distance, double rating) {
 		logger.debug("getCommunityBySearchKeyword ==> "+searchText);
 
 		List<Page> pageList = null;
@@ -220,7 +223,7 @@ public class EventsDAO implements IEventsDAO{
 		}
 		else
 			hqlQuery = "select distinct a from Page a,Events b, Pagetype c where c.pageType=:category and a.pagetype.pageTypeId = c.pageTypeId and a.pageId = b.page.pageId";
-		
+
 		if(searchText != null && !searchText.trim().equals(""))
 		{
 			hqlQuery = hqlQuery + "and (a.about = :searchText or a.pageUrl = :searchText)";
@@ -277,7 +280,7 @@ public class EventsDAO implements IEventsDAO{
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Page> getCommunityByLikeSearchKeywordForBusiness(String searchText,String category, String location, int offset, int limit) {
+	public List<Page> getCommunityByLikeSearchKeywordForBusiness(String searchText,String category, String location, int offset, int limit, double lat, double lon, int distance, double rating) {
 		logger.debug("getCommunityByLikeSearchKeyword ==> "+searchText);
 
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Page.class, "page").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
@@ -309,7 +312,7 @@ public class EventsDAO implements IEventsDAO{
 		if(searchText != null && !searchText.trim().equals(""))
 		{
 			criteria.add(Restrictions.disjunction().add(Restrictions.like("page.about", "%" + searchText + "%"))
-					.add(Restrictions.like("page.pageUrl", "%" + searchText + "%"))).add(Restrictions.conjunction().add(Restrictions.ne("page.about", searchText))
+					.add(Restrictions.like("page.pageUrl", "%" + searchText + "%")).add(Restrictions.like("page.tag", "%" + searchText + "%"))).add(Restrictions.conjunction().add(Restrictions.ne("page.about", searchText))
 							.add(Restrictions.ne("page.pageUrl", searchText)));
 
 		}
@@ -322,7 +325,7 @@ public class EventsDAO implements IEventsDAO{
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Page> getCommunityByLikeSearchKeywordForEvents(String searchText,String category, String location, int offset, int limit) {
+	public List<Page> getCommunityByLikeSearchKeywordForEvents(String searchText,String category, String location, int offset, int limit, double lat, double lon, int distance, double rating) {
 		logger.debug("getCommunityByLikeSearchKeyword ==> "+searchText);
 		List<Page> pageList = null;
 		String hqlQuery = "";
@@ -332,10 +335,10 @@ public class EventsDAO implements IEventsDAO{
 		}
 		else
 			hqlQuery = "select distinct a from Page a,Events b, Pagetype c where c.pageType=:category and a.pagetype.pageTypeId = c.pageTypeId and a.pageId = b.page.pageId";
-		
+
 		if(searchText != null && !searchText.trim().equals(""))
 		{
-			hqlQuery = hqlQuery + "and ((a.about like '%" +searchText+ "%' or a.pageUrl like '%" +searchText+ "%') and (a.about !=:searchText))";
+			hqlQuery = hqlQuery + "and ((a.about like '%" +searchText+ "%' or a.pageUrl like '%" +searchText+ "%' or a.tag like '%" +searchText+ "%') and (a.about !=:searchText))";
 		}
 		if(location != null && !location.trim().equals(""))
 		{
@@ -394,7 +397,7 @@ public class EventsDAO implements IEventsDAO{
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Events> getEventsBySearchKeyword(String searchText,String category, String location, int offset, int limit) {
+	public List<Events> getEventsBySearchKeyword(String searchText,String category, String location, int offset, int limit, double lat, double lon, int distance, double rating) {
 		logger.debug("getEventsBySearchKeyword ==> "+searchText);
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Events.class, "events").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
@@ -433,8 +436,11 @@ public class EventsDAO implements IEventsDAO{
 		criteria.add(Restrictions.conjunction().add(Restrictions.ge("events.event_date_time_local", Utils.getCurrentDate()))
 				.add(Restrictions.le("events.event_date_time_local", Utils.getNearestWeekendForEvent(null))));
 
+		String sql =  "(((acos(sin(((" + lat + ")*pi()/180)) * sin((latitude*pi()/180))+cos(((" + lat + ")*pi()/180)) * cos((latitude*pi()/180)) * cos((((" + lon + ")- longitude)*pi()/180))))*180/pi())*60*1.1515)<="+distance;     
+		criteria.add(Restrictions.sqlRestriction(sql)); 
+
 		criteria.addOrder(Order.asc("events.event_date_time_local"));
-		
+
 		criteria.setFirstResult(offset)
 		.setMaxResults(limit);
 		List<Events> eventsList = criteria.list();
@@ -443,7 +449,7 @@ public class EventsDAO implements IEventsDAO{
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Events> getEventsByLikeSearchKeyword(String searchText,String category, String location, int offset, int limit) {
+	public List<Events> getEventsByLikeSearchKeyword(String searchText,String category, String location, int offset, int limit, double lat, double lon, int distance, double rating) {
 		logger.debug("getEventsByLikeSearchKeyword ==> "+searchText);
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Events.class, "events").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
@@ -482,6 +488,9 @@ public class EventsDAO implements IEventsDAO{
 
 		criteria.add(Restrictions.conjunction().add(Restrictions.ge("events.event_date_time_local", Utils.getCurrentDate()))
 				.add(Restrictions.le("events.event_date_time_local", Utils.getNearestWeekendForEvent(null))));
+
+		String sql =  "(((acos(sin(((" + lat + ")*pi()/180)) * sin((latitude*pi()/180))+cos(((" + lat + ")*pi()/180)) * cos((latitude*pi()/180)) * cos((((" + lon + ")- longitude)*pi()/180))))*180/pi())*60*1.1515)<="+distance;     
+		criteria.add(Restrictions.sqlRestriction(sql)); 
 
 		criteria.addOrder(Order.asc("events.event_date_time_local"));
 
@@ -581,7 +590,6 @@ public class EventsDAO implements IEventsDAO{
 		return eventsList;
 	}
 
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Events> getUpcomingEvents(int pageId, int offset, int limit) {
@@ -641,7 +649,7 @@ public class EventsDAO implements IEventsDAO{
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Events> getUserEventsSuggestions(String userEmail, int offset,
-			int limit) {
+			int limit, String category, String suggestionType, double lat, double lon, int distance, double rating) {
 		logger.debug("getUserNonDealSuggestions ==> "+userEmail +" ==> "+offset+" ==> "+limit);
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Events.class, "events").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
@@ -652,8 +660,55 @@ public class EventsDAO implements IEventsDAO{
 			criteria.add(Restrictions.eq("user.emailId", userEmail));
 		}
 
+		if(category != null && !category.trim().equals(""))
+		{
+			criteria.createAlias("events.page", "page");
+			criteria.createAlias("page.pagetype", "pagetypes");
+			if(category.equalsIgnoreCase("NIGHTLIFE"))
+			{
+				criteria.add(Restrictions.disjunction().add(Restrictions.eq("pagetypes.pageType", category))
+						.add(Restrictions.eq("pagetypes.pageType", "THEATER"))
+						.add(Restrictions.eq("pagetypes.pageType", "CONCERT")));
+			}
+			else
+				criteria.add(Restrictions.eq("pagetypes.pageType", category));
+		}
+
 		criteria.add(Restrictions.ge("usereventsuggestions.suggestedTime", Utils.getCurrentDate()));
 		criteria.add(Restrictions.ge("events.event_date_time_local", Utils.getCurrentDate()));
+
+
+		if(suggestionType != null)
+		{
+			if(suggestionType.equalsIgnoreCase("Friend Suggestion"))
+			{
+				criteria.add(Restrictions.disjunction().add(Restrictions.like("usereventsuggestions.suggestionType", "%Friend%"))
+						.add(Restrictions.like("usereventsuggestions.suggestionType", "%Group%"))
+						.add(Restrictions.eq("usereventsuggestions.suggestionType", "Wall Feed Suggestion"))
+						.add(Restrictions.eq("usereventsuggestions.suggestionType", "Direct Suggestion")));
+			}
+			else if(suggestionType.equalsIgnoreCase("Community Suggestion"))
+			{
+				criteria.add(Restrictions.like("usereventsuggestions.suggestionType", "%Community%"));
+			}
+			else
+			{
+				criteria.add(Restrictions.disjunction().add(Restrictions.like("usereventsuggestions.suggestionType", "%User%"))
+						.add(Restrictions.like("usereventsuggestions.suggestionType", "%Friend%"))
+						.add(Restrictions.eq("usereventsuggestions.suggestionType", "Group")));
+			}
+		}
+
+		/*if(category != null && !category.trim().equals(""))
+		{
+			criteria.add(Restrictions.eq("channel", "%" + category + "%"));
+		}*/
+
+		/*if(lat != 0 && lon != 0)
+		{
+			String sql =  "(((acos(sin(((" + lat + ")*pi()/180)) * sin((latitude*pi()/180))+cos(((" + lat + ")*pi()/180)) * cos((lattitude*pi()/180)) * cos((((" + lon + ")- longitude)*pi()/180))))*180/pi())*60*1.1515)<="+distance;     
+			criteria.add(Restrictions.sqlRestriction(sql)); 
+		}*/
 
 		criteria.setFirstResult(offset*10)
 		.setMaxResults(limit);
@@ -745,7 +800,140 @@ public class EventsDAO implements IEventsDAO{
 
 	@Override
 	public int getTotalEventsBySearchKeyWord(String searchText,
-			String category, String location) {
+			String category, String location, double lat, double lon, int distance, double rating) {
+		logger.debug("getEventsByLikeSearchKeyword ==> "+searchText);
+		/*	int rowCount = 0;
+		String hqlQuery = "";
+
+		if(rating != 0)
+		{
+			hqlQuery = "select a from Events a, Page b, Pagetype c, CommunityReviewMap d, CommunityReview e  ";
+		}
+		else
+		{
+			hqlQuery = "select distinct a from Page a,Events b, Pagetype c ";
+		}
+
+		if(category.equalsIgnoreCase("NIGHTLIFE"))
+		{
+			hqlQuery = "where (c.pageType=:category or c.pageType='CONCERT' or c.pageType='THEATER') and a.pagetype.pageTypeId = c.pageTypeId and a.pageId = b.page.pageId";
+		}
+		else
+			hqlQuery = "where c.pageType=:category and a.pagetype.pageTypeId = c.pageTypeId and a.pageId = b.page.pageId";
+
+		hqlQuery = hqlQuery + " and (a.event_date_time_local >= :currentDate and a.event_date_time_local <= :weekendDate)";
+
+		if(searchText != null && !searchText.trim().equals(""))
+		{
+			//hqlQuery = hqlQuery + " and (a.description like '%" + likekeyword  +"%' or a.title like '%" + likekeyword  +"%' or a.ancestorGenreDescriptions like '%" + likekeyword  +"%' or a.urlpath like '%" + likekeyword  +"%')
+			hqlQuery = hqlQuery + " and (a.description like '%" + searchText  +"%' or a.title like '%" + searchText  +"%' or a.ancestorGenreDescriptions like '%" + searchText  +"%' or a.urlpath like '%" + searchText  +"%')";
+
+		}
+		if(location != null && !location.trim().equals(""))
+		{
+			hqlQuery = hqlQuery + " and (a.zip = :location or a.city like '%" +location+ "%' or a.state like '%" +location+ "%' or a.stateCode like '%" +location+ "%')";
+		}
+		if(lat != 0 && lon != 0)
+		{
+			hqlQuery = hqlQuery + "and (((acos(sin(((:latitude)*pi()/180)) * sin((a.latitude*pi()/180))+cos(((:latitude)*pi()/180)) * cos((a.latitude*pi()/180)) * cos((((:longitude)- a.longitude)*pi()/180))))*180/pi())*60*1.1515) <=:distance";
+		}
+		if(rating != 0)
+			hqlQuery = hqlQuery + " and b.pageId = c.pageId and c.reviewId = d.reviewId group by b.pageId having avgrating >= :rating";
+
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("category", category);
+			query.setParameter("currentDate", Utils.getCurrentDate());
+			query.setParameter("weekendDate", Utils.getNearestWeekendForEvent(null));
+			if(searchText != null && !searchText.trim().equals(""))
+				query.setParameter("searchText", searchText);
+			if(location != null && !location.trim().equals(""))
+				query.setParameter("location", location);
+			if(lat != 0 && lon != 0)
+			{
+				query.setDouble("latitude", lat);
+				query.setDouble("longitude", lon);
+				query.setInteger("distance",distance);
+			}
+			if(rating != 0)
+				query.setDouble("rating", rating);
+
+			query.setFirstResult(0);
+			query.setMaxResults(10000);
+			rowCount = ((Number)query.uniqueResult()).intValue();
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.debug(e.getMessage());
+		}*/
+
+		/*
+		 select a.pageId,avg(d.rating) as avgrating,a.zip,a.event_date_time_local from events a, page b, communityReviewMap c, communityReview d, pagetype e where a.pageId = b.pageId and b.pageId = c.pageId and c.reviewId = d.reviewId and e.pageType = "sport" and b.pageTypeId = e.pageTypeId and (a.event_date_time_local >= now()) and (((acos(sin(((42.3589)*pi()/180)) * sin((a.latitude*pi()/180))+cos(((42.3589)*pi()/180)) * cos((a.latitude*pi()/180)) * cos((((-71.0578)- a.longitude)*pi()/180))))*180/pi())*60*1.1515) <=50000 group by b.pageId having avgrating >= 4;
+		 */
+
+		/*	Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Events.class, "events").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+				.setProjection(Projections.count("events.eventId"));
+
+
+		if(location != null && !location.trim().equals(""))
+		{
+			criteria.add(Restrictions.disjunction()
+					.add(Restrictions.eq("events.zip", location))
+					.add(Restrictions.like("events.city", "%" + location + "%"))
+					.add(Restrictions.like("events.state", "%" + location + "%"))
+					.add(Restrictions.like("events.stateCode", "%" + location + "%")));
+		}
+		if(searchText != null && !searchText.trim().equals(""))
+		{
+			criteria.add(Restrictions.disjunction().add(Restrictions.like("events.description", "%" + searchText + "%"))
+					.add(Restrictions.like("events.city", "%" + searchText + "%"))
+					.add(Restrictions.like("events.ancestorGenreDescriptions", "%" + searchText + "%"))
+					.add(Restrictions.like("events.venue_name", "%" + searchText + "%")));
+		}
+
+		//criteria.createAlias("events.page", "page").setProjection(Projections.property("page.pageId").as("pagePageId"));
+
+		if(rating != 0)
+		{
+			criteria.createAlias("page.communityReviewMap", "communityReviewMap");
+			criteria.createAlias("communityReviewMap.communityReview", "communityReview");
+			criteria.setProjection(Projections.avg("communityReview.rating").as("avgRating"));
+			String groupBy = "pageId having " + "avgRating >= " + rating;
+			String[] alias = new String[1]; 
+			alias[0] = "pagePageId"; 
+			Type[] types = new Type[1]; 
+			types[0] = Hibernate.INTEGER;	
+			criteria.setProjection(Projections.alias(Projections.property("page.pageId"), "pageId1"));
+			criteria.setProjection(Projections.sqlGroupProjection("page", groupBy, alias, types));
+
+		}
+
+
+		if(category != null && !category.trim().equals(""))
+		{
+			criteria.createAlias("page.pagetype", "pagetypes");
+			if(category.equalsIgnoreCase("NIGHTLIFE"))
+			{
+				criteria.add(Restrictions.disjunction().add(Restrictions.eq("pagetypes.pageType", category))
+						.add(Restrictions.eq("pagetypes.pageType", "THEATER"))
+						.add(Restrictions.eq("pagetypes.pageType", "CONCERT")));
+			}
+			else
+				criteria.add(Restrictions.eq("pagetypes.pageType", category));
+		}
+
+		criteria.add(Restrictions.conjunction().add(Restrictions.ge("events.event_date_time_local", Utils.getCurrentDate()))
+				.add(Restrictions.le("events.event_date_time_local", Utils.getNearestWeekendForEvent(null))));
+
+		String sql =  "(((acos(sin(((" + lat + ")*pi()/180)) * sin((latitude*pi()/180))+cos(((" + lat + ")*pi()/180)) * cos((latitude*pi()/180)) * cos((((" + lon + ")- longitude)*pi()/180))))*180/pi())*60*1.1515)<="+distance;     
+		criteria.add(Restrictions.sqlRestriction(sql)); 
+
+		criteria.setFirstResult(0)
+		.setMaxResults(10000);
+
+		//int rowCount = criteria.list().size();
+		int rowCount = Integer.parseInt(criteria.uniqueResult().toString());*/
+
 		logger.debug("getEventsByLikeSearchKeyword ==> "+searchText);
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Events.class, "events").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
 				.setProjection(Projections.count("events.eventId"));
@@ -787,12 +975,13 @@ public class EventsDAO implements IEventsDAO{
 
 		//int rowCount = criteria.list().size();
 		int rowCount = Integer.parseInt(criteria.uniqueResult().toString());
+
 		return rowCount;
 	}
 
 	@Override
 	public int getTotalCommunityBySearchKeyWordForBusiness(String searchText,
-			String category, String location) {
+			String category, String location, double lat, double lon, int distance, double rating) {
 		logger.debug("getTotalCommunityBySearchKeyWord ==> "+searchText);
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Page.class, "page").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
 				.setProjection(Projections.count("page.pageId"));
@@ -824,9 +1013,16 @@ public class EventsDAO implements IEventsDAO{
 		if(searchText != null && !searchText.trim().equals(""))
 		{
 			criteria.add(Restrictions.disjunction().add(Restrictions.like("page.about", "%" + searchText + "%"))
-					.add(Restrictions.like("page.pageUrl", "%" + searchText + "%")));
+					.add(Restrictions.like("page.pageUrl", "%" + searchText + "%"))
+					.add(Restrictions.like("page.tag", "%" + searchText + "%")));
 
 		}
+
+		/*if(lat != 0 && lon != 0)
+		{
+			String sql =  "(((acos(sin(((" + lat + ")*pi()/180)) * sin((lattitude*pi()/180))+cos(((" + lat + ")*pi()/180)) * cos((lattitude*pi()/180)) * cos((((" + lon + ")- longitude)*pi()/180))))*180/pi())*60*1.1515)<="+distance;     
+			criteria.add(Restrictions.sqlRestriction(sql)); 
+		}*/
 
 		//int rowCount = criteria.list().size();
 		int rowCount = Integer.parseInt(criteria.uniqueResult().toString());
@@ -836,11 +1032,10 @@ public class EventsDAO implements IEventsDAO{
 
 	@Override
 	public int getTotalCommunityBySearchKeyWordForEvent(String searchText,
-			String category, String location) {
+			String category, String location, double lat, double lon, int distance, double rating) {
 		logger.debug("getTotalCommunityBySearchKeyWord ==> "+searchText);
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Page.class, "page").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
 				.setProjection(Projections.count("page.pageId"));
-
 
 		if(category != null && !category.trim().equals(""))
 		{
@@ -867,10 +1062,17 @@ public class EventsDAO implements IEventsDAO{
 		if(searchText != null && !searchText.trim().equals(""))
 		{
 			criteria.add(Restrictions.disjunction().add(Restrictions.like("page.about", "%" + searchText + "%"))
-					.add(Restrictions.like("page.pageUrl", "%" + searchText + "%")));
+					.add(Restrictions.like("page.pageUrl", "%" + searchText + "%"))
+					.add(Restrictions.like("page.tag", "%" + searchText + "%")));
 
 		}
 
+		/*if(lat != 0 && lon != 0)
+		{
+			String sql =  "(((acos(sin(((" + lat + ")*pi()/180)) * sin((lattitude*pi()/180))+cos(((" + lat + ")*pi()/180)) * cos((lattitude*pi()/180)) * cos((((" + lon + ")- longitude)*pi()/180))))*180/pi())*60*1.1515)<="+distance;     
+			criteria.add(Restrictions.sqlRestriction(sql)); 
+		}
+		 */
 		//int rowCount = criteria.list().size();
 		int rowCount = Integer.parseInt(criteria.uniqueResult().toString());
 		return rowCount;
@@ -879,6 +1081,7 @@ public class EventsDAO implements IEventsDAO{
 	@SuppressWarnings("unchecked")
 	@Override
 	public Pagetype getPageTypeByName(String pageType) {
+		logger.debug("getPageTypeByName :: "+pageType);
 		List<Pagetype> pageList = null;
 		String hqlQuery = "from Pagetype a where a.pageType =:pageType";
 		try {
@@ -1118,12 +1321,12 @@ public class EventsDAO implements IEventsDAO{
 		}
 		return eventList != null && !eventList.isEmpty() ? eventList.get(0) : null;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public Object[] getRecentEventDetails(int pageId) {
 		List<Object[]> eventList = null;
-		String hqlQuery = "select b.event_date_local,b.event_time_local,b.latitude,b.longitude from Page a, Events b where a.pageId = :pageId and a.pageId = b.page.pageId and b.event_date_time_local >= :currentDate order by b.event_date_time_local asc limit 1";
+		String hqlQuery = "select b.event_date_local,b.event_time_local,b.latitude,b.longitude,b.zip from Page a, Events b where a.pageId = :pageId and a.pageId = b.page.pageId and b.event_date_time_local >= :currentDate order by b.event_date_time_local asc limit 1";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
@@ -1163,7 +1366,7 @@ public class EventsDAO implements IEventsDAO{
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Page> getCommunityBySearchKeyword(String searchText,
-			String category, int offset, int limit) {
+			String category, int offset, int limit, String abbreviation) {
 		logger.debug("getCommunityBySearchKeyword =>"+searchText + " => " + category);
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Page.class, "page").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		if(category != null && !category.trim().equals(""))
@@ -1178,12 +1381,22 @@ public class EventsDAO implements IEventsDAO{
 			else
 				criteria.add(Restrictions.eq("pagetypes.pageType", category));
 		}
-		if(searchText != null && !searchText.trim().equals(""))
+		if(searchText != null && !searchText.trim().equals("") || abbreviation != null && !abbreviation.trim().equals(""))
 		{
 			criteria.add(Restrictions.disjunction().add(Restrictions.like("page.about", "%" + searchText + "%"))
-					.add(Restrictions.like("page.pageUrl", "%" + searchText + "%")));
+					.add(Restrictions.like("page.pageUrl", "%" + searchText + "%"))
+					.add(Restrictions.like("page.tag", "%" + searchText + "%"))
+					.add(Restrictions.like("page.about", "%" + abbreviation + "%"))
+					.add(Restrictions.like("page.pageUrl", "%" + abbreviation + "%"))
+					.add(Restrictions.like("page.tag", "%" + abbreviation + "%")));
 
 		}
+		/*if(abbreviation != null && !abbreviation.trim().equals(""))
+		{
+			criteria.add(Restrictions.disjunction().add(Restrictions.like("page.about", "%" + abbreviation + "%"))
+					.add(Restrictions.like("page.pageUrl", "%" + abbreviation + "%"))
+					.add(Restrictions.like("page.tag", "%" + abbreviation + "%")));
+		}*/
 
 		criteria.setFirstResult(offset)
 		.setMaxResults(limit);
@@ -1224,5 +1437,115 @@ public class EventsDAO implements IEventsDAO{
 			e.printStackTrace();
 		}
 		return eventList;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Object[] getPagesAvergeRatingAndDetails(int pageId) {
+		logger.debug("getTopCommunitySuggestions ==> "+pageId);
+		List<Object[]> rows = null;
+
+		String hqlQuery = "select avg(c.rating) as rating, a from Page a left Join a.communityReviewMap b left join b.communityReview c where a.pageId = :pageId";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(hqlQuery);
+			query.setParameter("pageId", pageId);
+			rows = (List<Object[]>) query.list();
+		} catch (Exception e) {
+			logger.debug("Error: "+e.getMessage());
+			e.printStackTrace();
+		}
+		return rows != null && !rows.isEmpty() ? rows.get(0) : null;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<PopularCommunity> getPopularCommunityList() {
+		List<PopularCommunity> communityList = null;
+		String hqlQuery = "from PopularCommunity";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			communityList = (List<PopularCommunity>) query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return communityList;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Pagetype getPopularComunityType(int communityId) {
+		logger.debug("pageList CommunityType => ");
+		List<Pagetype> pageList = null;
+		String hqlQuery = "select b from PopularCommunity a, Pagetype b where a.communityId = :communityId and a.pagetype.pageTypeId = b.pageTypeId";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("communityId", communityId);
+			pageList = (List<Pagetype>) query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.debug(e.toString());
+			logger.debug(e.getLocalizedMessage());
+		}
+		return pageList != null && !pageList.isEmpty() ? pageList.get(0) : null;
+	}
+
+
+	@Override
+	public int getTotalCommunityForCommunitySearch(String searchText,
+			String category, String location, String abbreviation) {
+		logger.debug("getTotalCommunityBySearchKeyWord ==> "+searchText);
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Page.class, "page").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+				.setProjection(Projections.count("page.pageId"));
+
+
+		if(category != null && !category.trim().equals(""))
+		{
+			criteria.createAlias("page.pagetype", "pagetypes");
+			if(category.equalsIgnoreCase("NIGHTLIFE"))
+			{
+				criteria.add(Restrictions.disjunction().add(Restrictions.eq("pagetypes.pageType", category))
+						.add(Restrictions.eq("pagetypes.pageType", "THEATER"))
+						.add(Restrictions.eq("pagetypes.pageType", "CONCERT")));
+			}
+			else
+				criteria.add(Restrictions.eq("pagetypes.pageType", category));
+		}
+		if(location != null && !location.trim().equals(""))
+		{
+			criteria.createAlias("page.events", "events");
+			criteria.add(Restrictions.disjunction()
+					.add(Restrictions.eq("events.zip", location))
+					.add(Restrictions.like("events.city", "%" + location + "%"))
+					.add(Restrictions.like("events.state", "%" + location + "%"))
+					.add(Restrictions.like("events.stateCode", "%" + location + "%")));
+		}
+
+		if(searchText != null && !searchText.trim().equals("") || abbreviation != null && !abbreviation.trim().equals(""))
+		{
+			criteria.add(Restrictions.disjunction().add(Restrictions.like("page.about", "%" + searchText + "%"))
+					.add(Restrictions.like("page.pageUrl", "%" + searchText + "%"))
+					.add(Restrictions.like("page.tag", "%" + searchText + "%"))
+					.add(Restrictions.like("page.about", "%" + abbreviation + "%"))
+					.add(Restrictions.like("page.pageUrl", "%" + abbreviation + "%"))
+					.add(Restrictions.like("page.tag", "%" + abbreviation + "%")));
+
+		}
+		/*if(searchText != null && !searchText.trim().equals(""))
+		{
+			criteria.add(Restrictions.disjunction().add(Restrictions.like("page.about", "%" + searchText + "%"))
+					.add(Restrictions.like("page.pageUrl", "%" + searchText + "%"))
+					.add(Restrictions.like("page.tag", "%" + searchText + "%")));
+		}
+		if(abbreviation != null && !abbreviation.trim().equals(""))
+		{
+			criteria.add(Restrictions.disjunction().add(Restrictions.like("page.about", "%" + abbreviation + "%"))
+					.add(Restrictions.like("page.pageUrl", "%" + abbreviation + "%"))
+					.add(Restrictions.like("page.tag", "%" + abbreviation + "%")));
+		}*/
+
+		int rowCount = Integer.parseInt(criteria.uniqueResult().toString());
+		return rowCount;
 	}
 }

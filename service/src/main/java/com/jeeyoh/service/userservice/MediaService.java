@@ -90,7 +90,7 @@ public class MediaService implements IMediaService{
 			uploadMediaServerResponse.setMediaUrl(mediaURL);
 			uploadMediaServerResponse.setTimeStamp(randomNumber);
 		}*/
-		String imageUrl = folderName + "/" +fileName;
+		String imageUrl = folderName +fileName;
 		uploadMediaServerResponse.setMediaUrl(imageUrl);
 		uploadMediaServerResponse.setTimeStamp(randomNumber);
 		return uploadMediaServerResponse;

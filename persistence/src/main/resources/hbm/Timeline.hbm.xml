@@ -17,7 +17,7 @@
          <property name="endTime" type="time">
             <column name="endTime" />
         </property>
-        <set name="funBoard" inverse="true" lazy="false" cascade="all">
+        <set name="funBoard" inverse="true">
             <key>
                 <column name="timeLineId" not-null="true" />
             </key>

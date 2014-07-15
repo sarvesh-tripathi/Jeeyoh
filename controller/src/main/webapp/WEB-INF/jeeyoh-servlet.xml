@@ -8,14 +8,14 @@
 						http://www.springframework.org/schema/context/spring-context-3.0.xsd
 						http://www.springframework.org/schema/mvc 
 						http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
-	
+
 	<context:property-placeholder location="classpath*:properties/*.properties" />
-	<context:component-scan base-package="com.jeeyoh.controller" />	
-	<context:component-scan base-package="com.jeeyoh.mobile.endpoint" />	
-	<context:annotation-config />	
-	<mvc:annotation-driven/>
-	<mvc:view-controller path="/login" view-name="login"/>
-	
+	<context:component-scan base-package="com.jeeyoh.controller" />
+	<context:component-scan base-package="com.jeeyoh.mobile.endpoint" />
+	<context:annotation-config />
+	<mvc:annotation-driven />
+	<mvc:view-controller path="/login" view-name="login" />
+
 	<bean id="viewResolver"
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix">
@@ -23,8 +23,34 @@
 		</property>
 		<property name="suffix">
 			<value>.jsp</value>
-		</property>		
+		</property>
 	</bean>
-	
-	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerExceptionResolver"  />
+
+	<bean id="messageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basename" value="classpath:properties/messages" />
+		<property name="defaultEncoding" value="UTF-8" />
+	</bean>
+
+	<!-- Convenience subclass of UrlBasedViewResolver that supports TilesView 
+		(i.e. Tiles definitions) and custom subclasses of it. -->
+	<!-- Don't forget to set the order if you declared other ViewResolvers -->
+	<!-- See http://static.springsource.org/spring/docs/3.0.x/javadoc-api/org/springframework/web/servlet/view/tiles2/TilesViewResolver.html -->
+	<bean id="tilesviewResolver"
+		class="org.springframework.web.servlet.view.tiles2.TilesViewResolver"
+		p:order="0" />
+
+	<!-- Helper class to configure Tiles 2.x for the Spring Framework -->
+	<!-- See http://static.springsource.org/spring/docs/3.0.x/javadoc-api/org/springframework/web/servlet/view/tiles2/TilesConfigurer.html -->
+	<!-- The actual tiles templates are in the tiles-definitions.xml -->
+	<bean id="tilesConfigurer"
+		class="org.springframework.web.servlet.view.tiles2.TilesConfigurer">
+		<property name="definitions">
+			<list>
+				<value>/WEB-INF/tiles-definitions.xml</value>
+			</list>
+		</property>
+	</bean>
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerExceptionResolver" />
 </beans>

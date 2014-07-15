@@ -238,7 +238,7 @@ public class DealSearch implements IDealSearch {
 									}
 							
 									List<Userdealssuggestion> userdealsuggestions = userDAO.isDealSuggestionExists(userFor.getUserId(), catdeal.getId());
-									if(userdealsuggestions == null || userdealsuggestions.size() == 0 || (userdealsuggestions.get(0).getSuggestedTime() != null && userdealsuggestions.get(0).getSuggestedTime().compareTo(currentDate) < 0))
+									if(userdealsuggestions == null || userdealsuggestions.size() == 0 || (userdealsuggestions != null && userdealsuggestions.size() != 0 && userdealsuggestions.get(0).getSuggestedTime() != null && userdealsuggestions.get(0).getSuggestedTime().compareTo(Utils.getCurrentDate()) < 0))
 									{
 										saveDealsSuggestionInDataBase(catdeal,user,userFor,isGroupMember, contactFlag, false,true, weekendDate);
 									}
@@ -265,7 +265,7 @@ public class DealSearch implements IDealSearch {
 											business.setLongitude(Double.toString(array[1]));
 										}
 										List<Userdealssuggestion> userdealsuggestions = userDAO.isDealSuggestionExists(userFor.getUserId(), catdeal.getId());
-										if(userdealsuggestions == null || userdealsuggestions.size() == 0 || (userdealsuggestions.get(0).getSuggestedTime() != null && userdealsuggestions.get(0).getSuggestedTime().compareTo(currentDate) < 0))
+										if(userdealsuggestions == null || userdealsuggestions.size() == 0 || (userdealsuggestions != null && userdealsuggestions.size() != 0 && userdealsuggestions.get(0).getSuggestedTime() != null && userdealsuggestions.get(0).getSuggestedTime().compareTo(Utils.getCurrentDate()) < 0))
 										{
 											saveDealsSuggestionInDataBase(catdeal,user,userFor, isGroupMember, contactFlag, false,true, weekendDate);
 										}
@@ -291,7 +291,7 @@ public class DealSearch implements IDealSearch {
 												business.setLongitude(Double.toString(array[1]));
 											}
 											List<Userdealssuggestion> userdealsuggestions = userDAO.isDealSuggestionExists(userFor.getUserId(), catdeal.getId());
-											if(userdealsuggestions == null || userdealsuggestions.size() == 0 || (userdealsuggestions.get(0).getSuggestedTime() != null && userdealsuggestions.get(0).getSuggestedTime().compareTo(currentDate) < 0))
+											if(userdealsuggestions == null || userdealsuggestions.size() == 0 || (userdealsuggestions != null && userdealsuggestions.size() != 0 && userdealsuggestions.get(0).getSuggestedTime() != null && userdealsuggestions.get(0).getSuggestedTime().compareTo(Utils.getCurrentDate()) < 0))
 											{
 												saveDealsSuggestionInDataBase(catdeal,user,userFor, isGroupMember, contactFlag, false,true, weekendDate);
 											}

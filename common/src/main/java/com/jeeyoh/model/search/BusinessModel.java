@@ -48,7 +48,7 @@ public class BusinessModel implements Serializable{
 	@JsonProperty
 	private String displayAddress;
 	@JsonProperty
-	private String postalCode;
+	private String zipCode;
 	@JsonProperty
 	private String countryCode;
 	@JsonProperty
@@ -56,9 +56,9 @@ public class BusinessModel implements Serializable{
 	@JsonProperty
 	private String stateCode;
 	@JsonProperty
-	private String lattitude;
+	private double lattitude;
 	@JsonProperty
-	private String longitude;
+	private double longitude;
 	@JsonProperty
 	private String ambience;
 	@JsonProperty
@@ -280,14 +280,14 @@ public class BusinessModel implements Serializable{
 	/**
 	 * @return the postalCode
 	 */
-	public String getPostalCode() {
-		return postalCode;
+	public String getZipCode() {
+		return zipCode;
 	}
 	/**
 	 * @param postalCode the postalCode to set
 	 */
-	public void setPostalCode(String postalCode) {
-		this.postalCode = postalCode;
+	public void setZipCode(String zipCode) {
+		this.zipCode = zipCode;
 	}
 	/**
 	 * @return the countryCode
@@ -328,25 +328,25 @@ public class BusinessModel implements Serializable{
 	/**
 	 * @return the lattitude
 	 */
-	public String getLattitude() {
+	public double getLattitude() {
 		return lattitude;
 	}
 	/**
 	 * @param lattitude the lattitude to set
 	 */
-	public void setLattitude(String lattitude) {
+	public void setLattitude(double lattitude) {
 		this.lattitude = lattitude;
 	}
 	/**
 	 * @return the longitude
 	 */
-	public String getLongitude() {
+	public double getLongitude() {
 		return longitude;
 	}
 	/**
 	 * @param longitude the longitude to set
 	 */
-	public void setLongitude(String longitude) {
+	public void setLongitude(double longitude) {
 		this.longitude = longitude;
 	}
 	/**

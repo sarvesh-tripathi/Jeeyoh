@@ -11,7 +11,7 @@ import com.jeeyoh.model.user.UserModel;
  */
 public interface IMessagingEventPublisher
 {
-	//public void sendWelcomeEmail();
+	public void sendWelcomeEmail(UserModel user);
 	//public void sendChangePasswordEmail();
     //public void sendResetPasswordEmail();    
     //public void sendInvitationEmail();

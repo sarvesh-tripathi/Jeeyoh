@@ -28,6 +28,8 @@ public class CommentModel implements Serializable{
 	private String imageUrl;
 	@JsonProperty
 	private boolean isComment;
+	@JsonProperty
+	private String emailId;
 	/**
 	 * @return the isComment
 	 */
@@ -112,5 +114,16 @@ public class CommentModel implements Serializable{
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
 	}
-
+	/**
+	 * @return the emailId
+	 */
+	public String getEmailId() {
+		return emailId;
+	}
+	/**
+	 * @param emailId the emailId to set
+	 */
+	public void setEmailId(String emailId) {
+		this.emailId = emailId;
+	}
 }

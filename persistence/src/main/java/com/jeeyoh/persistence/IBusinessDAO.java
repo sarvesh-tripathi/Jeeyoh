@@ -23,13 +23,13 @@ public interface IBusinessDAO {
 	public List<Business> getBusinessByCriteria(String userEmail, String searchText, String category, String location, String rating);
 	public List<Business> getBusinessByuserLikes(String likekeyword, String itemCategory, String providerName, double latitude, double longitude);
 	public Gcategory getBusinessCategory(String name);
-	public List<Business> getBusinessBySearchKeyword(String searchText,String category, String location,int offset, int limit);
-	public List<Business> getBusinessByLikeSearchKeyword(String searchText,String category, String location,int offset, int limit);
+	public List<Business> getBusinessBySearchKeyword(String searchText,String category, String location,int offset, int limit, double lat, double lon, int distance, double rating);
+	public List<Business> getBusinessByLikeSearchKeyword(String searchText,String category, String location,int offset, int limit, double lat, double lon, int distance, double rating);
 	public List<Business> getBusinessByCriteriaWithoutRating(String userEmail, String searchText, String category, String location, String rating);
-	public List<Business> getUserNonDealSuggestions(String userEmail, int offset, int limit);
+	public List<Business> getUserNonDealSuggestions(String userEmail, int offset,int limit, String category, String suggestionType, double lat, double lon, int distance, double rating);
 	public List<Object[]> getTopBusinessByRating(String idsArray);
 	public List<Object[]> getNonDealLikeCountByPage(String idsStr);
-	public int getTotalBusinessBySearchKeyWord(String searchText,String category, String location);
+	public int getTotalBusinessBySearchKeyWord(String searchText,String category, String location, double lat, double lon, int distance, double rating);
 	public Lcategory getLivingSocialBusinessCategory(String name);
 	public List<Business> getBusinessByIdForLivingSocial(String businessId);
 	public List<Business> getBusinessByNameForLivingSocial(String merchantName);

@@ -18,17 +18,17 @@ public class MemoryCardResponse extends BaseResponse{
 	 */
 	private static final long serialVersionUID = 1L;
 	@JsonProperty
-	private List<MemoryCardModel> memoryCardItems;
+	private MemoryCardModel memoryCardItems;
 	/**
 	 * @return the memoryCardItems
 	 */
-	public List<MemoryCardModel> getMemoryCardItems() {
+	public MemoryCardModel getMemoryCardItems() {
 		return memoryCardItems;
 	}
 	/**
 	 * @param memoryCardItems the memoryCardItems to set
 	 */
-	public void setMemoryCardItems(List<MemoryCardModel> memoryCardItems) {
+	public void setMemoryCardItems(MemoryCardModel memoryCardItems) {
 		this.memoryCardItems = memoryCardItems;
 	}
 

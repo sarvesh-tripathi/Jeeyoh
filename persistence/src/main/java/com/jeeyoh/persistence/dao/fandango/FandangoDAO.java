@@ -9,9 +9,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.jeeyoh.persistence.domain.FandangoCommingSoon;
+import com.jeeyoh.persistence.domain.FandangoComingSoon;
 import com.jeeyoh.persistence.domain.FandangoNearMe;
-import com.jeeyoh.persistence.domain.FandangoOpenning;
+import com.jeeyoh.persistence.domain.FandangoOpening;
 import com.jeeyoh.persistence.domain.FandangoTopTen;
 
 @Repository("fandangoDAO")
@@ -40,13 +40,12 @@ public class FandangoDAO implements IFandangoDAO {
 		
 	}
 	@Override
-	public void saveCommingSoon(FandangoCommingSoon fandango) {
+	public void saveCommingSoon(FandangoComingSoon fandango) {
 		// TODO Auto-generated method stub
 		Session session  = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();
 		try
 		{
-			
 			session.save(fandango);				
 			tx.commit();
 			session.close();
@@ -58,7 +57,7 @@ public class FandangoDAO implements IFandangoDAO {
 		
 	}
 	@Override
-	public void saveNewOpning(FandangoOpenning fandango) {
+	public void saveNewOpning(FandangoOpening fandango) {
 		// TODO Auto-generated method stub
 		Session session  = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();

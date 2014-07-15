@@ -1,6 +1,7 @@
 package com.jeeyoh.persistence.domain;
 
 import java.io.Serializable;
+import java.sql.Time;
 import java.util.Date;
 
 public class Funboard implements Serializable{
@@ -11,6 +12,7 @@ public class Funboard implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private Integer funBoardId;
 	private User user;
+	private Privacy privacy;
 	private int itemId;
 	private String category;
 	private String itemType;
@@ -23,6 +25,7 @@ public class Funboard implements Serializable{
 	private String tag;
 	private String source;
 	private Date scheduledTime;
+	private Time timeSlot;
 	
 	/**
 	 * @return the funBoardId
@@ -199,6 +202,30 @@ public class Funboard implements Serializable{
 	 */
 	public void setScheduledTime(Date scheduledTime) {
 		this.scheduledTime = scheduledTime;
+	}
+	/**
+	 * @return the timeSlot
+	 */
+	public Time getTimeSlot() {
+		return timeSlot;
+	}
+	/**
+	 * @param timeSlot the timeSlot to set
+	 */
+	public void setTimeSlot(Time timeSlot) {
+		this.timeSlot = timeSlot;
+	}
+	/**
+	 * @return the privacy
+	 */
+	public Privacy getPrivacy() {
+		return privacy;
+	}
+	/**
+	 * @param privacy the privacy to set
+	 */
+	public void setPrivacy(Privacy privacy) {
+		this.privacy = privacy;
 	}
 
 }

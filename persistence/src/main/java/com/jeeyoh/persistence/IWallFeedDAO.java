@@ -17,11 +17,12 @@ public interface IWallFeedDAO {
 	public void deleteWallFeedSharing(WallFeedItems feedSharing);
 	public double getAVGItemRank(int wallFeedId);
 	public void updatePackageRank(double packageRank, int wallFeedId);
-	public List<String> getMemoryCard(int userId, String searchText, Date startDate, Date endDate);
+	public List<String> getMemoryCard(int userId, String searchText, Date startDate, Date endDate, String category);
 	public void saveWallFeedComments(WallFeedComments wallFeedComments);
 	public List<WallFeedComments> getWallFeedCommentsById(int wallFeedId);
 	public WallFeed getWallFeedDetailsByID(int wallFeedId);
 	public List<WallFeed> getUserWallFeed(int userId);
 	public void saveWallFeedShareMap(WallFeedUserShareMap wallFeedUserShareMap);
 	public WallFeedUserShareMap isWallFeedAlreadyShared(int userId, int wallFeedId, int sharedUserId);
+	public List<Object[]> getSharedWithUserWallFeed(int userId);
 }

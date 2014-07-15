@@ -19,7 +19,7 @@ public class FriendModel implements Serializable{
 	@JsonProperty
 	private int contactId;
 	@JsonProperty
-	private String name;
+	private String firstName;
 	@JsonProperty
 	private String location;
 	@JsonProperty
@@ -28,6 +28,8 @@ public class FriendModel implements Serializable{
 	private boolean isApproved;
 	@JsonProperty
 	private boolean isBlock;
+	@JsonProperty
+	private String lastName;
 	
 	/**
 	 * @return the userId
@@ -52,18 +54,6 @@ public class FriendModel implements Serializable{
 	 */
 	public void setContactId(int contactId) {
 		this.contactId = contactId;
-	}
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
-	/**
-	 * @param name the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
 	}
 	/**
 	 * @return the location
@@ -112,6 +102,30 @@ public class FriendModel implements Serializable{
 	 */
 	public void setBlock(boolean isBlock) {
 		this.isBlock = isBlock;
+	}
+	/**
+	 * @return the firstName
+	 */
+	public String getFirstName() {
+		return firstName;
+	}
+	/**
+	 * @param firstName the firstName to set
+	 */
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+	/**
+	 * @return the lastName
+	 */
+	public String getLastName() {
+		return lastName;
+	}
+	/**
+	 * @param lastName the lastName to set
+	 */
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 	
 

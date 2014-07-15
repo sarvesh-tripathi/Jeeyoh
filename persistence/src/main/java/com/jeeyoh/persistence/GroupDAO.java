@@ -20,7 +20,6 @@ public class GroupDAO implements IGroupDAO{
 	static final Logger logger = LoggerFactory.getLogger("debugLogger");
 	@Autowired
 	private SessionFactory sessionFactory;
-
 	
 	@Override
 	public void saveJeeyohGroup(Jeeyohgroup jeeyohGroup) {
@@ -133,7 +132,7 @@ public class GroupDAO implements IGroupDAO{
 	public void updateJeeyohGroup(Jeeyohgroup group) {
 		try
 		{
-			sessionFactory.getCurrentSession().update(group);
+			sessionFactory.getCurrentSession().saveOrUpdate(group);
 		}
 		catch(HibernateException e)
 		{
@@ -173,5 +172,34 @@ public class GroupDAO implements IGroupDAO{
 			e.printStackTrace();
 		}
 		return members;
+	}
+
+	@Override
+	public void deleteGroupMember(Groupusermap groupUserMap) {
+		try
+		{
+			sessionFactory.getCurrentSession().delete(groupUserMap);
+		}
+		catch(HibernateException e)
+		{
+			logger.error(e.toString());
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Jeeyohgroup> getUserGroupsByCategory(int userId, String category) {
+		List<Jeeyohgroup> groupList = null;
+		String hqlQuery = "select b from User a, Jeeyohgroup b, Groupusermap c where a.userId = :userId and b.groupTyep = :category  and c.user.userId = a.userId and b.groupId = c.jeeyohgroup.groupId";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("userId", userId);
+			query.setParameter("category", category);
+			groupList = (List<Jeeyohgroup>) query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return groupList;
 	}
 }

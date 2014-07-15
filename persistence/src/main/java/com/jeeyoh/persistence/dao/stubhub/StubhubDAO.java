@@ -59,7 +59,6 @@ public class StubhubDAO implements IStubhubDAO {
 					hqlQuery);
 			query.setParameter("currentDate", Utils.getCurrentDateForEvent());
 			query.setParameter("currentTime", Utils.getCurrentTimeForEvent().toString());
-			logger.debug("getCurrentTimeForEvent:  "+Utils.getCurrentTimeForEvent().toString());
 			eventsList = (List<StubhubEvent>) query.list();
 		} catch (Exception e) {
 			logger.debug("ERROR::  "+e.getMessage());

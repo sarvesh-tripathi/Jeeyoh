@@ -256,7 +256,7 @@ public class AccountController {
 	public ModelAndView searchYelp(HttpServletRequest request,
 			HttpServletResponse httpresponse) {
 		ModelAndView modelAndView = new ModelAndView("home");
-		//yelpService.search();
+		yelpService.search();
 		yelpService.searchBusiness();
 		return modelAndView;
 	}
@@ -515,7 +515,7 @@ public class AccountController {
 		user.setEmailId("gaurav.shandilya@gmail.com");
 		user.setUserId(1);
 		user.setLimit(10);
-		userService.getUserSuggestions(user);
+		//userService.getUserSuggestions(user);
 		//userService.getUserTopSuggestions(user);
 
 		//nonDealSearch.caculateTopSuggestions();
@@ -810,7 +810,7 @@ public class AccountController {
 		String name = request.getParameter("name");
 		String userId = request.getParameter("userId");
 		
-		FriendListResponse friendList = addFriendService.searchFriend(location, name, Integer.parseInt(userId));
+		FriendListResponse friendList = addFriendService.searchFriend(location, name,"", Integer.parseInt(userId));
 		MainModel model = new MainModel();
 		if(friendList!=null)
 		{
@@ -895,9 +895,9 @@ public class AccountController {
 		userModel.setUserId(2);
 		UserModel userModel1 = new UserModel();
 		userModel1.setUserId(3);
-		List<UserModel> userList = new ArrayList<UserModel>();
-		userList.add(userModel);
-		userList.add(userModel1);
+		List<Integer> userList = new ArrayList<Integer>();
+		userList.add(1);
+		userList.add(2);
 		
 		FunBoardModel funBoardModel = new FunBoardModel();
 		funBoardModel.setFunBoardId(1);
@@ -908,7 +908,7 @@ public class AccountController {
 		funBoardList.add(funBoardModel1);
 		
 		wallFeedModel.setUserId(1);
-		wallFeedModel.setSharedWithUserList(userList);
+		wallFeedModel.setFriends(userList);
 		wallFeedModel.setSharedfunBoardItemsList(funBoardList);
 		wallFeedSharingService.saveWallFeedSharingData(wallFeedModel);
 		return modelAndView;
@@ -926,4 +926,5 @@ public class AccountController {
 		communitySearchService.saveCommunityReview(reviewModel);
 		return modelAndView;
 	}
+    
 }

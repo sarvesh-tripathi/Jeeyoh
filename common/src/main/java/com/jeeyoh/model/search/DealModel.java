@@ -63,6 +63,12 @@ public class DealModel implements Serializable{
     private int discount;
 	@JsonProperty
 	private boolean isBooked;
+	@JsonProperty
+	private double latitude;
+	@JsonProperty
+	private double longitude;
+	@JsonProperty
+    private String zipCode;
 	/**
 	 * @return the price
 	 */
@@ -309,6 +315,42 @@ public class DealModel implements Serializable{
 	 */
 	public void setIsBooked(boolean isBooked) {
 		this.isBooked = isBooked;
+	}
+	/**
+	 * @return the latitude
+	 */
+	public double getLatitude() {
+		return latitude;
+	}
+	/**
+	 * @param latitude the latitude to set
+	 */
+	public void setLatitude(double latitude) {
+		this.latitude = latitude;
+	}
+	/**
+	 * @return the longitude
+	 */
+	public double getLongitude() {
+		return longitude;
+	}
+	/**
+	 * @param longitude the longitude to set
+	 */
+	public void setLongitude(double longitude) {
+		this.longitude = longitude;
+	}
+	/**
+	 * @return the zipCode
+	 */
+	public String getZipCode() {
+		return zipCode;
+	}
+	/**
+	 * @param zipCode the zipCode to set
+	 */
+	public void setZipCode(String zipCode) {
+		this.zipCode = zipCode;
 	}
 
 }

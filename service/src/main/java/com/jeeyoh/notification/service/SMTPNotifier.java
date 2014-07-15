@@ -34,7 +34,7 @@ public class SMTPNotifier extends JeeyohMessageSubscriber implements IJeeyohMess
     @Autowired
     IMessagingService smtpEmailService;
 
-    @Value("${app.storistic.messages.smtpNotifier}")
+    @Value("${app.jeeyoh.messages.smtpNotifier}")
     private String smtpNotifier;
 
     @Value("${mail.sender.email}")
@@ -105,7 +105,7 @@ public class SMTPNotifier extends JeeyohMessageSubscriber implements IJeeyohMess
                 String to = (String) messageArgumentsMap.get("to");
                 if (to == null || to.isEmpty())
                 {
-                    logger.error("onStoristicMessage: MESSAGE: from=" + messageArgumentsMap.get(fromEmail)
+                    logger.error("onJeeyohMessage: MESSAGE: from=" + messageArgumentsMap.get(fromEmail)
                             + " Error: No 'to' property specified");
                     return;
                 }
@@ -146,12 +146,12 @@ public class SMTPNotifier extends JeeyohMessageSubscriber implements IJeeyohMess
             }
             else
             {
-                logger.error("onStoristicMessage: Param passed does not contain mandatory parameters");
+                logger.error("onJeeyohMessage: Param passed does not contain mandatory parameters");
             }
         }
         catch (Throwable e)
         {
-            logger.error("onStoristicMessage: Error handling SMTP message", e);
+            logger.error("onJeeyohMessage: Error handling SMTP message", e);
 
             // ignore and continue
         }

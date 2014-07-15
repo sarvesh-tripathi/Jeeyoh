@@ -8,13 +8,16 @@
             <column name="funBoardId" />
             <generator class="native" />
         </id>
-        <many-to-one name="user" class="com.jeeyoh.persistence.domain.User" fetch="select" cascade="all">
+        <many-to-one name="user" class="com.jeeyoh.persistence.domain.User" fetch="select">
             <column name="userId" not-null="true" />
         </many-to-one>
        <many-to-one name="timeline"
 			class="com.jeeyoh.persistence.domain.Timeline" fetch="select" cascade="all">
 			<column name="timeLineId" not-null="true" />
 		</many-to-one>
+		 <many-to-one name="privacy" class="com.jeeyoh.persistence.domain.Privacy" fetch="select">
+            <column name="privacyId" not-null="true" />
+        </many-to-one>
         <property name="itemId" type="java.lang.Integer">
             <column name="itemId" />
         </property>
@@ -51,6 +54,9 @@
         <property name="scheduledTime" type="timestamp">
 			<column name="scheduledTime" length="19" not-null="true" />
 		</property>
+		 <property name="timeSlot" type="time">
+            <column name="timeSlot" />
+        </property>
         
         <!-- <joined-subclass name="com.jeeyoh.persistence.domain.BusinessFunboard"
 			table="rel_business_funboard">

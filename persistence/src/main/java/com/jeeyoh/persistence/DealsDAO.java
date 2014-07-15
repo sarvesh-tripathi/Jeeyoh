@@ -1,11 +1,5 @@
 package com.jeeyoh.persistence;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -26,7 +20,6 @@ import com.jeeyoh.persistence.domain.Dealoption;
 import com.jeeyoh.persistence.domain.Dealredemptionlocation;
 import com.jeeyoh.persistence.domain.Deals;
 import com.jeeyoh.persistence.domain.Dealsusage;
-import com.jeeyoh.persistence.domain.Events;
 import com.jeeyoh.persistence.domain.Userdealssuggestion;
 import com.jeeyoh.utils.Utils;
 
@@ -503,7 +496,7 @@ public class DealsDAO implements IDealsDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Userdealssuggestion> getUserDealSuggestions(String userEmail, int offset,
-			int limit) {
+			int limit, String category, String suggestionType, double lat, double lon, int distance, double rating, int minPrice, int maxPrice) {
 		logger.error("getUserDealSuggestions ==== > "+userEmail +" : "+offset +" : "+limit);
 
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Userdealssuggestion.class,"userdealssuggestion");
@@ -626,44 +619,50 @@ public class DealsDAO implements IDealsDAO {
 		         se.printStackTrace();
 		      }//end finally try
 		   }//end try
-*/		Session session = sessionFactory.getCurrentSession();
-		String hqlQuery = "select id from Deals a where a.dealId = :dealId";
-		try{
-			long startTime = System.currentTimeMillis();
-			logger.debug("DealsDAO ==> isDealExists ==> startTime ==> " + startTime);
-			Query query = session.createQuery(
-					hqlQuery);
-			query.setParameter("dealId", dealId);
-			dealList = (List<Integer>)query.list();
-			long endTime = System.currentTimeMillis();
-			logger.debug("DealsDAO ==> isDealExists ==> startTime ==> " + endTime + " total time ==> " + (endTime-startTime));
+		 */		Session session = sessionFactory.getCurrentSession();
+		 String hqlquery = "select id from deals a where a.dealId = :dealId";
+		// String hqlQuery = "select id from Deals a where a.dealId = :dealId";
+		 try{
+			 Query query = session.createSQLQuery(hqlquery);
 
-		}
-		catch (HibernateException e) {
-			e.printStackTrace();
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-		/*try {
+
+
+			 long startTime = System.currentTimeMillis();
+			 logger.debug("DealsDAO ==> isDealExists ==> startTime ==> " + startTime);
+			 //Query query = session.createQuery(
+			 //hqlQuery);
+			 query.setParameter("dealId", dealId);
+			 dealList = (List<Integer>)query.list();
+			 long endTime = System.currentTimeMillis();
+			 logger.debug("DealsDAO ==> isDealExists ==> startTime ==> " + endTime + " total time ==> " + (endTime-startTime));
+
+		 }
+		 catch (HibernateException e) {
+			 e.printStackTrace();
+		 }
+		 catch (Exception e) {
+			 e.printStackTrace();
+		 }
+		 /*try {
 			return rs != null && !rs.next() ? rs.getInt(1) : 0;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return 0;
 		}*/
-		return dealList != null && !dealList.isEmpty() ? dealList.get(0) : 0;
+		 return dealList != null && !dealList.isEmpty() ? dealList.get(0) : 0;
 	}
 
 	@Override
 	public int getTotalDealsBySearchKeyWord(String searchText, String category,
-			String location) {
+			String location, double lat, double lon, int distance, double rating, int minPrice, int maxPrice) {
 		logger.error("getTotalDealsBySearchKeyWord ==== > "+searchText);
 
 
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Deals.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
 				.setProjection(Projections.count("id"));
 		criteria.createAlias("business", "business");
+		//Criteria addr = criteria.createCriteria("business"); 
 		criteria.createAlias("business.businesstype", "businesstype");
 
 		if(category != null && category.isEmpty() == false)
@@ -691,6 +690,24 @@ public class DealsDAO implements IDealsDAO {
 
 		criteria.add(Restrictions.conjunction().add(Restrictions.ge("endAt", Utils.getCurrentDate()))
 				.add(Restrictions.gt("endAt", Utils.getNearestThursday())));
+		
+		/*if(rating != 0)
+			criteria.add(Restrictions.ge("business.rating", rating));*/
+		
+		/*if(minPrice != 0 && maxPrice != 0)
+		{
+			criteria.createAlias("dealoptions", "dealoptions");
+			criteria.add(Restrictions.conjunction().add(Restrictions.ge("dealoptions.price", minPrice*100))
+					.add(Restrictions.ge("dealoptions.price", maxPrice*100)));
+		}*/
+			
+		
+		/*String sql =  "SQRT( POW( 69.1 * ( {alias}.latitude - " + point[1]      
+		       +" ) , 2 ) + POW( 69.1 * ( "+point[0] +" - {alias}.longitude ) * COS( {alias}.latitude /" 
+		       +" 57.3 ) , 2 ) )  < "+distance;     */
+		
+		/*String sql =  "(((acos(sin(((" + lat + ")*pi()/180)) * sin(({alias}.lattitude*pi()/180))+cos(((" + lat + ")*pi()/180)) * cos(({alias}.lattitude*pi()/180)) * cos((((" + lon + ")- {alias}.longitude)*pi()/180))))*180/pi())*60*1.1515)<="+distance;     
+		addr.add(Restrictions.sqlRestriction(sql)); */
 		//criteria.add(Restrictions.ge("endAt", Utils.getCurrentDate()));
 
 		//int rowCount = criteria.list().size();

@@ -65,8 +65,8 @@
 		<mapping resource="hbm/Events.hbm.xml" />
 		<mapping resource="hbm/EventuserLikes.hbm.xml" />
 		<mapping resource="hbm/FandangoTopTen.hbm.xml" />
-		<mapping resource="hbm/FandangoCommingSoon.hbm.xml" />
-		<mapping resource="hbm/FandangoOpenning.hbm.xml" />
+		<mapping resource="hbm/FandangoComingSoon.hbm.xml" />
+		<mapping resource="hbm/FandangoOpening.hbm.xml" />
 		<mapping resource="hbm/FandangoNearMe.hbm.xml" />
 		<mapping resource="hbm/StubhubEvent.hbm.xml" />
 		<mapping resource="hbm/Tags.hbm.xml" />
@@ -98,5 +98,8 @@
 		<mapping resource="hbm/WallFeedUserShareMap.hbm.xml" />
 		<mapping resource="hbm/CommunityReviewMap.hbm.xml" />
 		<mapping resource="hbm/CommunityReview.hbm.xml" />
+		<mapping resource="hbm/UserSession.hbm.xml" />
+		<mapping resource="hbm/PopularCommunity.hbm.xml" />
+		<mapping resource="hbm/BetaListUser.hbm.xml" />
 	</session-factory>
 </hibernate-configuration>

@@ -11,9 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.jeeyoh.persistence.dao.fandango.IFandangoDAO;
-import com.jeeyoh.persistence.domain.FandangoCommingSoon;
+import com.jeeyoh.persistence.domain.FandangoComingSoon;
 import com.jeeyoh.persistence.domain.FandangoNearMe;
-import com.jeeyoh.persistence.domain.FandangoOpenning;
+import com.jeeyoh.persistence.domain.FandangoOpening;
 import com.jeeyoh.persistence.domain.FandangoTopTen;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
@@ -57,12 +57,8 @@ public class FandangoService implements IFandangoService {
 				fandango.setPublishDate(entry.getPublishedDate()+"");
 				fandango.setDescription(entry.getDescription().getValue());
 				fandangoDAO.saveTopTen(fandango);
-				
 			}
-			
-			
 		}
-			
 		catch(Exception e)
 		{
 			logger.error("ERROR ::: == >"+e);
@@ -87,19 +83,15 @@ public class FandangoService implements IFandangoService {
 			while (itEntries.hasNext()) {
 				SyndEntry entry = itEntries.next();
 				logger.debug("TITLE ===== > "+entry.getTitle());
-				FandangoCommingSoon fandango = new FandangoCommingSoon();
+				FandangoComingSoon fandango = new FandangoComingSoon();
 				fandango.setTitle(entry.getTitle());
 				fandango.setAuthor(entry.getAuthor());
 				fandango.setLink(entry.getLink());
 				fandango.setPublishDate(entry.getPublishedDate()+"");
 				fandango.setDescription(entry.getDescription().getValue());
 				fandangoDAO.saveCommingSoon(fandango);
-				
 			}
-			
-			
 		}
-			
 		catch(Exception e)
 		{
 			logger.error("ERROR ::: == >"+e);
@@ -131,12 +123,8 @@ public class FandangoService implements IFandangoService {
 				fandango.setPublishDate(entry.getPublishedDate()+"");
 				fandango.setDescription(entry.getDescription().getValue());
 				fandangoDAO.saveMovieNearMe(fandango);
-				
 			}
-			
-			
-		}
-			
+		}	
 		catch(Exception e)
 		{
 			logger.error("ERROR ::: == >"+e);
@@ -161,19 +149,15 @@ public class FandangoService implements IFandangoService {
 			while (itEntries.hasNext()) {
 				SyndEntry entry = itEntries.next();
 				logger.debug("TITLE ===== > "+entry.getTitle());
-				FandangoOpenning fandango = new FandangoOpenning();
+				FandangoOpening fandango = new FandangoOpening();
 				fandango.setTitle(entry.getTitle());
 				fandango.setAuthor(entry.getAuthor());
 				fandango.setLink(entry.getLink());
 				fandango.setPublishDate(entry.getPublishedDate()+"");
 				fandango.setDescription(entry.getDescription().getValue());
 				fandangoDAO.saveNewOpning(fandango);
-				
 			}
-			
-			
 		}
-			
 		catch(Exception e)
 		{
 			logger.error("ERROR ::: == >"+e);

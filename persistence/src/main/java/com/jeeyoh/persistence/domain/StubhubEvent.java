@@ -78,6 +78,8 @@ public class StubhubEvent implements java.io.Serializable {
 	
 	private String genre_parent_name;
 	
+	private String ancestorGeoDescriptions;
+	
 	public int getId() {
 		return id;
 	}
@@ -364,6 +366,20 @@ public class StubhubEvent implements java.io.Serializable {
 	 */
 	public void setEvent_date_time_local(Date event_date_time_local) {
 		this.event_date_time_local = event_date_time_local;
+	}
+
+	/**
+	 * @return the ancestorGeoDescriptions
+	 */
+	public String getAncestorGeoDescriptions() {
+		return ancestorGeoDescriptions;
+	}
+
+	/**
+	 * @param ancestorGeoDescriptions the ancestorGeoDescriptions to set
+	 */
+	public void setAncestorGeoDescriptions(String ancestorGeoDescriptions) {
+		this.ancestorGeoDescriptions = ancestorGeoDescriptions;
 	}
 
 }

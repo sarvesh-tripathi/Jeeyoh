@@ -59,6 +59,7 @@ public class User  implements java.io.Serializable {
      private Set topnondealsuggestions = new HashSet(0);
      private Set topeventsuggestions = new HashSet(0);
      private Set topcommunitysuggestions = new HashSet(0);
+     private Set userSessions = new HashSet(0);
 
     public User() {
     }
@@ -73,7 +74,7 @@ public class User  implements java.io.Serializable {
         this.createdtime = createdtime;
         this.updatedtime = updatedtime;
     }
-    public User(Profiletype profiletype, Privacy privacy, String emailId, String password, String firstName, String middleName, String lastName, Integer birthDate, Integer birthMonth, Integer birthYear, Character gender, Boolean isActive, Boolean isDeleted, String addressline1, String street, String city, String state, String country, String zipcode, String longitude, String lattitude, Date createdtime, Date updatedtime, Set jeeyohgroupsForOwnerId, Set dealsusages, Set pagesForCreatorId, Set pageuserlikeses, Set groupusermaps, Set usercontactsesForUserId, Set pagesForOwnerId, Set jeeyohgroupsForCreatorId, Set usercontactsesForContactId) {
+    public User(Profiletype profiletype, Privacy privacy, String emailId, String password, String firstName, String middleName, String lastName, Integer birthDate, Integer birthMonth, Integer birthYear, Character gender, Boolean isActive, Boolean isDeleted, String addressline1, String street, String city, String state, String country, String zipcode, String longitude, String lattitude, Date createdtime, Date updatedtime, Set jeeyohgroupsForOwnerId, Set dealsusages, Set pagesForCreatorId, Set pageuserlikeses, Set groupusermaps, Set usercontactsesForUserId, Set pagesForOwnerId, Set jeeyohgroupsForCreatorId, Set usercontactsesForContactId, Set userSessions) {
        this.profiletype = profiletype;
        this.privacy = privacy;
        this.emailId = emailId;
@@ -106,6 +107,7 @@ public class User  implements java.io.Serializable {
        this.pagesForOwnerId = pagesForOwnerId;
        this.jeeyohgroupsForCreatorId = jeeyohgroupsForCreatorId;
        this.usercontactsesForContactId = usercontactsesForContactId;
+       this.setUserSessions(userSessions);
     }
    
     public Integer getUserId() {
@@ -548,6 +550,55 @@ public class User  implements java.io.Serializable {
 
 	public String toString() {
 		return "emailId : " + emailId;
+	}
+
+
+	/**
+	 * @return the userSessions
+	 */
+	public Set getUserSessions() {
+		return userSessions;
+	}
+
+
+	/**
+	 * @param userSessions the userSessions to set
+	 */
+	public void setUserSessions(Set userSessions) {
+		this.userSessions = userSessions;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((userId == null) ? 0 : userId.hashCode());
+		return result;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		User other = (User) obj;
+		if (userId == null) {
+			if (other.userId != null)
+				return false;
+		} else if (!userId.equals(other.userId))
+			return false;
+		return true;
 	}
 
 

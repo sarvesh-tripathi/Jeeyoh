@@ -23,5 +23,11 @@
             </key>
             <one-to-many class="com.jeeyoh.persistence.domain.User" />
         </set>
+         <set name="funboards" inverse="true">
+            <key>
+                <column name="privacyId" not-null="true" />
+            </key>
+            <one-to-many class="com.jeeyoh.persistence.domain.Funboard" />
+        </set>
     </class>
 </hibernate-mapping>

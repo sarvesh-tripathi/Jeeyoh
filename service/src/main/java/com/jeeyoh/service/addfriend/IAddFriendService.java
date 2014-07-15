@@ -5,7 +5,7 @@ import com.jeeyoh.model.response.FriendListResponse;
 
 public interface IAddFriendService 
 {
-	public FriendListResponse searchFriend(String location, String name, int userId);
+	public FriendListResponse searchFriend(String location, String firstName, String lastName, int userId);
 	public BaseResponse sendFriendRequest(int userId, int contactId);
 	public BaseResponse acceptFriendRequest(int userId, int contactId);
 	public BaseResponse denyFriendRequest(int userId, int contactId);

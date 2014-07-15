@@ -3,6 +3,8 @@
  */
 package com.jeeyoh.notification.service;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 
 import org.slf4j.Logger;
@@ -29,29 +31,29 @@ public class EventPublisher implements IMessagingEventPublisher
     @Value("${mail.sender.email}")
     private String fromEmailId;
 
-    //@Value("${app.storistic.server.url}")
-    private String serverURL = "http://192.168.1.191:9090/jeeyoh/mobile/userService";
+    @Value("${app.jeeyoh.server.url}")
+    private String serverURL;
+    
+    @Value("${app.jeeyoh.welcome.subject}")
+    private String welcomeEmailSubject;
     
     
-    
-    
-    @Value("${app.storistic.registration.confirmation.subject}")
+    @Value("${app.jeeyoh.registration.confirmation.subject}")
     private String confirmationSubject;
     
     
     
-    /*public void sendWelcomeEmail()
+    public void sendWelcomeEmail(UserModel user)
     {
         HashMap<String, Object> messageArgumentsMap = new HashMap<String, Object>();
-        //messageArgumentsMap.put("userFirstName", user.getFullName());
-        //messageArgumentsMap.put("to", user.getEmail());
-        messageArgumentsMap.put("to", "sachin.sharma@evontech.com");
+        messageArgumentsMap.put("userFirstName", user.getFirstName());
+        messageArgumentsMap.put("to", user.getEmailId());
         messageArgumentsMap.put("from", fromEmailId);
         messageArgumentsMap.put("subject", welcomeEmailSubject);
-        storisticMessagePublisher.publish(this.getClass().getSimpleName(), JeeyohMessageType.WELCOME_EMAIL,
+        jeeyohMessagePublisher.publish(this.getClass().getSimpleName(), JeeyohMessageType.WELCOME_EMAIL,
                 IJeeyohMessagePublisher.INSTANCE_NO_REF, messageArgumentsMap);
     }
-
+    /*
     public void sendChangePasswordEmail()
     {
         HashMap<String, Object> messageArgumentsMap = new HashMap<String, Object>();
@@ -98,23 +100,26 @@ public class EventPublisher implements IMessagingEventPublisher
     public void sendConfirmationEmail(UserModel user, String confirmationCode)
     {        
         HashMap<String, Object> messageArgumentsMap = new HashMap<String, Object>();
-        //String encUserName = user.getFullName();
+        String encUserName = user.getFirstName();
         messageArgumentsMap.put("userName", user.getFirstName());
-        //String encEmail = user.getEmail();        
-        /*try
+        String encEmail = user.getEmailId();  
+        String encConfirmationCode = null;
+        try
         {
             encUserName = URLEncoder.encode(encUserName, "UTF-8");
             encEmail = URLEncoder.encode(encEmail, "UTF-8");
+            encConfirmationCode = URLEncoder.encode(confirmationCode, "UTF-8");
+            
         }
         catch(UnsupportedEncodingException e)
         {
             logger.error("email and name can not be encoded");
-        }*/
+        }
         //encUserName = encUserName.replaceAll("\\+", "%20");        
-        messageArgumentsMap.put("encUserName", user);
-        messageArgumentsMap.put("encEmail", user.getFirstName());
+        messageArgumentsMap.put("encUserName", encUserName);
+        messageArgumentsMap.put("encEmail", encEmail);
         messageArgumentsMap.put("serverURL", serverURL);
-        messageArgumentsMap.put("confirmationCode", confirmationCode);
+        messageArgumentsMap.put("confirmationCode", encConfirmationCode);
         
         messageArgumentsMap.put("to", user.getEmailId());
         messageArgumentsMap.put("from", fromEmailId);

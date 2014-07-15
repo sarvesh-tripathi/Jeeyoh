@@ -4,12 +4,15 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +28,9 @@ public class MemoryCardService implements IMemoryCardService{
 
 	static final Logger logger = LoggerFactory.getLogger("debugLogger");
 
+	@Value("${host.path}")
+	private String hostPath;
+	
 	@Autowired
 	IWallFeedDAO wallFeedDAO;
 
@@ -41,23 +47,23 @@ public class MemoryCardService implements IMemoryCardService{
 			Date end = null;
 			List<String> list = null;
 			
-			List<MemoryCardModel> memoryCardModels = new ArrayList<MemoryCardModel>();
-			
+			MemoryCardModel memoryCardModels = new MemoryCardModel();
+			Set<MediaContenModel> mediaContenModels = new HashSet<MediaContenModel>();
 			List<Date> weekendList =  Utils.findWeekendsBetweenTwoDates(startDate, endDate);
-			logger.debug("Weekend"+weekendList.size());
+			//logger.debug("Weekend"+weekendList.size());
 			if(weekendList.isEmpty() || weekendList.size() == 1)
 			{
-				list = wallFeedDAO.getMemoryCard(memoryCardModel.getUserId(), memoryCardModel.getSearchText(), startDate, endDate);
+				list = wallFeedDAO.getMemoryCard(memoryCardModel.getUserId(), memoryCardModel.getSearchText(), startDate, endDate, memoryCardModel.getCategory());
 				if(list != null && !list.isEmpty())
 				{
-					setImagesForMemoryCard(list,memoryCardModels);
+					setImagesForMemoryCard(list,mediaContenModels);
 				}
 			}
 			else
 			{
 				for(int i = 0; i < weekendList.size(); i++)
 				{
-					logger.debug("Weekend"+weekendList.get(i));
+					//logger.debug("Weekend"+weekendList.get(i));
 					if(i == weekendList.size() -1)
 					{
 						end = endDate;
@@ -70,10 +76,10 @@ public class MemoryCardService implements IMemoryCardService{
 						end = cal.getTime();
 					}
 					
-					list = wallFeedDAO.getMemoryCard(memoryCardModel.getUserId(), memoryCardModel.getSearchText(), startDate, end);
+					list = wallFeedDAO.getMemoryCard(memoryCardModel.getUserId(), memoryCardModel.getSearchText(), startDate, end, memoryCardModel.getCategory());
 					if(list != null && !list.isEmpty())
 					{	
-						setImagesForMemoryCard(list,memoryCardModels);
+						setImagesForMemoryCard(list,mediaContenModels);
 					}
 					Calendar start = Calendar.getInstance();
 					start.setTime(weekendList.get(i));
@@ -82,6 +88,9 @@ public class MemoryCardService implements IMemoryCardService{
 					startDate = start.getTime();
 				}
 			}
+			List<MediaContenModel> mediaContentList = new ArrayList<MediaContenModel>();
+			mediaContentList.addAll(mediaContenModels);
+			memoryCardModels.setImages(mediaContentList);
 			response.setMemoryCardItems(memoryCardModels);
 			response.setStatus(ServiceAPIStatus.OK.getStatus());
 			return response;
@@ -102,20 +111,21 @@ public class MemoryCardService implements IMemoryCardService{
 	 * @param imageList
 	 * @param memoryCardModels
 	 */
-	private void setImagesForMemoryCard(List<String> imageList, List<MemoryCardModel> memoryCardModels)
+	private void setImagesForMemoryCard(List<String> imageList, Set<MediaContenModel> mediaContenModels)
 	{
-		List<MediaContenModel> mediaContent = new ArrayList<MediaContenModel>();
+		
+		//List<MediaContenModel> mediaContent = new ArrayList<MediaContenModel>();
 		MediaContenModel mediaContenModel = null;
-		MemoryCardModel memoryCardModel = null;
+		
 		for(String imageUrl : imageList)
 		{
 			logger.debug("ImageUrl: "+ imageUrl);
 			mediaContenModel = new MediaContenModel();
-			mediaContenModel.setImageUrl(imageUrl);
-			mediaContent.add(mediaContenModel);
+			mediaContenModel.setImageUrl(hostPath + imageUrl);
+			mediaContenModels.add(mediaContenModel);
+			//mediaContent.add(mediaContenModel);
 		}
-		memoryCardModel = new MemoryCardModel();
-		memoryCardModel.setImages(mediaContent);
-		memoryCardModels.add(memoryCardModel);
+		//memoryCardModels.setImages(mediaContent);
+		//memoryCardModels.add(memoryCardModel);
 	}
 }

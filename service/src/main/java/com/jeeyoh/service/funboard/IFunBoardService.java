@@ -19,6 +19,8 @@ public interface IFunBoardService {
 	public CommentResponse addFunBoardComment(CommentModel commentModel);
 	public FunBoardDetailResponse getFunBoardItem(FunBoardRequest request);
 	public UploadMediaServerResponse uploadMediaContent(MediaContenModel mediaContenModel);
-	public BaseResponse updateTimeLine(FunBoardModel funBoardModel);
+	//public BaseResponse updateTimeLine(FunBoardModel funBoardModel);
+	//public BaseResponse updateTag(FunBoardModel funBoardModel);
+	public BaseResponse updateFunBoard(FunBoardModel funBoardModel);
 
 }

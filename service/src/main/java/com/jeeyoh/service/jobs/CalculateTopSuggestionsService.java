@@ -20,6 +20,7 @@ import com.jeeyoh.persistence.IUserDAO;
 import com.jeeyoh.persistence.domain.Business;
 import com.jeeyoh.persistence.domain.Deals;
 import com.jeeyoh.persistence.domain.Events;
+import com.jeeyoh.persistence.domain.Page;
 import com.jeeyoh.persistence.domain.Pageuserlikes;
 import com.jeeyoh.persistence.domain.Topcommunitysuggestion;
 import com.jeeyoh.persistence.domain.Topdealssuggestion;
@@ -159,20 +160,26 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 						logger.debug("rows: "+rows.size());
 						for(Object[] object : rows)
 						{
-							count++;
-							if(count <= 10)
+							Pageuserlikes pageuserlikes = (Pageuserlikes) object[1];
+							Page page = pageuserlikes.getPage();
+							List<Topcommunitysuggestion> topcommunitysuggestions = userDAO.isTopCommunitySuggestionExists(userId, page.getPageId());
+							if(topcommunitysuggestions == null || topcommunitysuggestions.size() == 0)
 							{
-								Pageuserlikes pageuserlikes = (Pageuserlikes) object[1];
-								Topcommunitysuggestion topcommunitysuggestion = new Topcommunitysuggestion();
-								topcommunitysuggestion.setPage(pageuserlikes.getPage());
-								topcommunitysuggestion.setUser(user);
-								topcommunitysuggestion.setRank((long)count);
-								topcommunitysuggestion.setTotalLikes(Integer.parseInt(object[0].toString()));
-								topcommunitysuggestion.setCreatedTime(new Date());
-								topcommunitysuggestion.setUpdatedTime(new Date());
-								topcommunitysuggestion.setCategoryType(category);
-								userDAO.saveTopCommunitySuggestions(topcommunitysuggestion);
+								count++;
+								if(count <= 10)
+								{
+									Topcommunitysuggestion topcommunitysuggestion = new Topcommunitysuggestion();
+									topcommunitysuggestion.setPage(page);
+									topcommunitysuggestion.setUser(user);
+									topcommunitysuggestion.setRank((long)count);
+									topcommunitysuggestion.setTotalLikes(Integer.parseInt(object[0].toString()));
+									topcommunitysuggestion.setCreatedTime(new Date());
+									topcommunitysuggestion.setUpdatedTime(new Date());
+									topcommunitysuggestion.setCategoryType(category);
+									userDAO.saveTopCommunitySuggestions(topcommunitysuggestion);
+								}
 							}
+
 						}
 					}
 				}
@@ -186,7 +193,7 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 	public void calculateTopJeyoohSuggestions() {
 		List<User> userList = userDAO.getUsers();
 		logger.debug("calculateTopJeyoohSuggestions ==> search ==> ");
-		
+
 		if(userList != null) {
 			for(User user : userList) {
 				logger.debug("caculateTopSuggestions ==> search ==> userID ==> " + user.getEmailId());
@@ -829,43 +836,46 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 			}
 			else
 			{*/
-			if(events.getEventId() == eventId)
+			if(events != null)
 			{
-				//Checking if the suggestions is already exists or not
-				List<Topeventsuggestion> topeventsuggestions = userDAO.isTopEventSuggestionExists(userId, events.getEventId(),null);
-				if(topeventsuggestions == null || topeventsuggestions.size() == 0)
+				if(events.getEventId() == eventId)
 				{
-					Topeventsuggestion topeventsuggestion = new Topeventsuggestion();
-					if(usereventsuggestion.getUserContact() != null)
-						topeventsuggestion.setUserContact(usereventsuggestion.getUserContact());
-					topeventsuggestion.setEvents(events);
-					topeventsuggestion.setUser(usereventsuggestion.getUser());
-
-					if(forJeeyohSuggestion)
-						topeventsuggestion.setSuggestionType("Jeeyoh Suggestion");
-					else if(forFriendsSuggestion)
+					//Checking if the suggestions is already exists or not
+					List<Topeventsuggestion> topeventsuggestions = userDAO.isTopEventSuggestionExists(userId, events.getEventId(),null);
+					if(topeventsuggestions == null || topeventsuggestions.size() == 0)
 					{
-						if(usereventsuggestion.getSuggestionType().equalsIgnoreCase("Wall Feed Suggestion") || usereventsuggestion.getSuggestionType().equalsIgnoreCase("Direct Suggestion"))
+						Topeventsuggestion topeventsuggestion = new Topeventsuggestion();
+						if(usereventsuggestion.getUserContact() != null)
+							topeventsuggestion.setUserContact(usereventsuggestion.getUserContact());
+						topeventsuggestion.setEvents(events);
+						topeventsuggestion.setUser(usereventsuggestion.getUser());
+
+						if(forJeeyohSuggestion)
+							topeventsuggestion.setSuggestionType("Jeeyoh Suggestion");
+						else if(forFriendsSuggestion)
 						{
-							topeventsuggestion.setSuggestionType("Friend's Direct Suggestion");
+							if(usereventsuggestion.getSuggestionType().equalsIgnoreCase("Wall Feed Suggestion") || usereventsuggestion.getSuggestionType().equalsIgnoreCase("Direct Suggestion"))
+							{
+								topeventsuggestion.setSuggestionType("Friend's Direct Suggestion");
+							}
+							else
+								topeventsuggestion.setSuggestionType("Friend's Suggestion");
 						}
-						else
-							topeventsuggestion.setSuggestionType("Friend's Suggestion");
+
+						topeventsuggestion.setRank((long)count);
+						topeventsuggestion.setTotalLikes(totalLikes);
+						topeventsuggestion.setCategoryType(category);
+						Date date = new Date();
+						topeventsuggestion.setCreatedTime(date);
+						topeventsuggestion.setUpdatedTime(date);
+						userDAO.saveTopEventSuggestions(topeventsuggestion);
+						isSaved = true;
+						count++;
 					}
-						
-					topeventsuggestion.setRank((long)count);
-					topeventsuggestion.setTotalLikes(totalLikes);
-					topeventsuggestion.setCategoryType(category);
-					Date date = new Date();
-					topeventsuggestion.setCreatedTime(date);
-					topeventsuggestion.setUpdatedTime(date);
-					userDAO.saveTopEventSuggestions(topeventsuggestion);
-					isSaved = true;
-					count++;
+					break;
 				}
-				break;
+				//}
 			}
-			//}
 		}
 		return isSaved;
 	}
@@ -881,36 +891,39 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 			if(usernondealsuggestion.getBusiness().getId() == businessId)
 			{
 				Business business = usernondealsuggestion.getBusiness();
-				//Checking if the suggestions is already exists or not
-				List<Topnondealsuggestion> topnondealsuggestions = userDAO.isTopNonDealSuggestionExists(userId, business.getId(),null);
-				if(topnondealsuggestions == null || topnondealsuggestions.size() == 0)
+				if(business != null)
 				{
-					Topnondealsuggestion topnondealsuggestion = new Topnondealsuggestion();
-					if(usernondealsuggestion.getUserContact() != null)
-						topnondealsuggestion.setUserContact(usernondealsuggestion.getUserContact());
-					topnondealsuggestion.setBusiness(business);
-					topnondealsuggestion.setUser(usernondealsuggestion.getUser());
-					if(forFriendsSuggestion)
+					//Checking if the suggestions is already exists or not
+					List<Topnondealsuggestion> topnondealsuggestions = userDAO.isTopNonDealSuggestionExists(userId, business.getId(),null);
+					if(topnondealsuggestions == null || topnondealsuggestions.size() == 0)
 					{
-						if(usernondealsuggestion.getSuggestionType().equalsIgnoreCase("Wall Feed Suggestion") || usernondealsuggestion.getSuggestionType().equalsIgnoreCase("Direct Suggestion"))
+						Topnondealsuggestion topnondealsuggestion = new Topnondealsuggestion();
+						if(usernondealsuggestion.getUserContact() != null)
+							topnondealsuggestion.setUserContact(usernondealsuggestion.getUserContact());
+						topnondealsuggestion.setBusiness(business);
+						topnondealsuggestion.setUser(usernondealsuggestion.getUser());
+						if(forFriendsSuggestion)
 						{
-							topnondealsuggestion.setSuggestionType("Friend's Direct Suggestion");
+							if(usernondealsuggestion.getSuggestionType().equalsIgnoreCase("Wall Feed Suggestion") || usernondealsuggestion.getSuggestionType().equalsIgnoreCase("Direct Suggestion"))
+							{
+								topnondealsuggestion.setSuggestionType("Friend's Direct Suggestion");
+							}
+							else
+								topnondealsuggestion.setSuggestionType("Friend's Suggestion");
 						}
-						else
-							topnondealsuggestion.setSuggestionType("Friend's Suggestion");
+						else if(forJeeyohSuggestion)
+							topnondealsuggestion.setSuggestionType("Jeeyoh Suggestion");
+						topnondealsuggestion.setRank((long)count);
+						topnondealsuggestion.setTotalLikes(totalLikes);
+						Date date = new Date();
+						topnondealsuggestion.setCreatedTime(date);
+						topnondealsuggestion.setUpdatedTime(date);
+						topnondealsuggestion.setCategoryType(category);
+						userDAO.saveTopNonDealSuggestions(topnondealsuggestion);
+						isSaved = true;
 					}
-					else if(forJeeyohSuggestion)
-						topnondealsuggestion.setSuggestionType("Jeeyoh Suggestion");
-					topnondealsuggestion.setRank((long)count);
-					topnondealsuggestion.setTotalLikes(totalLikes);
-					Date date = new Date();
-					topnondealsuggestion.setCreatedTime(date);
-					topnondealsuggestion.setUpdatedTime(date);
-					topnondealsuggestion.setCategoryType(category);
-					userDAO.saveTopNonDealSuggestions(topnondealsuggestion);
-					isSaved = true;
+					break;
 				}
-				break;
 			}
 		}
 		return isSaved;
@@ -924,41 +937,43 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 		for(Userdealssuggestion userdealsuggestion : userdealsuggestions)
 		{
 			Deals deal = userdealsuggestion.getDeals();
-
-			if(deal.getId() == dealId)
+			if(deal != null)
 			{
-				//Checking if the suggestions is already exists or not
-				List<Topdealssuggestion> topdealsuggestions = userDAO.isTopDealSuggestionExists(userId, deal.getId(),null);
-				if(topdealsuggestions == null || topdealsuggestions.size() == 0)
+				if(deal.getId() == dealId)
 				{
-					Topdealssuggestion topdealsuggestion = new Topdealssuggestion();
-					if(userdealsuggestion.getUserContact() != null)
-						topdealsuggestion.setUserContact(userdealsuggestion.getUserContact());
-					
-					topdealsuggestion.setDeals(deal);
-					topdealsuggestion.setUser(userdealsuggestion.getUser());
-					if(forJeeyohSuggestion)
-						topdealsuggestion.setSuggestionType("Jeeyoh Suggestion");
-					else if(forFriendsSuggestion)
+					//Checking if the suggestions is already exists or not
+					List<Topdealssuggestion> topdealsuggestions = userDAO.isTopDealSuggestionExists(userId, deal.getId(),null);
+					if(topdealsuggestions == null || topdealsuggestions.size() == 0)
 					{
-						if(userdealsuggestion.getSuggestionType().equalsIgnoreCase("Wall Feed Suggestion") || userdealsuggestion.getSuggestionType().equalsIgnoreCase("Direct Suggestion"))
+						Topdealssuggestion topdealsuggestion = new Topdealssuggestion();
+						if(userdealsuggestion.getUserContact() != null)
+							topdealsuggestion.setUserContact(userdealsuggestion.getUserContact());
+
+						topdealsuggestion.setDeals(deal);
+						topdealsuggestion.setUser(userdealsuggestion.getUser());
+						if(forJeeyohSuggestion)
+							topdealsuggestion.setSuggestionType("Jeeyoh Suggestion");
+						else if(forFriendsSuggestion)
 						{
-							topdealsuggestion.setSuggestionType("Friend's Direct Suggestion");
+							if(userdealsuggestion.getSuggestionType().equalsIgnoreCase("Wall Feed Suggestion") || userdealsuggestion.getSuggestionType().equalsIgnoreCase("Direct Suggestion"))
+							{
+								topdealsuggestion.setSuggestionType("Friend's Direct Suggestion");
+							}
+							else
+								topdealsuggestion.setSuggestionType("Friend's Suggestion");
 						}
-						else
-							topdealsuggestion.setSuggestionType("Friend's Suggestion");
+
+						topdealsuggestion.setRank((long)count);
+						topdealsuggestion.setTotalLikes(totalLikes);
+						topdealsuggestion.setCategoryType(category);
+						Date date = new Date();
+						topdealsuggestion.setCreatedTime(date);
+						topdealsuggestion.setUpdatedTime(date);
+						userDAO.saveTopDealSuggestions(topdealsuggestion);
+						isSaved = true;
 					}
-						
-					topdealsuggestion.setRank((long)count);
-					topdealsuggestion.setTotalLikes(totalLikes);
-					topdealsuggestion.setCategoryType(category);
-					Date date = new Date();
-					topdealsuggestion.setCreatedTime(date);
-					topdealsuggestion.setUpdatedTime(date);
-					userDAO.saveTopDealSuggestions(topdealsuggestion);
-					isSaved = true;
+					break;
 				}
-				break;
 			}
 		}
 

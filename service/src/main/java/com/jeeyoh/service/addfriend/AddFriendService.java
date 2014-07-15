@@ -7,6 +7,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,16 +23,19 @@ import com.jeeyoh.persistence.domain.Usercontacts;
 public class AddFriendService implements IAddFriendService{
 	static final Logger logger = LoggerFactory.getLogger("debugLogger");
 
+	@Value("${host.path}")
+	private String hostPath;
+	
 	@Autowired
 	private IUserDAO userDAO;
 
 	@Override
 	@Transactional
-	public FriendListResponse searchFriend(String location, String name, int userId) {
+	public FriendListResponse searchFriend(String location, String firstName, String lastName, int userId) {
 		FriendListResponse friendListResponse = new FriendListResponse();
 		try
 		{
-			logger.debug("in searchFriend ====> location :: "+location+" ; name :: "+name+ " ; userId :: "+userId);
+			logger.debug("in searchFriend ====> location :: "+location+" ; name :: "+firstName+ " ; userId :: "+userId);
 			List<UserModel> userModelList = new ArrayList<UserModel>();
 			List<Integer> friendsId = new ArrayList<Integer>();
 			List<Integer> addedIds = new ArrayList<Integer>();
@@ -57,7 +61,7 @@ public class AddFriendService implements IAddFriendService{
 			if(location!=null && !location.equals(""))
 			{
 				logger.debug("searching by location and name and should not be in friend list====> ");
-				List<User> searchUserByLocationAndNameList = userDAO.getUserByNameAndLocation(location, name, userId, friendsId);
+				List<User> searchUserByLocationAndNameList = userDAO.getUserByNameAndLocation(location, firstName, lastName, userId, friendsId);
 				if(searchUserByLocationAndNameList!=null && !searchUserByLocationAndNameList.equals(""))
 				{
 					logger.debug("searchUserByLocationAndNameList ===>"+searchUserByLocationAndNameList.size());
@@ -87,6 +91,8 @@ public class AddFriendService implements IAddFriendService{
 						userModel.setUpdatedtime(user.getUpdatedtime().toString());
 						userModel.setUserId(user.getUserId());
 						userModel.setZipcode(user.getZipcode());
+						if(user.getImageUrl() != null)
+							userModel.setImageUrl(hostPath + user.getImageUrl());
 						addedIds.add(user.getUserId());
 						addedIdsStr.append(user.getUserId()+",");
 						userModelList.add(userModel);
@@ -98,10 +104,12 @@ public class AddFriendService implements IAddFriendService{
 			// Search by friends of friends
 			logger.debug("searching in friends of friends ====> ");
 			logger.debug("allUserFriendsList ====>"+allUserFriendsList.size());
-			friendIdsStr.deleteCharAt(friendIdsStr.length() - 1);
-			addedIdsStr.deleteCharAt(addedIdsStr.length() - 1);
+			if(!friendIdsStr.equals("") && friendIdsStr.length() > 0)
+				friendIdsStr.deleteCharAt(friendIdsStr.length() - 1);
+			if(!addedIdsStr.equals("") && addedIdsStr.length() > 0)
+				addedIdsStr.deleteCharAt(addedIdsStr.length() - 1);
 			logger.debug("addedIdsStr ==>"+addedIdsStr+ "friendIdsStr ==>"+friendIdsStr);
-			List<User> searchMutualFriendsList = userDAO.findInMutualFriends(name, friendIdsStr.toString(), addedIdsStr.toString());
+			List<User> searchMutualFriendsList = userDAO.findInMutualFriends(firstName, lastName, friendIdsStr.toString(), addedIdsStr.toString());
 			if(searchMutualFriendsList!=null && !searchMutualFriendsList.equals(""))
 			{
 				logger.debug("searchMutualFriendList ===>"+searchMutualFriendsList.size());
@@ -131,6 +139,8 @@ public class AddFriendService implements IAddFriendService{
 					userModel.setUpdatedtime(user.getUpdatedtime().toString());
 					userModel.setUserId(user.getUserId());
 					userModel.setZipcode(user.getZipcode());
+					if(user.getImageUrl() != null)
+						userModel.setImageUrl(hostPath + user.getImageUrl());
 					addedIds.add(user.getUserId());
 					userModelList.add(userModel);
 				}
@@ -139,37 +149,42 @@ public class AddFriendService implements IAddFriendService{
 			// Search others
 			logger.debug("searching others ====> ");
 
-			List<User> searchOtherThanFriendsList = userDAO.findOtherThanMutualFriends(name, addedIds);
-			if(searchOtherThanFriendsList!=null && !searchOtherThanFriendsList.equals(""))
+			if((firstName != null && !firstName.trim().equals("")) || (lastName != null && !lastName.trim().equals("")))
 			{
-				logger.debug("searchOtherThanFriendsList ===>"+searchOtherThanFriendsList.size());
-				for(User user:searchOtherThanFriendsList)
+				List<User> searchOtherThanFriendsList = userDAO.findOtherThanMutualFriends(firstName, lastName, addedIds);
+				if(searchOtherThanFriendsList!=null && !searchOtherThanFriendsList.equals(""))
 				{
-					logger.debug("adding in user model"+user.getUserId()+"; name "+user.getFirstName());
-					UserModel userModel = new UserModel();
-					userModel.setAddressline1(user.getAddressline1());
-					userModel.setBirthDate(user.getBirthDate());
-					userModel.setBirthMonth(user.getBirthMonth());
-					userModel.setBirthYear(user.getBirthYear());
-					userModel.setCity(user.getCity());
-					userModel.setConfirmationId(user.getConfirmationId());
-					userModel.setCountry(user.getCountry());
-					userModel.setCreatedtime(user.getCreatedtime().toString());
-					userModel.setEmailId(user.getEmailId());
-					userModel.setFirstName(user.getFirstName());
-					userModel.setGender(user.getGender());
-					userModel.setIsActive(user.getIsActive());
-					userModel.setIsDeleted(user.getIsDeleted());
-					userModel.setLastName(user.getLastName());
-					userModel.setMiddleName(user.getMiddleName());
-					userModel.setPassword(user.getPassword());
-					userModel.setSessionId(user.getSessionId());
-					userModel.setState(user.getState());
-					userModel.setStreet(user.getStreet());
-					userModel.setUpdatedtime(user.getUpdatedtime().toString());
-					userModel.setUserId(user.getUserId());
-					userModel.setZipcode(user.getZipcode());
-					userModelList.add(userModel);
+					logger.debug("searchOtherThanFriendsList ===>"+searchOtherThanFriendsList.size());
+					for(User user:searchOtherThanFriendsList)
+					{
+						logger.debug("adding in user model"+user.getUserId()+"; name "+user.getFirstName());
+						UserModel userModel = new UserModel();
+						userModel.setAddressline1(user.getAddressline1());
+						userModel.setBirthDate(user.getBirthDate());
+						userModel.setBirthMonth(user.getBirthMonth());
+						userModel.setBirthYear(user.getBirthYear());
+						userModel.setCity(user.getCity());
+						userModel.setConfirmationId(user.getConfirmationId());
+						userModel.setCountry(user.getCountry());
+						userModel.setCreatedtime(user.getCreatedtime().toString());
+						userModel.setEmailId(user.getEmailId());
+						userModel.setFirstName(user.getFirstName());
+						userModel.setGender(user.getGender());
+						userModel.setIsActive(user.getIsActive());
+						userModel.setIsDeleted(user.getIsDeleted());
+						userModel.setLastName(user.getLastName());
+						userModel.setMiddleName(user.getMiddleName());
+						userModel.setPassword(user.getPassword());
+						userModel.setSessionId(user.getSessionId());
+						userModel.setState(user.getState());
+						userModel.setStreet(user.getStreet());
+						userModel.setUpdatedtime(user.getUpdatedtime().toString());
+						userModel.setUserId(user.getUserId());
+						userModel.setZipcode(user.getZipcode());
+						if(user.getImageUrl() != null)
+							userModel.setImageUrl(hostPath + user.getImageUrl());
+						userModelList.add(userModel);
+					}
 				}
 			}
 

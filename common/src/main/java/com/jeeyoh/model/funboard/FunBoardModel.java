@@ -66,6 +66,13 @@ public class FunBoardModel implements Serializable{
 	private double latitude;
 	@JsonProperty
 	private double longitude;
+	@JsonProperty
+	private String timeSlot;
+	@JsonProperty
+	private String websiteUrl;
+	@JsonProperty
+	private String tag;
+	private boolean isPublic;
 	
 	/**
 	 * @return the funBoardId
@@ -355,5 +362,54 @@ public class FunBoardModel implements Serializable{
 	public void setLongitude(double longitude) {
 		this.longitude = longitude;
 	}
+	/**
+	 * @return the timeSlot
+	 */
+	public String getTimeSlot() {
+		return timeSlot;
+	}
+	/**
+	 * @param timeSlot the timeSlot to set
+	 */
+	public void setTimeSlot(String timeSlot) {
+		this.timeSlot = timeSlot;
+	}
+	/**
+	 * @return the websiteUrl
+	 */
+	public String getWebsiteUrl() {
+		return websiteUrl;
+	}
+	/**
+	 * @param websiteUrl the websiteUrl to set
+	 */
+	public void setWebsiteUrl(String websiteUrl) {
+		this.websiteUrl = websiteUrl;
+	}
+	/**
+	 * @return the tag
+	 */
+	public String getTag() {
+		return tag;
+	}
+	/**
+	 * @param tag the tag to set
+	 */
+	public void setTag(String tag) {
+		this.tag = tag;
+	}
+	/**
+	 * @return the isPublic
+	 */
+	public boolean getIsPublic() {
+		return isPublic;
+	}
+	/**
+	 * @param isPublic the isPublic to set
+	 */
+	public void setIsPublic(boolean isPublic) {
+		this.isPublic = isPublic;
+	}
+	
 
 }

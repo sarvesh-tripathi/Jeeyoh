@@ -8,7 +8,7 @@
             <column name="groupUserMapId" />
             <generator class="identity" />
         </id>
-        <many-to-one name="jeeyohgroup" class="com.jeeyoh.persistence.domain.Jeeyohgroup" fetch="select" cascade="all">
+        <many-to-one name="jeeyohgroup" class="com.jeeyoh.persistence.domain.Jeeyohgroup" fetch="select">
             <column name="groupId" not-null="true" />
         </many-to-one>
         <many-to-one name="user" class="com.jeeyoh.persistence.domain.User" fetch="select">

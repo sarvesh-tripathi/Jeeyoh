@@ -27,5 +27,6 @@ public interface IFunBoardDAO {
 	public int getFunboardComment(Integer funBoardId, Integer userId);
 	public Timeline getDefaultTimeLine();
 	public void updateFunBoard(Funboard funboard);
+	public List<Funboard> getUserFunBoardItemsForCurrentWeekend(int userId, String category, boolean forUser);
 	
 }

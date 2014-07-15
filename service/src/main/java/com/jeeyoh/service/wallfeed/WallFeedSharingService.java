@@ -2,6 +2,7 @@ package com.jeeyoh.service.wallfeed;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -74,6 +75,7 @@ public class WallFeedSharingService implements IWallFeedSharingService{
 	@Autowired
 	private IGroupDAO groupDAO;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional
 	public BaseResponse saveWallFeedSharingData(WallFeedRequest wallFeedModel){
@@ -83,7 +85,7 @@ public class WallFeedSharingService implements IWallFeedSharingService{
 		WallFeed wallFeed = new WallFeed();
 		Set<WallFeedItems> wallFeedItemsSet = new HashSet<WallFeedItems>();
 		Set<WallFeedUserShareMap> wallFeedUSerShareMapSet = new HashSet<WallFeedUserShareMap>();
-		if(wallFeedModel.getUserId()!=0 && wallFeedModel.getSharedfunBoardItemsList()!=null && wallFeedModel.getSharedWithUserList()!=null)
+		if(wallFeedModel.getUserId()!=0 && wallFeedModel.getSharedfunBoardItemsList()!=null)
 		{
 			User user = (User)userDAO.getUserById(wallFeedModel.getUserId());
 			UserModel userModel = new UserModel();
@@ -93,6 +95,7 @@ public class WallFeedSharingService implements IWallFeedSharingService{
 			wallFeed.setUser(user);
 			wallFeed.setCreatedTime(date);
 			wallFeed.setUpdatedTime(date);
+			wallFeed.setTag(wallFeedModel.getTag());
 			for(FunBoardModel funBoardList:wallFeedModel.getSharedfunBoardItemsList())
 			{
 				WallFeedItems wallFeedItems = new WallFeedItems();
@@ -104,18 +107,55 @@ public class WallFeedSharingService implements IWallFeedSharingService{
 				wallFeedItems.setWallFeed(wallFeed);
 				wallFeedItemsSet.add(wallFeedItems);
 			}
-			List<UserModel> sharedUSerList = wallFeedModel.getSharedWithUserList();
-			sharedUSerList.add(userModel);
-			for(UserModel userModelList: sharedUSerList)
+
+			List<Integer> friends = wallFeedModel.getFriends();
+			if(friends != null)
 			{
-				WallFeedUserShareMap wallFeedUSerShareMap = new WallFeedUserShareMap();
-				User shareWithUser = (User)userDAO.getUserById(userModelList.getUserId());
-				wallFeedUSerShareMap.setUser(user);
-				wallFeedUSerShareMap.setShareWithUser(shareWithUser);
-				wallFeedUSerShareMap.setCreatedTime(date);
-				wallFeedUSerShareMap.setUpdatedTime(date);
-				wallFeedUSerShareMap.setWallFeed(wallFeed);
-				wallFeedUSerShareMapSet.add(wallFeedUSerShareMap);
+				for(Integer userId:friends)
+				{
+					logger.debug("User share with id :::"+userId);
+					WallFeedUserShareMap wallFeedUserShareMap = new WallFeedUserShareMap();
+					wallFeedUserShareMap.setWallFeed(wallFeed);
+					wallFeedUserShareMap.setCreatedTime(date);
+					wallFeedUserShareMap.setUpdatedTime(date);
+					wallFeedUserShareMap.setUser(user);
+					User users1   = userDAO.getUserById(userId);
+					wallFeedUserShareMap.setShareWithUser(users1);
+					logger.debug("in friends shareWithUser Id: "+users1.getUserId() + "shareWithUser: "+users1.hashCode() + " user : "+user.hashCode() + " wallFeed : " + wallFeed.hashCode());
+
+					wallFeedUSerShareMapSet.add(wallFeedUserShareMap);
+				}
+			}
+
+			List<Integer> groups = wallFeedModel.getGroups();
+			if(groups != null)
+			{
+				for(Integer groupId:groups)
+				{
+					Jeeyohgroup jeeyohGroup = groupDAO.getGroupByGroupId(groupId);
+					Set<Groupusermap> groups2   = jeeyohGroup.getGroupusermaps();
+					for (Groupusermap groups1 : groups2)
+					{
+						User groupMember = groups1.getUser();
+						if(groupMember.getUserId() != user.getUserId())
+						{
+							WallFeedUserShareMap wallFeedUserShareMap = new WallFeedUserShareMap();
+							wallFeedUserShareMap.setWallFeed(wallFeed);
+							wallFeedUserShareMap.setCreatedTime(date);
+							wallFeedUserShareMap.setUpdatedTime(date);
+							wallFeedUserShareMap.setUser(user);
+							User shareWithUser  = userDAO.getUserById(groupMember.getUserId());
+							wallFeedUserShareMap.setShareWithUser(shareWithUser);
+							logger.debug("shareWithUser Id: "+shareWithUser.getUserId() + "shareWithUser: "+shareWithUser.hashCode() + " user : "+user.hashCode() + " wallFeed : " + wallFeed.hashCode());
+							wallFeedUSerShareMapSet.add(wallFeedUserShareMap);
+						}
+					}
+				}
+			}
+			for(WallFeedUserShareMap wallFeedUserShareMap : wallFeedUSerShareMapSet)
+			{
+				logger.debug("shareWithUser Id: "+wallFeedUserShareMap.getShareWithUser().getUserId() + "shareWithUser: "+wallFeedUserShareMap.getShareWithUser().hashCode() + " user : "+wallFeedUserShareMap.getUser().hashCode() + " wallFeed : " + wallFeedUserShareMap.getWallFeed().hashCode());
+
 			}
 			wallFeed.setWallFeedItems(wallFeedItemsSet);
 			wallFeed.setWallFeedUserShareMap(wallFeedUSerShareMapSet);
@@ -191,6 +231,7 @@ public class WallFeedSharingService implements IWallFeedSharingService{
 				commentModel.setCreatedTime(Utils.getTime(wallFeedComment.getCreatedTime()));
 				commentModel.setItemId(wallFeedComment.getWallFeed().getWallFeedId());
 				commentModel.setUserId(user.getUserId());
+				commentModel.setEmailId(user.getEmailId());
 				if(user.getImageUrl() != null)
 					commentModel.setImageUrl(hostPath + user.getImageUrl());
 				commentModel.setUserName(user.getFirstName()+" "+user.getLastName());
@@ -213,21 +254,35 @@ public class WallFeedSharingService implements IWallFeedSharingService{
 		List<WallFeedModel> feedModelList = new ArrayList<WallFeedModel>();
 		if(wallFeeds != null && !wallFeeds.isEmpty())
 		{
+			logger.debug("wallFeed size=> " + wallFeeds.size());
 			for(WallFeed wallFeed:wallFeeds)
 			{
 				WallFeedModel feedModel = new WallFeedModel();
 				feedModel.setWallFeedId(wallFeed.getWallFeedId());
+				feedModel.setTag(wallFeed.getTag());
+
+				// Set wallFeed creator
+				User creatorUser = wallFeed.getUser();
+				UserModel userModel = new UserModel();
+				userModel.setFirstName(creatorUser.getFirstName());
+				userModel.setLastName(creatorUser.getLastName());
+				if(creatorUser.getImageUrl() != null)
+					userModel.setImageUrl(hostPath + creatorUser.getImageUrl());
+				userModel.setUserId(creatorUser.getUserId());
+				feedModel.setCreatorUser(userModel);
+
 				Set<WallFeedItems> items = wallFeed.getWallFeedItems();
 				List<SuggestionModel> itemsList = new ArrayList<SuggestionModel>();
 				for(WallFeedItems item:items)
 				{
-					SuggestionModel suggestionModel = new SuggestionModel();
+					SuggestionModel suggestionModel =null;
 					String itemType = item.getItemType();
 					if(itemType.equalsIgnoreCase("deal"))
 					{
 						Deals deals = dealsDAO.getDealById(item.getItemId());
 						if(deals != null)
 						{
+							suggestionModel = new SuggestionModel();
 							suggestionModel.setImageUrl(deals.getLargeImageUrl());
 							suggestionModel.setTitle(deals.getTitle());
 							suggestionModel.setSuggestionType(itemType);
@@ -239,6 +294,7 @@ public class WallFeedSharingService implements IWallFeedSharingService{
 						Events events = eventsDAO.getEventById(item.getItemId());
 						if(events != null)
 						{
+							suggestionModel = new SuggestionModel();
 							suggestionModel.setTitle(events.getTitle());
 							suggestionModel.setSuggestionType(itemType);
 							suggestionModel.setItemId(item.getItemId());
@@ -249,6 +305,7 @@ public class WallFeedSharingService implements IWallFeedSharingService{
 						Business business = businessDAO.getBusinessById(item.getItemId());
 						if(business != null)
 						{
+							suggestionModel = new SuggestionModel();
 							suggestionModel.setTitle(business.getName());
 							suggestionModel.setImageUrl(business.getImageUrl());
 							suggestionModel.setSuggestionType(itemType);
@@ -260,13 +317,15 @@ public class WallFeedSharingService implements IWallFeedSharingService{
 						Page page = eventsDAO.getPageDetailsByID(item.getItemId());
 						if(page != null)
 						{
+							suggestionModel = new SuggestionModel();
 							suggestionModel.setTitle(page.getAbout());
 							suggestionModel.setImageUrl(page.getProfilePicture());
 							suggestionModel.setSuggestionType(itemType);
 							suggestionModel.setItemId(item.getItemId());		
 						}
 					}
-					itemsList.add(suggestionModel);
+					if(suggestionModel != null)
+						itemsList.add(suggestionModel);
 				}
 
 				Set<WallFeedComments> comments = wallFeed.getWallFeedComments();
@@ -278,6 +337,7 @@ public class WallFeedSharingService implements IWallFeedSharingService{
 					commentModel.setComment(comment.getComment());
 					commentModel.setUserId(user.getUserId());
 					commentModel.setUserName(user.getFirstName());
+					commentModel.setEmailId(user.getEmailId());
 					if(user.getImageUrl() != null)
 						commentModel.setImageUrl(hostPath + user.getImageUrl());
 					commentsList.add(commentModel);
@@ -812,6 +872,18 @@ public class WallFeedSharingService implements IWallFeedSharingService{
 			userEventSuggestion.setSuggestedTime(suggestionDate);
 			userDAO.saveEventsSuggestions(userEventSuggestion, batch_size);
 			return true;
+		}
+	}
+
+
+	/**
+	 * Comparator class to compare wallFeed by like package rank
+	 */
+	public class WallFeedComparator implements Comparator<Object[]> {
+		@Override
+		public int compare(Object[] o1, Object[] o2) 
+		{
+			return (int)(Integer.parseInt(o2[1].toString())-Integer.parseInt(o2[2].toString()));
 		}
 	}
 

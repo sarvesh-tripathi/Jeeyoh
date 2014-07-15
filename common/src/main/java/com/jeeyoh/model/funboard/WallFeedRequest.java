@@ -23,7 +23,11 @@ public class WallFeedRequest implements Serializable
 	@JsonProperty
 	private List<FunBoardModel> sharedfunBoardItemsList;
 	@JsonProperty
-	private List<UserModel> sharedWithUserList;
+	private List<Integer> friends;
+	@JsonProperty
+	private List<Integer> groups;
+	@JsonProperty
+	private String tag;
 	
 	public int getUserId() {
 		return userId;
@@ -38,10 +42,41 @@ public class WallFeedRequest implements Serializable
 			List<FunBoardModel> sharedfunBoardItemsList) {
 		this.sharedfunBoardItemsList = sharedfunBoardItemsList;
 	}
-	public List<UserModel> getSharedWithUserList() {
-		return sharedWithUserList;
+	/**
+	 * @return the friends
+	 */
+	public List<Integer> getFriends() {
+		return friends;
 	}
-	public void setSharedWithUserList(List<UserModel> sharedWithUserList) {
-		this.sharedWithUserList = sharedWithUserList;
+	/**
+	 * @param friends the friends to set
+	 */
+	public void setFriends(List<Integer> friends) {
+		this.friends = friends;
 	}
+	/**
+	 * @return the groups
+	 */
+	public List<Integer> getGroups() {
+		return groups;
+	}
+	/**
+	 * @param groups the groups to set
+	 */
+	public void setGroups(List<Integer> groups) {
+		this.groups = groups;
+	}
+	/**
+	 * @return the tag
+	 */
+	public String getTag() {
+		return tag;
+	}
+	/**
+	 * @param tag the tag to set
+	 */
+	public void setTag(String tag) {
+		this.tag = tag;
+	}
+	
 }

@@ -286,7 +286,8 @@ public class EventsSearch implements IEventSearch{
 		{
 			List<Usereventsuggestion> usereventsuggestions = userDAO.isEventSuggestionExists(user.getUserId(), event.getEventId());
 			logger.debug("EventSearch ==> usereventsuggestions ==> " + usereventsuggestions);
-			if(usereventsuggestions == null || usereventsuggestions.size() == 0 || usereventsuggestions.get(0).getSuggestedTime().compareTo(currentDate) < 0)
+			
+			if(usereventsuggestions == null || (usereventsuggestions != null && usereventsuggestions.size() == 0) || (usereventsuggestions != null && usereventsuggestions.size() != 0 && usereventsuggestions.get(0).getSuggestedTime().compareTo(currentDate) < 0))
 			{
 				boolean includePage = true;
 				double distance = 0;

@@ -76,13 +76,19 @@ public class FunBoardDAO implements IFunBoardDAO{
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Funboard> getUserFunBoardItems(int userId) {
-		logger.debug("getUserFunBoardItems:  ");
+		logger.debug("getUserFunBoardItems:  "+Utils.getNearestWeekend(null));
+		int day = Utils.getCurrentDay();
 		List<Funboard>  funBoardList = null;
-	    String hqlQuery = "from Funboard where user.userId =:userId order by createdTime desc";
-	    
+	    String hqlQuery = "from Funboard where user.userId =:userId  and (scheduledTime >= :prevousMonday and scheduledTime <= :weekendDate) order by scheduledTime asc,timeLineId asc";
+	    /*if(day == 1 || day == 2)
+	    	hqlQuery = hqlQuery + " and (scheduledTime >= :prevousMonday and scheduledTime <= :weekendDate) order by scheduledTime asc,timeLineId asc";
+	    else
+	    	hqlQuery = hqlQuery + "and (scheduledTime >= :prevousMonday and scheduledTime <= :weekendDate) order by scheduledTime asc,timeLineId asc";*/
 	    try{
 	    	Query query = sessionFactory.getCurrentSession().createQuery(hqlQuery);
 	    	query.setParameter("userId",userId);
+	    	query.setParameter("prevousMonday", Utils.getCurrentWeekMonday());
+	    	query.setParameter("weekendDate", Utils.getNearestWeekend(null));
 	    	funBoardList = query.list();
 	    }
 	    catch(HibernateException e)
@@ -291,7 +297,7 @@ public class FunBoardDAO implements IFunBoardDAO{
 	public Timeline getDefaultTimeLine() {
 		logger.debug("getTimeLine::");
 		List<Timeline>  timelines = null;
-	    String hqlQuery = "from Timeline where timeLineId = 6";
+	    String hqlQuery = "from Timeline where timeLineId = 8";
 	    try{
 	    	Query query = sessionFactory.getCurrentSession().createQuery(hqlQuery);
 	    	timelines = query.list();
@@ -315,6 +321,29 @@ public class FunBoardDAO implements IFunBoardDAO{
 		{
 			logger.error(e.toString());
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Funboard> getUserFunBoardItemsForCurrentWeekend(int userId, String category, boolean forUser) {
+		List<Funboard>  funBoardList = null;
+	    String hqlQuery = "from Funboard where user.userId =:userId and (scheduledTime >= :currentDate and scheduledTime <= :weekendDate) and category = :category";
+	    if(!forUser)
+	    	hqlQuery = hqlQuery + " and privacy.privacyType = 'OPEN'";
+	    try{
+	    	Query query = sessionFactory.getCurrentSession().createQuery(hqlQuery);
+	    	query.setParameter("userId",userId);
+	    	query.setParameter("currentDate", Utils.getCurrentDate());
+	    	query.setParameter("weekendDate", Utils.getNearestWeekend(null));
+	    	query.setParameter("category", category);
+	    	funBoardList = query.list();
+	    	logger.debug("funBoardList:  "+funBoardList);
+	    }
+	    catch(HibernateException e)
+	    {
+	    	logger.error(e.toString());
+	    }
+		return funBoardList;
 	}
 
 }

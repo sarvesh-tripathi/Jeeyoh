@@ -17,5 +17,7 @@ public interface IGroupDAO {
 	public void updateJeeyohGroup(Jeeyohgroup group);
 	public Groupusermap isContactInGroup(int userId, int groupId);
 	public List<Integer> getGroupMembers(int groupId);
+	public void deleteGroupMember(Groupusermap groupUserMap);
+	public List<Jeeyohgroup> getUserGroupsByCategory(int userId, String category);
 
 }

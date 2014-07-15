@@ -200,6 +200,12 @@
 			</key>
 			<one-to-many class="com.jeeyoh.persistence.domain.Topcommunitysuggestion" />
 		</set>
+		<set name="userSessions" inverse="true" cascade="all">
+			<key>
+				<column name="userId" not-null="true" />
+			</key>
+			<one-to-many class="com.jeeyoh.persistence.domain.UserSession" />
+		</set>
 
 	</class>
 

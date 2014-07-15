@@ -2,6 +2,7 @@ package com.jeeyoh.service.addgroup;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -151,7 +152,7 @@ public class AddGroupService implements IAddGroupService{
 			}
 			addGroupButtonResponse.setUserModel(userModelList);
 		}
-*/
+		 */
 
 		return addGroupButtonResponse;
 
@@ -194,7 +195,7 @@ public class AddGroupService implements IAddGroupService{
 		else
 		{
 			groupDetailResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
-			groupDetailResponse.setError("Error");
+			groupDetailResponse.setError("Group doesn't exist");
 		}
 		return groupDetailResponse;
 	}
@@ -224,35 +225,72 @@ public class AddGroupService implements IAddGroupService{
 		return groupListResponse;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Transactional
 	@Override
 	public BaseResponse editGroup(AddGroupModel addGroupModel) {
 		BaseResponse baseResponse =new BaseResponse();
+		boolean isGroupNameExist = false;
 		Jeeyohgroup jeeyohGroup = groupDAO.getGroupByGroupId(addGroupModel.getGroupId());
 		if(jeeyohGroup != null)
 		{
-			// Check privacy id
-			Privacy privacyObj = userDAO.getUserPrivacyType(addGroupModel.getPrivacy());
-
-			Notificationpermission notificationPermission = userDAO.getDafaultNotification();
-			jeeyohGroup.setAbout(addGroupModel.getGroupName());
-			jeeyohGroup.setGroupName(addGroupModel.getGroupName());
-			jeeyohGroup.setGroupType(addGroupModel.getCategory());
-			jeeyohGroup.setPrivacy(privacyObj);
-			jeeyohGroup.setUpdatedtime(Utils.getCurrentDate());
-			ArrayList<Integer> groupMembers = addGroupModel.getMember();
-			if(groupMembers!=null)
+			if(!jeeyohGroup.getGroupName().equals(addGroupModel.getGroupName()))
 			{
-				Set<Groupusermap> groupUserMapSet = new HashSet<Groupusermap>();
-				for(Integer memberId:groupMembers)
+				Jeeyohgroup jeeyohgroup = groupDAO.isGroupExists(addGroupModel.getGroupName());
+				if(jeeyohgroup != null)
 				{
-					logger.debug("member id  =====>"+memberId);
-					Groupusermap groupUserMapDetails = groupDAO.isContactInGroup(memberId, addGroupModel.getGroupId());
-					if(groupUserMapDetails == null)
+					isGroupNameExist = true;
+				}
+			}
+
+			if(!isGroupNameExist)
+			{
+				// Check privacy id
+				Privacy privacyObj = userDAO.getUserPrivacyType(addGroupModel.getPrivacy());
+
+				Notificationpermission notificationPermission = userDAO.getDafaultNotification();
+				jeeyohGroup.setAbout(addGroupModel.getGroupName());
+				jeeyohGroup.setGroupName(addGroupModel.getGroupName());
+				jeeyohGroup.setGroupType(addGroupModel.getCategory());
+				jeeyohGroup.setPrivacy(privacyObj);
+				jeeyohGroup.setUpdatedtime(Utils.getCurrentDate());
+				ArrayList<Integer> groupMembers = addGroupModel.getMember();
+				if(groupMembers!=null && !groupMembers.isEmpty())
+				{
+					List<Integer> recipientArrayNew = new ArrayList<Integer>();
+					Iterator<Groupusermap> itr = jeeyohGroup.getGroupusermaps().iterator();
+					List<Integer> RecipientDBList = new ArrayList<Integer>();
+
+					Groupusermap groupusermap = null;
+					// Removing members which are not coming from request.
+					while (itr.hasNext())
+					{
+						groupusermap = itr.next();
+						RecipientDBList.add(groupusermap.getUser().getUserId());
+						if(!groupMembers.contains(groupusermap.getUser().getUserId())) {
+							groupDAO.deleteGroupMember(groupusermap);
+						}
+					}
+
+
+					for (int i = 0; i < groupMembers.size(); i++)
+					{
+						if (!RecipientDBList.contains(groupMembers.get(i)))
+						{
+							if (groupMembers.get(i) != null && groupMembers.get(i) != 0)
+							{
+								recipientArrayNew.add(groupMembers.get(i));
+							}
+						}
+					}
+
+					Set<Groupusermap> groupUserMapSet = new HashSet<Groupusermap>();
+					// Constructing new group user Objects which is to be saved in DB
+					for (int i = 0; i < recipientArrayNew.size(); i++)
 					{
 						User contactUser = new User();
-						contactUser.setUserId(memberId);
-						
+						contactUser.setUserId(recipientArrayNew.get(i));
+
 						Groupusermap groupUserMap = new Groupusermap();
 						groupUserMap.setCreatedtime(Utils.getCurrentDate());
 						groupUserMap.setJeeyohgroup(jeeyohGroup);
@@ -261,20 +299,28 @@ public class AddGroupService implements IAddGroupService{
 						groupUserMap.setUser(contactUser);
 						groupUserMapSet.add(groupUserMap);
 					}
+					jeeyohGroup.setGroupusermaps(groupUserMapSet);
 				}
-				jeeyohGroup.setGroupusermaps(groupUserMapSet);
+				else
+				{
+					// Remove all members from DB
+					jeeyohGroup.setGroupusermaps(null);
+				}
+				groupDAO.updateJeeyohGroup(jeeyohGroup);
+				logger.debug("Data updated successfully");
+				baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
 			}
-
-			groupDAO.updateJeeyohGroup(jeeyohGroup);
-			logger.debug("Data updated successfully");
-			baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
+			else
+			{
+				baseResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
+				baseResponse.setError("Group name already exists");
+			}
 		}
 		else
 		{
 			baseResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
 			baseResponse.setError("Group not found");
 		}
-
 		return baseResponse;
 	}
 

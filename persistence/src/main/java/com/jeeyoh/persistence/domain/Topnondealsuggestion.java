@@ -16,6 +16,7 @@ public class Topnondealsuggestion implements Serializable{
 	private String categoryType;
 	private Date createdTime;
 	private Date updatedTime;
+	private Date suggestedTime;
 	/**
 	 * @return the suggestionId
 	 */
@@ -135,6 +136,18 @@ public class Topnondealsuggestion implements Serializable{
 	 */
 	public void setUserContact(User userContact) {
 		this.userContact = userContact;
+	}
+	/**
+	 * @return the suggestedTime
+	 */
+	public Date getSuggestedTime() {
+		return suggestedTime;
+	}
+	/**
+	 * @param suggestedTime the suggestedTime to set
+	 */
+	public void setSuggestedTime(Date suggestedTime) {
+		this.suggestedTime = suggestedTime;
 	}
 
 }

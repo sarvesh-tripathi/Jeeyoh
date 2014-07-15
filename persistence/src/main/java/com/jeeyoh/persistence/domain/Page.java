@@ -28,6 +28,7 @@ public class Page  implements java.io.Serializable {
      private Boolean isEvent;
      private Boolean isCommunity;
      private String source;
+     private String tag;
      private Date createdtime;
      private Date updatedtime;
      private Set pageuserlikeses = new HashSet(0);
@@ -225,6 +226,16 @@ public class Page  implements java.io.Serializable {
 	 */
 	public void setCommunityReviewMap(Set communityReviewMap) {
 		this.communityReviewMap = communityReviewMap;
+	}
+
+
+	public String getTag() {
+		return tag;
+	}
+
+
+	public void setTag(String tag) {
+		this.tag = tag;
 	}
 
 

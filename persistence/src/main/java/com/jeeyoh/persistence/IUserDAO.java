@@ -22,6 +22,7 @@ import com.jeeyoh.persistence.domain.Topnondealsuggestion;
 import com.jeeyoh.persistence.domain.User;
 import com.jeeyoh.persistence.domain.UserCategory;
 import com.jeeyoh.persistence.domain.UserCategoryLikes;
+import com.jeeyoh.persistence.domain.UserSession;
 import com.jeeyoh.persistence.domain.Usercontacts;
 import com.jeeyoh.persistence.domain.Userdealssuggestion;
 import com.jeeyoh.persistence.domain.Usereventsuggestion;
@@ -102,12 +103,14 @@ public interface IUserDAO {
 	public List<Topnondealsuggestion> isTopNonDealSuggestionExists(int userId, int businessId, String suggestionType);
 	public List<Topdealssuggestion> isTopDealSuggestionExists(int userId, int dealId, String suggestionType);
 	public List<Topeventsuggestion> isTopEventSuggestionExists(int userId, int eventId, String suggestionType);
+	public List<Topcommunitysuggestion> isTopCommunitySuggestionExists(int userId, int pageId);
 	public List<Object[]> getuserCommunitySuggestionsByLikesCount(int userId, String category);
 	public void saveTopCommunitySuggestions(Topcommunitysuggestion topcommunitysuggestion);
 	public List<Usereventsuggestion> getUserEventsSuggestionByUserIdForFriendsCommunity(int userId, int contactid, String category);
 	public List<Userdealssuggestion> getUserDealSuggestionByUserIdForFriendsCommunity(int userId, int contactid, String category);
 	public List<User> getStarFriends(int userId, Double lattitude,Double longitude);
 	public long getUserPageFavouriteCount(String pageType, int userId);
+	public long getUserFavouriteCount(String category, int userId);
 
 	public List<UserCategory> getUserNonLikeCategories(int userId, String categoryType);
 
@@ -127,9 +130,9 @@ public interface IUserDAO {
 	public List<User> getAttendingUsersForDeals(int id, int userId);
 	public List<User> getAttendingUsersForEvents(int id, int userId);
 	public List<User> getAttendingUsersForpage(int id, int userId);
-	public int getTotalUserNonDealSuggestions(Integer userId);
+	public int getTotalUserNonDealSuggestions(Integer userId, String category, String suggestionType, double lat, double lon, int distance, double rating);
 	public int getTotalUserDealSuggestions(Integer userId);
-	public int getTotalUserEventSuggestions(Integer userId);
+	public int getTotalUserEventSuggestions(Integer userId, String category, String suggestionType, double lat, double lon, int distance, double rating);
 	public List<Page> getUserCommunitiesByPageType(int userId, String pageType);
 	public List<Page> getUserCommunities(int userId);
 	public List<Dealsusage> getUseDealUsage(Integer userId, double latitude, double longitude);
@@ -137,11 +140,11 @@ public interface IUserDAO {
 	public Dealsusage getUserLikeDeal(Integer userId,Integer itemId);
 	public Eventuserlikes getUserLikeEvent(Integer userId,Integer itemId);
 	public Pageuserlikes getUserLikeCommunity(Integer userId,Integer itemId);
-	public List<User> getUserByNameAndLocation(String location, String name, int userId, List<Integer> friendsIds);
+	public List<User> getUserByNameAndLocation(String location, String firstName, String lastName, int userId, List<Integer> friendsIds);
 	public void saveUsercontacts(Usercontacts userContacts);
 	public void updateUsercontacts(Usercontacts userContacts);
-	public List<User> findInMutualFriends(String name, String friendsIds, String alreadyExistingIds);
-	public List<User> findOtherThanMutualFriends(String name, List<Integer> alreadyExistingIds);
+	public List<User> findInMutualFriends(String firstName, String lastName, String friendsIds, String alreadyExistingIds);
+	public List<User> findOtherThanMutualFriends(String firstName, String lastName, List<Integer> alreadyExistingIds);
 	public Usercontacts isUsercontactExists(int userId, int contactId);
 	public List<User> getGroupMembers(int groupId, int userId);
 	public Usereventsuggestion isEventSuggestionExistsForDirectSuggestion(int userId,int eventId, int userContactId);
@@ -153,4 +156,6 @@ public interface IUserDAO {
 	public Dealsusage getUserDealProperties(int userId, int dealId);
 	public List<Topcommunitysuggestion> getTopCommunitySuggestions(String userEmail);
 	public List<User> getUserFriendRequests(int userId);
+	public UserSession isSessionActive(int userId, String sessionId);
+	public List<User> getGroupMembersWithinFiftyMiles(int groupId, int userId,  double latitude, double longitude);
 }

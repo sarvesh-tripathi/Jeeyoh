@@ -15,6 +15,7 @@ public class Privacy  implements java.io.Serializable {
      private String privacyType;
      private Set jeeyohgroups = new HashSet(0);
      private Set users = new HashSet(0);
+     private Set funboards = new HashSet(0);
 
     public Privacy() {
     }
@@ -23,10 +24,11 @@ public class Privacy  implements java.io.Serializable {
     public Privacy(String privacyType) {
         this.privacyType = privacyType;
     }
-    public Privacy(String privacyType, Set jeeyohgroups, Set users) {
+    public Privacy(String privacyType, Set jeeyohgroups, Set users,  Set funboards) {
        this.privacyType = privacyType;
        this.jeeyohgroups = jeeyohgroups;
        this.users = users;
+       this.funboards = funboards;
     }
    
     public Integer getPrivacyId() {
@@ -57,6 +59,22 @@ public class Privacy  implements java.io.Serializable {
     public void setUsers(Set users) {
         this.users = users;
     }
+
+
+	/**
+	 * @return the funboards
+	 */
+	public Set getFunboards() {
+		return funboards;
+	}
+
+
+	/**
+	 * @param funboards the funboards to set
+	 */
+	public void setFunboards(Set funboards) {
+		this.funboards = funboards;
+	}
 
 
 

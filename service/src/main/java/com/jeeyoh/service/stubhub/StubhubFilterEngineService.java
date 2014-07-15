@@ -46,7 +46,6 @@ public class StubhubFilterEngineService implements IStubhubFilterEngineService{
 	private ICountryLocationDAO countryLocationDAO;
 
 	@Override
-	@Transactional
 	public void filter() {
 		List<StubhubEvent> stubhubEventsList = stubhubDAO.getStubhubEvents();
 
@@ -127,6 +126,7 @@ public class StubhubFilterEngineService implements IStubhubFilterEngineService{
 						{
 							Page page = new Page();
 							page.setAbout(stubhubEvent.getGenre_parent_name());
+							page.setTag(stubhubEvent.getAncestorGenreDescriptions());
 							page.setCreatedtime(new Date());
 							page.setIsCommunity(true);
 							page.setIsEvent(true);
@@ -135,28 +135,43 @@ public class StubhubFilterEngineService implements IStubhubFilterEngineService{
 							Pagetype pagetype = null;
 							if(stubhubEvent.getChannel().toLowerCase().contains("sports"))
 							{
-								pagetype = eventsDAO.getPageTypeByName("SPORT");
+								//pagetype = eventsDAO.getPageTypeByName("SPORT");
+								pagetype = new Pagetype();
+								pagetype.setPageTypeId(8);
 							}
 							else if(stubhubEvent.getChannel().toLowerCase().contains("theater"))
 							{
-								pagetype = eventsDAO.getPageTypeByName("THEATER");
+								//pagetype = eventsDAO.getPageTypeByName("THEATER");
+								pagetype = new Pagetype();
+								pagetype.setPageTypeId(13);
 							}
 							else if(stubhubEvent.getChannel().toLowerCase().contains("concert"))
 							{
-								pagetype = eventsDAO.getPageTypeByName("CONCERT");
+								//pagetype = eventsDAO.getPageTypeByName("CONCERT");
+								pagetype = new Pagetype();
+								pagetype.setPageTypeId(14);
 							}
 							else
-								pagetype = eventsDAO.getPageTypeByName("NIGHTLIFE");
+							{
+								//pagetype = eventsDAO.getPageTypeByName("NIGHTLIFE");
+								pagetype = new Pagetype();
+								pagetype.setPageTypeId(15);
+							}
+								
 
-							User user  = userDAO.getUserById(1);
+							//User user  = userDAO.getUserById(1);
+							User user = new User();
+							user.setUserId(1);
+							
 							page.setUserByCreatorId(user);
 							page.setUserByOwnerId(user);
-							page.setPagetype(pagetype);										
+							page.setPagetype(pagetype);	
+							page.setSource("Stubhub");
 							page.setPageUrl(stubhubBaseUrl + stubhubEvent.getGenreUrlPath());
 							page.setProfilePicture(stubhubImageUrl +stubhubEvent.getGeography_parent() + "/" + stubhubEvent.getImage_url() );
-							//eventsDAO.savePage(page,batch_size);
-							//Page page1 = eventsDAO.getPageByAbout(stubhubEvent.getGenre_parent_name());
-							events.setPage(page);
+							eventsDAO.savePage(page,batch_size);
+							Page page1 = eventsDAO.getPageByAbout(stubhubEvent.getGenre_parent_name());
+							events.setPage(page1);
 						}
 						else
 						{

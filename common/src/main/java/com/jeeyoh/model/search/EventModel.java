@@ -41,7 +41,7 @@ public class EventModel implements Serializable{
 	@JsonProperty
 	private String totalTickets;
 	@JsonProperty
-	private String zip;
+	private String zipCode;
 	@JsonProperty
 	private double latitude;
 	@JsonProperty
@@ -261,16 +261,16 @@ public class EventModel implements Serializable{
 		this.totalTickets = totalTickets;
 	}
 	/**
-	 * @return the zip
+	 * @return the zipCode
 	 */
-	public String getZip() {
-		return zip;
+	public String getZipCode() {
+		return zipCode;
 	}
 	/**
-	 * @param zip the zip to set
+	 * @param zip the zipCode to set
 	 */
-	public void setZip(String zip) {
-		this.zip = zip;
+	public void setZipCode(String zipCode) {
+		this.zipCode = zipCode;
 	}
 	/**
 	 * @return the latitude

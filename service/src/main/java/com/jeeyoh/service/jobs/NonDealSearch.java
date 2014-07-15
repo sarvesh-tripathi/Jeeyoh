@@ -142,7 +142,7 @@ public class NonDealSearch implements INonDealSearch {
 									{
 										List<Usernondealsuggestion> usernondealsuggestions = userDAO.isNonDealSuggestionExists(user.getUserId(), business.getId());
 										logger.debug("NonDealSearch ==> usernondealsuggestions ==> " + usernondealsuggestions);
-										if(usernondealsuggestions == null || usernondealsuggestions.size() == 0 || (usernondealsuggestions.get(0).getSuggestedTime() != null && usernondealsuggestions.get(0).getSuggestedTime().compareTo(Utils.getCurrentDate()) < 0))
+										if(usernondealsuggestions == null || usernondealsuggestions.size() == 0 || (usernondealsuggestions != null && usernondealsuggestions.size() != 0 && usernondealsuggestions.get(0).getSuggestedTime() != null && usernondealsuggestions.get(0).getSuggestedTime().compareTo(Utils.getCurrentDate()) < 0))
 										{
 											String type = business.getBusinesstype().getBusinessType();
 											if(type.equalsIgnoreCase(MOVIE_CATEGORY) || type.equalsIgnoreCase(RESTAURANT_CATEGORY) || type.equalsIgnoreCase(NIGHTLIFE_CATEGORY) || type.equalsIgnoreCase(EVENTS_CATEGORY) || type.equalsIgnoreCase(GETAWAYS_CATEGORY) || type.equalsIgnoreCase(SPORTS_CATEGORY)) {
@@ -278,7 +278,7 @@ public class NonDealSearch implements INonDealSearch {
 					{
 						List<Usernondealsuggestion> usernondealsuggestions = userDAO.isNonDealSuggestionExists(user.getUserId(), community.getBusiness().getId());
 						logger.debug("NonDealSearch ==> usernondealsuggestions ==> " + usernondealsuggestions);
-						if(usernondealsuggestions == null || usernondealsuggestions.size() == 0 || (usernondealsuggestions.get(0).getSuggestedTime() != null && usernondealsuggestions.get(0).getSuggestedTime().compareTo(Utils.getCurrentDate()) < 0))
+						if(usernondealsuggestions == null || usernondealsuggestions.size() == 0 || (usernondealsuggestions != null && usernondealsuggestions.size() != 0 && usernondealsuggestions.get(0).getSuggestedTime() != null && usernondealsuggestions.get(0).getSuggestedTime().compareTo(Utils.getCurrentDate()) < 0))
 						{
 							logger.debug("NonDealSearch ==> search ==> pageId ==> " + community.getPageId());
 							List<Pagetype> pageTypeList = userDAO.getCommunityType(community.getPageId());
