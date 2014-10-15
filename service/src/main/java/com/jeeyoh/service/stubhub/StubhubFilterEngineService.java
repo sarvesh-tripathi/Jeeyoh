@@ -1,8 +1,10 @@
 package com.jeeyoh.service.stubhub;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.poi.ss.formula.functions.Even;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +48,7 @@ public class StubhubFilterEngineService implements IStubhubFilterEngineService{
 	private ICountryLocationDAO countryLocationDAO;
 
 	@Override
+	@Transactional
 	public void filter() {
 		List<StubhubEvent> stubhubEventsList = stubhubDAO.getStubhubEvents();
 
@@ -55,7 +58,9 @@ public class StubhubFilterEngineService implements IStubhubFilterEngineService{
 		//List<Date>weekendList =  Utils.findWeekendsWithFriday();
 		if(stubhubEventsList != null)
 		{
+			List<Events> eventsList = new ArrayList<Events>();
 			int batch_size = 0;
+			int pageId = 0;
 			int count = 0, count1 = 0;
 			try {
 				logger.debug("stubhubEventsList::  "+stubhubEventsList.size());
@@ -169,17 +174,24 @@ public class StubhubFilterEngineService implements IStubhubFilterEngineService{
 							page.setSource("Stubhub");
 							page.setPageUrl(stubhubBaseUrl + stubhubEvent.getGenreUrlPath());
 							page.setProfilePicture(stubhubImageUrl +stubhubEvent.getGeography_parent() + "/" + stubhubEvent.getImage_url() );
-							eventsDAO.savePage(page,batch_size);
-							Page page1 = eventsDAO.getPageByAbout(stubhubEvent.getGenre_parent_name());
-							events.setPage(page1);
+							//eventsDAO.savePage(page,batch_size);
+							//pageId  = eventsDAO.getPageByAbout(stubhubEvent.getGenre_parent_name());
+							//logger.debug("After save page::  "+pageId);
+							//page.setPageId(pageId);
+							events.setPage(page);
 						}
 						else
 						{
 							events.setPage(isPageExist);
 						}
+						//eventsList.add(events);
 						eventsDAO.saveEvents(events, batch_size);
 					}
+					/*if(count1 > 100)
+						break;*/
 				}
+				
+				//eventsDAO.saveEvents(eventsList, batch_size);
 			} catch (Exception e) {
 				logger.debug("Error in filter:::  "+e.getMessage());
 				e.printStackTrace();

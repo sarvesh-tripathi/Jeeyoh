@@ -1,5 +1,6 @@
 package com.jeeyoh.service.groupon;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -54,6 +55,7 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 
 		if(rows != null)
 		{
+			List<Deals> dealList = new ArrayList<Deals>();
 			int batch_size = 0;
 			//List<Date>weekendList =  Utils.findWeekends();
 			//logger.debug("loadDeals => weekendList size " + weekendList.size());
@@ -203,7 +205,7 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 								dealOption.setFormattedDiscountPrice(gdealprice.getFormattedAmount());
 
 								gdealprice = option.getGdealpriceByValueId();
-								dealOption.setOriginalPrice(Long.parseLong(Integer.toString(gdealprice.getAmount())));
+								dealOption.setOriginalPrice(Long.parseLong(Integer.toString(gdealprice.getAmount()))/100);
 								dealOption.setFormattedOriginalPrice(gdealprice.getFormattedAmount());
 
 								Goptiondetail goptiondetail = gDealsDAO.getOptionDeatils(option.getId());
@@ -235,6 +237,7 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 
 							batch_size++;
 							logger.debug("loadDeals => count " + batch_size);
+							dealList.add(deals);
 							dealsDAO.saveDeal(deals,batch_size);
 							logger.debug("After Save ====> ");
 						}
@@ -248,6 +251,8 @@ public class GrouponFilterEngineService implements IGrouponFilterEngineService {
 					e.printStackTrace();
 				}
 			}
+			
+			//dealsDAO.saveDeal(dealList, batch_size);
 		}
 
 		/*List<Gdealoption> rows = gDealsDAO.getDeals();

@@ -39,7 +39,7 @@ public class EventsDAO implements IEventsDAO{
 	@Override
 	public void saveEvents(Events events, int batch_size) {
 		logger.debug("saveEvents ==>");
-		Session session = sessionFactory.openSession();
+	/*	Session session = sessionFactory.openSession();
 		Transaction tx = null;
 		try
 		{
@@ -59,8 +59,8 @@ public class EventsDAO implements IEventsDAO{
 		finally
 		{
 			session.close();
-		}
-		/*Session session =  sessionFactory.getCurrentSession();
+		}*/
+		Session session =  sessionFactory.getCurrentSession();
 		try
 		{
 			session.save(events);
@@ -71,9 +71,56 @@ public class EventsDAO implements IEventsDAO{
 			}
 		}
 		catch (HibernateException e) {
+			logger.debug("Error in save event ==> "+e.getLocalizedMessage());
+			e.printStackTrace(); 
+		}
+	}
+	
+	@Override
+	public void saveEvents(List<Events> events, int batch_size) {
+		logger.debug("saveEvents ==>");
+		int batch_size1 = 0;
+	/*	Session session = sessionFactory.openSession();
+		Transaction tx = null;
+		try
+		{
+			tx = session.beginTransaction();
+			for(Events events2 : events)
+			{
+				session.saveOrUpdate(events2);	
+				if( batch_size1 % 20 == 0 ) {
+					session.flush();
+					session.clear();
+				}
+			}
+			tx.commit();
+		}
+		catch (HibernateException e) {
+			if (tx!=null) tx.rollback();
+			e.printStackTrace(); 
+		}
+		finally
+		{
+			session.close();
+		}*/
+		Session session =  sessionFactory.getCurrentSession();
+		try
+		{
+			for(Events events2 : events)
+			{
+				batch_size1++;
+				logger.debug("batch_size1 ==> "+batch_size1);
+				session.saveOrUpdate(events2);	
+				if( batch_size1 % 20 == 0 ) {
+					session.flush();
+					session.clear();
+				}
+			}
+		}
+		catch (HibernateException e) {
 			logger.debug("Error ==> "+e.getLocalizedMessage());
 			e.printStackTrace(); 
-		}*/
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -171,9 +218,84 @@ public class EventsDAO implements IEventsDAO{
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Page> getCommunityBySearchKeywordForBusiness(String searchText,String category, String location, int offset, int limit, double lat, double lon, int distance, double rating) {
+	public List<Page> getCommunityBySearchKeywordForBusiness(String searchText,String category, String location, int offset, int limit, double lat, double lon, int distance, double rating, boolean forExactMatch) {
 		logger.debug("getCommunityBySearchKeyword ==> "+searchText);
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Page.class, "page").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+
+		List<Page> pageList = null;
+		String hqlQuery = "";
+		String fromStr = "", whereStr = "";
+
+		if(rating != 0)
+		{
+			fromStr = "select a from Page a inner join a.pagetype c inner join a.communityReviewMap d inner join d.communityReview e  ";
+		}
+		else
+		{
+			fromStr = "select a from Page a inner join a.pagetype c ";
+		}
+
+		if(category.equalsIgnoreCase("NIGHTLIFE"))
+		{
+			whereStr += "where (c.pageType=:category or c.pageType='CONCERT' or c.pageType='THEATER')";
+		}
+		else
+			whereStr += "where c.pageType=:category";
+
+		if(searchText != null && !searchText.trim().equals(""))
+		{
+			if(forExactMatch)
+				whereStr = whereStr + " and (a.about = :searchText or a.pageUrl = :searchText)";
+			else
+				whereStr = whereStr + " and ((a.about like '%" +searchText+ "%' or a.pageUrl like '%" +searchText+ "%' or a.tag like '%" +searchText+ "%') and (a.about !=:searchText))";
+		}
+
+		if(location != null && !location.trim().equals("") || (lat != 0 && lon != 0))
+		{
+			fromStr += " inner join a.business b ";
+			//whereStr += " and a.business.businessId = b.id";
+		}
+
+		if(location != null && !location.trim().equals(""))
+		{
+			whereStr = whereStr + " and (b.postalCode = :location or b.city like '%" +location+ "%' or b.state like '%" +location+ "%' or b.stateCode like '%" +location+ "%' or b.displayAddress like '%" +location+ "%' or b.businessId like '%" +location+ "%')";
+		}
+
+		if(lat != 0 && lon != 0)
+		{
+			whereStr = whereStr + " and (((acos(sin(((:latitude)*pi()/180)) * sin((b.lattitude*pi()/180))+cos(((:latitude)*pi()/180)) * cos((b.lattitude*pi()/180)) * cos((((:longitude)- b.longitude)*pi()/180))))*180/pi())*60*1.1515) <=:distance";
+		}
+		if(rating != 0)
+			whereStr = whereStr + " group by a.pageId having avg(e.rating) >= :rating";
+
+		try {
+			hqlQuery = fromStr + whereStr;
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("category", category);
+			if(searchText != null && !searchText.trim().equals(""))
+				query.setParameter("searchText", searchText);
+			if(location != null && !location.trim().equals(""))
+				query.setParameter("location", location);
+			if(lat != 0 && lon != 0)
+			{
+				query.setDouble("latitude", lat);
+				query.setDouble("longitude", lon);
+				query.setInteger("distance",distance);
+			}
+			if(rating != 0)
+				query.setDouble("rating", rating);
+			query.setFirstResult(offset);
+			query.setMaxResults(limit);
+			pageList = query.list();
+			if(pageList != null)
+				logger.debug("pageList size:::  "+pageList.size());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.debug(e.toString());
+			logger.debug(e.getLocalizedMessage());
+		}
+		/*	Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Page.class, "page").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
 		if(category != null && !category.trim().equals(""))
 		{
@@ -187,52 +309,101 @@ public class EventsDAO implements IEventsDAO{
 			else
 				criteria.add(Restrictions.eq("pagetypes.pageType", category));
 		}
-		if(searchText != null && !searchText.trim().equals(""))
-		{
-			criteria.add(Restrictions.disjunction().add(Restrictions.eq("page.about", searchText))
-					.add(Restrictions.eq("page.pageUrl", searchText)));
-		}
 
+		Criteria addr = null;
+		if(location != null && !location.trim().equals("") || (lat != 0 && lon != 0))
+			addr = criteria.createCriteria("business"); 
 		if(location != null && !location.trim().equals(""))
 		{
-			criteria.createAlias("page.business", "business");
-			criteria.add(Restrictions.disjunction().add(Restrictions.like("business.displayAddress", "%" + location + "%"))
-					.add(Restrictions.like("business.businessId", "%" + location + "%"))
-					.add(Restrictions.eq("business.postalCode", location))
-					.add(Restrictions.like("business.city", "%" + location + "%"))
-					.add(Restrictions.like("business.state", "%" + location + "%"))
-					.add(Restrictions.like("business.stateCode", "%" + location + "%")));
+			//criteria.createAlias("page.business", "business");
+			addr.add(Restrictions.disjunction().add(Restrictions.like("displayAddress", "%" + location + "%"))
+					.add(Restrictions.like("businessId", "%" + location + "%"))
+					.add(Restrictions.eq("postalCode", location))
+					.add(Restrictions.like("city", "%" + location + "%"))
+					.add(Restrictions.like("state", "%" + location + "%"))
+					.add(Restrictions.like("stateCode", "%" + location + "%")));
+		}
+
+		if(searchText != null && !searchText.trim().equals(""))
+		{
+			criteria.add(Restrictions.disjunction().add(Restrictions.eq("page.about", "%" + searchText + "%"))
+					.add(Restrictions.eq("page.pageUrl", "%" + searchText + "%"))
+					.add(Restrictions.eq("page.tag", "%" + searchText + "%")));
+
+		}
+
+		if(lat != 0 && lon != 0)
+		{
+			String sql =  "(((acos(sin(((" + lat + ")*pi()/180)) * sin(({alias}.lattitude*pi()/180))+cos(((" + lat + ")*pi()/180)) * cos(({alias}.lattitude*pi()/180)) * cos((((" + lon + ")- {alias}.longitude)*pi()/180))))*180/pi())*60*1.1515)<="+distance;     
+			addr.add(Restrictions.sqlRestriction(sql)); 
+		}
+
+		if(rating != 0)
+		{
+			criteria.createAlias("page.communityReviewMap", "communityReviewMap");
+			//criteria.createAlias("communityReviewMap.communityReview", "communityReview");
+			Criteria a = criteria.createCriteria("communityReviewMap.communityReview"); 
+			//a.setProjection(Projections.avg("communityReview.rating").as("avgRating"));
+			String groupBy = "this_.pageId having " + "avg({alias}.rating) >= " + rating;
+			String[] alias = new String[1]; 
+			alias[0] = "this_.pageId"; 
+			Type[] types = new Type[1]; 
+			types[0] = Hibernate.INTEGER;	
+			//criteria.setProjection(Projections.alias(Projections.property("page.pageId"), "pageId1"));
+			a.setProjection(Projections.sqlGroupProjection("this_.pageId", groupBy, alias, types));
+
 		}
 
 		criteria.setFirstResult(offset)
 		.setMaxResults(limit);
-		List<Page> pageList = criteria.list();
+		List<Page> pageList = criteria.list();*/
 		return pageList;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Page> getCommunityBySearchKeywordForEvents(String searchText,String category, String location, int offset, int limit, double lat, double lon, int distance, double rating) {
-		logger.debug("getCommunityBySearchKeyword ==> "+searchText);
+	public List<Page> getCommunityBySearchKeywordForEvents(String searchText,String category, String location, int offset, int limit, double lat, double lon, int distance, double rating, boolean forExactMatch) {
+		logger.debug("getCommunityBySearchKeywordForEvents ==> "+searchText + " forExactmatch: "+ forExactMatch);
 
 		List<Page> pageList = null;
 		String hqlQuery = "";
-		if(category.equalsIgnoreCase("NIGHTLIFE"))
+		if(rating != 0)
 		{
-			hqlQuery = "select distinct a from Page a,Events b, Pagetype c where (c.pageType=:category or c.pageType='CONCERT' or c.pageType='THEATER') and a.pagetype.pageTypeId = c.pageTypeId and a.pageId = b.page.pageId";
+			hqlQuery = "select a from Page a inner join a.events b inner join  a.pagetype c inner join a.communityReviewMap d inner join d.communityReview e ";
 		}
 		else
-			hqlQuery = "select distinct a from Page a,Events b, Pagetype c where c.pageType=:category and a.pagetype.pageTypeId = c.pageTypeId and a.pageId = b.page.pageId";
+		{
+			hqlQuery = "select a from Page a inner join a.events b inner join  a.pagetype c ";
+		}
+
+		if(category.equalsIgnoreCase("NIGHTLIFE"))
+		{
+			hqlQuery += " where (c.pageType=:category or c.pageType='CONCERT' or c.pageType='THEATER')";
+		}
+		else
+			hqlQuery += " where c.pageType=:category";
 
 		if(searchText != null && !searchText.trim().equals(""))
 		{
-			hqlQuery = hqlQuery + "and (a.about = :searchText or a.pageUrl = :searchText)";
+			if(forExactMatch)
+				hqlQuery = hqlQuery + " and (a.about = :searchText or a.pageUrl = :searchText)";
+			else
+				hqlQuery = hqlQuery + " and ((a.about like '%" +searchText+ "%' or a.pageUrl like '%" +searchText+ "%' or a.tag like '%" +searchText+ "%') and (a.about !=:searchText))";
 		}
 		if(location != null && !location.trim().equals(""))
 		{
 			hqlQuery = hqlQuery + " and (b.zip = :location or b.city like '%" +location+ "%' or b.state like '%" +location+ "%' or b.stateCode like '%" +location+ "%')";
 		}
-		//hqlQuery = hqlQuery + " limit "+offset+","+limit;
+
+		if(lat != 0 && lon != 0)
+		{
+			hqlQuery = hqlQuery + " and (((acos(sin(((:latitude)*pi()/180)) * sin((b.latitude*pi()/180))+cos(((:latitude)*pi()/180)) * cos((b.latitude*pi()/180)) * cos((((:longitude)- b.longitude)*pi()/180))))*180/pi())*60*1.1515) <=:distance";
+		}
+		hqlQuery = hqlQuery + " group by a.pageId";
+		if(rating != 0)
+			hqlQuery = hqlQuery + " having avg(e.rating) >= :rating";
+
+
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
@@ -241,6 +412,14 @@ public class EventsDAO implements IEventsDAO{
 				query.setParameter("searchText", searchText);
 			if(location != null && !location.trim().equals(""))
 				query.setParameter("location", location);
+			if(lat != 0 && lon != 0)
+			{
+				query.setDouble("latitude", lat);
+				query.setDouble("longitude", lon);
+				query.setInteger("distance",distance);
+			}
+			if(rating != 0)
+				query.setDouble("rating", rating);
 			query.setFirstResult(offset);
 			query.setMaxResults(limit);
 			pageList = (List<Page>) query.list();
@@ -249,28 +428,78 @@ public class EventsDAO implements IEventsDAO{
 			logger.debug(e.toString());
 			logger.debug(e.getLocalizedMessage());
 		}
-		/*Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Page.class, "page").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+
+		/*Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Page.class, "page").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+				.setProjection(Projections.projectionList()
+						.add(Projections.property("pageId")).add(Projections.property("about")));
 
 		if(category != null && !category.trim().equals(""))
 		{
 			criteria.createAlias("page.pagetype", "pagetypes");
-			criteria.add(Restrictions.eq("pagetypes.pageType", category));
-		}
-		if(searchText != null && !searchText.trim().equals(""))
-		{
-			criteria.add(Restrictions.disjunction().add(Restrictions.eq("page.about", searchText))
-					.add(Restrictions.eq("page.pageUrl", searchText)));
+			if(category.equalsIgnoreCase("NIGHTLIFE"))
+			{
+				criteria.add(Restrictions.disjunction().add(Restrictions.eq("pagetypes.pageType", category))
+						.add(Restrictions.eq("pagetypes.pageType", "THEATER"))
+						.add(Restrictions.eq("pagetypes.pageType", "CONCERT")));
+			}
+			else
+				criteria.add(Restrictions.eq("pagetypes.pageType", category));
 		}
 
+		Criteria addr = criteria.createCriteria("events"); 
 		if(location != null && !location.trim().equals(""))
 		{
-			criteria.createAlias("page.events", "events");
-			criteria.add(Restrictions.disjunction()
-					.add(Restrictions.eq("events.zip", location))
-					.add(Restrictions.like("events.city", "%" + location + "%"))
-					.add(Restrictions.like("events.state", "%" + location + "%"))
-					.add(Restrictions.like("events.stateCode", "%" + location + "%")));
+			//criteria.createAlias("page.events", "events");
+			addr.add(Restrictions.disjunction()
+					.add(Restrictions.eq("zip", location))
+					.add(Restrictions.like("city", "%" + location + "%"))
+					.add(Restrictions.like("state", "%" + location + "%"))
+					.add(Restrictions.like("stateCode", "%" + location + "%")));
 		}
+
+		if(searchText != null && !searchText.trim().equals(""))
+		{
+
+			if(forExactmatch)
+			{
+				criteria.add(Restrictions.disjunction().add(Restrictions.eq("page.about", "%" + searchText + "%"))
+					.add(Restrictions.eq("page.pageUrl", "%" + searchText + "%"))
+					.add(Restrictions.eq("page.tag", "%" + searchText + "%")));
+			}
+
+			else
+			{
+				criteria.add(Restrictions.disjunction().add(Restrictions.like("page.about", "%" + searchText + "%"))
+					.add(Restrictions.like("page.pageUrl", "%" + searchText + "%"))
+					.add(Restrictions.like("page.tag", "%" + searchText + "%")))
+					.add(Restrictions.conjunction().add(Restrictions.ne("page.about", searchText))
+							.add(Restrictions.ne("page.pageUrl", searchText)));
+			}
+
+		}
+
+		if(lat != 0 && lon != 0)
+		{
+			String sql =  "(((acos(sin(((" + lat + ")*pi()/180)) * sin(({alias}.latitude*pi()/180))+cos(((" + lat + ")*pi()/180)) * cos(({alias}.latitude*pi()/180)) * cos((((" + lon + ")- {alias}.longitude)*pi()/180))))*180/pi())*60*1.1515)<="+distance;     
+			addr.add(Restrictions.sqlRestriction(sql)); 
+		}
+
+		if(rating != 0)
+		{
+			criteria.createAlias("page.communityReviewMap", "communityReviewMap");
+			//criteria.createAlias("communityReviewMap.communityReview", "communityReview");
+			Criteria a = criteria.createCriteria("communityReviewMap.communityReview"); " group by a.pageId having avg(e.rating) >= :rating";
+			//a.setProjection(Projections.avg("communityReview.rating").as("avgRating"));
+			String groupBy = "this_.pageId having " + "avg({alias}.rating) >= " + rating;
+			String[] alias = new String[1]; 
+			alias[0] = "this_.pageId"; 
+			Type[] types = new Type[1]; 
+			types[0] = Hibernate.INTEGER;	
+			//criteria.setProjection(Projections.alias(Projections.property("page.pageId"), "pageId1"));
+			a.setProjection(Projections.sqlGroupProjection("this_.pageId", groupBy, alias, types));
+
+		}
+
 
 		criteria.setFirstResult(offset)
 		.setMaxResults(limit);
@@ -283,7 +512,143 @@ public class EventsDAO implements IEventsDAO{
 	public List<Page> getCommunityByLikeSearchKeywordForBusiness(String searchText,String category, String location, int offset, int limit, double lat, double lon, int distance, double rating) {
 		logger.debug("getCommunityByLikeSearchKeyword ==> "+searchText);
 
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Page.class, "page").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		List<Page> pageList = null;
+		String hqlQuery = "";
+		String fromStr = "", whereStr = "";
+
+		if(rating != 0)
+		{
+			fromStr = "select a from Page a inner join a.pagetype c inner join a.communityReviewMap d inner join d.communityReview e  ";
+		}
+		else
+		{
+			fromStr = "select a from Page a inner join a.pagetype c ";
+		}
+
+		if(category.equalsIgnoreCase("NIGHTLIFE"))
+		{
+			whereStr += "where (c.pageType=:category or c.pageType='CONCERT' or c.pageType='THEATER')";
+		}
+		else
+			whereStr += "where c.pageType=:category";
+
+		if(searchText != null && !searchText.trim().equals(""))
+		{
+			whereStr = whereStr + " and ((a.about like '%" +searchText+ "%' or a.pageUrl like '%" +searchText+ "%' or a.tag like '%" +searchText+ "%') and (a.about !=:searchText))";
+		}
+
+		if(location != null && !location.trim().equals("") || (lat != 0 && lon != 0))
+		{
+			fromStr += " inner join a.business b ";
+			//whereStr += " and a.business.businessId = b.id";
+		}
+
+		if(location != null && !location.trim().equals(""))
+		{
+			whereStr = whereStr + " and (b.postalCode = :location or b.city like '%" +location+ "%' or b.state like '%" +location+ "%' or b.stateCode like '%" +location+ "%' or b.displayAddress like '%" +location+ "%' or b.businessId like '%" +location+ "%')";
+		}
+
+		if(lat != 0 && lon != 0)
+		{
+			whereStr = whereStr + " and (((acos(sin(((:latitude)*pi()/180)) * sin((b.lattitude*pi()/180))+cos(((:latitude)*pi()/180)) * cos((b.lattitude*pi()/180)) * cos((((:longitude)- b.longitude)*pi()/180))))*180/pi())*60*1.1515) <=:distance";
+		}
+
+		if(rating != 0)
+			hqlQuery = hqlQuery + " group by a.pageId having avg(e.rating) >= :rating";
+
+		try {
+			hqlQuery = fromStr + whereStr;
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("category", category);
+			if(searchText != null && !searchText.trim().equals(""))
+				query.setParameter("searchText", searchText);
+			if(location != null && !location.trim().equals(""))
+				query.setParameter("location", location);
+			if(lat != 0 && lon != 0)
+			{
+				query.setDouble("latitude", lat);
+				query.setDouble("longitude", lon);
+				query.setInteger("distance",distance);
+			}
+			if(rating != 0)
+				query.setDouble("rating", rating);
+			query.setFirstResult(offset);
+			query.setMaxResults(limit);
+			pageList = query.list();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.debug(e.toString());
+			logger.debug(e.getLocalizedMessage());
+		}
+
+		/*Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Page.class, "page").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+
+		if(category != null && !category.trim().equals(""))
+		{
+			criteria.createAlias("page.pagetype", "pagetypes");
+			if(category.equalsIgnoreCase("NIGHTLIFE"))
+			{
+				criteria.add(Restrictions.disjunction().add(Restrictions.eq("pagetypes.pageType", category))
+						.add(Restrictions.eq("pagetypes.pageType", "THEATER"))
+						.add(Restrictions.eq("pagetypes.pageType", "CONCERT")));
+			}
+			else
+				criteria.add(Restrictions.eq("pagetypes.pageType", category));
+		}
+
+		Criteria addr = null;
+		if(location != null && !location.trim().equals("") || (lat != 0 && lon != 0))
+			addr = criteria.createCriteria("business"); 
+		if(location != null && !location.trim().equals(""))
+		{
+			//criteria.createAlias("page.business", "business");
+			addr.add(Restrictions.disjunction().add(Restrictions.like("displayAddress", "%" + location + "%"))
+					.add(Restrictions.like("businessId", "%" + location + "%"))
+					.add(Restrictions.eq("postalCode", location))
+					.add(Restrictions.like("city", "%" + location + "%"))
+					.add(Restrictions.like("state", "%" + location + "%"))
+					.add(Restrictions.like("stateCode", "%" + location + "%")));
+		}
+
+		if(searchText != null && !searchText.trim().equals(""))
+		{
+			criteria.add(Restrictions.disjunction().add(Restrictions.like("page.about", "%" + searchText + "%"))
+					.add(Restrictions.like("page.pageUrl", "%" + searchText + "%"))
+					.add(Restrictions.like("page.tag", "%" + searchText + "%")))
+					.add(Restrictions.conjunction().add(Restrictions.ne("page.about", searchText))
+							.add(Restrictions.ne("page.pageUrl", searchText)));
+
+		}
+
+		if(lat != 0 && lon != 0)
+		{
+			String sql =  "(((acos(sin(((" + lat + ")*pi()/180)) * sin(({alias}.lattitude*pi()/180))+cos(((" + lat + ")*pi()/180)) * cos(({alias}.lattitude*pi()/180)) * cos((((" + lon + ")- {alias}.longitude)*pi()/180))))*180/pi())*60*1.1515)<="+distance;     
+			addr.add(Restrictions.sqlRestriction(sql)); 
+		}
+
+		if(rating != 0)
+		{
+			criteria.createAlias("page.communityReviewMap", "communityReviewMap");
+			//criteria.createAlias("communityReviewMap.communityReview", "communityReview");
+			Criteria a = criteria.createCriteria("communityReviewMap.communityReview"); 
+			//a.setProjection(Projections.avg("communityReview.rating").as("avgRating"));
+			String groupBy = "this_.pageId having " + "avg({alias}.rating) >= " + rating;
+			String[] alias = new String[1]; 
+			alias[0] = "this_.pageId"; 
+			Type[] types = new Type[1]; 
+			types[0] = Hibernate.INTEGER;	
+			//criteria.setProjection(Projections.alias(Projections.property("page.pageId"), "pageId1"));
+			a.setProjection(Projections.sqlGroupProjection("this_", groupBy, alias, types));
+
+		}
+
+		criteria.setFirstResult(offset)
+		.setMaxResults(limit);
+		List<Page> pageList = criteria.list();*/
+
+		/*Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Page.class, "page").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
 
 		if(category != null && !category.trim().equals(""))
@@ -319,7 +684,7 @@ public class EventsDAO implements IEventsDAO{
 
 		criteria.setFirstResult(offset)
 		.setMaxResults(limit);
-		List<Page> pageList = criteria.list();
+		List<Page> pageList = criteria.list();*/
 		return pageList;
 	}
 
@@ -329,22 +694,38 @@ public class EventsDAO implements IEventsDAO{
 		logger.debug("getCommunityByLikeSearchKeyword ==> "+searchText);
 		List<Page> pageList = null;
 		String hqlQuery = "";
-		if(category.equalsIgnoreCase("NIGHTLIFE"))
+		if(rating != 0)
 		{
-			hqlQuery = "select distinct a from Page a,Events b, Pagetype c where (c.pageType=:category or c.pageType='CONCERT' or c.pageType='THEATER') and a.pagetype.pageTypeId = c.pageTypeId and a.pageId = b.page.pageId";
+			hqlQuery = "select a from Page a inner join a.events b inner join a.pagetype c inner join c.communityReviewMap d inner join d.communityReview e  ";
 		}
 		else
-			hqlQuery = "select distinct a from Page a,Events b, Pagetype c where c.pageType=:category and a.pagetype.pageTypeId = c.pageTypeId and a.pageId = b.page.pageId";
+		{
+			hqlQuery = "select a from Page a inner join a.events b inner join a.pagetype c ";
+		}
+
+		if(category.equalsIgnoreCase("NIGHTLIFE"))
+		{
+			hqlQuery += " where (c.pageType=:category or c.pageType='CONCERT' or c.pageType='THEATER')";
+		}
+		else
+			hqlQuery += " where c.pageType=:category";
 
 		if(searchText != null && !searchText.trim().equals(""))
 		{
-			hqlQuery = hqlQuery + "and ((a.about like '%" +searchText+ "%' or a.pageUrl like '%" +searchText+ "%' or a.tag like '%" +searchText+ "%') and (a.about !=:searchText))";
+			hqlQuery = hqlQuery + " and ((a.about like '%" +searchText+ "%' or a.pageUrl like '%" +searchText+ "%' or a.tag like '%" +searchText+ "%') and (a.about !=:searchText))";
 		}
 		if(location != null && !location.trim().equals(""))
 		{
 			hqlQuery = hqlQuery + " and (b.zip = :location or b.city like '%" +location+ "%' or b.state like '%" +location+ "%' or b.stateCode like '%" +location+ "%')";
 		}
-		//hqlQuery = hqlQuery + " limit "+offset+","+limit;
+		if(lat != 0 && lon != 0)
+		{
+			hqlQuery = hqlQuery + "and (((acos(sin(((:latitude)*pi()/180)) * sin((b.latitude*pi()/180))+cos(((:latitude)*pi()/180)) * cos((b.latitude*pi()/180)) * cos((((:longitude)- b.longitude)*pi()/180))))*180/pi())*60*1.1515) <=:distance";
+		}
+		hqlQuery = hqlQuery + " group by a.pageId";
+		if(rating != 0)
+			hqlQuery = hqlQuery + " having avg(e.rating) >= :rating";
+
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
@@ -353,6 +734,14 @@ public class EventsDAO implements IEventsDAO{
 				query.setParameter("searchText", searchText);
 			if(location != null && !location.trim().equals(""))
 				query.setParameter("location", location);
+			if(lat != 0 && lon != 0)
+			{
+				query.setDouble("latitude", lat);
+				query.setDouble("longitude", lon);
+				query.setInteger("distance",distance);
+			}
+			if(rating != 0)
+				query.setDouble("rating", rating);
 			query.setFirstResult(offset);
 			query.setMaxResults(limit);
 			pageList = (List<Page>) query.list();
@@ -361,6 +750,67 @@ public class EventsDAO implements IEventsDAO{
 			logger.debug(e.toString());
 			logger.debug(e.getLocalizedMessage());
 		}
+
+		/*Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Page.class, "page").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+
+		if(category != null && !category.trim().equals(""))
+		{
+			criteria.createAlias("page.pagetype", "pagetypes");
+			if(category.equalsIgnoreCase("NIGHTLIFE"))
+			{
+				criteria.add(Restrictions.disjunction().add(Restrictions.eq("pagetypes.pageType", category))
+						.add(Restrictions.eq("pagetypes.pageType", "THEATER"))
+						.add(Restrictions.eq("pagetypes.pageType", "CONCERT")));
+			}
+			else
+				criteria.add(Restrictions.eq("pagetypes.pageType", category));
+		}
+
+		Criteria addr = criteria.createCriteria("events"); 
+		if(location != null && !location.trim().equals(""))
+		{
+			//criteria.createAlias("page.events", "events");
+			addr.add(Restrictions.disjunction()
+					.add(Restrictions.eq("zip", location))
+					.add(Restrictions.like("city", "%" + location + "%"))
+					.add(Restrictions.like("state", "%" + location + "%"))
+					.add(Restrictions.like("stateCode", "%" + location + "%")));
+		}
+
+		if(searchText != null && !searchText.trim().equals(""))
+		{
+			criteria.add(Restrictions.disjunction().add(Restrictions.like("page.about", "%" + searchText + "%"))
+					.add(Restrictions.like("page.pageUrl", "%" + searchText + "%"))
+					.add(Restrictions.like("page.tag", "%" + searchText + "%"))).add(Restrictions.conjunction().add(Restrictions.ne("page.about", searchText))
+							.add(Restrictions.ne("page.pageUrl", searchText)));
+
+		}
+
+		if(lat != 0 && lon != 0)
+		{
+			String sql =  "(((acos(sin(((" + lat + ")*pi()/180)) * sin(({alias}.latitude*pi()/180))+cos(((" + lat + ")*pi()/180)) * cos(({alias}.latitude*pi()/180)) * cos((((" + lon + ")- {alias}.longitude)*pi()/180))))*180/pi())*60*1.1515)<="+distance;     
+			addr.add(Restrictions.sqlRestriction(sql)); 
+		}
+
+		if(rating != 0)
+		{
+			criteria.createAlias("page.communityReviewMap", "communityReviewMap");
+			//criteria.createAlias("communityReviewMap.communityReview", "communityReview");
+			Criteria a = criteria.createCriteria("communityReviewMap.communityReview"); 
+			//a.setProjection(Projections.avg("communityReview.rating").as("avgRating"));
+			String groupBy = "this_.pageId having " + "avg({alias}.rating) >= " + rating;
+			String[] alias = new String[1]; 
+			alias[0] = "this_.pageId"; 
+			Type[] types = new Type[1]; 
+			types[0] = Hibernate.INTEGER;	
+			//criteria.setProjection(Projections.alias(Projections.property("page.pageId"), "pageId1"));
+			a.setProjection(Projections.sqlGroupProjection("this_.pageId", groupBy, alias, types));
+
+		}
+		criteria.setFirstResult(offset)
+		.setMaxResults(limit);
+		List<Page> pageList = criteria.list();*/
+
 		/*Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Page.class, "page").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
 
@@ -387,7 +837,6 @@ public class EventsDAO implements IEventsDAO{
 							.add(Restrictions.ne("page.pageUrl", searchText)));
 
 		}
-
 		criteria.setFirstResult(offset)
 		.setMaxResults(limit);
 		List<Page> pageList = criteria.list();*/
@@ -397,9 +846,80 @@ public class EventsDAO implements IEventsDAO{
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Events> getEventsBySearchKeyword(String searchText,String category, String location, int offset, int limit, double lat, double lon, int distance, double rating) {
+	public List<Events> getEventsBySearchKeyword(String searchText,String category, String location, int offset, int limit, double lat, double lon, int distance, double rating, boolean forExactmatch) {
 		logger.debug("getEventsBySearchKeyword ==> "+searchText);
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Events.class, "events").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		List<Events> eventList = null;
+		String hqlQuery = "";
+
+		if(rating != 0)
+		{
+			hqlQuery = "select a from Events a, Page b, Pagetype c, CommunityReviewMap d, CommunityReview e  ";
+		}
+		else
+		{
+			hqlQuery = "select a from Events a, Page b, Pagetype c ";
+		}
+
+		if(category.equalsIgnoreCase("NIGHTLIFE"))
+		{
+			hqlQuery = hqlQuery + "where (c.pageType=:category or c.pageType='CONCERT' or c.pageType='THEATER') and b.pagetype.pageTypeId = c.pageTypeId and a.page.pageId = b.pageId";
+		}
+		else
+			hqlQuery = hqlQuery + "where c.pageType=:category and b.pagetype.pageTypeId = c.pageTypeId and a.page.pageId = b.pageId";
+
+		hqlQuery = hqlQuery + " and (a.event_date_time_local >= :currentDate and a.event_date_time_local <= :weekendDate)";
+
+		if(searchText != null && !searchText.trim().equals(""))
+		{
+			//hqlQuery = hqlQuery + " and (a.description like '%" + likekeyword  +"%' or a.title like '%" + likekeyword  +"%' or a.ancestorGenreDescriptions like '%" + likekeyword  +"%' or a.urlpath like '%" + likekeyword  +"%')
+			if(forExactmatch)
+				hqlQuery = hqlQuery + " and (a.description = :searchText or a.title = :searchText or a.ancestorGenreDescriptions = :searchText or a.urlpath = :searchText or a.venue_name = :searchText or a.channel = :searchText)";
+			else
+				hqlQuery = hqlQuery + " and (a.description like '%" + searchText  +"%' or a.title like '%" + searchText  +"%' or a.ancestorGenreDescriptions like '%" + searchText  +"%' or a.urlpath like '%" + searchText  +"%' or a.venue_name like '%" + searchText  +"%' or a.channel like '%" + searchText  +"%') and (a.description != :searchText or a.title != :searchText or a.ancestorGenreDescriptions != :searchText or a.urlpath != :searchText or a.venue_name != :searchText or a.channel != :searchText)";
+		}
+		if(location != null && !location.trim().equals(""))
+		{
+			hqlQuery = hqlQuery + " and (a.zip = :location or a.city like '%" +location+ "%' or a.state like '%" +location+ "%' or a.stateCode like '%" +location+ "%')";
+		}
+		if(lat != 0 && lon != 0)
+		{
+			hqlQuery = hqlQuery + " and (((acos(sin(((:latitude)*pi()/180)) * sin((a.latitude*pi()/180))+cos(((:latitude)*pi()/180)) * cos((a.latitude*pi()/180)) * cos((((:longitude)- a.longitude)*pi()/180))))*180/pi())*60*1.1515) <=:distance";
+		}
+		if(rating != 0)
+			hqlQuery = hqlQuery + " and b.pageId = d.page.pageId and d.communityReview.reviewId = e.reviewId group by a.eventId having avg(e.rating) >= :rating";
+
+		hqlQuery += " order by a.event_date_time_local";
+
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("category", category);
+			query.setParameter("currentDate", Utils.getCurrentDate());
+			query.setParameter("weekendDate", Utils.getNearestWeekendForEvent(null));
+			if(searchText != null && !searchText.trim().equals(""))
+				query.setParameter("searchText", searchText);
+			if(location != null && !location.trim().equals(""))
+				query.setParameter("location", location);
+			if(lat != 0 && lon != 0)
+			{
+				query.setDouble("latitude", lat);
+				query.setDouble("longitude", lon);
+				query.setInteger("distance",distance);
+			}
+			if(rating != 0)
+				query.setDouble("rating", rating);
+
+			query.setFirstResult(offset);
+			query.setMaxResults(limit);
+			logger.debug("Query::  "+query);
+
+			eventList = query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.debug(e.getMessage());
+		}
+
+		/*Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Events.class, "events").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
 		criteria.createAlias("events.page", "page");
 
@@ -426,10 +946,24 @@ public class EventsDAO implements IEventsDAO{
 
 		if(searchText != null && !searchText.trim().equals(""))
 		{
-			criteria.add(Restrictions.disjunction().add(Restrictions.eq("events.description", searchText))
-					.add(Restrictions.eq("events.channel", "%" + searchText + "%"))
-					.add(Restrictions.eq("events.ancestorGenreDescriptions", searchText))
-					.add(Restrictions.eq("events.venue_name", searchText)));
+			if(forExactmatch)
+			{
+				criteria.add(Restrictions.disjunction().add(Restrictions.eq("events.description", searchText))
+						.add(Restrictions.eq("events.channel", "%" + searchText + "%"))
+						.add(Restrictions.eq("events.ancestorGenreDescriptions", searchText))
+						.add(Restrictions.eq("events.venue_name", searchText)));
+			}
+
+			else
+			{
+				criteria.add(Restrictions.disjunction().add(Restrictions.like("events.description", "%" + searchText + "%"))
+						.add(Restrictions.like("events.city", "%" + searchText + "%"))
+						.add(Restrictions.like("events.ancestorGenreDescriptions", "%" + searchText + "%"))
+						.add(Restrictions.like("events.venue_name", "%" + searchText + "%"))).add(Restrictions.conjunction().add(Restrictions.ne("events.description", searchText))
+								.add(Restrictions.ne("events.city", "%" + searchText + "%"))
+								.add(Restrictions.ne("events.ancestorGenreDescriptions", searchText))
+								.add(Restrictions.ne("events.venue_name", searchText)));
+			}
 		}
 
 		logger.debug("Date: "+Utils.getNearestWeekendForEvent(null) +" : "+Utils.getCurrentDate());
@@ -443,15 +977,83 @@ public class EventsDAO implements IEventsDAO{
 
 		criteria.setFirstResult(offset)
 		.setMaxResults(limit);
-		List<Events> eventsList = criteria.list();
-		return eventsList;
+		List<Events> eventsList = criteria.list();*/
+		return eventList;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Events> getEventsByLikeSearchKeyword(String searchText,String category, String location, int offset, int limit, double lat, double lon, int distance, double rating) {
 		logger.debug("getEventsByLikeSearchKeyword ==> "+searchText);
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Events.class, "events").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+
+		List<Events> eventsList = null;
+		String hqlQuery = "";
+
+		if(rating != 0)
+		{
+			hqlQuery = "select a from Events a, Page b, Pagetype c, CommunityReviewMap d, CommunityReview e  ";
+		}
+		else
+		{
+			hqlQuery = "select a from Events a, Page b, Pagetype c ";
+		}
+
+		if(category.equalsIgnoreCase("NIGHTLIFE"))
+		{
+			hqlQuery = hqlQuery + "where (c.pageType=:category or c.pageType='CONCERT' or c.pageType='THEATER') and b.pagetype.pageTypeId = c.pageTypeId and a.page.pageId = b.pageId";
+		}
+		else
+			hqlQuery = hqlQuery + "where c.pageType=:category and b.pagetype.pageTypeId = c.pageTypeId and a.page.pageId = b.pageId";
+
+		hqlQuery = hqlQuery + " and (a.event_date_time_local >= :currentDate and a.event_date_time_local <= :weekendDate)";
+
+		if(searchText != null && !searchText.trim().equals(""))
+		{
+			hqlQuery = hqlQuery + " and (a.description like '%" + searchText  +"%' or a.title like '%" + searchText  +"%' or a.ancestorGenreDescriptions like '%" + searchText  +"%' or a.urlpath like '%" + searchText  +"%' or a.venue_name like '%" + searchText  +"%' or a.channel like '%" + searchText  +"%') and and (a.description != :searchText or a.title != :searchText or a.ancestorGenreDescriptions != :searchText or a.urlpath != :searchText or a.venue_name != :searchText or a.channel != :searchText)";
+		}
+		if(location != null && !location.trim().equals(""))
+		{
+			hqlQuery = hqlQuery + " and (a.zip = :location or a.city like '%" +location+ "%' or a.state like '%" +location+ "%' or a.stateCode like '%" +location+ "%')";
+		}
+		if(lat != 0 && lon != 0)
+		{
+			hqlQuery = hqlQuery + "and (((acos(sin(((:latitude)*pi()/180)) * sin((a.latitude*pi()/180))+cos(((:latitude)*pi()/180)) * cos((a.latitude*pi()/180)) * cos((((:longitude)- a.longitude)*pi()/180))))*180/pi())*60*1.1515) <=:distance";
+		}
+		if(rating != 0)
+			hqlQuery = hqlQuery + " and b.pageId = d.page.pageId and d.communityReview.reviewId = e.reviewId group by a.eventId having avg(e.rating) >= :rating";
+
+		hqlQuery += " order by a.event_date_time_local";
+
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("category", category);
+			query.setParameter("currentDate", Utils.getCurrentDate());
+			query.setParameter("weekendDate", Utils.getNearestWeekendForEvent(null));
+			if(searchText != null && !searchText.trim().equals(""))
+				query.setParameter("searchText", searchText);
+			if(location != null && !location.trim().equals(""))
+				query.setParameter("location", location);
+			if(lat != 0 && lon != 0)
+			{
+				query.setDouble("latitude", lat);
+				query.setDouble("longitude", lon);
+				query.setInteger("distance",distance);
+			}
+			if(rating != 0)
+				query.setDouble("rating", rating);
+
+			query.setFirstResult(offset);
+			query.setMaxResults(limit);
+			logger.debug("Query::  "+query);
+
+			eventsList = query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.debug(e.getMessage());
+		}
+
+		/*Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Events.class, "events").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
 		criteria.createAlias("events.page", "page");
 
@@ -496,7 +1098,7 @@ public class EventsDAO implements IEventsDAO{
 
 		criteria.setFirstResult(offset)
 		.setMaxResults(limit);
-		List<Events> eventsList = criteria.list();
+		List<Events> eventsList = criteria.list();*/
 		return eventsList;
 	}
 
@@ -651,7 +1253,85 @@ public class EventsDAO implements IEventsDAO{
 	public List<Events> getUserEventsSuggestions(String userEmail, int offset,
 			int limit, String category, String suggestionType, double lat, double lon, int distance, double rating) {
 		logger.debug("getUserNonDealSuggestions ==> "+userEmail +" ==> "+offset+" ==> "+limit);
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Events.class, "events").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+
+		List<Events> eventList = null;
+		String hqlQuery = "";
+
+		if(rating != 0)
+		{
+			hqlQuery = "select a from Events a, Page b, Pagetype c, Usereventsuggestion z, CommunityReviewMap d, CommunityReview e  ";
+		}
+		else
+		{
+			hqlQuery = "select a from Events a, Page b, Pagetype c, Usereventsuggestion z ";
+		}
+		
+		hqlQuery = hqlQuery + "where z.user.emailId = :emailId and a.eventId = z.events.eventId and b.pagetype.pageTypeId = c.pageTypeId and a.page.pageId = b.pageId";
+
+		if(category != null && !category.trim().equals(""))
+		{
+			if(category.equalsIgnoreCase("NIGHTLIFE"))
+			{
+				hqlQuery = hqlQuery + " and (c.pageType=:category or c.pageType='CONCERT' or c.pageType='THEATER')";
+			}
+			else
+				hqlQuery = hqlQuery + " and c.pageType=:category";
+		}
+
+		hqlQuery = hqlQuery + " and (a.event_date_time_local >= :currentDate and z.suggestedTime >= :suggestedTime)";
+
+		if(suggestionType != null)
+		{
+			if(suggestionType.equalsIgnoreCase("Friend Suggestion"))
+			{
+				hqlQuery += " and (z.suggestionType like '%Friend%' or z.suggestionType like '%Group%' or z.suggestionType ='Wall Feed Suggestion' or z.suggestionType ='Direct Suggestion')";
+			}
+			else if(suggestionType.equalsIgnoreCase("Community Suggestion"))
+			{
+				hqlQuery += " and (z.suggestionType like '%Community%')";
+			}
+			else if(suggestionType.equalsIgnoreCase("Jeeyoh Suggestion"))
+			{
+				hqlQuery += " and (z.suggestionType like '%Friend%' or z.suggestionType like '%Group%' or z.suggestionType like '%User%')";
+			}
+		}
+
+		if(lat != 0 && lon != 0)
+		{
+			hqlQuery = hqlQuery + " and (((acos(sin(((:latitude)*pi()/180)) * sin((a.latitude*pi()/180))+cos(((:latitude)*pi()/180)) * cos((a.latitude*pi()/180)) * cos((((:longitude)- a.longitude)*pi()/180))))*180/pi())*60*1.1515) <=:distance";
+		}
+		if(rating != 0)
+			hqlQuery = hqlQuery + " and b.pageId = d.page.pageId and d.communityReview.reviewId = e.reviewId group by a.eventId having avg(e.rating) >= :rating";
+
+
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("emailId", userEmail);
+			if(category != null && !category.trim().equals(""))
+				query.setParameter("category", category);
+			query.setParameter("currentDate", Utils.getCurrentDate());
+			query.setParameter("suggestedTime", Utils.getCurrentDateForEvent());
+			if(lat != 0 && lon != 0)
+			{
+				query.setDouble("latitude", lat);
+				query.setDouble("longitude", lon);
+				query.setInteger("distance",distance);
+			}
+			if(rating != 0)
+				query.setDouble("rating", rating);
+
+			query.setFirstResult(offset*10);
+			query.setMaxResults(limit);
+			logger.debug("Query::  "+query);
+
+			eventList = query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.debug(e.getMessage());
+		}
+
+		/*Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Events.class, "events").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
 		if(userEmail != null && !userEmail.trim().equals(""))
 		{
@@ -660,9 +1340,9 @@ public class EventsDAO implements IEventsDAO{
 			criteria.add(Restrictions.eq("user.emailId", userEmail));
 		}
 
+		criteria.createAlias("events.page", "page");
 		if(category != null && !category.trim().equals(""))
 		{
-			criteria.createAlias("events.page", "page");
 			criteria.createAlias("page.pagetype", "pagetypes");
 			if(category.equalsIgnoreCase("NIGHTLIFE"))
 			{
@@ -695,26 +1375,38 @@ public class EventsDAO implements IEventsDAO{
 			{
 				criteria.add(Restrictions.disjunction().add(Restrictions.like("usereventsuggestions.suggestionType", "%User%"))
 						.add(Restrictions.like("usereventsuggestions.suggestionType", "%Friend%"))
-						.add(Restrictions.eq("usereventsuggestions.suggestionType", "Group")));
+						.add(Restrictions.like("usereventsuggestions.suggestionType", "%Group%")));
 			}
 		}
 
-		/*if(category != null && !category.trim().equals(""))
+		if(rating != 0)
 		{
-			criteria.add(Restrictions.eq("channel", "%" + category + "%"));
-		}*/
+			criteria.createAlias("page.communityReviewMap", "communityReviewMap");
+			//criteria.createAlias("communityReviewMap.communityReview", "communityReview");
+			Criteria review = criteria.createCriteria("communityReviewMap.communityReview"); 
+			//a.setProjection(Projections.avg("communityReview.rating").as("avgRating"));
+			//String groupBy = "this_.pageId having " + "avg({alias}.rating) >= " + rating;
+			String groupBy = "this_.eventId having " + "avg({alias}.rating) >= " + rating;
+			String[] alias = new String[1]; 
+			alias[0] = "this_.eventId"; 
+			Type[] types = new Type[1]; 
+			types[0] = Hibernate.INTEGER;	
+			//criteria.setProjection(Projections.alias(Projections.property("page.pageId"), "pageId1"));
+			review.setProjection(Projections.sqlGroupProjection("this_.eventId", groupBy, alias, types));
 
-		/*if(lat != 0 && lon != 0)
+		}
+
+		if(lat != 0 && lon != 0)
 		{
-			String sql =  "(((acos(sin(((" + lat + ")*pi()/180)) * sin((latitude*pi()/180))+cos(((" + lat + ")*pi()/180)) * cos((lattitude*pi()/180)) * cos((((" + lon + ")- longitude)*pi()/180))))*180/pi())*60*1.1515)<="+distance;     
+			String sql =  "(((acos(sin(((" + lat + ")*pi()/180)) * sin((this_.latitude*pi()/180))+cos(((" + lat + ")*pi()/180)) * cos((this_.latitude*pi()/180)) * cos((((" + lon + ")- this_.longitude)*pi()/180))))*180/pi())*60*1.1515)<="+distance;     
 			criteria.add(Restrictions.sqlRestriction(sql)); 
-		}*/
+		}
 
 		criteria.setFirstResult(offset*10)
 		.setMaxResults(limit);
 
-		List<Events> eventsList = criteria.list();
-		return eventsList;
+		List<Events> eventsList = criteria.list();*/
+		return eventList;
 	}
 
 
@@ -801,25 +1493,25 @@ public class EventsDAO implements IEventsDAO{
 	@Override
 	public int getTotalEventsBySearchKeyWord(String searchText,
 			String category, String location, double lat, double lon, int distance, double rating) {
-		logger.debug("getEventsByLikeSearchKeyword ==> "+searchText);
-		/*	int rowCount = 0;
+		logger.debug("getTotalEventsBySearchKeyWord ==> "+searchText + " : "+Utils.getNearestWeekendForEvent(null));
+		/*int rowCount = 0;
 		String hqlQuery = "";
 
 		if(rating != 0)
 		{
-			hqlQuery = "select a from Events a, Page b, Pagetype c, CommunityReviewMap d, CommunityReview e  ";
+			hqlQuery = "select a.eventId from Events a, Page b, Pagetype c, CommunityReviewMap d, CommunityReview e  ";
 		}
 		else
 		{
-			hqlQuery = "select distinct a from Page a,Events b, Pagetype c ";
+			hqlQuery = "select count(a.eventId) from Events a, Page b, Pagetype c ";
 		}
 
 		if(category.equalsIgnoreCase("NIGHTLIFE"))
 		{
-			hqlQuery = "where (c.pageType=:category or c.pageType='CONCERT' or c.pageType='THEATER') and a.pagetype.pageTypeId = c.pageTypeId and a.pageId = b.page.pageId";
+			hqlQuery = hqlQuery + "where (c.pageType=:category or c.pageType='CONCERT' or c.pageType='THEATER') and b.pagetype.pageTypeId = c.pageTypeId and a.page.pageId = b.pageId";
 		}
 		else
-			hqlQuery = "where c.pageType=:category and a.pagetype.pageTypeId = c.pageTypeId and a.pageId = b.page.pageId";
+			hqlQuery = hqlQuery + "where c.pageType=:category and b.pagetype.pageTypeId = c.pageTypeId and a.page.pageId = b.pageId";
 
 		hqlQuery = hqlQuery + " and (a.event_date_time_local >= :currentDate and a.event_date_time_local <= :weekendDate)";
 
@@ -838,7 +1530,7 @@ public class EventsDAO implements IEventsDAO{
 			hqlQuery = hqlQuery + "and (((acos(sin(((:latitude)*pi()/180)) * sin((a.latitude*pi()/180))+cos(((:latitude)*pi()/180)) * cos((a.latitude*pi()/180)) * cos((((:longitude)- a.longitude)*pi()/180))))*180/pi())*60*1.1515) <=:distance";
 		}
 		if(rating != 0)
-			hqlQuery = hqlQuery + " and b.pageId = c.pageId and c.reviewId = d.reviewId group by b.pageId having avgrating >= :rating";
+			hqlQuery = hqlQuery + " and b.pageId = d.page.pageId and d.communityReview.reviewId = e.reviewId group by a.eventId having avg(e.rating) >= :rating";
 
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
@@ -861,7 +1553,11 @@ public class EventsDAO implements IEventsDAO{
 
 			query.setFirstResult(0);
 			query.setMaxResults(10000);
-			rowCount = ((Number)query.uniqueResult()).intValue();
+			logger.debug("Query::  "+query);
+			if(rating != 0)
+				rowCount = query.list().size();
+			else
+				rowCount = ((Number)query.uniqueResult()).intValue();
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.debug(e.getMessage());
@@ -871,10 +1567,23 @@ public class EventsDAO implements IEventsDAO{
 		 select a.pageId,avg(d.rating) as avgrating,a.zip,a.event_date_time_local from events a, page b, communityReviewMap c, communityReview d, pagetype e where a.pageId = b.pageId and b.pageId = c.pageId and c.reviewId = d.reviewId and e.pageType = "sport" and b.pageTypeId = e.pageTypeId and (a.event_date_time_local >= now()) and (((acos(sin(((42.3589)*pi()/180)) * sin((a.latitude*pi()/180))+cos(((42.3589)*pi()/180)) * cos((a.latitude*pi()/180)) * cos((((-71.0578)- a.longitude)*pi()/180))))*180/pi())*60*1.1515) <=50000 group by b.pageId having avgrating >= 4;
 		 */
 
-		/*	Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Events.class, "events").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-				.setProjection(Projections.count("events.eventId"));
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Events.class, "events").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+				.setProjection(Projections.property("events.eventId"));
 
+		criteria.createAlias("events.page", "page");
 
+		if(category != null && !category.trim().equals(""))
+		{
+			criteria.createAlias("page.pagetype", "pagetypes");
+			if(category.equalsIgnoreCase("NIGHTLIFE"))
+			{
+				criteria.add(Restrictions.disjunction().add(Restrictions.eq("pagetypes.pageType", category))
+						.add(Restrictions.eq("pagetypes.pageType", "THEATER"))
+						.add(Restrictions.eq("pagetypes.pageType", "CONCERT")));
+			}
+			else
+				criteria.add(Restrictions.eq("pagetypes.pageType", category));
+		}
 		if(location != null && !location.trim().equals(""))
 		{
 			criteria.add(Restrictions.disjunction()
@@ -896,45 +1605,41 @@ public class EventsDAO implements IEventsDAO{
 		if(rating != 0)
 		{
 			criteria.createAlias("page.communityReviewMap", "communityReviewMap");
-			criteria.createAlias("communityReviewMap.communityReview", "communityReview");
-			criteria.setProjection(Projections.avg("communityReview.rating").as("avgRating"));
-			String groupBy = "pageId having " + "avgRating >= " + rating;
+			//criteria.createAlias("communityReviewMap.communityReview", "communityReview");
+			Criteria review = criteria.createCriteria("communityReviewMap.communityReview"); 
+			//a.setProjection(Projections.avg("communityReview.rating").as("avgRating"));
+			//String groupBy = "this_.pageId having " + "avg({alias}.rating) >= " + rating;
+			//String groupBy = "this_.description having " + "avg({alias}.rating) >= " + rating;
+			String groupBy = "this_.eventId having " + "avg({alias}.rating) >= " + rating;
 			String[] alias = new String[1]; 
-			alias[0] = "pagePageId"; 
+			//alias[0] = "this_.description"; 
+			alias[0] = "this_.eventId"; 
 			Type[] types = new Type[1]; 
-			types[0] = Hibernate.INTEGER;	
-			criteria.setProjection(Projections.alias(Projections.property("page.pageId"), "pageId1"));
-			criteria.setProjection(Projections.sqlGroupProjection("page", groupBy, alias, types));
+			//types[0] = Hibernate.STRING;
+			types[0] = Hibernate.INTEGER;
+			//criteria.setProjection(Projections.alias(Projections.property("page.pageId"), "pageId1"));
+			review.setProjection(Projections.sqlGroupProjection("this_.eventId", groupBy, alias, types));
+			//review.setProjection(Projections.sqlGroupProjection("this_.description", groupBy, alias, types));
 
-		}
-
-
-		if(category != null && !category.trim().equals(""))
-		{
-			criteria.createAlias("page.pagetype", "pagetypes");
-			if(category.equalsIgnoreCase("NIGHTLIFE"))
-			{
-				criteria.add(Restrictions.disjunction().add(Restrictions.eq("pagetypes.pageType", category))
-						.add(Restrictions.eq("pagetypes.pageType", "THEATER"))
-						.add(Restrictions.eq("pagetypes.pageType", "CONCERT")));
-			}
-			else
-				criteria.add(Restrictions.eq("pagetypes.pageType", category));
 		}
 
 		criteria.add(Restrictions.conjunction().add(Restrictions.ge("events.event_date_time_local", Utils.getCurrentDate()))
 				.add(Restrictions.le("events.event_date_time_local", Utils.getNearestWeekendForEvent(null))));
 
-		String sql =  "(((acos(sin(((" + lat + ")*pi()/180)) * sin((latitude*pi()/180))+cos(((" + lat + ")*pi()/180)) * cos((latitude*pi()/180)) * cos((((" + lon + ")- longitude)*pi()/180))))*180/pi())*60*1.1515)<="+distance;     
-		criteria.add(Restrictions.sqlRestriction(sql)); 
+		if(lat != 0 && lon != 0)
+		{
+			String sql =  "(((acos(sin(((" + lat + ")*pi()/180)) * sin((latitude*pi()/180))+cos(((" + lat + ")*pi()/180)) * cos((latitude*pi()/180)) * cos((((" + lon + ")- longitude)*pi()/180))))*180/pi())*60*1.1515)<="+distance;   
+			criteria.add(Restrictions.sqlRestriction(sql)); 
+		}
+
 
 		criteria.setFirstResult(0)
 		.setMaxResults(10000);
 
-		//int rowCount = criteria.list().size();
-		int rowCount = Integer.parseInt(criteria.uniqueResult().toString());*/
+		int rowCount = criteria.list().size();
+		//int rowCount = Integer.parseInt(criteria.uniqueResult().toString());
 
-		logger.debug("getEventsByLikeSearchKeyword ==> "+searchText);
+		/*logger.debug("getEventsByLikeSearchKeyword ==> "+searchText);
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Events.class, "events").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
 				.setProjection(Projections.count("events.eventId"));
 
@@ -973,9 +1678,9 @@ public class EventsDAO implements IEventsDAO{
 		criteria.setFirstResult(0)
 		.setMaxResults(10000);
 
-		//int rowCount = criteria.list().size();
-		int rowCount = Integer.parseInt(criteria.uniqueResult().toString());
-
+		int rowCount = criteria.list().size();
+		//int rowCount = Integer.parseInt(criteria.uniqueResult().toString());
+		 */
 		return rowCount;
 	}
 
@@ -983,8 +1688,80 @@ public class EventsDAO implements IEventsDAO{
 	public int getTotalCommunityBySearchKeyWordForBusiness(String searchText,
 			String category, String location, double lat, double lon, int distance, double rating) {
 		logger.debug("getTotalCommunityBySearchKeyWord ==> "+searchText);
+		/*
+		int rowCount = 0;
+		String hqlQuery = "";
+		String fromStr = "", whereStr = "";
+
+		if(rating != 0)
+		{
+			fromStr = "select a.pageId from Page a, Pagetype c, CommunityReviewMap d, CommunityReview e  ";
+		}
+		else
+		{
+			fromStr = "select count(a.pageId) from Page a, Pagetype c ";
+		}
+
+		if(category.equalsIgnoreCase("NIGHTLIFE"))
+		{
+			whereStr += "where (c.pageType=:category or c.pageType='CONCERT' or c.pageType='THEATER') and a.pagetype.pageTypeId = c.pageTypeId";
+		}
+		else
+			whereStr += "where c.pageType=:category and a.pagetype.pageTypeId = c.pageTypeId";
+
+		if(searchText != null && !searchText.trim().equals(""))
+		{
+			whereStr = whereStr + " and (a.about = :searchText or a.pageUrl = :searchText)";
+		}
+
+		if(location != null && !location.trim().equals("") || (lat != 0 && lon != 0))
+		{
+			fromStr += ", business b ";
+			whereStr += " and a.businessId = b.id";
+		}
+
+		if(location != null && !location.trim().equals(""))
+		{
+			whereStr = whereStr + " and a.businessId = b.id and (b.zip = :location or b.city like '%" +location+ "%' or b.state like '%" +location+ "%' or b.stateCode like '%" +location+ "%')";
+		}
+
+		if(lat != 0 && lon != 0)
+		{
+			whereStr = whereStr + " and (((acos(sin(((:latitude)*pi()/180)) * sin((b.latitude*pi()/180))+cos(((:latitude)*pi()/180)) * cos((b.latitude*pi()/180)) * cos((((:longitude)- b.longitude)*pi()/180))))*180/pi())*60*1.1515) <=:distance";
+		}
+		if(rating != 0)
+			whereStr = whereStr + " and a.pageId = d.page.pageId and d.communityReview.reviewId = e.reviewId group by a.pageId having avg(e.rating) >= :rating";
+
+		try {
+			hqlQuery = fromStr + whereStr;
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("category", category);
+			if(searchText != null && !searchText.trim().equals(""))
+				query.setParameter("searchText", searchText);
+			if(location != null && !location.trim().equals(""))
+				query.setParameter("location", location);
+			if(lat != 0 && lon != 0)
+			{
+				query.setDouble("latitude", lat);
+				query.setDouble("longitude", lon);
+				query.setInteger("distance",distance);
+			}
+			if(rating != 0)
+				query.setDouble("rating", rating);
+
+			if(rating != 0)
+				rowCount = query.list().size();
+			else
+				rowCount = ((Number)query.uniqueResult()).intValue();
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.debug(e.toString());
+			logger.debug(e.getLocalizedMessage());
+		}*/
+
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Page.class, "page").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-				.setProjection(Projections.count("page.pageId"));
+				.setProjection(Projections.property("page.pageId"));
 
 
 		if(category != null && !category.trim().equals(""))
@@ -999,15 +1776,19 @@ public class EventsDAO implements IEventsDAO{
 			else
 				criteria.add(Restrictions.eq("pagetypes.pageType", category));
 		}
+
+		Criteria addr = null;
+		if(location != null && !location.trim().equals("") || (lat != 0 && lon != 0))
+			addr = criteria.createCriteria("business"); 
 		if(location != null && !location.trim().equals(""))
 		{
-			criteria.createAlias("page.business", "business");
-			criteria.add(Restrictions.disjunction().add(Restrictions.like("business.displayAddress", "%" + location + "%"))
-					.add(Restrictions.like("business.businessId", "%" + location + "%"))
-					.add(Restrictions.eq("business.postalCode", location))
-					.add(Restrictions.like("business.city", "%" + location + "%"))
-					.add(Restrictions.like("business.state", "%" + location + "%"))
-					.add(Restrictions.like("business.stateCode", "%" + location + "%")));
+			//criteria.createAlias("page.business", "business");
+			addr.add(Restrictions.disjunction().add(Restrictions.like("displayAddress", "%" + location + "%"))
+					.add(Restrictions.like("businessId", "%" + location + "%"))
+					.add(Restrictions.eq("postalCode", location))
+					.add(Restrictions.like("city", "%" + location + "%"))
+					.add(Restrictions.like("state", "%" + location + "%"))
+					.add(Restrictions.like("stateCode", "%" + location + "%")));
 		}
 
 		if(searchText != null && !searchText.trim().equals(""))
@@ -1018,14 +1799,30 @@ public class EventsDAO implements IEventsDAO{
 
 		}
 
-		/*if(lat != 0 && lon != 0)
+		if(lat != 0 && lon != 0)
 		{
-			String sql =  "(((acos(sin(((" + lat + ")*pi()/180)) * sin((lattitude*pi()/180))+cos(((" + lat + ")*pi()/180)) * cos((lattitude*pi()/180)) * cos((((" + lon + ")- longitude)*pi()/180))))*180/pi())*60*1.1515)<="+distance;     
-			criteria.add(Restrictions.sqlRestriction(sql)); 
-		}*/
+			String sql =  "(((acos(sin(((" + lat + ")*pi()/180)) * sin(({alias}.lattitude*pi()/180))+cos(((" + lat + ")*pi()/180)) * cos(({alias}.lattitude*pi()/180)) * cos((((" + lon + ")- {alias}.longitude)*pi()/180))))*180/pi())*60*1.1515)<="+distance;     
+			addr.add(Restrictions.sqlRestriction(sql)); 
+		}
 
-		//int rowCount = criteria.list().size();
-		int rowCount = Integer.parseInt(criteria.uniqueResult().toString());
+		if(rating != 0)
+		{
+			criteria.createAlias("page.communityReviewMap", "communityReviewMap");
+			//criteria.createAlias("communityReviewMap.communityReview", "communityReview");
+			Criteria a = criteria.createCriteria("communityReviewMap.communityReview"); 
+			//a.setProjection(Projections.avg("communityReview.rating").as("avgRating"));
+			String groupBy = "this_.pageId having " + "avg({alias}.rating) >= " + rating;
+			String[] alias = new String[1]; 
+			alias[0] = "this_.pageId"; 
+			Type[] types = new Type[1]; 
+			types[0] = Hibernate.INTEGER;	
+			//criteria.setProjection(Projections.alias(Projections.property("page.pageId"), "pageId1"));
+			a.setProjection(Projections.sqlGroupProjection("this_.pageId", groupBy, alias, types));
+
+		}
+
+		int rowCount = criteria.list().size();
+		//int rowCount = Integer.parseInt(criteria.uniqueResult().toString());
 		return rowCount;
 	}
 
@@ -1033,9 +1830,70 @@ public class EventsDAO implements IEventsDAO{
 	@Override
 	public int getTotalCommunityBySearchKeyWordForEvent(String searchText,
 			String category, String location, double lat, double lon, int distance, double rating) {
-		logger.debug("getTotalCommunityBySearchKeyWord ==> "+searchText);
+		logger.debug("getTotalCommunityBySearchKeyWordForEvent ==> "+searchText);
+
+		/*int rowCount = 0;
+		String hqlQuery = "";
+		if(rating != 0)
+		{
+			hqlQuery = "select a.pageId from Page a, Events b, Pagetype c, CommunityReviewMap d, CommunityReview e  ";
+		}
+		else
+		{
+			hqlQuery = "select count(a.pageId) from Page a, Events b, Pagetype c ";
+		}
+
+		if(category.equalsIgnoreCase("NIGHTLIFE"))
+		{
+			hqlQuery += "where (c.pageType=:category or c.pageType='CONCERT' or c.pageType='THEATER') and a.pagetype.pageTypeId = c.pageTypeId and a.pageId = b.page.pageId";
+		}
+		else
+			hqlQuery += "where c.pageType=:category and a.pagetype.pageTypeId = c.pageTypeId and a.pageId = b.page.pageId";
+
+		if(searchText != null && !searchText.trim().equals(""))
+		{
+			hqlQuery = hqlQuery + " and (a.about = :searchText or a.pageUrl = :searchText)";
+		}
+		if(location != null && !location.trim().equals(""))
+		{
+			hqlQuery = hqlQuery + " and (b.zip = :location or b.city like '%" +location+ "%' or b.state like '%" +location+ "%' or b.stateCode like '%" +location+ "%')";
+		}
+
+		if(lat != 0 && lon != 0)
+		{
+			hqlQuery = hqlQuery + " and (((acos(sin(((:latitude)*pi()/180)) * sin((b.latitude*pi()/180))+cos(((:latitude)*pi()/180)) * cos((b.latitude*pi()/180)) * cos((((:longitude)- b.longitude)*pi()/180))))*180/pi())*60*1.1515) <=:distance";
+		}
+		if(rating != 0)
+			hqlQuery = hqlQuery + " and a.pageId = d.page.pageId and d.communityReview.reviewId = e.reviewId group by a.pageId having avg(e.rating) >= :rating";
+
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("category", category);
+			if(searchText != null && !searchText.trim().equals(""))
+				query.setParameter("searchText", searchText);
+			if(location != null && !location.trim().equals(""))
+				query.setParameter("location", location);
+			if(lat != 0 && lon != 0)
+			{
+				query.setDouble("latitude", lat);
+				query.setDouble("longitude", lon);
+				query.setInteger("distance",distance);
+			}
+			if(rating != 0)
+				query.setDouble("rating", rating);
+
+			if(rating != 0)
+				rowCount = query.list().size();
+			else
+				rowCount = ((Number)query.uniqueResult()).intValue();
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.debug(e.toString());
+			logger.debug(e.getLocalizedMessage());
+		}*/
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Page.class, "page").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-				.setProjection(Projections.count("page.pageId"));
+				.setProjection(Projections.property("page.pageId")).setProjection(Projections.distinct(Projections.property("page.pageId")));
 
 		if(category != null && !category.trim().equals(""))
 		{
@@ -1049,14 +1907,16 @@ public class EventsDAO implements IEventsDAO{
 			else
 				criteria.add(Restrictions.eq("pagetypes.pageType", category));
 		}
+
+		Criteria addr = criteria.createCriteria("events"); 
 		if(location != null && !location.trim().equals(""))
 		{
-			criteria.createAlias("page.events", "events");
-			criteria.add(Restrictions.disjunction()
-					.add(Restrictions.eq("events.zip", location))
-					.add(Restrictions.like("events.city", "%" + location + "%"))
-					.add(Restrictions.like("events.state", "%" + location + "%"))
-					.add(Restrictions.like("events.stateCode", "%" + location + "%")));
+			//criteria.createAlias("page.events", "events");
+			addr.add(Restrictions.disjunction()
+					.add(Restrictions.eq("zip", location))
+					.add(Restrictions.like("city", "%" + location + "%"))
+					.add(Restrictions.like("state", "%" + location + "%"))
+					.add(Restrictions.like("stateCode", "%" + location + "%")));
 		}
 
 		if(searchText != null && !searchText.trim().equals(""))
@@ -1067,14 +1927,30 @@ public class EventsDAO implements IEventsDAO{
 
 		}
 
-		/*if(lat != 0 && lon != 0)
+		if(lat != 0 && lon != 0)
 		{
-			String sql =  "(((acos(sin(((" + lat + ")*pi()/180)) * sin((lattitude*pi()/180))+cos(((" + lat + ")*pi()/180)) * cos((lattitude*pi()/180)) * cos((((" + lon + ")- longitude)*pi()/180))))*180/pi())*60*1.1515)<="+distance;     
-			criteria.add(Restrictions.sqlRestriction(sql)); 
+			String sql =  "(((acos(sin(((" + lat + ")*pi()/180)) * sin(({alias}.latitude*pi()/180))+cos(((" + lat + ")*pi()/180)) * cos(({alias}.latitude*pi()/180)) * cos((((" + lon + ")- {alias}.longitude)*pi()/180))))*180/pi())*60*1.1515)<="+distance;     
+			addr.add(Restrictions.sqlRestriction(sql)); 
 		}
-		 */
-		//int rowCount = criteria.list().size();
-		int rowCount = Integer.parseInt(criteria.uniqueResult().toString());
+
+		if(rating != 0)
+		{
+			criteria.createAlias("page.communityReviewMap", "communityReviewMap");
+			//criteria.createAlias("communityReviewMap.communityReview", "communityReview");
+			Criteria a = criteria.createCriteria("communityReviewMap.communityReview"); 
+			//a.setProjection(Projections.avg("communityReview.rating").as("avgRating"));
+			String groupBy = "this_.pageId having " + "avg({alias}.rating) >= " + rating;
+			String[] alias = new String[1]; 
+			alias[0] = "this_.pageId"; 
+			Type[] types = new Type[1]; 
+			types[0] = Hibernate.INTEGER;	
+			//criteria.setProjection(Projections.alias(Projections.property("page.pageId"), "pageId1"));
+			a.setProjection(Projections.sqlGroupProjection("this_.pageId", groupBy, alias, types));
+
+		}
+
+		int rowCount = criteria.list().size();
+		//int rowCount = Integer.parseInt(criteria.uniqueResult().toString());
 		return rowCount;
 	}
 
@@ -1100,6 +1976,7 @@ public class EventsDAO implements IEventsDAO{
 	@Override
 	public Page getPageByAbout(String genre_parent_name)
 	{
+		logger.debug("genre_parent_name:  "+genre_parent_name);
 		List<Page> pageList = null;
 		String hqlQuery = "from Page a where a.about =:genre_parent_name";
 		try {
@@ -1107,6 +1984,7 @@ public class EventsDAO implements IEventsDAO{
 					hqlQuery);
 			query.setParameter("genre_parent_name", genre_parent_name);
 			pageList = (List<Page>) query.list();
+			logger.debug("pageList  "+pageList);
 		} catch (Exception e) {
 			logger.debug("Error ==> "+e.getMessage());
 			e.printStackTrace();
@@ -1118,19 +1996,26 @@ public class EventsDAO implements IEventsDAO{
 	public void savePage(Page page, int batch_size) {
 		logger.debug("savePage ==>");
 		Session session = sessionFactory.openSession();
+		//Session session = sessionFactory.getCurrentSession();
 		Transaction tx = null;
 		try
 		{
 			tx = session.beginTransaction();
-			session.save(page);	
+			session.saveOrUpdate(page);	
+			if( batch_size % 20 == 0 ) {
+				session.flush();
+				session.clear();
+			}
+			
 			tx.commit();
 		}
 		catch (HibernateException e) {
 			if (tx!=null) tx.rollback();
-			logger.debug(e.toString());
+			
+			logger.debug("ERROR::  "+e.getLocalizedMessage());
 		}
 		catch (Exception e) {
-			logger.debug(e.toString());
+			logger.debug("ERROR::  "+e.getLocalizedMessage());
 		}
 		finally
 		{
@@ -1298,7 +2183,8 @@ public class EventsDAO implements IEventsDAO{
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
 			query.setParameter("pageId", pageId);
-			rating = ((Number)query.uniqueResult()).doubleValue();
+			if(query.uniqueResult() != null)
+				rating = ((Number)query.uniqueResult()).doubleValue();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1309,12 +2195,13 @@ public class EventsDAO implements IEventsDAO{
 	@Override
 	public Object[] getRecentEventDate(int pageId) {
 		List<Object[]> eventList = null;
-		String hqlQuery = "select b.event_date_local,b.event_time_local from Page a, Events b where a.pageId = :pageId and a.pageId = b.page.pageId and b.event_date_time_local >= :currentDate order by b.event_date_time_local asc limit 1";
+		String hqlQuery = "select b.event_date_time_local,b.event_time_local from Page a, Events b where a.pageId = :pageId and a.pageId = b.page.pageId and b.event_date_time_local >= :currentDate order by b.event_date_time_local asc";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
 			query.setParameter("pageId", pageId);
 			query.setParameter("currentDate", Utils.getCurrentDate());
+			query.setMaxResults(1);
 			eventList = (List<Object[]>) query.list();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1326,12 +2213,13 @@ public class EventsDAO implements IEventsDAO{
 	@Override
 	public Object[] getRecentEventDetails(int pageId) {
 		List<Object[]> eventList = null;
-		String hqlQuery = "select b.event_date_local,b.event_time_local,b.latitude,b.longitude,b.zip from Page a, Events b where a.pageId = :pageId and a.pageId = b.page.pageId and b.event_date_time_local >= :currentDate order by b.event_date_time_local asc limit 1";
+		String hqlQuery = "select b.event_date_time_local,b.event_time_local,b.latitude,b.longitude,b.zip from Page a, Events b where a.pageId = :pageId and a.pageId = b.page.pageId and b.event_date_time_local >= :currentDate order by b.event_date_time_local asc";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
 			query.setParameter("pageId", pageId);
 			query.setParameter("currentDate", Utils.getCurrentDate());
+			query.setMaxResults(1);
 			eventList = (List<Object[]>) query.list();
 		} catch (Exception e) {
 			e.printStackTrace();

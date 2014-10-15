@@ -313,8 +313,8 @@ public class BusinessDAO implements IBusinessDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Business> getBusinessBySearchKeyword(String searchText,String category, String location,int offset, int limit, double lat, double lon, int distance, double rating) {
-		logger.debug("getBusinessBySearchKeyword ==> "+searchText);
+	public List<Business> getBusinessBySearchKeyword(String searchText,String category, String location,int offset, int limit, double lat, double lon, int distance, double rating, boolean forExactMatch) {
+		logger.debug("getBusinessBySearchKeyword ==> "+searchText + " forExactMatch: " + forExactMatch);
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Business.class, "business").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
 		criteria.createAlias("business.businesstype", "businessTypes");
@@ -323,11 +323,23 @@ public class BusinessDAO implements IBusinessDAO {
 
 		if(searchText != null && !searchText.trim().equals(""))
 		{
-			criteria.add(Restrictions.disjunction().add(Restrictions.eq("business.businessId", searchText))
-					.add(Restrictions.eq("business.websiteUrl", searchText))
-					.add(Restrictions.eq("business.city", searchText))
-					.add(Restrictions.eq("business.displayAddress", searchText))
-					.add(Restrictions.eq("business.name", searchText)));
+			if(forExactMatch)
+			{
+				criteria.add(Restrictions.disjunction().add(Restrictions.eq("business.businessId", searchText))
+						.add(Restrictions.eq("business.websiteUrl", searchText))
+						.add(Restrictions.eq("business.city", searchText))
+						.add(Restrictions.eq("business.displayAddress", searchText))
+						.add(Restrictions.eq("business.name", searchText)));
+			}
+			else
+			{
+				criteria.add(Restrictions.disjunction().add(Restrictions.like("business.businessId", "%" + searchText + "%"))
+						.add(Restrictions.like("business.websiteUrl", "%" + searchText + "%"))
+						.add(Restrictions.like("business.city", "%" + searchText + "%"))
+						.add(Restrictions.like("business.displayAddress", "%" + searchText + "%"))
+						.add(Restrictions.like("business.name", "%" + searchText + "%"))).add(Restrictions.conjunction().add(Restrictions.ne("business.name", searchText)));
+			}
+			
 		}
 
 		if(category != null && !category.trim().equals(""))
@@ -488,7 +500,7 @@ public class BusinessDAO implements IBusinessDAO {
 		}
 
 		criteria.add(Restrictions.disjunction().add(Restrictions.isNull("usernondealsuggestion.suggestedTime"))
-				.add(Restrictions.ge("usernondealsuggestion.suggestedTime", Utils.getCurrentDate())));
+				.add(Restrictions.ge("usernondealsuggestion.suggestedTime", Utils.getCurrentDateForEvent())));
 		//criteria.add(Restrictions.eq("usernondealsuggestion.suggestedTime", Utils.getNearestWeekend(null)));
 
 		if(suggestionType != null)
@@ -504,22 +516,22 @@ public class BusinessDAO implements IBusinessDAO {
 			{
 				criteria.add(Restrictions.like("usernondealsuggestion.suggestionType", "%Community%"));
 			}
-			else
+			else if(suggestionType.equalsIgnoreCase("Jeeyoh Suggestion"))
 			{
 				criteria.add(Restrictions.disjunction().add(Restrictions.like("usernondealsuggestion.suggestionType", "%User%"))
 						.add(Restrictions.like("usernondealsuggestion.suggestionType", "%Friend%"))
-						.add(Restrictions.eq("usernondealsuggestion.suggestionType", "Group")));
+						.add(Restrictions.like("usernondealsuggestion.suggestionType", "%Group%")));
 			}
 		}
 		
-		/*if(rating != 0)
+		if(rating != 0)
 			criteria.add(Restrictions.ge("rating", rating));
 
 		if(lat != 0 && lon != 0)
 		{
-			String sql =  "(((acos(sin(((" + lat + ")*pi()/180)) * sin((lattitude*pi()/180))+cos(((" + lat + ")*pi()/180)) * cos((lattitude*pi()/180)) * cos((((" + lon + ")- longitude)*pi()/180))))*180/pi())*60*1.1515)<="+distance;     
+			String sql =  "(((acos(sin(((" + lat + ")*pi()/180)) * sin((this_.lattitude*pi()/180))+cos(((" + lat + ")*pi()/180)) * cos((this_.lattitude*pi()/180)) * cos((((" + lon + ")- this_.longitude)*pi()/180))))*180/pi())*60*1.1515)<="+distance;     
 			criteria.add(Restrictions.sqlRestriction(sql)); 
-		}*/
+		}
 
 		criteria.setFirstResult(offset*10)
 		.setMaxResults(limit);

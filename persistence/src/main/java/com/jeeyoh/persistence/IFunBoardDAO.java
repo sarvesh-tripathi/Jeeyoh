@@ -1,6 +1,7 @@
 package com.jeeyoh.persistence;
 
 import java.sql.Time;
+import java.util.Date;
 import java.util.List;
 
 import com.jeeyoh.persistence.domain.Funboard;
@@ -21,7 +22,7 @@ public interface IFunBoardDAO {
 	public void deleteFunBoardMediaContent(int funBoardId);
 	public void deleteFunBoardComments(int funBoardId);
 	public Timeline getTimeLine(Time funboardCreationTime);
-	public Funboard isFunBoardExists(int userId, int itemId);
+	public Funboard isFunBoardExists(int userId, int itemId, Date scheduledDate);
 	public List<Funboard> getUserFunBoardItemsByCurrentsDate(int userId);
 	public Funboard getFunboardById(int funBoardId);
 	public int getFunboardComment(Integer funBoardId, Integer userId);

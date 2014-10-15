@@ -1,10 +1,12 @@
 package com.jeeyoh.persistence;
 
 import java.sql.Time;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
@@ -76,19 +78,18 @@ public class FunBoardDAO implements IFunBoardDAO{
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Funboard> getUserFunBoardItems(int userId) {
-		logger.debug("getUserFunBoardItems:  "+Utils.getNearestWeekend(null));
-		int day = Utils.getCurrentDay();
 		List<Funboard>  funBoardList = null;
-	    String hqlQuery = "from Funboard where user.userId =:userId  and (scheduledTime >= :prevousMonday and scheduledTime <= :weekendDate) order by scheduledTime asc,timeLineId asc";
+	    String hqlQuery = "select * from funboard where userId =:userId  and (scheduledTime >= :prevousMonday and scheduledTime <= :weekendDate) order by CAST(scheduledTime as DATE) asc,timeLineId asc,startTime asc";
 	    /*if(day == 1 || day == 2)
 	    	hqlQuery = hqlQuery + " and (scheduledTime >= :prevousMonday and scheduledTime <= :weekendDate) order by scheduledTime asc,timeLineId asc";
 	    else
 	    	hqlQuery = hqlQuery + "and (scheduledTime >= :prevousMonday and scheduledTime <= :weekendDate) order by scheduledTime asc,timeLineId asc";*/
 	    try{
-	    	Query query = sessionFactory.getCurrentSession().createQuery(hqlQuery);
+	    	SQLQuery query = sessionFactory.getCurrentSession().createSQLQuery(hqlQuery);
 	    	query.setParameter("userId",userId);
-	    	query.setParameter("prevousMonday", Utils.getCurrentWeekMonday());
-	    	query.setParameter("weekendDate", Utils.getNearestWeekend(null));
+	    	query.setParameter("prevousMonday", Utils.getCurrentWeekMonday(null,true));
+	    	query.setParameter("weekendDate", Utils.getNearestWeekendForFunboard());
+	    	query.addEntity(Funboard.class);
 	    	funBoardList = query.list();
 	    }
 	    catch(HibernateException e)
@@ -209,14 +210,17 @@ public class FunBoardDAO implements IFunBoardDAO{
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Funboard isFunBoardExists(int userId, int itemId) {
+	public Funboard isFunBoardExists(int userId, int itemId, Date scheduledDate) {
 		List<Funboard>  funBoardList = null;
-	    String hqlQuery = "from Funboard where user.userId =:userId and itemId = :itemId";
+		logger.debug("Monday::  "+Utils.getCurrentWeekMonday(scheduledDate,false) + " : "+ Utils.getWeekendForParticularDate(scheduledDate));
+	    String hqlQuery = "from Funboard where user.userId =:userId and itemId = :itemId and (scheduledTime >= :prevousMonday and scheduledTime <= :weekendDate)";
 	    
 	    try{
 	    	Query query = sessionFactory.getCurrentSession().createQuery(hqlQuery);
 	    	query.setParameter("userId",userId);
 	    	query.setParameter("itemId",itemId);
+	    	query.setParameter("prevousMonday", Utils.getCurrentWeekMonday(scheduledDate,false));
+	    	query.setParameter("weekendDate", Utils.getWeekendForParticularDate(scheduledDate));
 	    	funBoardList = query.list();
 	    	logger.debug("funBoardList:  "+funBoardList);
 	    }
@@ -333,7 +337,7 @@ public class FunBoardDAO implements IFunBoardDAO{
 	    try{
 	    	Query query = sessionFactory.getCurrentSession().createQuery(hqlQuery);
 	    	query.setParameter("userId",userId);
-	    	query.setParameter("currentDate", Utils.getCurrentDate());
+	    	query.setParameter("currentDate", Utils.getCurrentWeekMonday(null,false));
 	    	query.setParameter("weekendDate", Utils.getNearestWeekend(null));
 	    	query.setParameter("category", category);
 	    	funBoardList = query.list();

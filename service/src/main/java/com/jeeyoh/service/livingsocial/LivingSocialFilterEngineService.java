@@ -1,5 +1,6 @@
 package com.jeeyoh.service.livingsocial;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -48,132 +49,167 @@ public class LivingSocialFilterEngineService implements ILivingSocialFilterEngin
 
 		List<Ldeal> rows = livingSocialDAO.getLDeals();
 		List<LdealOption> ldealOptions = null;
+		//boolean isSingleParent = false;
 
 		if(rows != null)
 		{
+			List<Deals> dealList = new ArrayList<Deals>();
 			int batch_size = 0;
 			//List<Date>weekendList =  Utils.findWeekends();
 			//logger.debug("loadDeals => weekendList size " + weekendList.size());
 			for(Ldeal ldeal : rows)
 			{
+				//StringBuilder categoryStr = new StringBuilder();
 				//for(int j = 0; j < weekendList.size(); j++){
 				try {
-					//logger.debug("Date::  "+ ldeal.getEndAt() +"  :  "+ sdf.parse(sdf.format((Date)weekendList.get(j))));
-					//if(ldeal.getEndAt().before(weekendList.get(j))){
-					int deal = dealsDAO.isDealExists(ldeal.getDealId());
-					logger.debug("after query::::  "+deal);
-					if(deal == 0)
+					Set<LdealCategory> ldealCategories = ldeal.getLdealCategory();
+					String category = isSingCategoryParentFound(ldealCategories);
+					
+					if(category != null)
 					{
-						batch_size++;
-						Deals deals =new Deals();
-						deals.setDealId(ldeal.getDealId());
-						deals.setDealUrl(ldeal.getDealUrl());
-						deals.setEndAt(ldeal.getEndAt());
-						deals.setStartAt(ldeal.getStartAt());
-						deals.setIsSoldOut(ldeal.getIsSoldOut());
-						deals.setDealType(ldeal.getDealType());
-						deals.setLargeImageUrl(ldeal.getLargeImageUrl());
-						deals.setSmallImageUrl(ldeal.getSmallImageUrl());
-						deals.setMediumImageUrl(ldeal.getMediumImageUrl());
-						deals.setTitle(ldeal.getLongTitle());
-						deals.setDealSource("Living Social");
-
-						List<Business> businessList = businessDAO.getBusinessByIdForGroupon(ldeal.getMerchantName());
-						logger.debug("loadDeals => businessList " + businessList);
-						if(businessList != null)
+						int deal = dealsDAO.isDealExists(ldeal.getDealId());
+						logger.debug("after query::::  "+deal);
+						if(deal == 0)
 						{
-							if(businessList.isEmpty())
+							ldealOptions = livingSocialDAO.getDealOptions(ldeal.getId());
+
+							if(ldealOptions!=null && !ldealOptions.isEmpty())
 							{
-								Set<LdealCategory> ldealCategories = ldeal.getLdealCategory();
-								Businesstype businesstype = null;
-								for(LdealCategory ldealCategory : ldealCategories)
+								Deals deals =new Deals();
+								deals.setDealId(ldeal.getDealId());
+								deals.setDealUrl(ldeal.getDealUrl());
+								deals.setEndAt(ldeal.getEndAt());
+								deals.setStartAt(ldeal.getStartAt());
+								deals.setIsSoldOut(ldeal.getIsSoldOut());
+								deals.setDealType(ldeal.getDealType());
+								deals.setLargeImageUrl(ldeal.getLargeImageUrl());
+								deals.setSmallImageUrl(ldeal.getSmallImageUrl());
+								deals.setMediumImageUrl(ldeal.getMediumImageUrl());
+								deals.setTitle(ldeal.getLongTitle());
+								deals.setDealSource("Living Social");
+
+								List<Business> businessList = businessDAO.getBusinessByIdForGroupon(ldeal.getMerchantName());
+								logger.debug("loadDeals => businessList " + businessList);
+								if(businessList != null)
 								{
-									String name = ldealCategory.getCategoryName();
-									Lcategory lCategory = businessDAO.getLivingSocialBusinessCategory(name) ;
-									logger.debug("After Query::  "+lCategory);
-									if(lCategory!=null)
+									if(businessList.isEmpty())
 									{
-										String category = lCategory.getLcategory().getCategory();
+										//Set<LdealCategory> ldealCategories = ldeal.getLdealCategory();
+										Businesstype businesstype = null;
+										/*for(LdealCategory ldealCategory : ldealCategories)
+											{
+												//String name = ldealCategory.getCategoryName();
+												categoryStr.append(ldealCategory.getCategoryName()+",");
+												//Lcategory lCategory = businessDAO.getLivingSocialBusinessCategory(name) ;
+												logger.debug("After Query::  "+lCategory);
+												if(lCategory!=null)
+												{
+													String category = lCategory.getLcategory().getCategory();
+													if(category.equalsIgnoreCase("Fitness/Active"))
+													{
+														businesstype = businessDAO.getBusinesstypeByType("SPORT");
+														break;
+													}
+													else if(category.equalsIgnoreCase("Full-Service Restaurant"))
+													{
+														businesstype = businessDAO.getBusinesstypeByType("RESTAURANT");
+														break;
+													}
+													else if(category.equalsIgnoreCase("Beauty/Health"))
+													{
+														businesstype = businessDAO.getBusinesstypeByType("SPA");
+														break;
+													}
+													else if(category.equalsIgnoreCase("Nightlife"))
+													{
+														businesstype = businessDAO.getBusinesstypeByType("NIGHTLIFE");
+														break;
+													}
+													else if(category.equalsIgnoreCase("Fitness/Active") || category.equalsIgnoreCase("Health & Beauty"))
+													{
+														businesstype = businessDAO.getBusinesstypeByType("SPA");
+														break;
+													}
+												}
+											}
+										 */
+										
 										if(category.equalsIgnoreCase("Fitness/Active"))
 										{
 											businesstype = businessDAO.getBusinesstypeByType("SPORT");
-											break;
 										}
 										else if(category.equalsIgnoreCase("Full-Service Restaurant"))
 										{
 											businesstype = businessDAO.getBusinesstypeByType("RESTAURANT");
-											break;
 										}
 										else if(category.equalsIgnoreCase("Beauty/Health"))
 										{
 											businesstype = businessDAO.getBusinesstypeByType("SPA");
-											break;
 										}
 										else if(category.equalsIgnoreCase("Nightlife"))
 										{
 											businesstype = businessDAO.getBusinesstypeByType("NIGHTLIFE");
-											break;
 										}
 										else if(category.equalsIgnoreCase("Fitness/Active") || category.equalsIgnoreCase("Health & Beauty"))
 										{
 											businesstype = businessDAO.getBusinesstypeByType("SPA");
-											break;
 										}
+
+
+										Business business = new Business();
+										LCities lCity = lCitiesDAO.getCityByName(ldeal.getCityName());
+										logger.debug("After query::::  "+lCity);
+										if(lCity!=null)
+										{
+											business.setLattitude(lCity.getLatitude());
+											business.setLongitude(lCity.getLongitude());
+											business.setPostalCode(lCity.getZipcode());
+											business.setCity(lCity.getCityName());
+											business.setDisplayAddress(lCity.getAddress());
+											business.setAddress(lCity.getAddress());
+											business.setState(lCity.getState());
+											business.setStateCode(lCity.getStateCode());
+										}
+										business.setName(ldeal.getMerchantName());
+										business.setBusinesstype(businesstype);
+										business.setRating(0.0);
+										business.setSource("Living Social");
+
+										deals.setBusiness(business);
+									}
+									else
+									{
+										deals.setBusiness(businessList.get(0));
 									}
 								}
 
-								Business business = new Business();
-								LCities lCity = lCitiesDAO.getCityByName(ldeal.getCityName());
-								logger.debug("After query::::  "+lCity);
-								if(lCity!=null)
+								Set<Dealoption> dealOptions = new HashSet<Dealoption>();
+								Dealoption dealOption = null;
+								for(LdealOption option : ldealOptions)
 								{
-									business.setLattitude(lCity.getLatitude());
-									business.setLongitude(lCity.getLongitude());
-									business.setPostalCode(lCity.getZipcode());
-									business.setCity(lCity.getCityName());
-									business.setDisplayAddress(lCity.getAddress());
-									business.setAddress(lCity.getAddress());
-									business.setState(lCity.getState());
-									business.setStateCode(lCity.getStateCode());
+									dealOption = new Dealoption();
+									dealOption.setDescription(option.getDescription());
+									dealOption.setPrice(option.getPrice());
+									dealOption.setOriginalPrice(option.getOriginalPrice());
+									dealOption.setDiscountPrice(option.getSavings());
+									dealOption.setDiscountPercent(option.getDiscount());
+									dealOption.setDeals(deals);
+									dealOptions.add(dealOption);
 								}
-								business.setName(ldeal.getMerchantName());
-								business.setBusinesstype(businesstype);
-								business.setRating(0.0);
-								business.setSource("Living Social");
+								deals.setDealoptions(dealOptions);
+								logger.debug("loadDeals => count "+batch_size);
+								batch_size++;
+								dealsDAO.saveDeal(deals,batch_size);
+								dealList.add(deals);
+							}
 
-								deals.setBusiness(business);
-							}
-							else
-							{
-								deals.setBusiness(businessList.get(0));
-							}
+							//}
+							//break;
 						}
-
-						ldealOptions = livingSocialDAO.getDealOptions(ldeal.getId());
-
-						if(ldealOptions!=null && !ldealOptions.isEmpty())
-						{
-							Set<Dealoption> dealOptions = new HashSet<Dealoption>();
-							Dealoption dealOption = null;
-							for(LdealOption option : ldealOptions)
-							{
-								dealOption = new Dealoption();
-								dealOption.setDescription(option.getDescription());
-								dealOption.setPrice(option.getPrice());
-								dealOption.setOriginalPrice(option.getOriginalPrice());
-								dealOption.setDiscountPrice(option.getSavings());
-								dealOption.setDiscountPercent(option.getDiscount());
-								dealOption.setDeals(deals);
-								dealOptions.add(dealOption);
-							}
-							deals.setDealoptions(dealOptions);
-							logger.debug("loadDeals => count "+batch_size);
-							//dealsDAO.saveDeal(deals,batch_size);
-						}
-
-						//}
-						//break;
 					}
+					//logger.debug("Date::  "+ ldeal.getEndAt() +"  :  "+ sdf.parse(sdf.format((Date)weekendList.get(j))));
+					//if(ldeal.getEndAt().before(weekendList.get(j))){
+
 				}
 				catch(Exception e){
 					e.printStackTrace();
@@ -181,6 +217,7 @@ public class LivingSocialFilterEngineService implements ILivingSocialFilterEngin
 				//}
 
 			}
+			//dealsDAO.saveDeal(dealList, batch_size);
 		}
 
 		/*List<LdealOption> rows = livingSocialDAO.getDeals();
@@ -357,5 +394,32 @@ public class LivingSocialFilterEngineService implements ILivingSocialFilterEngin
 				}
 			}
 		}	*/
+	}
+
+	/**
+	 * This tells whether a deal belongs to a single category or not
+	 * @param ldealCategories
+	 * @return
+	 */
+	private String isSingCategoryParentFound(Set<LdealCategory> ldealCategories)
+	{
+		String category = null;
+		StringBuilder categoryStr = new StringBuilder();
+		for(LdealCategory ldealCategory : ldealCategories)
+		{
+			categoryStr.append("'"+ldealCategory.getCategoryName()+"',");
+		}
+		if(!categoryStr.equals("") && categoryStr.length() > 0)
+			categoryStr.deleteCharAt(categoryStr.length() - 1);
+
+		List<Lcategory> lcategories = livingSocialDAO.getCategoryParent(categoryStr.toString());
+		if(lcategories != null)
+		{
+			if(lcategories.size() == 1)
+			{
+				category = lcategories.get(0).getLcategory().getCategory();
+			}
+		}
+		return category;
 	}
 }

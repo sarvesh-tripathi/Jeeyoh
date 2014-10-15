@@ -14,17 +14,18 @@ import com.jeeyoh.persistence.domain.PopularCommunity;
 public interface IEventsDAO {
 	
 	public void saveEvents(Events events, int batch_size);
+	public void saveEvents(List<Events> events, int batch_size);
 	public List<Events> getEventsByCriteria(String userEmail, String searchText,
 			String category, String location);
 	public List<Page> getCommunities();
 	public List<Events> getEventsByCommunityId(int pageId);
 	public List<Events> getEventsByCommunityType(int pageId, int pageType);
 	public List<Events> getEventsByLikeSearchKeyword(String searchText,String category, String location, int offset, int limit, double lat, double lon, int distance, double rating);
-	public List<Events> getEventsBySearchKeyword(String searchText,String category, String location, int offset, int limit, double lat, double lon, int distance, double rating);
+	public List<Events> getEventsBySearchKeyword(String searchText,String category, String location, int offset, int limit, double lat, double lon, int distance, double rating, boolean forExactMatch);
 	public List<Page> getCommunityByLikeSearchKeywordForBusiness(String searchText,String category, String location, int offset, int limit, double lat, double lon, int distance, double rating);
 	public List<Page> getCommunityByLikeSearchKeywordForEvents(String searchText,String category, String location, int offset, int limit, double lat, double lon, int distance, double rating);
-	public List<Page> getCommunityBySearchKeywordForBusiness(String searchText,String category, String location, int offset, int limit, double lat, double lon, int distance, double rating);
-	public List<Page> getCommunityBySearchKeywordForEvents(String searchText,String category, String location, int offset, int limit, double lat, double lon, int distance, double rating);
+	public List<Page> getCommunityBySearchKeywordForBusiness(String searchText,String category, String location, int offset, int limit, double lat, double lon, int distance, double rating, boolean forExactMatch);
+	public List<Page> getCommunityBySearchKeywordForEvents(String searchText,String category, String location, int offset, int limit, double lat, double lon, int distance, double rating, boolean forExactMatch);
 	public List<Page> getCommunityPageByCategoryType(String category, int userId);
 	public List<Page> getUserFavourites(Integer userId);
 	public Page getCommunityById(int pageId);

@@ -133,7 +133,7 @@ public class CommunitySearchService implements ICommunitySearchService{
 			currentEventModel.setCity(event.getCity());
 			currentEventModel.setCurrency_code(event.getCurrency_code());
 			currentEventModel.setDescription(event.getDescription());
-			currentEventModel.setEvent_date(event.getEvent_date_local().toString());
+			currentEventModel.setEvent_date(event.getEvent_date_time_local().toString());
 			currentEventModel.setGenreUrlPath(event.getGenreUrlPath());
 			currentEventModel.setGeography_parent(event.getGeography_parent());
 			if(event.getLatitude() != null)
@@ -175,7 +175,7 @@ public class CommunitySearchService implements ICommunitySearchService{
 			upcomingEventModel.setCity(event.getCity());
 			upcomingEventModel.setCurrency_code(event.getCurrency_code());
 			upcomingEventModel.setDescription(event.getDescription());
-			upcomingEventModel.setEvent_date(event.getEvent_date_local().toString());
+			upcomingEventModel.setEvent_date(event.getEvent_date_time_local().toString());
 			upcomingEventModel.setGenreUrlPath(event.getGenreUrlPath());
 			upcomingEventModel.setGeography_parent(event.getGeography_parent());
 			if(event.getLatitude() != null)
@@ -217,7 +217,7 @@ public class CommunitySearchService implements ICommunitySearchService{
 			pastEventModel.setCity(event.getCity());
 			pastEventModel.setCurrency_code(event.getCurrency_code());
 			pastEventModel.setDescription(event.getDescription());
-			pastEventModel.setEvent_date(event.getEvent_date_local().toString());
+			pastEventModel.setEvent_date(event.getEvent_date_time_local().toString());
 			pastEventModel.setGenreUrlPath(event.getGenreUrlPath());
 			pastEventModel.setGeography_parent(event.getGeography_parent());
 			if(event.getLatitude() != null)
@@ -335,7 +335,7 @@ public class CommunitySearchService implements ICommunitySearchService{
 			eventModel.setCity(event.getCity());
 			eventModel.setCurrency_code(event.getCurrency_code());
 			eventModel.setDescription(event.getDescription());
-			eventModel.setEvent_date(event.getEvent_date_local().toString());
+			eventModel.setEvent_date(event.getEvent_date_time_local().toString());
 			eventModel.setGenreUrlPath(event.getGenreUrlPath());
 			eventModel.setGeography_parent(event.getGeography_parent());
 			if(event.getLatitude() != null)
@@ -518,7 +518,7 @@ public class CommunitySearchService implements ICommunitySearchService{
 			eventUserLikes.setIsFollowing(isFollow);
 			eventUserLikes.setIsBooked(false);
 			eventUserLikes.setIsFavorite(false);
-			eventUserLikes.setIsLike(false);
+			eventUserLikes.setIsLike(true);
 			eventUserLikes.setIsVisited(false);
 			eventUserLikes.setIsProfileDetailsHidden(false);
 			eventUserLikes.setIsProfileHidden(false);

@@ -20,6 +20,7 @@ import com.jeeyoh.persistence.domain.Dealoption;
 import com.jeeyoh.persistence.domain.Dealredemptionlocation;
 import com.jeeyoh.persistence.domain.Deals;
 import com.jeeyoh.persistence.domain.Dealsusage;
+import com.jeeyoh.persistence.domain.Events;
 import com.jeeyoh.persistence.domain.Userdealssuggestion;
 import com.jeeyoh.utils.Utils;
 
@@ -89,6 +90,40 @@ public class DealsDAO implements IDealsDAO {
 				session.clear();
 			}
 
+			tx.commit();
+		}
+		catch (HibernateException e) {
+			if (tx!=null) tx.rollback();
+			e.printStackTrace(); 
+			logger.error("EXCEPTION IN saveDeal==>  "+e);
+		}
+		finally
+		{
+			session.close();
+		}
+	}
+	
+	
+	@Override
+	public void saveDeal(List<Deals> dealList, int batch_size) 
+	{
+		logger.debug("saveDeal ==>");
+		int batch_size1 = 0;
+		Session session = sessionFactory.openSession();
+		Transaction tx = null;
+		try
+		{
+			tx = session.beginTransaction();
+			for(Deals deals : dealList)
+			{
+				batch_size1++;
+				session.saveOrUpdate(deals);	
+
+				if( batch_size1 % 20 == 0 ) {
+					session.flush();
+					session.clear();
+				}
+			}
 			tx.commit();
 		}
 		catch (HibernateException e) {
@@ -271,7 +306,7 @@ public class DealsDAO implements IDealsDAO {
 	public List<Deals> getDealsByBusinessId(Integer id) {
 		// TODO Auto-generated method stub
 		List<Deals> dealsList = null;
-		String hqlQuery = "from Deals a where a.business.id = :id and a.endAt >= :currentDate";
+		String hqlQuery = "from Deals a where a.business.id = :id and a.endAt >= :currentDate group by a.title";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
@@ -315,12 +350,13 @@ public class DealsDAO implements IDealsDAO {
 
 		List<Deals> dealsList = criteria.list();*/
 		List<Deals> dealsList = null;
-		String hqlQuery = "select a from Deals a, Business b, Businesstype c where c.businessType = :category and a.endAt >= :currentDate and a.business.id = b.id and b.businesstype.businessTypeId = c.businessTypeId and (a.title like '%"+ itemType + "%' or a.dealUrl like '%" + itemType + "%' or a.dealId like '%" + itemType + "%') and (((acos(sin(((:latitude)*pi()/180)) * sin((b.lattitude*pi()/180))+cos(((:latitude)*pi()/180)) * cos((b.lattitude*pi()/180)) * cos((((:longitude)- b.longitude)*pi()/180))))*180/pi())*60*1.1515) <=50 group by a.dealId";
+		String hqlQuery = "select a from Deals a, Business b, Businesstype c where c.businessType = :category and (a.endAt >= :currentDate and a.endAt > :weekendDate) and a.business.id = b.id and b.businesstype.businessTypeId = c.businessTypeId and (a.title like '%"+ itemType + "%' or a.dealUrl like '%" + itemType + "%' or a.dealId like '%" + itemType + "%') and (((acos(sin(((:latitude)*pi()/180)) * sin((b.lattitude*pi()/180))+cos(((:latitude)*pi()/180)) * cos((b.lattitude*pi()/180)) * cos((((:longitude)- b.longitude)*pi()/180))))*180/pi())*60*1.1515) <=50 group by a.title";
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
 			query.setParameter("category", itemCategory);
 			query.setParameter("currentDate", Utils.getCurrentDate());
+			query.setParameter("weekendDate", Utils.getNearestThursday());
 			query.setDouble("latitude", latitude);
 			query.setDouble("longitude", longitude);
 			dealsList = (List<Deals>) query.list();
@@ -406,26 +442,92 @@ public class DealsDAO implements IDealsDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Deals> getDealsByLikeSearchKeyword(String searchText,String category, String location, int offset, int limit) {
+	public List<Deals> getDealsByLikeSearchKeyword(String searchText,String category, String location, int offset, int limit, double lat, double lon, int distance, double rating, int minPrice, int maxPrice) {
 		logger.error("getDealsByLikeSearchKeyword ==== > "+searchText);
 
+		List<Deals> dealsList = null;
+		String hqlQuery = "";
+		String fromStr = "";
+		String whereStr = "";
 
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Deals.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-		criteria.createAlias("business", "business");
-		criteria.createAlias("business.businesstype", "businesstype");
+		fromStr = "select a from Deals a inner join a.business b inner join b.businesstype c ";
+
+		whereStr = "where c.businessType=:category";
+
+		if(location != null && !location.trim().equals(""))
+		{
+			whereStr = whereStr + " and (b.postalCode = :location or b.city like '%" +location+ "%' or b.state like '%" +location+ "%' or b.stateCode like '%" +location+ "%' or b.displayAddress like '%" +location+ "%' or b.businessId like '%" +location+ "%')";
+		}
+
+		if(searchText != null && !searchText.trim().equals(""))
+		{
+			//hqlQuery = hqlQuery + " and (a.description like '%" + likekeyword  +"%' or a.title like '%" + likekeyword  +"%' or a.ancestorGenreDescriptions like '%" + likekeyword  +"%' or a.urlpath like '%" + likekeyword  +"%')
+			hqlQuery = hqlQuery + " and ((a.title like '%" +searchText+ "%' or a.dealUrl like '%" +searchText+ "%' or a.dealId like '%" +searchText+ "%') and (a.title != :searchText or a.dealUrl != :searchText or a.dealId != :searchText))";
+
+		}
+		whereStr += " and (a.endAt >= :currentDate and a.endAt > :weekendDate)";
+
+		if(rating != 0)
+			whereStr = whereStr + " and b.rating >= :rating";
+
+		if(lat != 0 && lon != 0)
+		{
+			whereStr = whereStr + " and (((acos(sin(((:latitude)*pi()/180)) * sin((b.lattitude*pi()/180))+cos(((:latitude)*pi()/180)) * cos((b.lattitude*pi()/180)) * cos((((:longitude)- b.longitude)*pi()/180))))*180/pi())*60*1.1515) <=:distance";
+		}
+
+		if(minPrice != 0 && maxPrice != 0)
+		{
+			fromStr += " inner join a.dealoptions d ";
+			whereStr += " and (d.originalPrice >= :minPrice and d.originalPrice <= :maxPrice) group by a.id";
+		}
+
+		try {
+			hqlQuery = fromStr + whereStr;
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("category", category);
+			query.setParameter("currentDate", Utils.getCurrentDate());
+			query.setParameter("weekendDate", Utils.getNearestThursday());
+			if(searchText != null && !searchText.trim().equals(""))
+				query.setParameter("searchText", searchText);
+			if(location != null && !location.trim().equals(""))
+				query.setParameter("location", location);
+			if(lat != 0 && lon != 0)
+			{
+				query.setDouble("latitude", lat);
+				query.setDouble("longitude", lon);
+				query.setInteger("distance",distance);
+			}
+			if(rating != 0)
+				query.setDouble("rating", rating);
+
+			query.setFirstResult(offset);
+			query.setMaxResults(limit);
+			logger.debug("Query::  "+query);
+
+			dealsList = query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.debug(e.getMessage());
+		}
+		/*Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Deals.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		//criteria.createAlias("business", "business");
+		//criteria.createAlias("business.businesstype", "businesstype");
+		Criteria addr = criteria.createCriteria("business"); 
+		addr.createAlias("businesstype", "businesstype");
 
 		if(category != null && category.isEmpty() == false)
 		{
-			criteria.add(Restrictions.eq("businesstype.businessType", category));
+			addr.add(Restrictions.eq("businesstype.businessType", category));
 		}
 		if(location != null && location.isEmpty()== false)
 		{
-			criteria.add(Restrictions.disjunction().add(Restrictions.like("business.displayAddress", "%" + location + "%"))
-					.add(Restrictions.like("business.businessId", "%" + location + "%"))
-					.add(Restrictions.eq("business.postalCode", location))
-					.add(Restrictions.like("business.city", "%" + location + "%"))
-					.add(Restrictions.like("business.state", "%" + location + "%"))
-					.add(Restrictions.like("business.stateCode", "%" + location + "%")));
+			addr.add(Restrictions.disjunction().add(Restrictions.like("city", "%" + location + "%"))
+					.add(Restrictions.like("state", "%" + location + "%"))
+					.add(Restrictions.like("stateCode", "%" + location + "%"))
+					.add(Restrictions.like("displayAddress", "%" + location + "%"))
+					.add(Restrictions.like("businessId", "%" + location + "%"))
+					.add(Restrictions.eq("postalCode", location)));
 		}
 
 		if(searchText != null && searchText.isEmpty() == false)
@@ -441,55 +543,178 @@ public class DealsDAO implements IDealsDAO {
 
 		criteria.add(Restrictions.conjunction().add(Restrictions.ge("endAt", Utils.getCurrentDate()))
 				.add(Restrictions.gt("endAt", Utils.getNearestThursday())));
-		//criteria.add(Restrictions.ge("endAt", Utils.getCurrentDate()));
+
+		if(rating != 0)
+			addr.add(Restrictions.ge("rating", rating));
+
+		if(minPrice != 0 && maxPrice != 0)
+		{
+			criteria.createAlias("dealoptions", "dealoptions");
+			criteria.add(Restrictions.conjunction().add(Restrictions.ge("dealoptions.originalPrice", Long.parseLong(Integer.toString(minPrice))))
+					.add(Restrictions.le("dealoptions.originalPrice", Long.parseLong(Integer.toString(maxPrice)))));
+		}
+
+		if(lat != 0 && lon != 0)
+		{
+			String sql =  "(((acos(sin(((" + lat + ")*pi()/180)) * sin(({alias}.lattitude*pi()/180))+cos(((" + lat + ")*pi()/180)) * cos(({alias}.lattitude*pi()/180)) * cos((((" + lon + ")- {alias}.longitude)*pi()/180))))*180/pi())*60*1.1515)<="+distance;     
+			addr.add(Restrictions.sqlRestriction(sql)); 
+		}
 
 		criteria.setFirstResult(offset)
 		.setMaxResults(limit);
-		List<Deals> dealsList = criteria.list();
+		List<Deals> dealsList = criteria.list();*/
 		return dealsList;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Deals> getDealsBySearchKeyword(String searchText,String category, String location, int offset, int limit) {
-		logger.error("getDealsByLikeSearchKeyword ==== > "+searchText);
+	public List<Deals> getDealsBySearchKeyword(String searchText,String category, String location, int offset, int limit, double lat, double lon, int distance, double rating, int minPrice, int maxPrice, boolean forExactMatch){
+		/*
+		 * select distinct this_.id from jeeyoh.deals this_ inner join jeeyoh.business business1_ on this_.businessId=business1_.id inner join jeeyoh.businesstype businessty2_ on business1_.businessTypeId=businessty2_.businessTypeId inner join jeeyoh.dealoption dealoption3_ on this_.id=dealoption3_.dealId where businessty2_.businessType="Sport" and (this_.endAt>=now() and this_.endAt>"2014-07-17 23:59:59:59") and (dealoption3_.originalPrice>=50 and dealoption3_.originalPrice<=1000) and (((acos(sin(((42.3589)*pi()/180)) * sin((business1_.lattitude*pi()/180))+cos(((42.3589)*pi()/180)) * cos((business1_.lattitude*pi()/180)) * cos((((-71.0578)- business1_.longitude)*pi()/180))))*180/pi())*60*1.1515)<=2000 limit 8;
+		 */
+		logger.error("getDealsBySearchKeyword ==== > "+searchText + " forExactMatch: " + forExactMatch);
+		List<Deals> dealsList = null;
+		String hqlQuery = "";
+		String fromStr = "";
+		String whereStr = "";
+
+		fromStr = "select a from Deals a inner join a.business b inner join b.businesstype c ";
+
+		whereStr = "where c.businessType=:category";
+
+		if(location != null && !location.trim().equals(""))
+		{
+			whereStr = whereStr + " and (b.postalCode = :location or b.city like '%" +location+ "%' or b.state like '%" +location+ "%' or b.stateCode like '%" +location+ "%' or b.displayAddress like '%" +location+ "%' or b.businessId like '%" +location+ "%')";
+		}
+
+		if(searchText != null && !searchText.trim().equals(""))
+		{
+			//hqlQuery = hqlQuery + " and (a.description like '%" + likekeyword  +"%' or a.title like '%" + likekeyword  +"%' or a.ancestorGenreDescriptions like '%" + likekeyword  +"%' or a.urlpath like '%" + likekeyword  +"%')
+			if(forExactMatch)
+				whereStr = whereStr + " and (a.title = :searchText or a.dealUrl = :searchText or a.dealId = :searchText)";
+			else
+				whereStr = whereStr + " and ((a.title like '%" +searchText+ "%' or a.dealUrl like '%" +searchText+ "%' or a.dealId like '%" +searchText+ "%') and (a.title != :searchText or a.dealUrl != :searchText or a.dealId != :searchText))";
+		}
+
+		whereStr += " and (a.endAt >= :currentDate and a.endAt > :weekendDate)";
+
+		if(rating != 0)
+			whereStr = whereStr + " and b.rating >= :rating";
+
+		if(lat != 0 && lon != 0)
+		{
+			whereStr = whereStr + " and (((acos(sin(((:latitude)*pi()/180)) * sin((b.lattitude*pi()/180))+cos(((:latitude)*pi()/180)) * cos((b.lattitude*pi()/180)) * cos((((:longitude)- b.longitude)*pi()/180))))*180/pi())*60*1.1515) <=:distance";
+		}
+
+		if(minPrice != 0 && maxPrice != 0)
+		{
+			fromStr += " inner join a.dealoptions d ";
+			whereStr += " and (d.originalPrice >= :minPrice and d.originalPrice <= :maxPrice) group by a.title";
+		}
+		else
+			whereStr += " group by a.title";
+
+		try {
+			hqlQuery = fromStr + whereStr;
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("category", category);
+			query.setParameter("currentDate", Utils.getCurrentDate());
+			query.setParameter("weekendDate", Utils.getNearestThursday());
+			if(searchText != null && !searchText.trim().equals(""))
+				query.setParameter("searchText", searchText);
+			if(location != null && !location.trim().equals(""))
+				query.setParameter("location", location);
+			if(lat != 0 && lon != 0)
+			{
+				query.setDouble("latitude", lat);
+				query.setDouble("longitude", lon);
+				query.setInteger("distance",distance);
+			}
+			if(rating != 0)
+				query.setDouble("rating", rating);
+			if(minPrice != 0 && maxPrice != 0)
+			{
+				query.setDouble("minPrice", minPrice);
+				query.setDouble("maxPrice", maxPrice);
+			}
+
+			query.setFirstResult(offset);
+			query.setMaxResults(limit);
+			logger.debug("Query::  "+query);
+
+			dealsList = query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.debug(e.getMessage());
+		}
 
 
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Deals.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		/*Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Deals.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
-		criteria.createAlias("business", "business");
-		criteria.createAlias("business.businesstype", "businesstype");
+		//criteria.createAlias("business", "business");
+		//criteria.createAlias("business.businesstype", "businesstype");
+		Criteria addr = criteria.createCriteria("business"); 
+		addr.createAlias("businesstype", "businesstype");
 
 		if(category != null && category.isEmpty() == false)
 		{
-			criteria.add(Restrictions.eq("businesstype.businessType", category));
+			addr.add(Restrictions.eq("businesstype.businessType", category));
 		}
 		if(location != null && location.isEmpty()== false)
 		{
-			criteria.add(Restrictions.disjunction().add(Restrictions.like("business.displayAddress", "%" + location + "%"))
-					.add(Restrictions.like("business.businessId", "%" + location + "%"))
-					.add(Restrictions.eq("business.postalCode", location))
-					.add(Restrictions.like("business.city", "%" + location + "%"))
-					.add(Restrictions.like("business.state", "%" + location + "%"))
-					.add(Restrictions.like("business.stateCode", "%" + location + "%")));
+			addr.add(Restrictions.disjunction().add(Restrictions.like("city", "%" + location + "%"))
+					.add(Restrictions.like("state", "%" + location + "%"))
+					.add(Restrictions.like("stateCode", "%" + location + "%"))
+					.add(Restrictions.like("displayAddress", "%" + location + "%"))
+					.add(Restrictions.like("businessId", "%" + location + "%"))
+					.add(Restrictions.eq("postalCode", location)));
 		}
+
 
 		if(searchText != null && searchText.isEmpty() == false)
 		{
 			logger.debug("IN KEYWORD CHECKING ::: ");
-			criteria.add(Restrictions.disjunction().add(Restrictions.eq("title", searchText))
-					.add(Restrictions.eq("dealUrl", searchText))
-					.add(Restrictions.eq("dealId", searchText)));
+			if(forExactMatch)
+			{
+				criteria.add(Restrictions.disjunction().add(Restrictions.eq("title", searchText))
+						.add(Restrictions.eq("dealUrl", searchText))
+						.add(Restrictions.eq("dealId", searchText)));
+			}
+			else
+			{
+				criteria.add(Restrictions.disjunction().add(Restrictions.like("title", "%" + searchText + "%"))
+						.add(Restrictions.like("dealUrl", "%" + searchText + "%"))
+						.add(Restrictions.like("dealId", "%" + searchText + "%"))).add(Restrictions.conjunction().add(Restrictions.ne("title", searchText))
+								.add(Restrictions.ne("dealUrl", searchText))
+								.add(Restrictions.ne("dealId", searchText)));
+			}
+
 
 		}
 
 		criteria.add(Restrictions.conjunction().add(Restrictions.ge("endAt", Utils.getCurrentDate()))
 				.add(Restrictions.gt("endAt", Utils.getNearestThursday())));
-		//criteria.add(Restrictions.ge("endAt", Utils.getCurrentDate()));
+
+		if(rating != 0)
+			addr.add(Restrictions.ge("rating", rating));
+
+		if(minPrice != 0 && maxPrice != 0)
+		{
+			criteria.createAlias("dealoptions", "dealoptions");
+			criteria.add(Restrictions.conjunction().add(Restrictions.ge("dealoptions.originalPrice", Long.parseLong(Integer.toString(minPrice))))
+					.add(Restrictions.le("dealoptions.originalPrice", Long.parseLong(Integer.toString(maxPrice)))));
+		}
+
+		if(lat != 0 && lon != 0)
+		{
+			String sql =  "(((acos(sin(((" + lat + ")*pi()/180)) * sin(({alias}.lattitude*pi()/180))+cos(((" + lat + ")*pi()/180)) * cos(({alias}.lattitude*pi()/180)) * cos((((" + lon + ")- {alias}.longitude)*pi()/180))))*180/pi())*60*1.1515)<="+distance;     
+			addr.add(Restrictions.sqlRestriction(sql)); 
+		}
 
 		criteria.setFirstResult(offset)
 		.setMaxResults(limit);
-		List<Deals> dealsList = criteria.list();
+		List<Deals> dealsList = criteria.list();*/
 		return dealsList;
 	}
 
@@ -498,8 +723,86 @@ public class DealsDAO implements IDealsDAO {
 	public List<Userdealssuggestion> getUserDealSuggestions(String userEmail, int offset,
 			int limit, String category, String suggestionType, double lat, double lon, int distance, double rating, int minPrice, int maxPrice) {
 		logger.error("getUserDealSuggestions ==== > "+userEmail +" : "+offset +" : "+limit);
+		List<Userdealssuggestion> dealsList = null;
+		String hqlQuery = "";
+		String fromStr = "";
+		String whereStr = "";
 
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Userdealssuggestion.class,"userdealssuggestion");
+		fromStr = "select a from Userdealssuggestion a inner join a.deals b inner join b.business c inner join c.businesstype d ";
+
+		whereStr = "where a.user.emailId = :emailId";
+
+		if(category != null && !category.trim().equals(""))
+			whereStr += " and d.businessType=:category";
+
+		whereStr += " and (b.endAt >= :currentDate and b.endAt > :weekendDate) and (a.suggestedTime is null or a.suggestedTime >= :suggestedTime)";
+
+		if(suggestionType != null)
+		{
+			if(suggestionType.equalsIgnoreCase("Friend Suggestion"))
+			{
+				hqlQuery += " and (a.suggestionType like '%Friend%' or a.suggestionType like '%Group%' or a.suggestionType ='Wall Feed Suggestion' or a.suggestionType ='Direct Suggestion')";
+			}
+			else if(suggestionType.equalsIgnoreCase("Community Suggestion"))
+			{
+				hqlQuery += " and (a.suggestionType like '%Community%')";
+			}
+			else if(suggestionType.equalsIgnoreCase("Jeeyoh Suggestion"))
+			{
+				hqlQuery += " and (a.suggestionType like '%Friend%' or a.suggestionType like '%Group%' or a.suggestionType like '%User%')";
+			}
+		}
+		
+		if(rating != 0)
+			whereStr = whereStr + " and c.rating >= :rating";
+
+		if(lat != 0 && lon != 0)
+		{
+			whereStr = whereStr + " and (((acos(sin(((:latitude)*pi()/180)) * sin((c.lattitude*pi()/180))+cos(((:latitude)*pi()/180)) * cos((c.lattitude*pi()/180)) * cos((((:longitude)- c.longitude)*pi()/180))))*180/pi())*60*1.1515) <=:distance";
+		}
+
+		if(minPrice != 0 && maxPrice != 0)
+		{
+			fromStr += " inner join b.dealoptions e ";
+			whereStr += " and (e.originalPrice >= :minPrice and e.originalPrice <= :maxPrice) group by a.id";
+		}
+
+		try {
+			hqlQuery = fromStr + whereStr;
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					hqlQuery);
+			query.setParameter("emailId", userEmail);
+			if(category != null && !category.trim().equals(""))
+				query.setParameter("category", category);
+			query.setParameter("currentDate", Utils.getCurrentDate());
+			query.setParameter("suggestedTime", Utils.getCurrentDateForEvent());
+			query.setParameter("weekendDate", Utils.getNearestThursday());
+
+			if(lat != 0 && lon != 0)
+			{
+				query.setDouble("latitude", lat);
+				query.setDouble("longitude", lon);
+				query.setInteger("distance",distance);
+			}
+			if(rating != 0)
+				query.setDouble("rating", rating);
+			if(minPrice != 0 && maxPrice != 0)
+			{
+				query.setDouble("minPrice", minPrice);
+				query.setDouble("maxPrice", maxPrice);
+			}
+
+			query.setFirstResult(offset*10);
+			query.setMaxResults(limit);
+			logger.debug("Query::  "+query);
+
+			dealsList = query.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.debug(e.getMessage());
+		}
+
+		/*	Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Userdealssuggestion.class,"userdealssuggestion");
 		criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		criteria.createAlias("userdealssuggestion.user", "user");
 		criteria.add(Restrictions.eq("user.emailId", userEmail));
@@ -511,7 +814,7 @@ public class DealsDAO implements IDealsDAO {
 		criteria.setFirstResult(offset*10)
 		.setMaxResults(limit);
 
-		List<Userdealssuggestion> dealsList = criteria.list();
+		List<Userdealssuggestion> dealsList = criteria.list();*/
 		return dealsList;
 	}
 
@@ -621,7 +924,7 @@ public class DealsDAO implements IDealsDAO {
 		   }//end try
 		 */		Session session = sessionFactory.getCurrentSession();
 		 String hqlquery = "select id from deals a where a.dealId = :dealId";
-		// String hqlQuery = "select id from Deals a where a.dealId = :dealId";
+		 // String hqlQuery = "select id from Deals a where a.dealId = :dealId";
 		 try{
 			 Query query = session.createSQLQuery(hqlquery);
 
@@ -656,27 +959,27 @@ public class DealsDAO implements IDealsDAO {
 	@Override
 	public int getTotalDealsBySearchKeyWord(String searchText, String category,
 			String location, double lat, double lon, int distance, double rating, int minPrice, int maxPrice) {
-		logger.error("getTotalDealsBySearchKeyWord ==== > "+searchText);
+		logger.error("getTotalDealsBySearchKeyWord ==== > "+searchText + " "+minPrice);
 
 
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Deals.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-				.setProjection(Projections.count("id"));
-		criteria.createAlias("business", "business");
-		//Criteria addr = criteria.createCriteria("business"); 
-		criteria.createAlias("business.businesstype", "businesstype");
+				.setProjection(Projections.property("id")).setProjection(Projections.groupProperty("title"));
+		//criteria.createAlias("business", "business");
+		Criteria addr = criteria.createCriteria("business"); 
+		addr.createAlias("businesstype", "businesstype");
 
 		if(category != null && category.isEmpty() == false)
 		{
-			criteria.add(Restrictions.eq("businesstype.businessType", category));
+			addr.add(Restrictions.eq("businesstype.businessType", category));
 		}
 		if(location != null && location.isEmpty()== false)
 		{
-			criteria.add(Restrictions.disjunction().add(Restrictions.like("business.city", "%" + location + "%"))
-					.add(Restrictions.like("business.state", "%" + location + "%"))
-					.add(Restrictions.like("business.stateCode", "%" + location + "%"))
-					.add(Restrictions.like("business.displayAddress", "%" + location + "%"))
-					.add(Restrictions.like("business.businessId", "%" + location + "%"))
-					.add(Restrictions.eq("business.postalCode", location)));
+			addr.add(Restrictions.disjunction().add(Restrictions.like("city", "%" + location + "%"))
+					.add(Restrictions.like("state", "%" + location + "%"))
+					.add(Restrictions.like("stateCode", "%" + location + "%"))
+					.add(Restrictions.like("displayAddress", "%" + location + "%"))
+					.add(Restrictions.like("businessId", "%" + location + "%"))
+					.add(Restrictions.eq("postalCode", location)));
 		}
 
 		if(searchText != null && searchText.isEmpty() == false)
@@ -690,28 +993,27 @@ public class DealsDAO implements IDealsDAO {
 
 		criteria.add(Restrictions.conjunction().add(Restrictions.ge("endAt", Utils.getCurrentDate()))
 				.add(Restrictions.gt("endAt", Utils.getNearestThursday())));
-		
-		/*if(rating != 0)
-			criteria.add(Restrictions.ge("business.rating", rating));*/
-		
-		/*if(minPrice != 0 && maxPrice != 0)
+
+		if(rating != 0)
+			addr.add(Restrictions.ge("rating", rating));
+
+		if(minPrice != 0 && maxPrice != 0)
 		{
+			logger.error("dealoptions ==== > "+maxPrice + " "+minPrice);
 			criteria.createAlias("dealoptions", "dealoptions");
-			criteria.add(Restrictions.conjunction().add(Restrictions.ge("dealoptions.price", minPrice*100))
-					.add(Restrictions.ge("dealoptions.price", maxPrice*100)));
-		}*/
-			
-		
-		/*String sql =  "SQRT( POW( 69.1 * ( {alias}.latitude - " + point[1]      
-		       +" ) , 2 ) + POW( 69.1 * ( "+point[0] +" - {alias}.longitude ) * COS( {alias}.latitude /" 
-		       +" 57.3 ) , 2 ) )  < "+distance;     */
-		
-		/*String sql =  "(((acos(sin(((" + lat + ")*pi()/180)) * sin(({alias}.lattitude*pi()/180))+cos(((" + lat + ")*pi()/180)) * cos(({alias}.lattitude*pi()/180)) * cos((((" + lon + ")- {alias}.longitude)*pi()/180))))*180/pi())*60*1.1515)<="+distance;     
-		addr.add(Restrictions.sqlRestriction(sql)); */
+			criteria.add(Restrictions.conjunction().add(Restrictions.ge("dealoptions.originalPrice", Long.parseLong(Integer.toString(minPrice))))
+					.add(Restrictions.le("dealoptions.originalPrice", Long.parseLong(Integer.toString(maxPrice)))));
+		}
+
+		if(lat != 0 && lon != 0)
+		{
+			String sql =  "(((acos(sin(((" + lat + ")*pi()/180)) * sin(({alias}.lattitude*pi()/180))+cos(((" + lat + ")*pi()/180)) * cos(({alias}.lattitude*pi()/180)) * cos((((" + lon + ")- {alias}.longitude)*pi()/180))))*180/pi())*60*1.1515)<="+distance;     
+			addr.add(Restrictions.sqlRestriction(sql)); 
+		}
 		//criteria.add(Restrictions.ge("endAt", Utils.getCurrentDate()));
 
-		//int rowCount = criteria.list().size();
-		int rowCount = Integer.parseInt(criteria.uniqueResult().toString());
+		int rowCount = criteria.list().size();
+		//int rowCount = Integer.parseInt(criteria.uniqueResult().toString());
 		return rowCount;
 	}
 
@@ -776,13 +1078,21 @@ public class DealsDAO implements IDealsDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Dealoption getDealOptionByDealId(int dealId) {
+	public Dealoption getDealOptionByDealId(int dealId, int minPrice, int maxPrice) {
 		List<Dealoption> dealsList = null;
 		String hqlQuery = "from Dealoption a where a.deals.id = :dealId";
+		if(minPrice != 0 && maxPrice != 0)
+			hqlQuery += " and (originalPrice >=:minPrice and originalPrice <= :maxPrice)";
+		
 		try {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					hqlQuery);
 			query.setParameter("dealId", dealId);
+			if(minPrice != 0 && maxPrice != 0)
+			{
+				query.setDouble("minPrice", minPrice);
+				query.setDouble("maxPrice", maxPrice);
+			}
 			dealsList = (List<Dealoption>) query.list();
 		} catch (Exception e) {
 			e.printStackTrace();

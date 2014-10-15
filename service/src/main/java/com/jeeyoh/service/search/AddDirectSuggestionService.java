@@ -56,6 +56,7 @@ public class AddDirectSuggestionService implements IAddDirectSuggestionService{
 	@Transactional
 	public BaseResponse addSuggestions(int userId,ArrayList<Integer> friendsIdList,List<Integer> groups, int suggestionId,String category, String suggestionType, String suggestedTime) 
 	{
+		boolean isExist = false;
 		logger.debug("AddEventSuggestionService => addSuggestions");
 		BaseResponse response = new BaseResponse();
 		User user = userDAO.getUserById(userId);
@@ -113,7 +114,6 @@ public class AddDirectSuggestionService implements IAddDirectSuggestionService{
 				}
 			}
 			response.setStatus("Ok");
-
 		}
 		else if (suggestionType.equalsIgnoreCase("deal"))
 		{
@@ -122,31 +122,33 @@ public class AddDirectSuggestionService implements IAddDirectSuggestionService{
 			{
 				for(Integer friendId:friendsIdList)
 				{
-					Userdealssuggestion userDealSuggestion = userDAO.isDealSuggestionExistsForDirectSuggestion(friendId, deal.getId(), user.getUserId());
-					if(userDealSuggestion != null)
+					isExist = false;
+					Userdealssuggestion userDealSuggestion = null;
+					List<Userdealssuggestion> userdealsuggestions = userDAO.isDealSuggestionExists(friendId, deal.getId());
+					if(userdealsuggestions != null && userdealsuggestions.size() != 0)
 					{
-						if(userDealSuggestion.getSuggestedTime() == null || userDealSuggestion.getSuggestedTime().compareTo(currentDate) >= 0)
+						userDealSuggestion = userdealsuggestions.get(0);
+						isExist = true;
+					}
+					else
+					{
+						userDealSuggestion = userDAO.isDealSuggestionExistsForDirectSuggestion(friendId, deal.getId(), user.getUserId());
+						if(userDealSuggestion != null)
 						{
-							userDealSuggestion.setUpdatedtime(date);
-							userDealSuggestion.setSuggestedTime(suggestionDate);
-							userDealSuggestion.setSuggestionType("Direct Suggestion");
-							userDAO.updateUserDealSuggestion(userDealSuggestion);
+							if(userDealSuggestion.getSuggestedTime() != null && userDealSuggestion.getSuggestedTime().compareTo(currentDate) >= 0)
+							{
+								isExist = true;
+							}
 						}
-						else
-						{
-							User friend = userDAO.getUserById(friendId);
-							userDealSuggestion = new Userdealssuggestion();
-							userDealSuggestion.setDeals(deal);
-							userDealSuggestion.setCreatedtime(date);
-							userDealSuggestion.setSuggestionType("Direct Suggestion");
-							userDealSuggestion.setUpdatedtime(date);
-							userDealSuggestion.setUser(friend);
-							userDealSuggestion.setUserContact(user);
-							userDealSuggestion.setSuggestedTime(suggestionDate);
-							dealsDAO.saveSuggestions(userDealSuggestion);
-							batch_size++;
-						}
-						response.setStatus("Ok");
+					}
+
+					if(isExist)
+					{
+						userDealSuggestion.setUpdatedtime(date);
+						userDealSuggestion.setSuggestedTime(suggestionDate);
+						userDealSuggestion.setUserContact(user);
+						userDealSuggestion.setSuggestionType("Direct Suggestion");
+						userDAO.updateUserDealSuggestion(userDealSuggestion);
 					}
 					else
 					{
@@ -161,9 +163,10 @@ public class AddDirectSuggestionService implements IAddDirectSuggestionService{
 						userDealSuggestion.setSuggestedTime(suggestionDate);
 						dealsDAO.saveSuggestions(userDealSuggestion);
 						batch_size++;
-						response.setStatus("Ok");
+						
 					}
 				}
+				response.setStatus("Ok");
 			}
 
 			if(groups != null)
@@ -177,31 +180,33 @@ public class AddDirectSuggestionService implements IAddDirectSuggestionService{
 						User users1 = groups1.getUser();
 						if(users1.getUserId() != user.getUserId())
 						{
-							Userdealssuggestion userDealSuggestion = userDAO.isDealSuggestionExistsForDirectSuggestion(users1.getUserId(), deal.getId(), user.getUserId());
-							if(userDealSuggestion != null)
+							isExist = false;
+							Userdealssuggestion userDealSuggestion = null;
+							List<Userdealssuggestion> userdealsuggestions = userDAO.isDealSuggestionExists(users1.getUserId(), deal.getId());
+							if(userdealsuggestions != null && userdealsuggestions.size() != 0)
 							{
-								if(userDealSuggestion.getSuggestedTime() == null || userDealSuggestion.getSuggestedTime().compareTo(currentDate) >= 0)
+								userDealSuggestion = userdealsuggestions.get(0);
+								isExist = true;
+							}
+							else
+							{
+								userDealSuggestion = userDAO.isDealSuggestionExistsForDirectSuggestion(users1.getUserId(), deal.getId(), user.getUserId());
+								if(userDealSuggestion != null)
 								{
-									userDealSuggestion.setUpdatedtime(date);
-									userDealSuggestion.setSuggestedTime(suggestionDate);
-									userDealSuggestion.setSuggestionType("Direct Suggestion");
-									userDAO.updateUserDealSuggestion(userDealSuggestion);
+									if(userDealSuggestion.getSuggestedTime() != null && userDealSuggestion.getSuggestedTime().compareTo(currentDate) >= 0)
+									{
+										isExist = true;
+									}
 								}
-								else
-								{
-									userDealSuggestion = new Userdealssuggestion();
-									userDealSuggestion.setDeals(deal);
-									userDealSuggestion.setCreatedtime(date);
-									userDealSuggestion.setSuggestionType("Direct Suggestion");
-									userDealSuggestion.setUpdatedtime(date);
-									userDealSuggestion.setUser(users1);
-									userDealSuggestion.setUserContact(user);
-									userDealSuggestion.setSuggestedTime(suggestionDate);
-									batch_size++;
-									dealsDAO.saveSuggestions(userDealSuggestion);
-								}
+							}
 
-								response.setStatus("Ok");
+							if(isExist)
+							{
+								userDealSuggestion.setUpdatedtime(date);
+								userDealSuggestion.setSuggestedTime(suggestionDate);
+								userDealSuggestion.setUserContact(user);
+								userDealSuggestion.setSuggestionType("Direct Suggestion");
+								userDAO.updateUserDealSuggestion(userDealSuggestion);
 							}
 							else
 							{
@@ -215,13 +220,12 @@ public class AddDirectSuggestionService implements IAddDirectSuggestionService{
 								userDealSuggestion.setSuggestedTime(suggestionDate);
 								dealsDAO.saveSuggestions(userDealSuggestion);
 								batch_size++;
-								response.setStatus("Ok");
 							}
 						}
 					}
 				}
+				response.setStatus("Ok");
 			}
-
 		}
 		else if (suggestionType.equalsIgnoreCase("business"))
 		{
@@ -230,31 +234,34 @@ public class AddDirectSuggestionService implements IAddDirectSuggestionService{
 			{
 				for(Integer friendId:friendsIdList)
 				{
-					Usernondealsuggestion userNonDealSuggestion = userDAO.isNonDealSuggestionExistsForDirectSuggestion(friendId, business.getId(), user.getUserId());
-					if(userNonDealSuggestion != null)
+					isExist = false;
+					Usernondealsuggestion userNonDealSuggestion = null;
+					List<Usernondealsuggestion> usernondealsuggestions = userDAO.isNonDealSuggestionExists(friendId, business.getId());
+					if(usernondealsuggestions != null && usernondealsuggestions.size() != 0)
 					{
-						if(userNonDealSuggestion.getSuggestedTime() == null || userNonDealSuggestion.getSuggestedTime().compareTo(currentDate) >= 0)
+						userNonDealSuggestion = usernondealsuggestions.get(0);
+						isExist = true;
+					}
+					else
+					{
+						userNonDealSuggestion = userDAO.isNonDealSuggestionExistsForDirectSuggestion(friendId, business.getId(), user.getUserId());
+						if(userNonDealSuggestion != null)
 						{
-							userNonDealSuggestion.setUpdatedtime(date);
-							userNonDealSuggestion.setSuggestedTime(suggestionDate);
-							userNonDealSuggestion.setSuggestionType("Direct Suggestion");
-							userDAO.updateUserNonDealSuggestion(userNonDealSuggestion);
+							if(userNonDealSuggestion.getSuggestedTime() != null && userNonDealSuggestion.getSuggestedTime().compareTo(currentDate) >= 0)
+							{
+								isExist = true;
+							}
 						}
-						else
-						{
-							User friend = userDAO.getUserById(friendId);
-							userNonDealSuggestion = new Usernondealsuggestion();
-							userNonDealSuggestion.setBusiness(business);
-							userNonDealSuggestion.setCreatedtime(date);
-							userNonDealSuggestion.setSuggestionType("Direct Suggestion");
-							userNonDealSuggestion.setUpdatedtime(date);
-							userNonDealSuggestion.setUser(friend);
-							userNonDealSuggestion.setUserContact(user);
-							userNonDealSuggestion.setSuggestedTime(suggestionDate);
-							userDAO.saveNonDealSuggestions(userNonDealSuggestion, batch_size);
-							batch_size++;
-						}
-						response.setStatus("Ok");
+					}
+					if(isExist)
+					{
+
+						userNonDealSuggestion.setUpdatedtime(date);
+						userNonDealSuggestion.setSuggestedTime(suggestionDate);
+						userNonDealSuggestion.setUserContact(user);
+						userNonDealSuggestion.setSuggestionType("Direct Suggestion");
+						userDAO.updateUserNonDealSuggestion(userNonDealSuggestion);
+
 					}
 					else
 					{
@@ -269,9 +276,9 @@ public class AddDirectSuggestionService implements IAddDirectSuggestionService{
 						userNonDealSuggestion.setSuggestedTime(suggestionDate);
 						userDAO.saveNonDealSuggestions(userNonDealSuggestion, batch_size);
 						batch_size++;
-						response.setStatus("Ok");
 					}
 				}
+				response.setStatus("Ok");
 			}
 			if(groups != null)
 			{
@@ -281,33 +288,36 @@ public class AddDirectSuggestionService implements IAddDirectSuggestionService{
 					Set<Groupusermap> groups2   = jeeyohGroup.getGroupusermaps();
 					for (Groupusermap groups1 : groups2)
 					{
+						isExist = false;
 						User users1 = groups1.getUser();
 						if(users1.getUserId() != user.getUserId())
 						{
-							Usernondealsuggestion userNonDealSuggestion = userDAO.isNonDealSuggestionExistsForDirectSuggestion(users1.getUserId(), business.getId(), user.getUserId());
-							if(userNonDealSuggestion != null)
+							Usernondealsuggestion userNonDealSuggestion = null;
+							List<Usernondealsuggestion> usernondealsuggestions = userDAO.isNonDealSuggestionExists(users1.getUserId(), business.getId());
+							if(usernondealsuggestions != null && usernondealsuggestions.size() != 0)
 							{
-								if(userNonDealSuggestion.getSuggestedTime() == null || userNonDealSuggestion.getSuggestedTime().compareTo(currentDate) >= 0)
+								userNonDealSuggestion = usernondealsuggestions.get(0);
+								isExist = true;
+							}
+							else
+							{
+								userNonDealSuggestion = userDAO.isNonDealSuggestionExistsForDirectSuggestion(users1.getUserId(), business.getId(), user.getUserId());
+								if(userNonDealSuggestion != null)
 								{
-									userNonDealSuggestion.setUpdatedtime(date);
-									userNonDealSuggestion.setSuggestedTime(suggestionDate);
-									userNonDealSuggestion.setSuggestionType("Direct Suggestion");
-									userDAO.updateUserNonDealSuggestion(userNonDealSuggestion);
+									if(userNonDealSuggestion.getSuggestedTime() != null && userNonDealSuggestion.getSuggestedTime().compareTo(currentDate) >= 0)
+									{
+										isExist = true;
+									}
 								}
-								else
-								{
-									userNonDealSuggestion = new Usernondealsuggestion();
-									userNonDealSuggestion.setBusiness(business);
-									userNonDealSuggestion.setCreatedtime(date);
-									userNonDealSuggestion.setSuggestionType("Direct Suggestion");
-									userNonDealSuggestion.setUpdatedtime(date);
-									userNonDealSuggestion.setUser(users1);
-									userNonDealSuggestion.setUserContact(user);
-									userNonDealSuggestion.setSuggestedTime(suggestionDate);
-									userDAO.saveNonDealSuggestions(userNonDealSuggestion, batch_size);
-									batch_size++;
-								}
-								response.setStatus("Ok");
+							}
+
+							if(isExist)
+							{
+								userNonDealSuggestion.setUpdatedtime(date);
+								userNonDealSuggestion.setSuggestedTime(suggestionDate);
+								userNonDealSuggestion.setSuggestionType("Direct Suggestion");
+								userNonDealSuggestion.setUserContact(user);
+								userDAO.updateUserNonDealSuggestion(userNonDealSuggestion);
 							}
 							else
 							{
@@ -321,11 +331,12 @@ public class AddDirectSuggestionService implements IAddDirectSuggestionService{
 								userNonDealSuggestion.setSuggestedTime(suggestionDate);
 								userDAO.saveNonDealSuggestions(userNonDealSuggestion, batch_size);
 								batch_size++;
-								response.setStatus("Ok");
 							}
+
 						}
 					}
 				}
+				response.setStatus("Ok");
 			}
 		}
 		else if(suggestionType.equalsIgnoreCase("community"))
@@ -373,6 +384,7 @@ public class AddDirectSuggestionService implements IAddDirectSuggestionService{
 					}
 
 				}
+				response.setStatus("Ok");
 			}
 
 			if(groups != null)
@@ -438,33 +450,32 @@ public class AddDirectSuggestionService implements IAddDirectSuggestionService{
 
 	private boolean saveEventDirectSuggestion(User user, int friendId,int eventId, Date date, Date suggestionDate, int batch_size, Date currentDate)
 	{
-		Usereventsuggestion userEventSuggestion = userDAO.isEventSuggestionExistsForDirectSuggestion(friendId, eventId, user.getUserId());
-		if(userEventSuggestion != null)
+		boolean isExist = false;
+		Usereventsuggestion userEventSuggestion = null;
+		List<Usereventsuggestion> userventsuggestions = userDAO.isEventSuggestionExists(friendId, eventId);
+		if(userventsuggestions != null && userventsuggestions.size() != 0)
 		{
-			if(userEventSuggestion.getSuggestedTime() == null || userEventSuggestion.getSuggestedTime().compareTo(currentDate) >= 0)
+			userEventSuggestion = userventsuggestions.get(0);
+			isExist = true;
+		}
+		else
+		{
+			userEventSuggestion = userDAO.isEventSuggestionExistsForDirectSuggestion(friendId, eventId, user.getUserId());
+			if(userEventSuggestion != null)
 			{
-				userEventSuggestion.setUpdatedTime(date);
-				userEventSuggestion.setSuggestedTime(suggestionDate);
-				userEventSuggestion.setSuggestionType("Direct Suggestion");
-				userDAO.updateUserEventSuggestion(userEventSuggestion);
+				if(userEventSuggestion.getSuggestedTime() != null && userEventSuggestion.getSuggestedTime().compareTo(currentDate) >= 0)
+				{
+					isExist = true;
+				}
 			}
-			else
-			{
-				Events events = new Events();
-				events.setEventId(eventId);
-
-				User users1 = new User();
-				users1.setUserId(friendId);
-
-				userEventSuggestion.setEvents(events);
-				userEventSuggestion.setCreatedTime(date);
-				userEventSuggestion.setSuggestionType("Direct Suggestion");
-				userEventSuggestion.setUpdatedTime(date);
-				userEventSuggestion.setUser(users1);
-				userEventSuggestion.setUserContact(user);
-				userEventSuggestion.setSuggestedTime(suggestionDate);
-				userDAO.saveEventsSuggestions(userEventSuggestion, batch_size);
-			}
+		}
+		if(isExist)
+		{
+			userEventSuggestion.setUpdatedTime(date);
+			userEventSuggestion.setSuggestedTime(suggestionDate);
+			userEventSuggestion.setSuggestionType("Direct Suggestion");
+			userEventSuggestion.setUserContact(user);
+			userDAO.updateUserEventSuggestion(userEventSuggestion);
 			return false;
 		}
 		else

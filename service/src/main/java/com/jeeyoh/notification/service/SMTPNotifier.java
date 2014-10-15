@@ -90,7 +90,7 @@ public class SMTPNotifier extends JeeyohMessageSubscriber implements IJeeyohMess
     @Override    
     public void onJeeyohMessage(JeeyohMessage message)
     {
-        logger.debug("SMTPNotifier ==> onStoristicMessage");
+        logger.debug("SMTPNotifier ==> onJeeyohMessage");
         try
         {
             if (confirmParamMap(message))

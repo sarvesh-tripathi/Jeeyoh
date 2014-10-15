@@ -23,6 +23,7 @@ import com.jeeyoh.persistence.domain.User;
 import com.jeeyoh.persistence.domain.UserCategory;
 import com.jeeyoh.persistence.domain.UserCategoryLikes;
 import com.jeeyoh.persistence.domain.Usercontacts;
+import com.jeeyoh.persistence.domain.Userdealssuggestion;
 import com.jeeyoh.persistence.domain.Usernondealsuggestion;
 import com.jeeyoh.utils.Utils;
 
@@ -87,6 +88,7 @@ public class NonDealSearch implements INonDealSearch {
 	 */
 	private void saveNonDealSuggestion(User suggestingUser, User user, boolean forUser, boolean isContactsAccessed, Date weekendDate, boolean isGroupMember, String groupType, boolean isStar, boolean isSharedWithFriends, boolean isSharedWithGroup, boolean isSharedWithCommunity)
 	{
+		boolean isExist = false;
 		int userId = suggestingUser.getUserId();
 		int countMain = 0;
 		double[] array = null;
@@ -127,8 +129,8 @@ public class NonDealSearch implements INonDealSearch {
 
 					try {
 						logger.debug("userLikeWeekend: "+userLikeWeekend +" weekendDate: "+weekendDate);
-						if(userLikeWeekend.compareTo(weekendDate) == 0)
-						{
+						//if(userLikeWeekend.compareTo(weekendDate) == 0)
+						//{
 							if(isContactsAccessed)
 								categoryLikesCount = userDAO.userCategoryLikeCount(userCategory.getUserCategoryId());
 							logger.debug("categoryLikesCount: "+categoryLikesCount);
@@ -138,11 +140,27 @@ public class NonDealSearch implements INonDealSearch {
 								if(businessList != null)
 								{
 									boolean includePage = true;
+									
 									for(Business business : businessList)
 									{
+										isExist = false;
+										//List<Usernondealsuggestion> usernondealsuggestions = userDAO.isNonDealSuggestionExists(user.getUserId(), business.getId());
+										Usernondealsuggestion userNonDealSuggestion = null;
 										List<Usernondealsuggestion> usernondealsuggestions = userDAO.isNonDealSuggestionExists(user.getUserId(), business.getId());
+										if(usernondealsuggestions != null && usernondealsuggestions.size() != 0)
+										{
+											isExist = true;
+										}
+										else
+										{
+											userNonDealSuggestion = userDAO.isNonDealSuggestionExistsForDirectSuggestion(user.getUserId(), business.getId());
+											if(userNonDealSuggestion != null)
+											{
+												isExist = true;
+											}
+										}
 										logger.debug("NonDealSearch ==> usernondealsuggestions ==> " + usernondealsuggestions);
-										if(usernondealsuggestions == null || usernondealsuggestions.size() == 0 || (usernondealsuggestions != null && usernondealsuggestions.size() != 0 && usernondealsuggestions.get(0).getSuggestedTime() != null && usernondealsuggestions.get(0).getSuggestedTime().compareTo(Utils.getCurrentDate()) < 0))
+										if(!isExist)
 										{
 											String type = business.getBusinesstype().getBusinessType();
 											if(type.equalsIgnoreCase(MOVIE_CATEGORY) || type.equalsIgnoreCase(RESTAURANT_CATEGORY) || type.equalsIgnoreCase(NIGHTLIFE_CATEGORY) || type.equalsIgnoreCase(EVENTS_CATEGORY) || type.equalsIgnoreCase(GETAWAYS_CATEGORY) || type.equalsIgnoreCase(SPORTS_CATEGORY)) {
@@ -217,7 +235,7 @@ public class NonDealSearch implements INonDealSearch {
 										}
 									}
 								}
-							}
+							//}
 						}
 					} catch (NumberFormatException e) {
 						e.printStackTrace();
@@ -276,9 +294,23 @@ public class NonDealSearch implements INonDealSearch {
 
 					if(community.getBusiness() != null)
 					{
+						isExist = false;
+						Usernondealsuggestion userNonDealSuggestion = null;
 						List<Usernondealsuggestion> usernondealsuggestions = userDAO.isNonDealSuggestionExists(user.getUserId(), community.getBusiness().getId());
+						if(usernondealsuggestions != null && usernondealsuggestions.size() != 0)
+						{
+							isExist = true;
+						}
+						else
+						{
+							userNonDealSuggestion = userDAO.isNonDealSuggestionExistsForDirectSuggestion(user.getUserId(), community.getBusiness().getId());
+							if(userNonDealSuggestion != null)
+							{
+								isExist = true;
+							}
+						}
 						logger.debug("NonDealSearch ==> usernondealsuggestions ==> " + usernondealsuggestions);
-						if(usernondealsuggestions == null || usernondealsuggestions.size() == 0 || (usernondealsuggestions != null && usernondealsuggestions.size() != 0 && usernondealsuggestions.get(0).getSuggestedTime() != null && usernondealsuggestions.get(0).getSuggestedTime().compareTo(Utils.getCurrentDate()) < 0))
+						if(!isExist)
 						{
 							logger.debug("NonDealSearch ==> search ==> pageId ==> " + community.getPageId());
 							List<Pagetype> pageTypeList = userDAO.getCommunityType(community.getPageId());

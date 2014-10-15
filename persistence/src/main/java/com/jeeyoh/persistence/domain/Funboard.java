@@ -26,6 +26,8 @@ public class Funboard implements Serializable{
 	private String source;
 	private Date scheduledTime;
 	private Time timeSlot;
+	private Time startTime;
+	private Time endTime;
 	
 	/**
 	 * @return the funBoardId
@@ -226,6 +228,30 @@ public class Funboard implements Serializable{
 	 */
 	public void setPrivacy(Privacy privacy) {
 		this.privacy = privacy;
+	}
+	/**
+	 * @return the startTime
+	 */
+	public Time getStartTime() {
+		return startTime;
+	}
+	/**
+	 * @param startTime the startTime to set
+	 */
+	public void setStartTime(Time startTime) {
+		this.startTime = startTime;
+	}
+	/**
+	 * @return the endTime
+	 */
+	public Time getEndTime() {
+		return endTime;
+	}
+	/**
+	 * @param endTime the endTime to set
+	 */
+	public void setEndTime(Time endTime) {
+		this.endTime = endTime;
 	}
 
 }

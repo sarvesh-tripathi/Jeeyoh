@@ -57,6 +57,12 @@
 		 <property name="timeSlot" type="time">
             <column name="timeSlot" />
         </property>
+        <property name="startTime" type="time">
+            <column name="startTime" />
+        </property>
+        <property name="endTime" type="time">
+            <column name="endTime" />
+        </property>
         
         <!-- <joined-subclass name="com.jeeyoh.persistence.domain.BusinessFunboard"
 			table="rel_business_funboard">

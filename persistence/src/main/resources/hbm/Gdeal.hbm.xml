@@ -24,22 +24,22 @@
             <column name="placementPriority" length="250" />
         </property>
         <property name="sidebarImageUrl" type="string">
-            <column name="sidebarImageUrl" length="200" />
+            <column name="sidebarImageUrl" length="250" />
         </property>
         <property name="smallImageUrl" type="string">
-            <column name="smallImageUrl" length="200" />
+            <column name="smallImageUrl" length="250" />
         </property>
         <property name="mediumImageUrl" type="string">
-            <column name="mediumImageUrl" length="200" />
+            <column name="mediumImageUrl" length="250" />
         </property>
         <property name="largeImageUrl" type="string">
-            <column name="largeImageUrl" length="200" />
+            <column name="largeImageUrl" length="250" />
         </property>
         <property name="announcementTitle" type="string">
-            <column name="announcementTitle" length="200" />
+            <column name="announcementTitle" />
         </property>
         <property name="dealUrl" type="string">
-            <column name="dealUrl" length="200" />
+            <column name="dealUrl" />
         </property>
         <property name="status" type="string">
             <column name="status" length="100" />

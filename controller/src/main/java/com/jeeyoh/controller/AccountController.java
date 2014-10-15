@@ -606,9 +606,9 @@ public class AccountController {
 	@RequestMapping(value = "/calculateTop10Suggestions", method = RequestMethod.GET)
 	public ModelAndView calculateTop10Suggestions(HttpServletRequest request, HttpServletResponse httpresponse){
 		ModelAndView modelAndView = new ModelAndView("home");
+		calculateTopSuggestionsService.calculateTopJeyoohSuggestions();
 		calculateTopSuggestionsService.caculateTopFriendsSuggestions();
 		calculateTopSuggestionsService.calculateTopCommunitySuggestions();
-		calculateTopSuggestionsService.calculateTopJeyoohSuggestions();
 		return modelAndView;
 	}
 

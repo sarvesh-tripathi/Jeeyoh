@@ -92,6 +92,7 @@ public class Jobs {
 		dealSearch.search();
 		logger.debug("event :::: ");
 		eventSearch.search();
+		calculateTopSuggestionsService.calculateTopJeyoohSuggestions();
 		calculateTopSuggestionsService.caculateTopFriendsSuggestions();
 		calculateTopSuggestionsService.calculateTopCommunitySuggestions();
 		matchingEventsService.searchMatchingEvents(); */

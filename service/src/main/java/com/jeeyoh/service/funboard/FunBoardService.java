@@ -3,6 +3,7 @@ package com.jeeyoh.service.funboard;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -78,41 +79,51 @@ public class FunBoardService implements IFunBoardService{
 		User user = userDAO.getUserByEmailId(request.getEmailId());
 		if(user != null)
 		{
-			FunBoardModel funBoardModel = request.getFunBoard();
-			Funboard funboard = funBoardDAO.isFunBoardExists(user.getUserId(), funBoardModel.getItemId());
-			int batch_size = 0;
-			logger.debug("funboard::::  "+funboard);
-			if(funboard == null)
-			{
-				// Check privacy id
-				Privacy privacyObj = userDAO.getUserPrivacyType("OPEN");
-
+			try {
+				
+				FunBoardModel funBoardModel = request.getFunBoard();
 				SimpleDateFormat simple=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				funboard = new Funboard();
-				Timeline timeline = null;
-				funboard.setUser(user);
-				funboard.setItemId(funBoardModel.getItemId());
-				funboard.setItemType(funBoardModel.getType());
-				Date currentDate = new Date();
-				funboard.setCreatedTime(currentDate);
-				funboard.setUpdatedTime(currentDate);
-				funboard.setImageUrl(funBoardModel.getImageUrl());
-				funboard.setSource(funBoardModel.getSource());
-				funboard.setPrivacy(privacyObj);
-				if(funBoardModel.getCategory().equalsIgnoreCase("Sports"))
+				Date scheduledDate = simple.parse(funBoardModel.getScheduledDate());
+				Funboard funboard = funBoardDAO.isFunBoardExists(user.getUserId(), funBoardModel.getItemId(), scheduledDate);
+				int batch_size = 0;
+				logger.debug("funboard::::  "+funboard);
+				if(funboard == null)
 				{
-					funboard.setCategory("SPORT");
-				}
-				else
-					funboard.setCategory(funBoardModel.getCategory());
+					// Check privacy id
+					Privacy privacyObj = userDAO.getUserPrivacyType("OPEN");
 
-				try {
+					funboard = new Funboard();
+					Timeline timeline = null;
+					funboard.setUser(user);
+					funboard.setItemId(funBoardModel.getItemId());
+					funboard.setItemType(funBoardModel.getType());
+					Date currentDate = new Date();
+					funboard.setCreatedTime(currentDate);
+					funboard.setUpdatedTime(currentDate);
+					funboard.setImageUrl(funBoardModel.getImageUrl());
+					funboard.setSource(funBoardModel.getSource());
+					funboard.setPrivacy(privacyObj);
+					if(funBoardModel.getCategory().equalsIgnoreCase("Sports"))
+					{
+						funboard.setCategory("SPORT");
+					}
+					else
+						funboard.setCategory(funBoardModel.getCategory());
+
+
 					Date endDate = simple.parse(funBoardModel.getEndDate());
 					if(funBoardModel.getType().equalsIgnoreCase("Event") || funBoardModel.getType().equalsIgnoreCase("Community"))
 					{
 						funboard.setScheduledTime(endDate);
 						Time funboardCreationTime = new Time(endDate.getTime());
 						funboard.setTimeSlot(funboardCreationTime);
+						funboard.setStartTime(funboardCreationTime);
+						
+						Calendar cal =Calendar.getInstance();
+						cal.setTime(endDate);
+						cal.add(Calendar.HOUR_OF_DAY,3); // this will add three hours
+						Time funboardEndTime = new Time(cal.getTime().getTime());
+						funboard.setEndTime(funboardEndTime);
 						logger.debug("funboardCreationTime::  "+funboardCreationTime);
 						timeline = funBoardDAO.getTimeLine(funboardCreationTime);
 					}
@@ -120,12 +131,14 @@ public class FunBoardService implements IFunBoardService{
 					{
 						if(funBoardModel.getScheduledDate() != null)
 						{
-							funboard.setScheduledTime(simple.parse(funBoardModel.getScheduledDate()));
+							funboard.setScheduledTime(scheduledDate);
 						}
 						if(funBoardModel.getTimeLine() == null)
 						{
 							timeline = funBoardDAO.getDefaultTimeLine();
 							funboard.setTimeSlot(timeline.getStartTime());
+							funboard.setStartTime(timeline.getStartTime());
+							funboard.setEndTime(timeline.getStartTime());
 						}
 						else
 						{
@@ -136,141 +149,142 @@ public class FunBoardService implements IFunBoardService{
 					funboard.setStartDate(simple.parse(funBoardModel.getStartDate()));
 					funboard.setEndDate(endDate);
 
-				} catch (Exception e) {
-					logger.debug("Error funboard : " + e.getLocalizedMessage());
-					e.printStackTrace();
-				}
-
-				logger.debug("Funboard timeline : " + timeline);
-				funboard.setTimeline(timeline);
 
 
-				funBoardDAO.saveFunBoard(funboard, batch_size);
+					logger.debug("Funboard timeline : " + timeline);
+					funboard.setTimeline(timeline);
 
-				// Set isVisited and isBooked flag for a particular item in their respective like tables
-				if(funBoardModel.getType().equalsIgnoreCase("Community") || funBoardModel.getType().equalsIgnoreCase("Business"))
-				{
-					Notificationpermission notificationPermission = userDAO.getDafaultNotification();
-					Page page = null;
-					if(funBoardModel.getType().equalsIgnoreCase("Business"))
+
+					funBoardDAO.saveFunBoard(funboard, batch_size);
+
+					// Set isVisited and isBooked flag for a particular item in their respective like tables
+					if(funBoardModel.getType().equalsIgnoreCase("Community") || funBoardModel.getType().equalsIgnoreCase("Business"))
 					{
-						page = eventsDAO.getPageByBusinessId(funBoardModel.getItemId());
-					}
-					else
-					{
-						page = new Page();
-						page.setPageId(funBoardModel.getItemId());
-					}
-
-
-					Pageuserlikes pageuserlikes = null;
-
-					if(page != null)
-					{
-						// Check if entry already exists in table
-						// Check if entry already exists in table
-						pageuserlikes = userDAO.getUserPageProperties(user.getUserId(), page.getPageId());
-						logger.debug("pageuserlikes =>"+pageuserlikes);
-						if(pageuserlikes!=null && !pageuserlikes.equals(""))
+						Notificationpermission notificationPermission = userDAO.getDafaultNotification();
+						Page page = null;
+						if(funBoardModel.getType().equalsIgnoreCase("Business"))
 						{
-							pageuserlikes.setIsVisited(true);
-							pageuserlikes.setIsBooked(true);
-							eventsDAO.updatePageUserLikes(pageuserlikes);
+							page = eventsDAO.getPageByBusinessId(funBoardModel.getItemId());
 						}
-						else if (pageuserlikes == null)
+						else
 						{
-							pageuserlikes = new Pageuserlikes();
-							pageuserlikes.setIsFavorite(false);
-							pageuserlikes.setIsFollowing(false);
-							pageuserlikes.setIsLike(false);
-							pageuserlikes.setIsVisited(true);
-							pageuserlikes.setIsProfileDetailsHidden(false);
-							pageuserlikes.setIsProfileHidden(false);
-							pageuserlikes.setIsSuggested(false);
-							pageuserlikes.setIsBooked(true);
-							pageuserlikes.setUser(user);
-							pageuserlikes.setPage(page);
-							pageuserlikes.setNotificationpermission(notificationPermission);
-							pageuserlikes.setCreatedtime(currentDate);
-							pageuserlikes.setUpdatedtime(currentDate);
-							eventsDAO.savePageUserLikes(pageuserlikes);
+							page = new Page();
+							page.setPageId(funBoardModel.getItemId());
+						}
+
+
+						Pageuserlikes pageuserlikes = null;
+
+						if(page != null)
+						{
+							// Check if entry already exists in table
+							// Check if entry already exists in table
+							pageuserlikes = userDAO.getUserPageProperties(user.getUserId(), page.getPageId());
+							logger.debug("pageuserlikes =>"+pageuserlikes);
+							if(pageuserlikes!=null && !pageuserlikes.equals(""))
+							{
+								pageuserlikes.setIsVisited(true);
+								pageuserlikes.setIsBooked(true);
+								eventsDAO.updatePageUserLikes(pageuserlikes);
+							}
+							else if (pageuserlikes == null)
+							{
+								pageuserlikes = new Pageuserlikes();
+								pageuserlikes.setIsFavorite(false);
+								pageuserlikes.setIsFollowing(false);
+								pageuserlikes.setIsLike(false);
+								pageuserlikes.setIsVisited(true);
+								pageuserlikes.setIsProfileDetailsHidden(false);
+								pageuserlikes.setIsProfileHidden(false);
+								pageuserlikes.setIsSuggested(false);
+								pageuserlikes.setIsBooked(true);
+								pageuserlikes.setUser(user);
+								pageuserlikes.setPage(page);
+								pageuserlikes.setNotificationpermission(notificationPermission);
+								pageuserlikes.setCreatedtime(currentDate);
+								pageuserlikes.setUpdatedtime(currentDate);
+								eventsDAO.savePageUserLikes(pageuserlikes);
+							}
 						}
 					}
+					else if(funBoardModel.getType().equalsIgnoreCase("Event"))
+					{
+						Events event = new Events();
+						event.setEventId(funBoardModel.getItemId());
+
+						Eventuserlikes eventUserLikes = new Eventuserlikes();
+
+						// Check if entry already exists in table
+						Eventuserlikes existingEventUserLikes = eventsDAO.isEventExistInUserProfile(user.getUserId(), funBoardModel.getItemId());
+						logger.debug("existingEventUserLikes =>"+existingEventUserLikes);
+						if(existingEventUserLikes!=null && !existingEventUserLikes.equals(""))
+						{
+							existingEventUserLikes.setIsVisited(true);
+							existingEventUserLikes.setIsBooked(true);
+							eventsDAO.updateUserEvents(existingEventUserLikes);
+						}
+						else if (existingEventUserLikes == null)
+						{
+							eventUserLikes.setIsFavorite(false);
+							eventUserLikes.setIsFollowing(false);
+							eventUserLikes.setIsBooked(true);
+							eventUserLikes.setIsLike(false);
+							eventUserLikes.setIsVisited(true);
+							eventUserLikes.setIsProfileDetailsHidden(false);
+							eventUserLikes.setIsProfileHidden(false);
+							eventUserLikes.setIsSuggested(false);
+							eventUserLikes.setEvent(event);
+							eventUserLikes.setUser(user);
+							eventUserLikes.setCreatedtime(currentDate);
+							eventUserLikes.setUpdatedtime(currentDate);
+							eventsDAO.saveUserEvents(eventUserLikes);
+						}
+					}
+					else if(funBoardModel.getType().equalsIgnoreCase("Deal"))
+					{
+						Deals deal = new Deals();
+						deal.setId(funBoardModel.getItemId());
+
+
+						Dealsusage dealsusage = null;
+
+						// Check if entry already exists in table
+						dealsusage = userDAO.getUserLikeDeal(user.getUserId(), funBoardModel.getItemId());
+						logger.debug("dealsusage =>"+dealsusage);
+						if(dealsusage!=null && !dealsusage.equals(""))
+						{
+							dealsusage.setIsVisited(true);
+							dealsusage.setIsBooked(true);
+							dealsDAO.updateDealUserLikes(dealsusage);
+						}
+						else if (dealsusage == null)
+						{
+							dealsusage = new Dealsusage();
+							dealsusage.setIsFavorite(false);
+							dealsusage.setIsFollowing(false);
+							dealsusage.setIsLike(false);
+							dealsusage.setIsVisited(true);
+							dealsusage.setIsSuggested(false);
+							dealsusage.setIsRedempted(false);
+							dealsusage.setIsBooked(true);
+							dealsusage.setUser(user);
+							dealsusage.setDeals(deal);
+							dealsusage.setCreatedtime(currentDate);
+							dealsusage.setUpdatedtime(currentDate);
+							dealsDAO.saveDealUserLikes(dealsusage);
+						}
+					}
+					baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
 				}
-				else if(funBoardModel.getType().equalsIgnoreCase("Event"))
+				else
 				{
-					Events event = new Events();
-					event.setEventId(funBoardModel.getItemId());
-
-					Eventuserlikes eventUserLikes = new Eventuserlikes();
-
-					// Check if entry already exists in table
-					Eventuserlikes existingEventUserLikes = eventsDAO.isEventExistInUserProfile(user.getUserId(), funBoardModel.getItemId());
-					logger.debug("existingEventUserLikes =>"+existingEventUserLikes);
-					if(existingEventUserLikes!=null && !existingEventUserLikes.equals(""))
-					{
-						existingEventUserLikes.setIsVisited(true);
-						existingEventUserLikes.setIsBooked(true);
-						eventsDAO.updateUserEvents(existingEventUserLikes);
-					}
-					else if (existingEventUserLikes == null)
-					{
-						eventUserLikes.setIsFavorite(false);
-						eventUserLikes.setIsFollowing(false);
-						eventUserLikes.setIsBooked(true);
-						eventUserLikes.setIsLike(false);
-						eventUserLikes.setIsVisited(true);
-						eventUserLikes.setIsProfileDetailsHidden(false);
-						eventUserLikes.setIsProfileHidden(false);
-						eventUserLikes.setIsSuggested(false);
-						eventUserLikes.setEvent(event);
-						eventUserLikes.setUser(user);
-						eventUserLikes.setCreatedtime(currentDate);
-						eventUserLikes.setUpdatedtime(currentDate);
-						eventsDAO.saveUserEvents(eventUserLikes);
-					}
+					logger.debug("Item Already exists in your Fun Board....");
+					baseResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
+					baseResponse.setError("The activity already exists on your Funboard");
 				}
-				else if(funBoardModel.getType().equalsIgnoreCase("Deal"))
-				{
-					Deals deal = new Deals();
-					deal.setId(funBoardModel.getItemId());
-
-
-					Dealsusage dealsusage = null;
-
-					// Check if entry already exists in table
-					dealsusage = userDAO.getUserLikeDeal(user.getUserId(), funBoardModel.getItemId());
-					logger.debug("dealsusage =>"+dealsusage);
-					if(dealsusage!=null && !dealsusage.equals(""))
-					{
-						dealsusage.setIsVisited(true);
-						dealsusage.setIsBooked(true);
-						dealsDAO.updateDealUserLikes(dealsusage);
-					}
-					else if (dealsusage == null)
-					{
-						dealsusage = new Dealsusage();
-						dealsusage.setIsFavorite(false);
-						dealsusage.setIsFollowing(false);
-						dealsusage.setIsLike(false);
-						dealsusage.setIsVisited(true);
-						dealsusage.setIsSuggested(false);
-						dealsusage.setIsRedempted(false);
-						dealsusage.setIsBooked(true);
-						dealsusage.setUser(user);
-						dealsusage.setDeals(deal);
-						dealsusage.setCreatedtime(currentDate);
-						dealsusage.setUpdatedtime(currentDate);
-						dealsDAO.saveDealUserLikes(dealsusage);
-					}
-				}
-				baseResponse.setStatus(ServiceAPIStatus.OK.getStatus());
-			}
-			else
-			{
-				logger.debug("Item Already exists in your Fun Board....");
-				baseResponse.setStatus(ServiceAPIStatus.FAILED.getStatus());
-				baseResponse.setError("The activity already exists on your Funboard");
+			} catch (Exception e) {
+				logger.debug("Error funboard : " + e.getLocalizedMessage());
+				e.printStackTrace();
 			}
 		}
 		else
@@ -306,8 +320,13 @@ public class FunBoardService implements IFunBoardService{
 			funBoardModel.setType(funboard.getItemType());
 			funBoardModel.setStartDate(funboard.getStartDate().toString());
 			funBoardModel.setEndDate(funboard.getEndDate().toString());
+			funBoardModel.setScheduledDate(funboard.getScheduledTime().toString());
 			funBoardModel.setSource(funboard.getSource());
 			funBoardModel.setTag(funboard.getTag());
+			funBoardModel.setStartTime(funboard.getStartTime().toString());
+			funBoardModel.setEndTime(funboard.getEndTime().toString());
+			if(funboard.getTimeSlot() != null)
+				funBoardModel.setTimeSlot(funboard.getTimeSlot().toString());
 			String privacyType = funboard.getPrivacy().getPrivacyType();
 			if(privacyType.equals("OPEN"))
 				funBoardModel.setIsPublic(true);
@@ -321,9 +340,6 @@ public class FunBoardService implements IFunBoardService{
 					funBoardModel.setRating(business.getRating());
 					funBoardModel.setDescription(business.getName());
 					funBoardModel.setWebsiteUrl(business.getWebsiteUrl());
-
-					if(funboard.getTimeSlot() != null)
-						funBoardModel.setTimeSlot(funboard.getTimeSlot().toString());
 					day = Utils.getDayOfWeek(funboard.getScheduledTime());
 					/*fridayActivefunBoardModels.add(funBoardModel);
 					saturadyActivefunBoardModels.add(funBoardModel);
@@ -338,8 +354,6 @@ public class FunBoardService implements IFunBoardService{
 					funBoardModel.setRating(deals.getBusiness().getRating());
 					funBoardModel.setDescription(deals.getTitle());
 					funBoardModel.setWebsiteUrl(deals.getDealUrl());
-					if(funboard.getTimeSlot() != null)
-						funBoardModel.setTimeSlot(funboard.getTimeSlot().toString());
 					day = Utils.getDayOfWeek(funboard.getScheduledTime());
 				}
 			}
@@ -355,9 +369,6 @@ public class FunBoardService implements IFunBoardService{
 					funBoardModel.setRating(avgRating);
 					funBoardModel.setDescription(pageDetails.getAbout());
 					funBoardModel.setWebsiteUrl(pageDetails.getPageUrl());
-					if(funboard.getTimeSlot() != null)
-						funBoardModel.setTimeSlot(funboard.getTimeSlot().toString());
-
 					day = Utils.getDayOfWeek(funboard.getStartDate());
 				}
 			}
@@ -372,8 +383,6 @@ public class FunBoardService implements IFunBoardService{
 					funBoardModel.setDescription(events.getDescription());
 					funBoardModel.setTitle(events.getTitle());
 					funBoardModel.setWebsiteUrl(events.getUrlpath());
-					if(funboard.getTimeSlot() != null)
-						funBoardModel.setTimeSlot(funboard.getTimeSlot().toString());
 					day = Utils.getDayOfWeek(funboard.getStartDate());
 				}
 			}
@@ -557,7 +566,7 @@ public class FunBoardService implements IFunBoardService{
 			funBoardModel.setMerhcantName(business.getName());
 
 			//Get price and discount
-			Dealoption dealoption = dealsDAO.getDealOptionByDealId(deal.getId());
+			Dealoption dealoption = dealsDAO.getDealOptionByDealId(deal.getId(),0,0);
 			if(dealoption != null)
 			{
 				if(dealoption.getFormattedOriginalPrice() != null)
@@ -824,11 +833,17 @@ public class FunBoardService implements IFunBoardService{
 			if(funboard != null)
 			{
 				//Update TimeLine
-				if(funBoardModel.getTimeLine() != null)
+				if(funBoardModel.getStartTime() != null)
 				{
 					SimpleDateFormat simple=new SimpleDateFormat("HH:mm:ss");
-					Date scheduleTime = simple.parse(funBoardModel.getTimeLine());
+					Date scheduleTime = simple.parse(funBoardModel.getStartTime());
+					Date startTime = simple.parse(funBoardModel.getStartTime());
+					Date endTime = simple.parse(funBoardModel.getEndTime());
 					Time funboardCreationTime = new Time(scheduleTime.getTime());
+					Time funboardStartTime = new Time(startTime.getTime());
+					Time funboardEndTime = new Time(endTime.getTime());
+					funboard.setStartTime(funboardStartTime);
+					funboard.setEndTime(funboardEndTime);
 					Timeline timeline = funBoardDAO.getTimeLine(funboardCreationTime);
 					if(timeline != null)
 					{

@@ -16,5 +16,6 @@ public interface ILivingSocialDAO {
 	public List<LdealOption> getDeals();
 	public List<Ldeal> getLDeals();
 	public List<LdealOption> getDealOptions(int dealId);
+	public List<Lcategory> getCategoryParent(String categoryList);
 	//public Lcategory getLCategory(String categoryName);
 }

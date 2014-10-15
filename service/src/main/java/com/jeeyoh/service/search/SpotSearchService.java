@@ -47,7 +47,7 @@ public class SpotSearchService implements ISpotSearchService{
 
 	@Autowired
 	private IUserDAO userDAO;
-	
+
 	@Autowired
 	private IFunBoardDAO funBoardDAO;
 
@@ -57,31 +57,38 @@ public class SpotSearchService implements ISpotSearchService{
 
 		int totalCount = 0;
 		int count = 0;
+		
 		//Getting total number of results
 		if(searchRequest.getExactMatchBusinessCount() == 0 && searchRequest.getExactMatchDealCount() == 0 && searchRequest.getExactMatchEventCount() == 0 && searchRequest.getExactMatchCommunityCount() == 0 && 
-				searchRequest.getLikeMatchBusinessCount() == 0 && searchRequest.getLikeMatchCommunityCount() == 0 && searchRequest.getLikeMatchDealCount() == 0 && searchRequest.getLikeMatchEventCount() == 0)
+				searchRequest.getLikeMatchBusinessCount() == 0 && searchRequest.getLikeMatchCommunityCount() == 0 && searchRequest.getLikeMatchDealCount() == 0 && searchRequest.getLikeMatchEventCount() == 0 && searchRequest.getExactMatchEventCommunityCount() == 0 && searchRequest.getLikeMatchEventCommunityCount() == 0)
 		{
-			count = businessDAO.getTotalBusinessBySearchKeyWord(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation(),searchRequest.getLatitude(), searchRequest.getLongitude(), searchRequest.getDistance(), searchRequest.getRating());
-			logger.debug("businesstotalCount::  "+count);
-			totalCount += count;
-
-			count = dealsDAO.getTotalDealsBySearchKeyWord(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation(),searchRequest.getLatitude(), searchRequest.getLongitude(), searchRequest.getDistance(), searchRequest.getRating(), searchRequest.getMinPricae(), searchRequest.getMaxPrice());
-			logger.debug("dealtotalCount::  "+count);
-			totalCount += count;
-
-			count = eventsDAO.getTotalEventsBySearchKeyWord(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation(),searchRequest.getLatitude(), searchRequest.getLongitude(), searchRequest.getDistance(), searchRequest.getRating());
-			logger.debug("eventtotalCount::  "+count);
-			totalCount += count;
-
-			count = eventsDAO.getTotalCommunityBySearchKeyWordForBusiness(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation(),searchRequest.getLatitude(), searchRequest.getLongitude(), searchRequest.getDistance(), searchRequest.getRating());
-			logger.debug("pagetotalCount for business::  "+count);
-			totalCount += count;
-			if(searchRequest.getLocation() != null && !searchRequest.getLocation().trim().equals(""))
+			
+			if(searchRequest.getIsDeal() || !searchRequest.getIsDeal())
 			{
-				count = eventsDAO.getTotalCommunityBySearchKeyWordForEvent(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation(),searchRequest.getLatitude(), searchRequest.getLongitude(), searchRequest.getDistance(), searchRequest.getRating());
-				logger.debug("pagetotalCount::  "+count);
+				count = dealsDAO.getTotalDealsBySearchKeyWord(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation(),searchRequest.getLatitude(), searchRequest.getLongitude(), searchRequest.getDistance(), searchRequest.getRating(), searchRequest.getMinPrice(), searchRequest.getMaxPrice());
+				logger.debug("dealtotalCount::  "+count);
 				totalCount += count;
-				logger.debug("totalCount pagetotalCount::  "+totalCount);
+			}
+			if(!searchRequest.getIsDeal())
+			{
+				count = businessDAO.getTotalBusinessBySearchKeyWord(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation(),searchRequest.getLatitude(), searchRequest.getLongitude(), searchRequest.getDistance(), searchRequest.getRating());
+				logger.debug("businesstotalCount::  "+count);
+				totalCount += count;
+
+				count = eventsDAO.getTotalEventsBySearchKeyWord(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation(),searchRequest.getLatitude(), searchRequest.getLongitude(), searchRequest.getDistance(), searchRequest.getRating());
+				logger.debug("eventtotalCount::  "+count);
+				totalCount += count;
+
+				count = eventsDAO.getTotalCommunityBySearchKeyWordForBusiness(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation(),searchRequest.getLatitude(), searchRequest.getLongitude(), searchRequest.getDistance(), searchRequest.getRating());
+				logger.debug("pagetotalCount for business::  "+count);
+				totalCount += count;
+				if((searchRequest.getLocation() != null && !searchRequest.getLocation().trim().equals("")) || (searchRequest.getLatitude() != 0 && searchRequest.getLongitude() != 0))
+				{
+					count = eventsDAO.getTotalCommunityBySearchKeyWordForEvent(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation(),searchRequest.getLatitude(), searchRequest.getLongitude(), searchRequest.getDistance(), searchRequest.getRating());
+					logger.debug("pagetotalCount::  "+count);
+					totalCount += count;
+					logger.debug("totalCount pagetotalCount::  "+totalCount);
+				}
 			}
 		}
 
@@ -91,33 +98,46 @@ public class SpotSearchService implements ISpotSearchService{
 		SearchResponse searchResponse = new SearchResponse();
 		List<SearchResult> exactMatchingSearchResults = new ArrayList<SearchResult>();
 		List<SearchResult> likeSearchResults = new ArrayList<SearchResult>();
-		List<Business> businessList = businessDAO.getBusinessBySearchKeyword(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation(),searchRequest.getExactMatchBusinessCount(),8, searchRequest.getLatitude(), searchRequest.getLongitude(), searchRequest.getDistance(), searchRequest.getRating());
-		List<Deals> dealsList = dealsDAO.getDealsBySearchKeyword(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation(),searchRequest.getExactMatchDealCount(),8);
-
+		List<Deals> dealsList = new ArrayList<Deals>();
 		List<Page> pageList = new ArrayList<Page>();
-		pageList = eventsDAO.getCommunityBySearchKeywordForBusiness(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation(),searchRequest.getExactMatchCommunityCount(),8,searchRequest.getLatitude(), searchRequest.getLongitude(), searchRequest.getDistance(), searchRequest.getRating());
-		searchResponse.setExactMatchCommunityCount(searchRequest.getExactMatchCommunityCount() + pageList.size());
-		if(searchRequest.getLocation() != null && !searchRequest.getLocation().trim().equals(""))
+		List<Business> businessList = new ArrayList<Business>();
+		List<Events> eventsList = new ArrayList<Events>();
+		if(searchRequest.getIsDeal() || !searchRequest.getIsDeal())
 		{
-			int limit = 0;
-			if(pageList.size() < 8)
+			dealsList = dealsDAO.getDealsBySearchKeyword(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation(),searchRequest.getExactMatchDealCount(),8,searchRequest.getLatitude(), searchRequest.getLongitude(), searchRequest.getDistance(), searchRequest.getRating(), searchRequest.getMinPrice(), searchRequest.getMaxPrice(), true);
+		}
+		if(!searchRequest.getIsDeal())
+		{
+			businessList = businessDAO.getBusinessBySearchKeyword(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation(),searchRequest.getExactMatchBusinessCount(),8, searchRequest.getLatitude(), searchRequest.getLongitude(), searchRequest.getDistance(), searchRequest.getRating(), true);
+			
+			pageList = eventsDAO.getCommunityBySearchKeywordForBusiness(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation(),searchRequest.getExactMatchCommunityCount(),8,searchRequest.getLatitude(), searchRequest.getLongitude(), searchRequest.getDistance(), searchRequest.getRating(), true);
+			searchResponse.setExactMatchCommunityCount(searchRequest.getExactMatchCommunityCount() + pageList.size());
+			if((searchRequest.getLocation() != null && !searchRequest.getLocation().trim().equals("")) || (searchRequest.getLatitude() != 0 && searchRequest.getLongitude() != 0))
 			{
-				limit = 8 - pageList.size();
-				List<Page> eventsPageList = eventsDAO.getCommunityBySearchKeywordForEvents(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation(),searchRequest.getExactMatchEventCommunityCount(),limit,searchRequest.getLatitude(), searchRequest.getLongitude(), searchRequest.getDistance(), searchRequest.getRating());
-
-				if(eventsPageList != null)
+				int limit = 0;
+				if(pageList.size() < 8)
 				{
-					searchResponse.setExactMatchEventCommunityCount(searchRequest.getExactMatchEventCommunityCount() + eventsPageList.size());
-					pageList.addAll(eventsPageList);
+					limit = 8 - pageList.size();
+					List<Page> eventsPageList = eventsDAO.getCommunityBySearchKeywordForEvents(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation(),searchRequest.getExactMatchEventCommunityCount(),limit,searchRequest.getLatitude(), searchRequest.getLongitude(), searchRequest.getDistance(), searchRequest.getRating(), true);
+
+					if(eventsPageList != null)
+					{
+						searchResponse.setExactMatchEventCommunityCount(searchRequest.getExactMatchEventCommunityCount() + eventsPageList.size());
+						pageList.addAll(eventsPageList);
+					}
 				}
 			}
-
+			eventsList = eventsDAO.getEventsBySearchKeyword(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation(),searchRequest.getExactMatchEventCount(),8,searchRequest.getLatitude(), searchRequest.getLongitude(), searchRequest.getDistance(), searchRequest.getRating(), true);
 		}
-		List<Events> eventsList = eventsDAO.getEventsBySearchKeyword(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation(),searchRequest.getExactMatchEventCount(),8,searchRequest.getLatitude(), searchRequest.getLongitude(), searchRequest.getDistance(), searchRequest.getRating());
-		logger.debug("dealsList::  "+dealsList.size());
-		logger.debug("businessList::  "+businessList.size());		
-		logger.debug("pageList::  "+pageList.size());
-		logger.debug("eventsList::  "+eventsList.size());
+		
+		if(dealsList != null)
+			logger.debug("dealsList::  "+dealsList.size());
+		if(businessList != null)
+			logger.debug("businessList::  "+businessList.size());
+		if(pageList != null)
+			logger.debug("pageList::  "+pageList.size());
+		if(eventsList != null)
+			logger.debug("eventsList::  "+eventsList.size());
 
 		searchResponse.setExactMatchBusinessCount(searchRequest.getExactMatchBusinessCount() + businessList.size());
 		searchResponse.setExactMatchDealCount(searchRequest.getExactMatchDealCount() + dealsList.size());
@@ -129,54 +149,59 @@ public class SpotSearchService implements ISpotSearchService{
 		List<Events> likeMatchEventsList = new ArrayList<Events>();
 
 		// Get Exact matched results
-		exactMatchingSearchResults = getSearchResults(searchRequest.getUserId(), businessList, dealsList, pageList, eventsList, exactMatchingSearchResults,searchRequest.getCategory());
+		exactMatchingSearchResults = getSearchResults(searchRequest.getUserId(), businessList, dealsList, pageList, eventsList, exactMatchingSearchResults,searchRequest.getCategory(), searchRequest.getMinPrice(), searchRequest.getMaxPrice());
 
 		if(searchRequest.getSearchText() != null && !searchRequest.getSearchText().trim().equals(""))
 		{
 			int limit = 0;
-			if(businessList.size() < 8)
+			if(searchRequest.getIsDeal() || !searchRequest.getIsDeal())
 			{
-				limit = 8 - businessList.size();
-				LikeMatchBusinessList = businessDAO.getBusinessByLikeSearchKeyword(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation(),searchRequest.getLikeMatchBusinessCount(),limit,searchRequest.getLatitude(), searchRequest.getLongitude(), searchRequest.getDistance(), searchRequest.getRating());
-				searchResponse.setLikeMatchBusinessCount(searchRequest.getLikeMatchBusinessCount() + LikeMatchBusinessList.size());
-			}
-
-			if(dealsList.size() < 8)
-			{
-				limit = 8 - dealsList.size();
-				likeMatchDealsList = dealsDAO.getDealsByLikeSearchKeyword(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation(),searchRequest.getLikeMatchDealCount(),limit);
-				searchResponse.setLikeMatchDealCount(searchRequest.getLikeMatchDealCount() + likeMatchDealsList.size());
-			}
-
-			if(pageList.size() < 8)
-			{
-				limit = 8 - pageList.size();
-				likematchPageList = eventsDAO.getCommunityByLikeSearchKeywordForBusiness(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation(),searchRequest.getLikeMatchCommunityCount(),limit,searchRequest.getLatitude(), searchRequest.getLongitude(), searchRequest.getDistance(), searchRequest.getRating());
-				searchResponse.setLikeMatchCommunityCount(searchRequest.getLikeMatchCommunityCount() + likematchPageList.size());
-				if(searchRequest.getLocation() != null && !searchRequest.getLocation().trim().equals(""))
+				if(dealsList.size() < 8)
 				{
-					if(likematchPageList.size() < 8)
+					limit = 8 - dealsList.size();
+					likeMatchDealsList = dealsDAO.getDealsBySearchKeyword(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation(),searchRequest.getLikeMatchDealCount(),limit,searchRequest.getLatitude(), searchRequest.getLongitude(), searchRequest.getDistance(), searchRequest.getRating(), searchRequest.getMinPrice(), searchRequest.getMaxPrice(), false);
+					searchResponse.setLikeMatchDealCount(searchRequest.getLikeMatchDealCount() + likeMatchDealsList.size());
+				}
+			}
+			if(!searchRequest.getIsDeal())
+			{
+				if(businessList.size() < 8)
+				{
+					limit = 8 - businessList.size();
+					LikeMatchBusinessList = businessDAO.getBusinessBySearchKeyword(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation(),searchRequest.getLikeMatchBusinessCount(),limit,searchRequest.getLatitude(), searchRequest.getLongitude(), searchRequest.getDistance(), searchRequest.getRating(), false);
+					searchResponse.setLikeMatchBusinessCount(searchRequest.getLikeMatchBusinessCount() + LikeMatchBusinessList.size());
+				}
+				
+				if(pageList.size() < 8)
+				{
+					limit = 8 - pageList.size();
+					likematchPageList = eventsDAO.getCommunityBySearchKeywordForBusiness(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation(),searchRequest.getLikeMatchCommunityCount(),limit,searchRequest.getLatitude(), searchRequest.getLongitude(), searchRequest.getDistance(), searchRequest.getRating(), false);
+					searchResponse.setLikeMatchCommunityCount(searchRequest.getLikeMatchCommunityCount() + likematchPageList.size());
+					if((searchRequest.getLocation() != null && !searchRequest.getLocation().trim().equals("")) || (searchRequest.getLatitude() != 0 && searchRequest.getLongitude() != 0))
 					{
-						limit = 8 - likematchPageList.size();
-						List<Page> eventsPageList = eventsDAO.getCommunityByLikeSearchKeywordForEvents(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation(),searchRequest.getLikeMatchEventCommunityCount(),limit,searchRequest.getLatitude(), searchRequest.getLongitude(), searchRequest.getDistance(), searchRequest.getRating());
-						if(eventsPageList != null)
+						if(likematchPageList.size() < 8)
 						{
-							likematchPageList.addAll(eventsPageList);
-							searchResponse.setLikeMatchEventCommunityCount(searchRequest.getLikeMatchEventCommunityCount() + eventsPageList.size());
+							limit = 8 - likematchPageList.size();
+							List<Page> eventsPageList = eventsDAO.getCommunityBySearchKeywordForEvents(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation(),searchRequest.getLikeMatchEventCommunityCount(),limit,searchRequest.getLatitude(), searchRequest.getLongitude(), searchRequest.getDistance(), searchRequest.getRating(), false);
+							if(eventsPageList != null)
+							{
+								likematchPageList.addAll(eventsPageList);
+								searchResponse.setLikeMatchEventCommunityCount(searchRequest.getLikeMatchEventCommunityCount() + eventsPageList.size());
+							}
 						}
 					}
 				}
-			}
 
-			if(eventsList.size() < 8)
-			{
-				limit = 32 - (exactMatchingSearchResults.size() + LikeMatchBusinessList.size() + likeMatchDealsList.size() +likematchPageList.size());
-				likeMatchEventsList = eventsDAO.getEventsByLikeSearchKeyword(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation(),searchRequest.getLikeMatchEventCount(),limit,searchRequest.getLatitude(), searchRequest.getLongitude(), searchRequest.getDistance(), searchRequest.getRating());
-				searchResponse.setLikeMatchEventCount(searchRequest.getLikeMatchEventCount() + likeMatchEventsList.size());
+				if(eventsList.size() < 8)
+				{
+					limit = 32 - (exactMatchingSearchResults.size() + LikeMatchBusinessList.size() + likeMatchDealsList.size() +likematchPageList.size());
+					likeMatchEventsList = eventsDAO.getEventsBySearchKeyword(searchRequest.getSearchText(),searchRequest.getCategory(),searchRequest.getLocation(),searchRequest.getLikeMatchEventCount(),limit,searchRequest.getLatitude(), searchRequest.getLongitude(), searchRequest.getDistance(), searchRequest.getRating(), false);
+					searchResponse.setLikeMatchEventCount(searchRequest.getLikeMatchEventCount() + likeMatchEventsList.size());
+				}
 			}
-
+			
 			// Get Like matched results
-			likeSearchResults = getSearchResults(searchRequest.getUserId(), LikeMatchBusinessList, likeMatchDealsList, likematchPageList, likeMatchEventsList,likeSearchResults,searchRequest.getCategory());
+			likeSearchResults = getSearchResults(searchRequest.getUserId(), LikeMatchBusinessList, likeMatchDealsList, likematchPageList, likeMatchEventsList,likeSearchResults,searchRequest.getCategory(), searchRequest.getMinPrice(), searchRequest.getMaxPrice());
 			exactMatchingSearchResults.addAll(likeSearchResults);
 		}
 
@@ -212,7 +237,7 @@ public class SpotSearchService implements ISpotSearchService{
 	 * @param searchResultList
 	 * @return
 	 */
-	private List<SearchResult> getSearchResults(int userId, List<Business> businessList, List<Deals> dealsList, List<Page> pageList, List<Events> eventsList, List<SearchResult> searchResultList, String category)
+	private List<SearchResult> getSearchResults(int userId, List<Business> businessList, List<Deals> dealsList, List<Page> pageList, List<Events> eventsList, List<SearchResult> searchResultList, String category, int minPrice, int maxPrice)
 	{
 		// Add results for Events
 		if(eventsList != null)
@@ -241,14 +266,20 @@ public class SpotSearchService implements ISpotSearchService{
 					double avg = (double)rating/count;
 					searchResult.setRating(avg);
 				}*/
-				double avgRating = eventsDAO.getCommunityReviewByPageId(events.getPage().getPageId());
+				logger.debug("events.getPage()::  "+events.getPage());
+				double avgRating = 0.0;
+				if(events.getPage() != null)
+				{
+					avgRating = eventsDAO.getCommunityReviewByPageId(events
+							.getPage().getPageId());
+				}
 				searchResult.setRating(avgRating);
 				searchResult.setId(events.getEventId());
 				searchResult.setCity(events.getCity());
 				searchResult.setName(events.getTitle());
 				searchResult.setType("Event");
-				searchResult.setStartDate(events.getEvent_date_local().toString());
-				searchResult.setEndDate(events.getEvent_date_local().toString());
+				searchResult.setStartDate(events.getEvent_date_time_local().toString());
+				searchResult.setEndDate(events.getEvent_date_time_local().toString());
 				//searchResult.setImageUrl(events.getImage_url());
 				searchResult.setWebsiteUrl(events.getUrlpath());
 				searchResult.setCategory(page.getPagetype().getPageType());
@@ -301,7 +332,7 @@ public class SpotSearchService implements ISpotSearchService{
 
 
 				//Get price and discount
-				Dealoption dealoption = dealsDAO.getDealOptionByDealId(deals.getId());
+				Dealoption dealoption = dealsDAO.getDealOptionByDealId(deals.getId(), minPrice, maxPrice);
 				if(dealoption != null)
 				{
 					if(dealoption.getFormattedOriginalPrice() != null)
@@ -430,7 +461,7 @@ public class SpotSearchService implements ISpotSearchService{
 				}
 				else
 				{
-					Funboard funboard = funBoardDAO.isFunBoardExists(userId, business.getId());
+					Funboard funboard = funBoardDAO.isFunBoardExists(userId, business.getId(),null);
 					if(funboard != null)
 						searchResult.setIsBooked(true);
 				}
@@ -442,7 +473,8 @@ public class SpotSearchService implements ISpotSearchService{
 				searchResult.setImageUrl(business.getImageUrl());
 				searchResult.setWebsiteUrl(business.getWebsiteUrl());
 				searchResult.setCategory(category);
-				searchResult.setRating(business.getRating());
+				if(business.getRating() != null)
+					searchResult.setRating(business.getRating());
 				searchResult.setSource(business.getSource());
 				searchResult.setZipCode(business.getPostalCode());
 				if(business.getLattitude() != null)

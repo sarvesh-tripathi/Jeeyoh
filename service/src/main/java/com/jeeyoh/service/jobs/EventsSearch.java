@@ -22,6 +22,7 @@ import com.jeeyoh.persistence.domain.UserCategory;
 import com.jeeyoh.persistence.domain.UserCategoryLikes;
 import com.jeeyoh.persistence.domain.Usercontacts;
 import com.jeeyoh.persistence.domain.Usereventsuggestion;
+import com.jeeyoh.persistence.domain.Usernondealsuggestion;
 import com.jeeyoh.utils.Utils;
 
 @Component("eventSearch")
@@ -133,8 +134,8 @@ public class EventsSearch implements IEventSearch{
 
 					try {
 						logger.debug("userLikeWeekend: "+userLikeWeekend +" weekendDate: "+weekendDate);
-						if(userLikeWeekend.compareTo(weekendDate) == 0)
-						{
+						//if(userLikeWeekend.compareTo(weekendDate) == 0)
+						//{
 							if(isContactsAccessed)
 								categoryLikesCount = userDAO.userCategoryLikeCount(userCategory.getUserCategoryId());
 							logger.debug("categoryLikesCount: "+categoryLikesCount);
@@ -150,7 +151,7 @@ public class EventsSearch implements IEventSearch{
 									}
 								}
 							}
-						}
+					//	}
 					} catch (NumberFormatException e) {
 						e.printStackTrace();
 
@@ -284,10 +285,24 @@ public class EventsSearch implements IEventSearch{
 	{
 		try
 		{
+			boolean isExist = false;
+			Usereventsuggestion userEventSuggestion = null;
 			List<Usereventsuggestion> usereventsuggestions = userDAO.isEventSuggestionExists(user.getUserId(), event.getEventId());
-			logger.debug("EventSearch ==> usereventsuggestions ==> " + usereventsuggestions);
+			if(usereventsuggestions != null && usereventsuggestions.size() != 0)
+			{
+				isExist = true;
+			}
+			else
+			{
+				userEventSuggestion = userDAO.isEventSuggestionExistsForDirectSuggestion(user.getUserId(), event.getEventId());
+				if(userEventSuggestion != null)
+				{
+					isExist = true;
+				}
+			}
+			logger.debug("EventSearch ==> usereventsuggestions ==> " + usereventsuggestions + " : "+ isExist);
 			
-			if(usereventsuggestions == null || (usereventsuggestions != null && usereventsuggestions.size() == 0) || (usereventsuggestions != null && usereventsuggestions.size() != 0 && usereventsuggestions.get(0).getSuggestedTime().compareTo(currentDate) < 0))
+			if(!isExist)
 			{
 				boolean includePage = true;
 				double distance = 0;
@@ -339,7 +354,7 @@ public class EventsSearch implements IEventSearch{
 						usereventsuggestion.setIsFavorite(isFavorite);
 						usereventsuggestion.setIsLike(isLiked);
 						usereventsuggestion.setIsFollowing(isFollowing);
-						usereventsuggestion.setSuggestedTime(weekendDate);
+						usereventsuggestion.setSuggestedTime(event.getEvent_date_time_local());
 						if(isCommunityLike)
 						{
 							if(isGroupMember)

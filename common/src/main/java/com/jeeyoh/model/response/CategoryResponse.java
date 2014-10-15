@@ -26,6 +26,8 @@ public class CategoryResponse extends BaseResponse {
 	private List<PageModel> food;
 	@JsonProperty
 	private List<PageModel> sport;
+	@JsonProperty
+	private List<PageModel> nightlife;
 	
 	/**
 	 * @return the user
@@ -57,14 +59,16 @@ public class CategoryResponse extends BaseResponse {
 	public void setSport(List<PageModel> sport) {
 		this.sport = sport;
 	}
-	
-
-	
-
-	
-
-	
-	
-	
-
+	/**
+	 * @return the nightlife
+	 */
+	public List<PageModel> getNightlife() {
+		return nightlife;
+	}
+	/**
+	 * @param nightlife the nightlife to set
+	 */
+	public void setNightlife(List<PageModel> nightlife) {
+		this.nightlife = nightlife;
+	}
 }

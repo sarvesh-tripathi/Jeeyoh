@@ -16,6 +16,7 @@ public interface IDealsDAO {
 	public List<Deals> getDealsByCategory(String category, String location, boolean isZipCode);
 	public void saveDeal(Deals deals);
 	public void saveDeal(Deals deals, int batch_size);
+	public void saveDeal(List<Deals> deals, int batch_size);
 	public void saveFilterdDeal(Deals deal);
 	public List<Deals> getDealsByBusinessId(String businessId);
 	public void saveSuggestions(Userdealssuggestion dealSuggestion);
@@ -31,8 +32,8 @@ public interface IDealsDAO {
 	public List<Userdealssuggestion>userDealsSuggestedByJeeyoh(String keyword, String category,
 			String location, String emailId);
 	public int userCategoryLikeCount(Integer userCategoryId);
-	public List<Deals> getDealsByLikeSearchKeyword(String searchText,String category, String location, int offset, int limit);
-	public List<Deals> getDealsBySearchKeyword(String searchText,String category, String location, int offset, int limit);
+	public List<Deals> getDealsByLikeSearchKeyword(String searchText,String category, String location, int offset, int limit, double lat, double lon, int distance, double rating, int minPrice, int maxPrice);
+	public List<Deals> getDealsBySearchKeyword(String searchText,String category, String location, int offset, int limit, double lat, double lon, int distance, double rating, int minPrice, int maxPrice, boolean forExactMatch);
 	public List<Userdealssuggestion> getUserDealSuggestions(String userEmail, int offset, int limit, String category, String suggestionType, double lat, double lon, int distance, double rating, int minPrice, int maxPrice);
 	public List<Object[]> getTopDealsByRating(String idsStr);
 	public List<Object[]> getDealLikeCountByPage(String idsStr);
@@ -43,7 +44,7 @@ public interface IDealsDAO {
 			String itemType, String providerName);
 	public boolean saveDealUserLikes(Dealsusage dealsusage);
 	public boolean updateDealUserLikes(Dealsusage dealsusage);
-	public Dealoption getDealOptionByDealId(int dealId);
+	public Dealoption getDealOptionByDealId(int dealId, int minPrice, int maxPrice);
 	public Dealredemptionlocation getRedemptionLocationByDealOption(int dealOptionId);
 	public List<Deals> getBookedDealList(int userId, String category);
 	public List<Deals> getDealsByuserLikesForCurrentWeekend(String itemCategory,

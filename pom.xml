@@ -333,6 +333,13 @@
 				<mail.smtp.password>jeeyoh123</mail.smtp.password>
 				<mail.smtp.host.value>smtp.gmail.com</mail.smtp.host.value>
 				<mail.smtp.port.num>587</mail.smtp.port.num>
+				
+				<!-- <sender.name>Jeeyoh</sender.name>
+				<sender.email>babita.dhami@evontech.com</sender.email>
+				<mail.smtp.loginid>babita.dhami@evontech.com</mail.smtp.loginid>
+				<mail.smtp.password>babita15</mail.smtp.password>
+				<mail.smtp.host.value>smtpout.secureserver.net</mail.smtp.host.value>
+				<mail.smtp.port.num>465</mail.smtp.port.num> -->
 
 				<!-- Upload File -->
 				<host.name>http://192.168.1.217</host.name>

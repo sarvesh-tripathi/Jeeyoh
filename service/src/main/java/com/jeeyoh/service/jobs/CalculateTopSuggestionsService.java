@@ -36,7 +36,7 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 
 	static final Logger logger = LoggerFactory.getLogger("debugLogger");
 
-	String[] categoryList = {"RESTAURANT","MOVIES","SPORT","THEATER","CONCERT","SPA","NIGHTLIFE"};
+	String[] categoryList = {"RESTAURANT","MOVIE","SPORT","THEATER","CONCERT","SPA","NIGHTLIFE"};
 
 	@Autowired
 	private IUserDAO userDAO;
@@ -143,47 +143,56 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 	@Override
 	public void calculateTopCommunitySuggestions() {
 		List<User> userList = userDAO.getUsers();
+		List<Topcommunitysuggestion> topcommunitysuggestionsList = new ArrayList<Topcommunitysuggestion>();
+		Date date = new Date();
 		if(userList != null) {
 			for(User user : userList) {
-				logger.debug("caculateTopSuggestions ==> search ==> userID ==> " + user.getEmailId());
+				logger.debug("calculateTopCommunitySuggestions ==> search ==> userID ==> " + user.getEmailId());
 				int userId = user.getUserId();
-
+				
 				for(int i = 0; i < categoryList.length; i++)
 				{
 					String category = categoryList[i];
 					logger.debug("Category: "+category);
 					// Getting Likes count for community suggestion in descending order
-					List<Object[]> rows = userDAO.getuserCommunitySuggestionsByLikesCount(userId,category);
+					List<Object[]> rows = userDAO.getuserCommunitySuggestionsByLikesCount(userId,category,Double.parseDouble(user.getLattitude()),Double.parseDouble(user.getLongitude()));
 					int count = 0;
 					if(rows != null)
 					{
 						logger.debug("rows: "+rows.size());
 						for(Object[] object : rows)
 						{
-							Pageuserlikes pageuserlikes = (Pageuserlikes) object[1];
-							Page page = pageuserlikes.getPage();
-							List<Topcommunitysuggestion> topcommunitysuggestions = userDAO.isTopCommunitySuggestionExists(userId, page.getPageId());
-							if(topcommunitysuggestions == null || topcommunitysuggestions.size() == 0)
-							{
+							int pageId = Integer.parseInt(object[2].toString());
+							Page page = new Page();
+							page.setPageId(pageId);
+							//List<Topcommunitysuggestion> topcommunitysuggestions = userDAO.isTopCommunitySuggestionExists(userId, page.getPageId());
+							//if(topcommunitysuggestions == null || topcommunitysuggestions.size() == 0)
+							//{
 								count++;
-								if(count <= 10)
-								{
+								//if(count <= 10)
+								//{
 									Topcommunitysuggestion topcommunitysuggestion = new Topcommunitysuggestion();
 									topcommunitysuggestion.setPage(page);
 									topcommunitysuggestion.setUser(user);
 									topcommunitysuggestion.setRank((long)count);
 									topcommunitysuggestion.setTotalLikes(Integer.parseInt(object[0].toString()));
-									topcommunitysuggestion.setCreatedTime(new Date());
-									topcommunitysuggestion.setUpdatedTime(new Date());
+									topcommunitysuggestion.setCreatedTime(date);
+									topcommunitysuggestion.setUpdatedTime(date);
 									topcommunitysuggestion.setCategoryType(category);
-									userDAO.saveTopCommunitySuggestions(topcommunitysuggestion);
-								}
-							}
+									topcommunitysuggestionsList.add(topcommunitysuggestion);
+									//userDAO.saveTopCommunitySuggestions(topcommunitysuggestion);
+								//}
+								//else
+									//break;
+							//}
 
 						}
 					}
 				}
 			}
+			
+			if(!topcommunitysuggestionsList.isEmpty())
+				userDAO.saveTopCommunitySuggestions(topcommunitysuggestionsList);
 		}
 	}
 
@@ -412,6 +421,8 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 									if(isSaved)
 										count++;
 								}
+								else
+									break;
 							}
 						}
 						else
@@ -421,6 +432,8 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 								count++;
 						}
 					}
+					else
+						break;
 				}
 			}
 		}
@@ -599,6 +612,8 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 															//Set found bool back to false
 															found = false;
 														}
+														else
+															break;
 													}
 												}
 											}
@@ -610,6 +625,8 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 												count++;
 										}
 									}
+									else
+										break;
 								}
 							}
 						}
@@ -620,6 +637,8 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 								count++;
 						}
 					}
+					else
+						break;
 				}
 
 			}
@@ -739,6 +758,8 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 								if(isSaved)
 									count++;
 							}
+							else
+								break;
 						}
 
 						if(idsArray.size() > array.size())
@@ -768,6 +789,8 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 										//Set found bool back to false
 										found = false;
 									}
+									else
+										break;
 								}
 							}
 						}
@@ -779,6 +802,8 @@ public class CalculateTopSuggestionsService implements ICalculateTopSuggestionsS
 							count++;
 					}
 				}
+				else
+					break;
 			}
 		}
 	}

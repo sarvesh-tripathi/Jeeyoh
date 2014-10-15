@@ -73,6 +73,10 @@ public class FunBoardModel implements Serializable{
 	@JsonProperty
 	private String tag;
 	private boolean isPublic;
+	@JsonProperty
+	private String startTime;
+	@JsonProperty
+	private String endTime;
 	
 	/**
 	 * @return the funBoardId
@@ -409,6 +413,30 @@ public class FunBoardModel implements Serializable{
 	 */
 	public void setIsPublic(boolean isPublic) {
 		this.isPublic = isPublic;
+	}
+	/**
+	 * @return the startTime
+	 */
+	public String getStartTime() {
+		return startTime;
+	}
+	/**
+	 * @param startTime the startTime to set
+	 */
+	public void setStartTime(String startTime) {
+		this.startTime = startTime;
+	}
+	/**
+	 * @return the endTime
+	 */
+	public String getEndTime() {
+		return endTime;
+	}
+	/**
+	 * @param endTime the endTime to set
+	 */
+	public void setEndTime(String endTime) {
+		this.endTime = endTime;
 	}
 	
 

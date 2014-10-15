@@ -22,6 +22,7 @@ import com.jeeyoh.persistence.domain.UserCategory;
 import com.jeeyoh.persistence.domain.UserCategoryLikes;
 import com.jeeyoh.persistence.domain.Usercontacts;
 import com.jeeyoh.persistence.domain.Userdealssuggestion;
+import com.jeeyoh.persistence.domain.Usereventsuggestion;
 import com.jeeyoh.utils.Utils;
 
 @Component("dealSearch")
@@ -90,6 +91,7 @@ public class DealSearch implements IDealSearch {
 	private void saveDealSuggestion(User user,User userFor,Boolean contactFlag,Boolean isStar, Boolean isGroupMember, String groupType, boolean isSharedWithFriends, boolean isSharedWithGroup, boolean isSharedWithCommunity, Date weekendDate, Date currentDate)
 	{
 
+		boolean isExist = false;
 		//get user detail and deal usage	
 		List<Dealsusage> dealUsage = null;
 		if(!isGroupMember)
@@ -139,8 +141,22 @@ public class DealSearch implements IDealSearch {
 		if(dealUsage != null){
 			for(Dealsusage dealsusage : dealUsage) {
 				Deals deal = dealsusage.getDeals();
+				isExist = false;
 				List<Userdealssuggestion> userdealsuggestions = userDAO.isDealSuggestionExists(userFor.getUserId(), deal.getId());
-				if(userdealsuggestions == null || userdealsuggestions.size() == 0 || (userdealsuggestions.get(0).getSuggestedTime() != null && userdealsuggestions.get(0).getSuggestedTime().compareTo(currentDate) < 0))
+				if(userdealsuggestions != null && userdealsuggestions.size() != 0)
+				{
+					isExist = true;
+				}
+				else
+				{
+					Userdealssuggestion userDealSuggestion = userDAO.isDealSuggestionExistsForDirectSuggestion(userFor.getUserId(), deal.getId());
+					if(userDealSuggestion != null)
+					{
+						isExist = true;
+					}
+				}
+				
+				if(!isExist)
 				{
 					Business business = deal.getBusiness();
 					if(business != null)
@@ -191,14 +207,27 @@ public class DealSearch implements IDealSearch {
 					List<Deals> deals = dealDAO.getDealsByBusinessId(business.getId());
 					for(Deals deal : deals)
 					{
+						isExist = false;
 						List<Userdealssuggestion> userdealsuggestions = userDAO.isDealSuggestionExists(userFor.getUserId(), deal.getId());
-						if(userdealsuggestions == null || userdealsuggestions.size() == 0 || (userdealsuggestions.get(0).getSuggestedTime() != null && userdealsuggestions.get(0).getSuggestedTime().compareTo(currentDate) < 0))
+						if(userdealsuggestions != null && userdealsuggestions.size() != 0)
+						{
+							isExist = true;
+						}
+						else
+						{
+							Userdealssuggestion userDealSuggestion = userDAO.isDealSuggestionExistsForDirectSuggestion(userFor.getUserId(), deal.getId());
+							if(userDealSuggestion != null)
+							{
+								isExist = true;
+							}
+						}
+						
+						if(!isExist)
 						{
 							saveDealsSuggestionInDataBase(deal,user,userFor,isGroupMember, contactFlag, true,false, weekendDate);
 						}
 					}
 				}
-
 			}
 		}
 
@@ -217,8 +246,8 @@ public class DealSearch implements IDealSearch {
 
 				logger.debug("Date Comparison: "+userLikeWeekend.compareTo(weekendDate));
 				try {
-					if(userLikeWeekend.compareTo(weekendDate) == 0) // Deals is open for nearst weekend only
-					{
+					//if(userLikeWeekend.compareTo(weekendDate) == 0) // Deals is open for nearst weekend only
+					//{
 
 						if(!contactFlag )
 						{
@@ -226,6 +255,7 @@ public class DealSearch implements IDealSearch {
 
 							for(Deals catdeal:catDeals)
 							{
+								isExist = false;
 								Business business = catdeal.getBusiness();
 								if(business != null)
 								{
@@ -238,7 +268,20 @@ public class DealSearch implements IDealSearch {
 									}
 							
 									List<Userdealssuggestion> userdealsuggestions = userDAO.isDealSuggestionExists(userFor.getUserId(), catdeal.getId());
-									if(userdealsuggestions == null || userdealsuggestions.size() == 0 || (userdealsuggestions != null && userdealsuggestions.size() != 0 && userdealsuggestions.get(0).getSuggestedTime() != null && userdealsuggestions.get(0).getSuggestedTime().compareTo(Utils.getCurrentDate()) < 0))
+									if(userdealsuggestions != null && userdealsuggestions.size() != 0)
+									{
+										isExist = true;
+									}
+									else
+									{
+										Userdealssuggestion userDealSuggestion = userDAO.isDealSuggestionExistsForDirectSuggestion(userFor.getUserId(), catdeal.getId());
+										if(userDealSuggestion != null)
+										{
+											isExist = true;
+										}
+									}
+									
+									if(!isExist)
 									{
 										saveDealsSuggestionInDataBase(catdeal,user,userFor,isGroupMember, contactFlag, false,true, weekendDate);
 									}
@@ -254,6 +297,7 @@ public class DealSearch implements IDealSearch {
 								List<Deals> catDeals = dealDAO.getDealsByUserCategory(userCategory.getItemCategory(),userCategory.getItemType(),userCategory.getProviderName(),Double.parseDouble(userFor.getLattitude()), Double.parseDouble(userFor.getLongitude()));
 								for(Deals catdeal:catDeals)
 								{
+									isExist = false;
 									Business business = catdeal.getBusiness();
 									if(business != null)
 									{
@@ -265,7 +309,20 @@ public class DealSearch implements IDealSearch {
 											business.setLongitude(Double.toString(array[1]));
 										}
 										List<Userdealssuggestion> userdealsuggestions = userDAO.isDealSuggestionExists(userFor.getUserId(), catdeal.getId());
-										if(userdealsuggestions == null || userdealsuggestions.size() == 0 || (userdealsuggestions != null && userdealsuggestions.size() != 0 && userdealsuggestions.get(0).getSuggestedTime() != null && userdealsuggestions.get(0).getSuggestedTime().compareTo(Utils.getCurrentDate()) < 0))
+										if(userdealsuggestions != null && userdealsuggestions.size() != 0)
+										{
+											isExist = true;
+										}
+										else
+										{
+											Userdealssuggestion userDealSuggestion = userDAO.isDealSuggestionExistsForDirectSuggestion(userFor.getUserId(), catdeal.getId());
+											if(userDealSuggestion != null)
+											{
+												isExist = true;
+											}
+										}
+										
+										if(!isExist)
 										{
 											saveDealsSuggestionInDataBase(catdeal,user,userFor, isGroupMember, contactFlag, false,true, weekendDate);
 										}
@@ -280,6 +337,7 @@ public class DealSearch implements IDealSearch {
 									List<Deals> catDeals = dealDAO.getDealsByUserCategory(userCategory.getItemCategory(),userCategory.getItemType(),userCategory.getProviderName(),Double.parseDouble(userFor.getLattitude()), Double.parseDouble(userFor.getLongitude()));
 									for(Deals catdeal:catDeals)
 									{
+										isExist = false;
 										Business business = catdeal.getBusiness();
 										if(business != null)
 										{
@@ -290,8 +348,22 @@ public class DealSearch implements IDealSearch {
 												business.setLattitude(Double.toString(array[0]));
 												business.setLongitude(Double.toString(array[1]));
 											}
+											
 											List<Userdealssuggestion> userdealsuggestions = userDAO.isDealSuggestionExists(userFor.getUserId(), catdeal.getId());
-											if(userdealsuggestions == null || userdealsuggestions.size() == 0 || (userdealsuggestions != null && userdealsuggestions.size() != 0 && userdealsuggestions.get(0).getSuggestedTime() != null && userdealsuggestions.get(0).getSuggestedTime().compareTo(Utils.getCurrentDate()) < 0))
+											if(userdealsuggestions != null && userdealsuggestions.size() != 0)
+											{
+												isExist = true;
+											}
+											else
+											{
+												Userdealssuggestion userDealSuggestion = userDAO.isDealSuggestionExistsForDirectSuggestion(userFor.getUserId(), catdeal.getId());
+												if(userDealSuggestion != null)
+												{
+													isExist = true;
+												}
+											}
+											
+											if(!isExist)
 											{
 												saveDealsSuggestionInDataBase(catdeal,user,userFor, isGroupMember, contactFlag, false,true, weekendDate);
 											}
@@ -300,7 +372,7 @@ public class DealSearch implements IDealSearch {
 								}
 							}
 						}
-					}
+					//}
 				}catch(Exception e)
 				{
 					e.printStackTrace();

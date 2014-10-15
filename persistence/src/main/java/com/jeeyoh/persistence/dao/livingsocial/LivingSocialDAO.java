@@ -2,19 +2,26 @@ package com.jeeyoh.persistence.dao.livingsocial;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.jeeyoh.persistence.domain.Lcategory;
 import com.jeeyoh.persistence.domain.Ldeal;
 import com.jeeyoh.persistence.domain.LdealCategory;
 import com.jeeyoh.persistence.domain.LdealOption;
+import com.jeeyoh.persistence.domain.Topeventsuggestion;
 import com.jeeyoh.utils.Utils;
 
 @Repository("livingSocialDAO")
@@ -156,4 +163,24 @@ public class LivingSocialDAO implements ILivingSocialDAO{
 		}
 		return lCategoryList!=null?lCategoryList.get(0):null;
 	}*/
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Lcategory> getCategoryParent(String categoryList) {
+		logger.debug("getCategoryParent ==> "+categoryList);
+		List<Lcategory> categoryParentList = null;
+		String h = "select a from Lcategory a where a.category in ("+ categoryList +") group by a.lcategory.id";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(
+					h);
+			categoryParentList = (List<Lcategory>) query.list();
+			logger.debug("categoryParentList::  ",categoryParentList);
+		} catch (Exception e) {
+			logger.debug("Error ==> "+e.getMessage());
+			e.printStackTrace();
+		}
+		
+		
+		return categoryParentList;
+	}
 }

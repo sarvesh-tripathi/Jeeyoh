@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Set;
 
 import com.jeeyoh.model.user.UserModel;
+import com.jeeyoh.persistence.domain.Business;
+import com.jeeyoh.persistence.domain.Deals;
 import com.jeeyoh.persistence.domain.Dealsusage;
 import com.jeeyoh.persistence.domain.Events;
 import com.jeeyoh.persistence.domain.Eventuserlikes;
@@ -50,6 +52,7 @@ public interface IUserDAO {
 	public List<UserCategory> getUserCategoryLikesById(int userId);
 	public List<UserCategory> getUserCategoryLikesByType(int userId, String category);
 	public List<Page> getUserCommunitiesByPageType(int userId, String pageType, double latitude, double longitude);
+	public List<Business> getUserBusinessByPageType(int userId, String pageType, double latitude, double longitude);
 	public int userCategoryLikeCount(Integer userCategoryId);
 	public List<Object[]> getAllUserContacts(int userId);
 	public void saveEventsSuggestions(Usereventsuggestion suggestion, int batch_size);
@@ -62,6 +65,9 @@ public interface IUserDAO {
 	public void registerUser(User user);
 
 	public List<Dealsusage> getUserDealUsageByType(Integer userId,
+			String groupType, double latitude, double longitude);
+	
+	public List<Deals> getUserDealByType(Integer userId,
 			String groupType, double latitude, double longitude);
 
 	public User loginUser(UserModel user);
@@ -104,8 +110,9 @@ public interface IUserDAO {
 	public List<Topdealssuggestion> isTopDealSuggestionExists(int userId, int dealId, String suggestionType);
 	public List<Topeventsuggestion> isTopEventSuggestionExists(int userId, int eventId, String suggestionType);
 	public List<Topcommunitysuggestion> isTopCommunitySuggestionExists(int userId, int pageId);
-	public List<Object[]> getuserCommunitySuggestionsByLikesCount(int userId, String category);
+	public List<Object[]> getuserCommunitySuggestionsByLikesCount(int userId, String category, double latitude, double longitude);
 	public void saveTopCommunitySuggestions(Topcommunitysuggestion topcommunitysuggestion);
+	public void saveTopCommunitySuggestions(List<Topcommunitysuggestion> topcommunitysuggestions);
 	public List<Usereventsuggestion> getUserEventsSuggestionByUserIdForFriendsCommunity(int userId, int contactid, String category);
 	public List<Userdealssuggestion> getUserDealSuggestionByUserIdForFriendsCommunity(int userId, int contactid, String category);
 	public List<User> getStarFriends(int userId, Double lattitude,Double longitude);
@@ -118,9 +125,9 @@ public interface IUserDAO {
 
 	public void saveUserCategoryLike(UserCategoryLikes categoryLikes);
 
-	public List<Topnondealsuggestion> getTopNonDealSuggestions(String userEmail, String suggestionType);
-	public List<Topdealssuggestion> getTopDealSuggestions(String userEmail, String suggestionType);
-	public List<Topeventsuggestion> getTopEventSuggestions(String userEmail, String suggestionType);
+	public List<Topnondealsuggestion> getTopNonDealSuggestions(String userEmail, String suggestionType, String categoryType);
+	public List<Topdealssuggestion> getTopDealSuggestions(String userEmail, String suggestionType, String categoryType);
+	public List<Topeventsuggestion> getTopEventSuggestions(String userEmail, String suggestionType, String categoryType);
 	public List<Object[]> getTopCommunitySuggestions(int userId);
 	public int getDealWightCount(int userId,int itemId);
 	public int getEventWightCount(int userId,int itemId);
@@ -131,7 +138,7 @@ public interface IUserDAO {
 	public List<User> getAttendingUsersForEvents(int id, int userId);
 	public List<User> getAttendingUsersForpage(int id, int userId);
 	public int getTotalUserNonDealSuggestions(Integer userId, String category, String suggestionType, double lat, double lon, int distance, double rating);
-	public int getTotalUserDealSuggestions(Integer userId);
+	public int getTotalUserDealSuggestions(Integer userId, String category, String suggestionType, double lat, double lon, int distance, double rating, int minPrice, int maxPrice);
 	public int getTotalUserEventSuggestions(Integer userId, String category, String suggestionType, double lat, double lon, int distance, double rating);
 	public List<Page> getUserCommunitiesByPageType(int userId, String pageType);
 	public List<Page> getUserCommunities(int userId);
@@ -150,6 +157,9 @@ public interface IUserDAO {
 	public Usereventsuggestion isEventSuggestionExistsForDirectSuggestion(int userId,int eventId, int userContactId);
 	public Usernondealsuggestion isNonDealSuggestionExistsForDirectSuggestion(int userId,int businessId, int userContactId);
 	public Userdealssuggestion isDealSuggestionExistsForDirectSuggestion(int userId,int dealId, int userContactId);
+	public Usereventsuggestion isEventSuggestionExistsForDirectSuggestion(int userId,int eventId);
+	public Usernondealsuggestion isNonDealSuggestionExistsForDirectSuggestion(int userId,int businessId);
+	public Userdealssuggestion isDealSuggestionExistsForDirectSuggestion(int userId,int dealId);
 	public void updateUserDealSuggestion(Userdealssuggestion userdealssuggestion);
 	public void updateUserNonDealSuggestion(Usernondealsuggestion usernondealsuggestion);
 	public void updateUserEventSuggestion(Usereventsuggestion usereventsuggestion);

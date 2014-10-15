@@ -175,7 +175,10 @@ public class YelpFilterEngineService implements IYelpFilterEngineService {
 									business.setName(yBusiness.getName());
 									business.setNeighborhoods(yBusiness.getNeighborhoods());
 									business.setPostalCode(yBusiness.getPostalCode());
-									business.setRating(yBusiness.getRating());
+									if(yBusiness.getRating() != null)
+										business.setRating(yBusiness.getRating());
+									else
+										business.setRating(0.0);
 									business.setRatingImgUrl(yBusiness.getRatingImgUrl());
 									business.setSnippetImageUrl(yBusiness.getSnippetImageUrl());
 									business.setSnippetText(yBusiness.getSnippetText());
@@ -261,36 +264,36 @@ public class YelpFilterEngineService implements IYelpFilterEngineService {
 						int parentId = ycategoryfilter.getYcategoryfilter().getId();
 						logger.debug("Parent id ::: "+parentId);
 						if(parentId >= 491 && parentId <= 608)
-						 {
-							 businesstype = businessDAO.getBusinesstypeByType("RESTAURANT");
-							 break;
-						 }
-						 else if(parentId >= 109 && parentId <= 130)
-						 {
-							 businesstype = businessDAO.getBusinesstypeByType("SPA");
-							 break;
-						 }
-						 else if(parentId >= 1 && parentId <= 66)
-						 {
-							 businesstype = businessDAO.getBusinesstypeByType("SPORT");
-							 break;
-						 }
-						 else if(parentId == 72)
-						 {
-							 businesstype = businessDAO.getBusinesstypeByType("MOVIE");
-							 break;
-						 }
-						 
-					 }
+						{
+							businesstype = businessDAO.getBusinesstypeByType("RESTAURANT");
+							break;
+						}
+						else if(parentId >= 109 && parentId <= 130)
+						{
+							businesstype = businessDAO.getBusinesstypeByType("SPA");
+							break;
+						}
+						else if(parentId >= 1 && parentId <= 66)
+						{
+							businesstype = businessDAO.getBusinesstypeByType("SPORT");
+							break;
+						}
+						else if(parentId == 72)
+						{
+							businesstype = businessDAO.getBusinesstypeByType("MOVIE");
+							break;
+						}
+
+					}
 				}
 				//Businesstype businesstype = businessDAO.getBusinesstypeByType("OTHERS");
 				business.setBusinesstype(businesstype);				   	
 				businessDAO.saveBusiness(business, count);	
 				count++;
-				
+
 			}
 		}
 
 	}
-	
+
 }

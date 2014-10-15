@@ -48,7 +48,7 @@ public class MatchingEventsService implements IMatchingEventsService{
 
 	@Autowired
 	private IFunBoardDAO funBoardDAO;
-	
+
 	@Autowired
 	private IGroupDAO groupDAO;
 
@@ -76,11 +76,15 @@ public class MatchingEventsService implements IMatchingEventsService{
 				}
 				List<User> getStarFiftyMilesUserList = userDAO.getStarFriends(userId, Double.parseDouble(user.getLattitude()), Double.parseDouble(user.getLongitude()));
 				logger.debug("getStarFiftyMilesUserList=>"+getStarFiftyMilesUserList);
-				
-			
+
+
 				for(int i = 0; i < categoryList.length; i++)
 				{
 					String category = categoryList[i];
+					List<Events> eventList = userDAO.getUserLikesEventsByType(userId, category,Double.parseDouble(user.getLattitude()),Double.parseDouble(user.getLongitude()));
+					List<Business> businessList = userDAO.getUserBusinessByPageType(userId, category,Double.parseDouble(user.getLattitude()), Double.parseDouble(user.getLongitude()));
+					List<Deals> dealList = userDAO.getUserDealByType(user.getUserId(),category, Double.parseDouble(user.getLattitude()), Double.parseDouble(user.getLongitude()));
+
 					userCategoryList = userDAO.getUserCategoryLikesByType(userId,category);
 					logger.debug("category::  "+category);
 					logger.debug("userCategoryList=>"+userCategoryList);
@@ -121,11 +125,14 @@ public class MatchingEventsService implements IMatchingEventsService{
 						}
 					}
 
-					if(userCategoryList != null || getBookedEvents != null || getBookedDeals != null || getBookedBusiness != null)
+					if(eventList != null || dealList != null || businessList != null || userCategoryList != null || getBookedEvents != null || getBookedDeals != null || getBookedBusiness != null)
 					{
-						List<Events> eventList = new ArrayList<Events>();
-						List<Deals> dealList = new ArrayList<Deals>();
-						List<Business> businessList = new ArrayList<Business>();
+						if(eventList == null)
+							eventList = new ArrayList<Events>();
+						if(dealList == null)
+							dealList = new ArrayList<Deals>();
+						if(businessList == null)
+							businessList = new ArrayList<Business>();
 
 						for(UserCategory userCategory : userCategoryList) 
 						{
@@ -160,7 +167,7 @@ public class MatchingEventsService implements IMatchingEventsService{
 						if(getBookedDeals != null)
 							businessList.addAll(getBookedBusiness);
 
-						
+
 						// Get user's groups
 						List<Jeeyohgroup> groups = groupDAO.getUserGroupsByCategory(userId, category);
 						if(groups != null)
@@ -181,7 +188,7 @@ public class MatchingEventsService implements IMatchingEventsService{
 								}
 							}
 						}
-						
+
 						for(User starFiftyMilesUser: getStarFiftyMilesUserList)
 						{
 							logger.debug("starFiftyMilesUser userId =>"+starFiftyMilesUser.getUserId());
@@ -239,8 +246,8 @@ public class MatchingEventsService implements IMatchingEventsService{
 			}
 		}
 	}
-	
-	
+
+
 	/**
 	 * Get matching list for friends and group members
 	 * @param user
@@ -286,7 +293,7 @@ public class MatchingEventsService implements IMatchingEventsService{
 				}
 			}
 		}			
-		
+
 		try{
 			if(eventList!=null)
 			{
@@ -391,7 +398,7 @@ public class MatchingEventsService implements IMatchingEventsService{
 		}
 	}
 
-	
+
 	/**
 	 * This saves the top Event Match List  into DataBase
 	 * @param userId
@@ -512,7 +519,7 @@ public class MatchingEventsService implements IMatchingEventsService{
 
 		}
 	}
-	
+
 	/**
 	 * This saves the top deal Match List  into DataBase
 	 * @param userId
@@ -670,7 +677,7 @@ public class MatchingEventsService implements IMatchingEventsService{
 
 		}
 	}
-	
+
 	/**
 	 * This saves the top non deal Match List  into DataBase
 	 * @param user
@@ -763,7 +770,7 @@ public class MatchingEventsService implements IMatchingEventsService{
 		}
 	}
 
-	
+
 	/**
 	 * This saves the top events Match List  into DataBase
 	 * @param eventList
@@ -815,8 +822,8 @@ public class MatchingEventsService implements IMatchingEventsService{
 		}
 		return isSaved;
 	}
-	
-	
+
+
 	/**
 	 * This saves the top deal Match List  into DataBase
 	 * @param dealList

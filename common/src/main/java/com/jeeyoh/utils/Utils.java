@@ -180,6 +180,38 @@ public class Utils {
 			Calendar cal1 = Calendar.getInstance();
 			if(date != null)
 				c.setTime(date);
+			if(c.get(Calendar.DAY_OF_WEEK) > 1)
+			{
+				c.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+				cal1.setTime(getCurrentDate());
+
+				if(c.get(Calendar.MONTH) < cal1.get(Calendar.MONTH))
+					c.add(Calendar.DATE,7);
+				else if(c.get(Calendar.DAY_OF_MONTH) < cal1.get(Calendar.DAY_OF_MONTH))
+					c.add(Calendar.DATE,7);
+			}
+			// Set time fields to end  
+			setTimeFields(c);
+
+			return c.getTime();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+
+	}
+
+
+	/**
+	 * Get Nearest weekend for a particular date
+	 * @return weekendDate
+	 */
+	public static Date getNearestWeekendForFunboard()
+	{
+		try {
+			Calendar c = Calendar.getInstance();
+			Calendar cal1 = Calendar.getInstance();
+
 			c.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
 			cal1.setTime(getCurrentDate());
 			if(cal1.get(Calendar.DAY_OF_WEEK) > 2)
@@ -200,56 +232,22 @@ public class Utils {
 		}
 
 	}
-	
-	
+
 	/**
-	 * Get previous weekend for a particular date
+	 * Get weekend for a particular date
 	 * @return weekendDate
 	 */
-	public static Date getPreviousWeekend(Date date)
+	public static Date getWeekendForParticularDate(Date date)
 	{
 		try {
 			Calendar c = Calendar.getInstance();
-			Calendar cal1 = Calendar.getInstance();
 			if(date != null)
 				c.setTime(date);
-			c.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
-			c.add(Calendar.WEEK_OF_YEAR, -1);
-			cal1.setTime(getCurrentDate());
-			if(c.get(Calendar.MONTH) < cal1.get(Calendar.MONTH))
-				c.add(Calendar.DATE,7);
-			else if(c.get(Calendar.DAY_OF_MONTH) < cal1.get(Calendar.DAY_OF_MONTH))
-				c.add(Calendar.DATE,7);
 
-			// Set time fields to end  
-			setTimeFields(c);
-
-			return c.getTime();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-
-	}
-	
-	
-	/**
-	 * Get nearest Monday for a particular date
-	 * @return weekendDate
-	 */
-	public static Date getCurrentWeekMonday()
-	{
-		try {
-			Calendar c = Calendar.getInstance();
-			Calendar cal1 = Calendar.getInstance();
-			c.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
-			cal1.setTime(getCurrentDate());
-			if(cal1.get(Calendar.DAY_OF_WEEK) < 2)
+			if(c.get(Calendar.DAY_OF_WEEK) > 1)
 			{
-				if(c.get(Calendar.MONTH) > cal1.get(Calendar.MONTH))
-					c.add(Calendar.DATE,-7);
-				else if(c.get(Calendar.DAY_OF_MONTH) >= cal1.get(Calendar.DAY_OF_MONTH))
-					c.add(Calendar.DATE,-7);
+				c.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+				c.add(Calendar.DATE,7);
 			}
 
 			// Set time fields to end  
@@ -262,7 +260,54 @@ public class Utils {
 		}
 
 	}
-	
+
+
+	/**
+	 * Get nearest Monday for a particular date
+	 * @return weekendDate
+	 */
+	public static Date getCurrentWeekMonday(Date date, boolean forSavingFunboard)
+	{
+		try {
+			Calendar c = Calendar.getInstance();
+			Calendar cal1 = Calendar.getInstance();
+			if(date != null)
+				c.setTime(date);
+
+			if(forSavingFunboard)
+			{
+				c.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+				cal1.setTime(getCurrentDate());
+				if(cal1.get(Calendar.DAY_OF_WEEK) <= 2)
+				{
+					if(c.get(Calendar.MONTH) > cal1.get(Calendar.MONTH))
+						c.add(Calendar.DATE,-7);
+					else if(c.get(Calendar.DAY_OF_MONTH) >= cal1.get(Calendar.DAY_OF_MONTH))
+						c.add(Calendar.DATE,-7);
+				}
+			}
+			else
+			{
+				c.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+				if(date != null)
+					cal1.setTime(date);
+				if(cal1.get(Calendar.DAY_OF_WEEK) == 1)
+				{
+					c.add(Calendar.DATE,-7);
+				}	
+			}
+
+			// Set time fields to end  
+			setTimeFields(c);
+
+			return c.getTime();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+
+	}
+
 	/**
 	 * Get current day
 	 * @return weekendDate
@@ -621,7 +666,7 @@ public class Utils {
 	}
 
 	/**
-	 * This method encode the provided string
+	 * This method decode the provided string
 	 * @param text
 	 * @return
 	 */

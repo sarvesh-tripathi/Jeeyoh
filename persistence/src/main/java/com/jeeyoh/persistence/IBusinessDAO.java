@@ -23,7 +23,7 @@ public interface IBusinessDAO {
 	public List<Business> getBusinessByCriteria(String userEmail, String searchText, String category, String location, String rating);
 	public List<Business> getBusinessByuserLikes(String likekeyword, String itemCategory, String providerName, double latitude, double longitude);
 	public Gcategory getBusinessCategory(String name);
-	public List<Business> getBusinessBySearchKeyword(String searchText,String category, String location,int offset, int limit, double lat, double lon, int distance, double rating);
+	public List<Business> getBusinessBySearchKeyword(String searchText,String category, String location,int offset, int limit, double lat, double lon, int distance, double rating, boolean forExactMatch);
 	public List<Business> getBusinessByLikeSearchKeyword(String searchText,String category, String location,int offset, int limit, double lat, double lon, int distance, double rating);
 	public List<Business> getBusinessByCriteriaWithoutRating(String userEmail, String searchText, String category, String location, String rating);
 	public List<Business> getUserNonDealSuggestions(String userEmail, int offset,int limit, String category, String suggestionType, double lat, double lon, int distance, double rating);

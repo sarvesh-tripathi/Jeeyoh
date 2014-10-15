@@ -58,14 +58,28 @@ public class SearchRequest implements Serializable{
 	@JsonProperty
 	private int distance;
 	@JsonProperty
-	private int minPricae;
+	private int minPrice;
 	@JsonProperty
 	private int maxPrice;
 	@JsonProperty
 	private String zipCode;
 	@JsonProperty
 	private String itemType;
+	@JsonProperty
+	private boolean isDeal;
 	
+	/**
+	 * @return the isDeal
+	 */
+	public boolean getIsDeal() {
+		return isDeal;
+	}
+	/**
+	 * @param isDeal the isDeal to set
+	 */
+	public void setIsDeal(boolean isDeal) {
+		this.isDeal = isDeal;
+	}
 	/**
 	 * @return the userId
 	 */
@@ -331,18 +345,6 @@ public class SearchRequest implements Serializable{
 		this.distance = distance;
 	}
 	/**
-	 * @return the minPricae
-	 */
-	public int getMinPricae() {
-		return minPricae;
-	}
-	/**
-	 * @param minPricae the minPricae to set
-	 */
-	public void setMinPricae(int minPricae) {
-		this.minPricae = minPricae;
-	}
-	/**
 	 * @return the maxPrice
 	 */
 	public int getMaxPrice() {
@@ -353,6 +355,19 @@ public class SearchRequest implements Serializable{
 	 */
 	public void setMaxPrice(int maxPrice) {
 		this.maxPrice = maxPrice;
+	}
+	
+	/**
+	 * @return the minPrice
+	 */
+	public int getMinPrice() {
+		return minPrice;
+	}
+	/**
+	 * @param minPrice the minPrice to set
+	 */
+	public void setMinPrice(int minPrice) {
+		this.minPrice = minPrice;
 	}
 	/**
 	 * @return the zipCode

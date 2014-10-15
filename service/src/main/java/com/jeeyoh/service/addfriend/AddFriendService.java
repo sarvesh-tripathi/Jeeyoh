@@ -221,7 +221,7 @@ public class AddFriendService implements IAddFriendService{
 				userContacts.setIsBlock(false);
 				userContacts.setIsDeleted(false);
 				userContacts.setIsDeny(false);
-				userContacts.setIsStar(false);
+				userContacts.setIsStar(true);
 				userContacts.setIsActive(true);
 				userContacts.setUpdatedtime(new Date());
 				userContacts.setCreatedtime(new Date());
